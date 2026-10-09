@@ -246,6 +246,20 @@ p { margin: 0 0 1em; }
 .tools span { font-size: .75rem; font-weight: 600; background: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
 .hh-action { text-align: center; font-weight: 700; background: var(--yellow); border-radius: 14px; padding: 12px; font-size: .92rem; }
 
+/* Misión Médica: ID card mock */
+.idcard { justify-self: center; width: min(400px, 100%); background: #fff; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: var(--shadow); }
+.id-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--graphite); color: #fff; border-bottom: 4px solid var(--yellow); }
+.id-head small { display: block; opacity: .75; font-size: .78rem; }
+.id-body { display: grid; grid-template-columns: 72px 1fr auto; gap: 14px; align-items: center; padding: 18px; }
+.id-photo { width: 72px; height: 88px; border-radius: 12px; background: var(--cream); display: grid; place-items: end center; overflow: hidden; }
+.id-data { display: grid; gap: 2px; font-size: .85rem; color: var(--muted); }
+.id-data b { color: var(--ink); font-size: 1rem; }
+.id-num { font-weight: 700; color: var(--gold-text) !important; }
+.id-qr { display: grid; justify-items: center; gap: 4px; }
+.id-qr small { font-size: .65rem; color: var(--muted); }
+.id-foot { background: var(--cream); padding: 10px 18px; font-size: .8rem; font-weight: 600; }
+@media (max-width: 420px) { .id-body { grid-template-columns: 64px 1fr; } .id-qr { grid-column: 1 / -1; justify-self: start; grid-auto-flow: column; align-items: center; } }
+
 /* Steps */
 .steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
 .steps li { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
@@ -326,6 +340,13 @@ p { margin: 0 0 1em; }
   .legal-doc { padding: 40px 0 64px; }
   .legal-doc .toc ol { columns: 1; }
   .service { border-radius: 60px 18px 60px 18px; }
+}
+@media (max-width: 420px) {
+  .brand { min-width: 0; gap: 8px; }
+  .brand-logo { width: 34px; height: 34px; }
+  .brand-stack .wordmark { font-size: 1rem; white-space: normal; }
+  .nav-inner .btn { flex: none; }
+  .nav-inner .btn-sm { padding: .55em .95em; font-size: .85rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
