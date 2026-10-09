@@ -211,6 +211,7 @@ p { margin: 0 0 1em; }
 .brand-logo { border-radius: 10px; }
 .brand-stack { display: grid; line-height: 1.05; }
 .brand-stack small { font-size: .72rem; font-weight: 600; color: var(--muted); letter-spacing: 0; }
+.brand-stack small b { color: var(--gold-text); }
 .case { justify-self: center; width: min(380px, 100%); background: #fff; border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--line); }
 .case-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--graphite); color: #fff; }
 .case-head img { border-radius: 8px; }
@@ -230,6 +231,20 @@ p { margin: 0 0 1em; }
 .limits h3 { margin-bottom: 12px; }
 .limits ul { margin: 0; padding-left: 1.1em; color: var(--muted); display: grid; gap: 8px; }
 .limits strong { color: var(--ink); }
+
+/* SI-APS: household mock */
+.household { justify-self: center; width: min(390px, 100%); background: #fff; border: 1px solid var(--line); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); }
+.hh-head { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: center; padding: 14px 18px; background: var(--graphite); color: #fff; }
+.hh-head small { display: block; opacity: .75; font-size: .78rem; }
+.hh-head .chip { grid-column: 1 / -1; justify-self: start; }
+.hh-body { padding: 16px 18px 18px; display: grid; gap: 12px; }
+.bar { display: grid; grid-template-columns: 120px 1fr 44px; gap: 10px; align-items: center; font-size: .85rem; }
+.bar span { color: var(--muted); }
+.bar i { height: 8px; border-radius: 99px; background: linear-gradient(90deg, var(--yellow) var(--p), var(--gray) var(--p)); }
+.bar b { text-align: right; font-size: .8rem; }
+.tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.tools span { font-size: .75rem; font-weight: 600; background: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+.hh-action { text-align: center; font-weight: 700; background: var(--yellow); border-radius: 14px; padding: 12px; font-size: .92rem; }
 
 /* Steps */
 .steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
