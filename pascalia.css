@@ -158,6 +158,15 @@ p { margin: 0 0 1em; }
   display: grid; place-items: center; background: var(--yellow); color: var(--graphite); font-size: .75rem; font-weight: 800;
 }
 
+/* Light variant of the product band (featured solutions) */
+.product.light { background: #fff; color: var(--ink); border: 1px solid var(--line); border-top: 5px solid var(--yellow); box-shadow: var(--shadow); margin-top: 44px; }
+.product.light::after { filter: none; opacity: .35; }
+.product.light p { color: var(--muted); }
+.product.light .fine-print { font-size: .95rem; border-left: 3px solid var(--yellow); padding-left: 12px; }
+.product.light .checks li { color: var(--muted); }
+.product.light .checks li strong { color: var(--ink); }
+.product-name svg { flex: none; }
+
 /* Steps */
 .steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
 .steps li { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
