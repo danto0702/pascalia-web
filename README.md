@@ -8,6 +8,7 @@ Publicado en https://pascalia.lat con GitHub Pages: `.github/workflows/pages.yml
 |------|-----------|
 | `/` | Portada de PascalIA: servicios, soluciones (Suite de Salud Pública), CuentaFacil, cómo trabajamos, valores y contacto |
 | `/flota/` | Solución Flota Vehicular: itinerario, marcas con GPS desde el celular, días de operación y planilla |
+| `/nana-dnt/` | NANA DNT: seguimiento nutricional infantil (desnutrición aguda en menores de 5 años), con su marca azul y dorado |
 | `/cuentafacil/` | Página del producto CuentaFacil (cuentas de cobro de contratistas por WhatsApp) |
 | `/politica-de-datos/` | Política de tratamiento de datos personales (Ley 1581 de 2012), versión 1.0 aprobada por el abogado |
 
