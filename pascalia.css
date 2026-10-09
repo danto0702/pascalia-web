@@ -209,6 +209,7 @@ p { margin: 0 0 1em; }
 .theme-nana .footer .wordmark b, .theme-nana .brand small b { color: #FFC107; }
 .theme-nana .brand small b { color: #B98A00; }
 .brand-logo { border-radius: 10px; }
+.logo-mm { border-radius: 22%; box-shadow: 0 0 0 1px rgba(31,31,31,.12); background: #fff; }
 .brand-stack { display: grid; line-height: 1.05; }
 .brand-stack small { font-size: .72rem; font-weight: 600; color: var(--muted); letter-spacing: 0; }
 .brand-stack small b { color: var(--gold-text); }
