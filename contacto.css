@@ -1,0 +1,48 @@
+/* Formulario de contacto compartido (portada, soluciones y CuentaFacil) */
+.pf {
+  --pf-ink: #1F1F1F; --pf-muted: #5A5754; --pf-line: #DCD6C6; --pf-accent: #1F1F1F; --pf-focus: #FFC107; --pf-error: #B3261E;
+  background: #fff; color: var(--pf-ink); border-radius: 22px; padding: 28px; text-align: left;
+  box-shadow: 0 24px 60px -30px rgba(31, 31, 31, .45); margin: 22px auto 18px; max-width: 680px;
+  font-size: 1rem;
+}
+.pf * { box-sizing: border-box; }
+.pf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
+.pf-field { display: grid; gap: 6px; }
+.pf-field.full { grid-column: 1 / -1; }
+.pf label, .pf legend { font-weight: 700; font-size: .92rem; color: var(--pf-ink); }
+.pf .pf-opt { font-weight: 500; color: var(--pf-muted); }
+.pf input[type=text], .pf input[type=email], .pf input[type=tel], .pf select, .pf textarea {
+  width: 100%; font: inherit; color: var(--pf-ink); background: #fff;
+  border: 1.5px solid var(--pf-line); border-radius: 12px; padding: 11px 13px;
+}
+.pf textarea { min-height: 120px; resize: vertical; }
+.pf input:focus, .pf select:focus, .pf textarea:focus { outline: 3px solid var(--pf-focus); outline-offset: 1px; border-color: var(--pf-ink); }
+.pf [aria-invalid=true] { border-color: var(--pf-error); }
+.pf-err { color: var(--pf-error); font-size: .85rem; min-height: 0; }
+.pf-check { font-weight: 500 !important; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; font-size: .9rem; color: var(--pf-muted); }
+.pf-check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--pf-ink); }
+.pf-check a { color: var(--pf-ink); font-weight: 600; }
+.pf-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+.pf-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+.pf-submit {
+  appearance: none; border: 0; cursor: pointer; font: inherit; font-weight: 700;
+  background: var(--pf-accent); color: #fff; border-radius: 999px; padding: .95em 2em;
+}
+.pf-submit:hover { filter: brightness(1.15); }
+.pf-submit:focus-visible { outline: 3px solid var(--pf-focus); outline-offset: 3px; }
+.pf-submit[disabled] { opacity: .6; cursor: progress; }
+.pf-status { font-size: .92rem; }
+.pf-status.error { color: var(--pf-error); font-weight: 600; }
+.pf-done { text-align: center; padding: 10px 6px; }
+.pf-done .pf-ok { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 12px; background: var(--pf-focus); font-size: 1.6rem; font-weight: 800; color: #1F1F1F; }
+.pf-done h3 { margin: 0 0 8px; font-size: 1.35rem; }
+.pf-done p { color: var(--pf-muted); margin: 0 0 6px; }
+.pf-done .pf-rad { display: inline-block; margin: 6px 0 10px; font-weight: 800; letter-spacing: .04em; background: #FFF8E1; border: 1px solid #ECE4CC; border-radius: 10px; padding: 6px 12px; color: var(--pf-ink); }
+/* Temas de producto */
+.theme-nana .pf { --pf-accent: #0C2858; --pf-focus: #E1A823; }
+.pf.pf-green { --pf-accent: #0f5c4d; --pf-focus: #f2a93b; }
+@media (max-width: 640px) {
+  .pf { padding: 20px 16px; border-radius: 18px; }
+  .pf-grid { grid-template-columns: 1fr; }
+  .pf-submit { width: 100%; }
+}

@@ -14,6 +14,13 @@ Publicado en https://pascalia.lat con GitHub Pages: `.github/workflows/pages.yml
 | `/cuentafacil/` | Página del producto CuentaFacil (cuentas de cobro de contratistas por WhatsApp) |
 | `/politica-de-datos/` | Política de tratamiento de datos personales (Ley 1581 de 2012), versión 1.0 aprobada por el abogado |
 
+## Solicitudes (formulario y tablero)
+
+- **Formulario** (`contacto.js` + `contacto.css`): se monta en cada `<div data-pascalia-form data-solucion="...">` y envía a la función de Supabase `pascalia-solicitud` (`supabase/functions/`), que valida, frena spam (campo trampa, tiempo mínimo y límite de envíos), guarda en `pascalia_solicitudes` y envía con Resend el aviso a contacto@ y la confirmación a quien escribe.
+- **Tablero** en `/panel/` (no indexado): ingreso con usuario de Supabase autorizado en `pascalia_admins`; indicadores, gráficas, filtros, detalle con etapa, prioridad, valor, próxima acción, motivo de cierre y bitácora; CSV para Excel. `panel/vendor/` trae supabase-js 2.45.4 (MIT) para no depender de una CDN.
+- **Base de datos:** temporalmente en el proyecto Supabase *SI-APS HRNO*, aislada con prefijo `pascalia_` y RLS. SQL en `supabase/migrations/`. Para trasladarla, ver el encabezado de ese archivo.
+- **Secretos de la función** (en Supabase → Edge Functions → Secrets): `RESEND_API_KEY`; opcionales `PASCALIA_FROM` y `PASCALIA_AVISO`.
+
 ## Ver en local
 
 ```

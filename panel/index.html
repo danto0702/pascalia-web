@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Solicitudes · PascalIA</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/panel/panel.css">
+<script src="/panel/vendor/supabase.js"></script>
+<script src="/panel/panel.js" defer></script>
+</head>
+<body>
+
+<!-- Ingreso -->
+<main id="v-login" class="login" hidden>
+  <form class="login-card" id="f-login" novalidate>
+    <img src="/flower.svg" alt="" width="64" height="64">
+    <h1>Solicitudes <span>PascalIA</span></h1>
+    <p class="muted">Ingresa con tu cuenta para ver y gestionar las solicitudes del sitio.</p>
+    <label for="l-correo">Correo</label>
+    <input id="l-correo" type="email" autocomplete="username" required>
+    <label for="l-clave">Contraseña</label>
+    <input id="l-clave" type="password" autocomplete="current-password" required>
+    <button class="btn btn-primary" type="submit">Ingresar</button>
+    <button class="linkbtn" type="button" id="b-olvide">¿Olvidaste tu contraseña?</button>
+    <p class="msg" id="login-msg" role="status" aria-live="polite"></p>
+  </form>
+  <form class="login-card" id="f-nueva-clave" novalidate hidden>
+    <img src="/flower.svg" alt="" width="64" height="64">
+    <h1>Nueva contraseña</h1>
+    <label for="n-clave">Escribe tu nueva contraseña (mínimo 10 caracteres)</label>
+    <input id="n-clave" type="password" autocomplete="new-password" minlength="10" required>
+    <button class="btn btn-primary" type="submit">Guardar contraseña</button>
+    <p class="msg" id="clave-msg" role="status" aria-live="polite"></p>
+  </form>
+</main>
+
+<!-- Sin permiso -->
+<main id="v-sin-acceso" class="login" hidden>
+  <div class="login-card">
+    <img src="/flower.svg" alt="" width="64" height="64">
+    <h1>Sin acceso</h1>
+    <p class="muted">Tu cuenta (<b id="sa-correo"></b>) no está autorizada para ver las solicitudes.</p>
+    <button class="btn btn-dark" type="button" data-salir>Salir</button>
+  </div>
+</main>
+
+<!-- Tablero -->
+<div id="v-app" hidden>
+  <header class="top">
+    <div class="top-in">
+      <a class="brand" href="/" title="Ir al sitio"><img src="/flower.svg" alt="" width="32" height="32"><span>Pascal<b>IA</b></span></a>
+      <h1>Solicitudes</h1>
+      <div class="top-actions">
+        <span class="muted small" id="u-correo"></span>
+        <button class="btn btn-ghost btn-sm" type="button" id="b-recargar" title="Actualizar datos">↻ Actualizar</button>
+        <button class="btn btn-primary btn-sm" type="button" id="b-nueva">+ Nueva</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-salir>Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="filters" aria-label="Filtros">
+      <label class="f-search"><span class="sr">Buscar</span><input type="search" id="f-q" placeholder="Buscar por nombre, correo, radicado o mensaje"></label>
+      <label><span class="sr">Periodo</span><select id="f-periodo">
+        <option value="30">Últimos 30 días</option><option value="90">Últimos 90 días</option>
+        <option value="365">Último año</option><option value="todo" selected>Todo</option></select></label>
+      <label><span class="sr">Etapa</span><select id="f-etapa"></select></label>
+      <label><span class="sr">Solución</span><select id="f-solucion"></select></label>
+      <label><span class="sr">Prioridad</span><select id="f-prioridad"></select></label>
+      <label><span class="sr">Fuente</span><select id="f-fuente"></select></label>
+      <label class="chk"><input type="checkbox" id="f-vencidas"> Solo acciones vencidas</label>
+      <button class="btn btn-ghost btn-sm" type="button" id="b-limpiar">Limpiar</button>
+    </section>
+
+    <section class="kpis" id="kpis" aria-label="Indicadores"></section>
+
+    <section class="charts" aria-label="Distribución">
+      <figure class="chart"><figcaption>Embudo · solicitudes por etapa</figcaption><div id="c-etapa"></div></figure>
+      <figure class="chart"><figcaption>Por solución</figcaption><div id="c-solucion"></div></figure>
+      <figure class="chart"><figcaption>Cómo nos conocieron</figcaption><div id="c-fuente"></div></figure>
+      <figure class="chart"><figcaption>Solicitudes por mes</figcaption><div id="c-mes"></div></figure>
+    </section>
+
+    <section class="list" aria-label="Solicitudes">
+      <div class="list-head">
+        <h2><span id="n-filtradas">0</span> solicitudes</h2>
+        <div class="list-actions">
+          <label>Ordenar por <select id="f-orden">
+            <option value="recientes">Más recientes</option>
+            <option value="proxima">Próxima acción</option>
+            <option value="prioridad">Prioridad</option>
+            <option value="valor">Valor estimado</option>
+          </select></label>
+          <button class="btn btn-ghost btn-sm" type="button" id="b-csv">Descargar CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Radicado</th><th>Recibida</th><th>Contacto</th><th>Solución</th><th>Etapa</th>
+            <th>Prioridad</th><th>Próxima acción</th><th class="num">Valor</th><th>1.ª respuesta</th>
+          </tr></thead>
+          <tbody id="t-body"></tbody>
+        </table>
+        <p class="empty" id="t-vacio" hidden>No hay solicitudes con estos filtros.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Detalle -->
+<div class="drawer-bg" id="d-bg" hidden></div>
+<aside class="drawer" id="drawer" aria-labelledby="d-titulo" role="dialog" aria-modal="true" hidden>
+  <header class="d-head">
+    <div>
+      <span class="rad" id="d-rad"></span>
+      <h2 id="d-titulo"></h2>
+      <div class="d-quick" id="d-quick"></div>
+    </div>
+    <button class="x" type="button" id="d-cerrar" aria-label="Cerrar">×</button>
+  </header>
+  <div class="d-body">
+    <section>
+      <h3>Solicitud</h3>
+      <dl class="d-datos" id="d-datos"></dl>
+      <p class="d-mensaje" id="d-mensaje"></p>
+    </section>
+    <section>
+      <h3>Seguimiento</h3>
+      <form id="f-seg" class="seg">
+        <label>Etapa<select name="etapa" id="s-etapa"></select></label>
+        <label>Prioridad<select name="prioridad" id="s-prioridad"></select></label>
+        <label>Valor estimado (COP)<input name="valor_estimado" id="s-valor" inputmode="numeric" placeholder="Ej.: 4.500.000"></label>
+        <label class="full">Próxima acción<input name="proxima_accion" id="s-accion" maxlength="300" placeholder="Ej.: Enviar propuesta"></label>
+        <label>Fecha de la próxima acción<input type="date" name="proxima_accion_fecha" id="s-fecha"></label>
+        <label class="cierre">Motivo de cierre<select name="motivo_cierre" id="s-motivo"></select></label>
+        <label class="full cierre">Detalle del cierre<textarea name="cierre_detalle" id="s-detalle" rows="2"></textarea></label>
+        <div class="full seg-actions"><button class="btn btn-dark" type="submit">Guardar cambios</button><span class="msg" id="seg-msg" role="status" aria-live="polite"></span></div>
+      </form>
+    </section>
+    <section>
+      <h3>Bitácora</h3>
+      <form id="f-act" class="act-form">
+        <select id="a-tipo" aria-label="Tipo de actividad"></select>
+        <input type="datetime-local" id="a-fecha" aria-label="Fecha y hora">
+        <textarea id="a-desc" rows="2" placeholder="¿Qué pasó? Ej.: Llamé, quedó de revisar con su gerente." aria-label="Descripción" required></textarea>
+        <button class="btn btn-primary btn-sm" type="submit">Agregar</button>
+      </form>
+      <ol class="timeline" id="d-timeline"></ol>
+    </section>
+    <section class="danger">
+      <button class="linkbtn danger-btn" type="button" id="b-eliminar">Eliminar solicitud (spam o duplicada)</button>
+    </section>
+  </div>
+</aside>
+
+<!-- Nueva solicitud manual -->
+<dialog id="dlg-nueva" aria-labelledby="dn-t">
+  <form method="dialog" id="f-nueva" class="seg">
+    <h2 id="dn-t" class="full">Nueva solicitud</h2>
+    <p class="muted full small">Para contactos que llegan por teléfono, WhatsApp o en persona.</p>
+    <label>Nombre<input name="nombre" required maxlength="120"></label>
+    <label>Correo<input name="correo" type="email" required maxlength="160"></label>
+    <label>WhatsApp<input name="whatsapp" maxlength="30"></label>
+    <label>Solución<select name="solucion" id="n-solucion" required></select></label>
+    <label>Tamaño<input name="tamano" maxlength="120"></label>
+    <label>Cómo nos conoció<select name="fuente" id="n-fuente"></select></label>
+    <label class="full">Mensaje o necesidad<textarea name="mensaje" rows="3" required></textarea></label>
+    <label class="full chk"><input type="checkbox" name="acepta_datos" required> La persona autorizó el tratamiento de sus datos</label>
+    <div class="full seg-actions">
+      <button class="btn btn-ghost" value="cancel" formnovalidate type="submit">Cancelar</button>
+      <button class="btn btn-dark" value="ok" type="submit">Crear</button>
+      <span class="msg" id="nueva-msg" role="status" aria-live="polite"></span>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
