@@ -1,12 +1,12 @@
 # pascalia-web
 
-Sitio web de **Pascalia** — soluciones de tecnología e inteligencia artificial a la medida para organizaciones y personas.
+Sitio web de **PascalIA** — *Ideas que hacen florecer tu organización*. Consultoría, desarrollo y capacitación en inteligencia artificial a la medida de organizaciones y personas.
 
 Publicado en https://pascalia.lat con GitHub Pages (rama `main`, raíz). HTML + CSS estático, sin build.
 
 | Ruta | Contenido |
 |------|-----------|
-| `/` | Portada de Pascalia: soluciones, Suite de Salud Pública, cómo trabajamos, contacto |
+| `/` | Portada de PascalIA: servicios, soluciones (Suite de Salud Pública), CuentaFacil, cómo trabajamos, valores y contacto |
 | `/cuentafacil/` | Página del producto CuentaFacil (cuentas de cobro de contratistas por WhatsApp) |
 
 ## Ver en local
@@ -16,6 +16,13 @@ python3 -m http.server 8000
 ```
 
 y abrir http://localhost:8000.
+
+## Identidad visual
+
+- Colores: amarillo PascalIA `#FFC107`, gris grafito `#1F1F1F`, gris claro `#E9E8E9`, crema `#FFF8E1` (variables en `pascalia.css`). Para texto amarillo sobre fondo claro se usa `--gold-text` (`#8A6100`) por contraste.
+- Tipografía: Montserrat (Google Fonts).
+- Logo: `flower.svg` (flor) + palabra "Pascal**IA**" con "IA" en amarillo; `flower-outline.svg` para las flores de fondo.
+- `styles.css` es solo para `/cuentafacil/`, que conserva su propia identidad de producto (verde).
 
 ## Notas
 
