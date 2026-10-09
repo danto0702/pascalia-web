@@ -2,7 +2,7 @@
 
 Sitio web de **PascalIA** — *Ideas que hacen florecer tu organización*. Consultoría, desarrollo y capacitación en inteligencia artificial a la medida de organizaciones y personas.
 
-Publicado en https://pascalia.lat con GitHub Pages (rama `main`, raíz). HTML + CSS estático, sin build.
+Publicado en https://pascalia.lat con GitHub Pages: `.github/workflows/pages.yml` publica cada push a `main`. HTML + CSS estático, sin build.
 
 | Ruta | Contenido |
 |------|-----------|
