@@ -8,6 +8,7 @@ Publicado en https://pascalia.lat con GitHub Pages: `.github/workflows/pages.yml
 |------|-----------|
 | `/` | Portada de PascalIA: servicios, soluciones (Suite de Salud Pública), CuentaFacil, cómo trabajamos, valores y contacto |
 | `/cuentafacil/` | Página del producto CuentaFacil (cuentas de cobro de contratistas por WhatsApp) |
+| `/politica-de-datos/` | Política de tratamiento de datos personales (Ley 1581 de 2012), versión 1.0 aprobada por el abogado |
 
 ## Ver en local
 
@@ -28,4 +29,4 @@ y abrir http://localhost:8000.
 
 - `CNAME` asocia el sitio a `pascalia.lat`. El DNS está en Porkbun (registros `A`/`AAAA` de GitHub Pages y `www` → `danto0702.github.io`).
 - Contacto: `contacto@pascalia.lat` (reenvío de correo de Porkbun).
-- La política de tratamiento de datos se publicará cuando la revise un abogado.
+- La política de tratamiento de datos está en `/politica-de-datos/`. Si cambia, sube la versión y la fecha en la página (los contratistas aceptan una versión concreta en WhatsApp).

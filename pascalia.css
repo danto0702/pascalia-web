@@ -194,6 +194,21 @@ p { margin: 0 0 1em; }
 .footer a { color: var(--yellow); }
 .footer .legal { grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,.12); padding-top: 18px; font-size: .85rem; margin: 0; }
 
+/* Legal documents (política de datos) */
+.legal-doc { padding: 64px 0 88px; background: var(--cream-2); }
+.legal-doc h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+.legal-doc .meta { color: var(--muted); font-size: .95rem; border-left: 3px solid var(--yellow); padding-left: 14px; }
+.legal-doc section { margin-top: 40px; }
+.legal-doc h2 { font-size: 1.3rem; scroll-margin-top: 90px; }
+.legal-doc li { margin-bottom: .45em; }
+.legal-doc .toc { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 24px; margin: 28px 0 8px; }
+.legal-doc .toc ol { margin: 0; padding-left: 1.2em; columns: 2; column-gap: 32px; }
+.legal-doc .toc a { color: var(--graphite); }
+.table-scroll { overflow-x: auto; margin: 0 0 1em; }
+.legal-doc table { width: 100%; border-collapse: collapse; background: #fff; font-size: .95rem; }
+.legal-doc th, .legal-doc td { text-align: left; vertical-align: top; padding: 10px 12px; border: 1px solid var(--line); }
+.legal-doc th { background: var(--cream); }
+
 /* 404 */
 .notfound { min-height: 100vh; display: grid; place-content: center; justify-items: center; gap: 14px; text-align: center; padding: 20px; background: var(--cream); }
 
@@ -217,6 +232,8 @@ p { margin: 0 0 1em; }
   .grid.three, .grid.two, .grid.four, .steps, .audience, .footer-inner { grid-template-columns: 1fr; }
   .grid.three .service:last-child { grid-column: auto; }
   .product { padding: 34px 22px; border-radius: 24px; }
+  .legal-doc { padding: 40px 0 64px; }
+  .legal-doc .toc ol { columns: 1; }
   .service { border-radius: 60px 18px 60px 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
