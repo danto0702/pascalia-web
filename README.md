@@ -12,7 +12,7 @@ Publicado en https://pascalia.lat con GitHub Pages: `.github/workflows/pages.yml
 | `/si-aps/` | SI-APS: caracterización sociofamiliar e individual en terreno y archivo plano APS124CCFP para PISIS |
 | `/mision-medica/` | Misión Médica: infracciones, carnet con QR, emblemas, capacitación DIH, riesgos, desplazamientos e inspección. Logotipo del módulo en `mision-medica/logo-*.png` (bordes redondeados) |
 | `/cuentafacil/` | Página del producto CuentaFacil (cuentas de cobro de contratistas por WhatsApp) |
-| `/politica-de-datos/` | Política de tratamiento de datos personales (Ley 1581 de 2012), versión 1.0 aprobada por el abogado |
+| `/politica-de-datos/` | Política de tratamiento de datos personales (Ley 1581 de 2012), versión 1.1 aprobada por el abogado |
 
 ## Solicitudes (formulario y tablero)
 
