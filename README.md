@@ -13,6 +13,7 @@ Publicado en https://pascalia.lat con GitHub Pages: `.github/workflows/pages.yml
 | `/mision-medica/` | Misión Médica: infracciones, carnet con QR, emblemas, capacitación DIH, riesgos, desplazamientos e inspección. Logotipo del módulo en `mision-medica/logo-*.png` (bordes redondeados) |
 | `/cuentafacil/` | Página del producto CuentaFacil (cuentas de cobro de contratistas por WhatsApp) |
 | `/politica-de-datos/` | Política de tratamiento de datos personales (Ley 1581 de 2012), versión 1.1 aprobada por el abogado |
+| `/terminos/` | Términos y condiciones del servicio CuentaFacil, versión 1.0 |
 
 ## Solicitudes (formulario y tablero)
 
