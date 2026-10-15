@@ -15,94 +15,203 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/pascalia.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/inicio.css">
 <link rel="stylesheet" href="/contacto.css">
 <script src="/contacto.js" defer></script>
+<script src="/inicio.js" defer></script>
 </head>
 <body>
 
-<header class="nav">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 20h18M6 20v-6M11 20v-9M16 20v-5"/><path d="M4 9l5-4 4 3 7-5"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4.5l-3 15"/></symbol>
+    <symbol id="i-sprout" viewBox="0 0 24 24"><path d="M12 21v-9"/><path d="M12 12c0-4.4 3-7 8-7 0 4.4-3 7-8 7z"/><path d="M12 15c0-3.5-2.4-5.5-7-5.5 0 3.5 2.4 5.5 7 5.5z"/></symbol>
+    <symbol id="i-nfc" viewBox="0 0 24 24"><rect x="4" y="3" width="10" height="18" rx="2"/><path d="M8 18h2"/><path d="M17.5 8.5a5 5 0 010 7M20.5 5.5a9.2 9.2 0 010 13"/></symbol>
+    <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+    <symbol id="i-menu-card" viewBox="0 0 24 24"><path d="M6 3v7a2 2 0 004 0V3M8 12v9"/><path d="M17 21V3c-2.5 1.5-3 5-3 8h3"/></symbol>
+    <symbol id="i-dash" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 16l3-3 2 2 5-5"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a8.5 8.5 0 01-12.3 7.6L3.5 20.5l1.4-4.5a8.5 8.5 0 1115.6-4.5z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5.5A1.5 1.5 0 015.5 4H8M16 4h2.5A1.5 1.5 0 0120 5.5V8M20 16v2.5a1.5 1.5 0 01-1.5 1.5H16M8 20H5.5A1.5 1.5 0 014 18.5V16"/><path d="M8 10h8M8 14h5"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+    <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 010 6.8M21.5 20c0-2.7-1.5-4.7-3.8-5.6"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 15.5l2 2 4-4"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.1-7-11.2a7 7 0 0114 0C19 14.9 12 21 12 21z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-syringe" viewBox="0 0 24 24"><path d="M18 3l3 3M16.5 4.5l3 3M19 6l-10 10-3-3L16 3"/><path d="M9.5 9.5l2 2M12 7l2 2M6 13l-3 3M3 21l3.5-3.5M6 16l2 2"/></symbol>
+    <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2.5-6 5 12 2.5-6h4"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 15v3.5A2.5 2.5 0 006.5 21h11a2.5 2.5 0 002.5-2.5V15"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5.5 9.5V20h13V9.5M10 20v-5h4v5"/></symbol>
+    <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M3 11h18a9 9 0 01-18 0z"/><path d="M8.5 7.5c0-1.5 1-2 1-3.5M12.5 7.5c0-1.5 1-2 1-3.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.7-3.4 8-8 9-4.6-1-8-4.3-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0112 7.4a4.2 4.2 0 017.5 2.4C19.5 15.4 12 20 12 20z"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19C5 10.5 10.5 5 20 4c-.8 9.6-6.5 15-15 15z"/><path d="M5 19l8.5-8.5"/></symbol>
+    <symbol id="i-network" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M10.8 7.2L6.2 16.8M13.2 7.2l4.6 9.6M7.5 19h9"/></symbol>
+    <symbol id="i-file-check" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 14.5l2 2 4-4"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 10l1.2-6h13.6L20 10"/><path d="M4 10a2.7 2.7 0 005.3 0 2.7 2.7 0 005.4 0 2.7 2.7 0 005.3 0"/><path d="M5 11.5V20h14v-8.5M10 20v-5h4v5"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 6.5h11v10h-11zM13.5 10h4l3.5 3.5v3h-7.5"/><circle cx="6.5" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-bars" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" data-nav>
   <div class="wrap nav-inner">
     <a class="brand" href="/" aria-label="PascalIA, inicio">
-      <img src="/flower.svg" alt="" width="38" height="38">
+      <img src="/flower.svg" alt="" width="34" height="34">
       <span class="wordmark">Pascal<b>IA</b></span>
     </a>
-    <nav class="nav-links" aria-label="Secciones">
+    <nav class="nav-links" id="menu" aria-label="Secciones">
       <a href="#servicios">Servicios</a>
       <a href="#soluciones">Soluciones</a>
       <a href="/desarrollos/">Desarrollos</a>
       <a href="/cuentafacil/">CuentaFacil</a>
       <a href="/flota/">Flota</a>
       <a href="#valores">Nosotros</a>
+      <a class="btn btn-ink btn-sm nav-cta" href="#contacto">Hablemos</a>
     </nav>
-    <a class="btn btn-dark btn-sm" href="#contacto">Hablemos</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>
+      <svg class="i" aria-hidden="true"><use href="#i-bars"/></svg><span>Menú</span>
+    </button>
   </div>
 </header>
 
-<main>
+<main id="contenido">
 
   <!-- Hero -->
-  <section class="hero">
+  <section class="hero" data-hero>
     <div class="wrap hero-grid">
-      <div>
-        <span class="eyebrow">Ideas que hacen florecer tu organización</span>
-        <h1>La inteligencia que impulsa el <span class="hl">potencial humano.</span></h1>
+      <div class="hero-copy">
+        <h1>La inteligencia que impulsa el <span class="mark">potencial humano.</span></h1>
         <p class="lead">En PascalIA unimos conocimiento, tecnología y personas para crear soluciones de inteligencia artificial a la medida de tu organización, y de quienes la hacen posible.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="#contacto">Hablemos de tu proyecto</a>
-          <a class="btn btn-ghost" href="#servicios">Conoce lo que hacemos</a>
+          <a class="btn btn-amber" href="#contacto">Hablemos de tu proyecto</a>
+          <a class="btn btn-line" href="#servicios">Conoce lo que hacemos</a>
+        </div>
+
+        <ul class="routes" aria-label="Encuentra tu solución">
+          <li>
+            <a class="route" href="/cuentafacil/" data-route="cf">
+              <span class="route-ico"><svg class="i" aria-hidden="true"><use href="#i-file-check"/></svg></span>
+              <span class="route-txt"><strong>Soy contratista</strong><span>Mi cuenta de cobro cada mes, con CuentaFacil</span></span>
+              <svg class="i route-arrow" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </li>
+          <li>
+            <a class="route" href="#suite" data-route="salud">
+              <span class="route-ico"><svg class="i" aria-hidden="true"><use href="#i-pulse"/></svg></span>
+              <span class="route-txt"><strong>Trabajo en salud pública</strong><span>Suite para ESE, IPS y secretarías de salud</span></span>
+              <svg class="i route-arrow" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </li>
+          <li>
+            <a class="route" href="#desarrollos" data-route="emp">
+              <span class="route-ico"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg></span>
+              <span class="route-txt"><strong>Tengo una empresa o comercio</strong><span>Desarrollos a la medida con IA</span></span>
+              <svg class="i route-arrow" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="bloom" aria-hidden="true">
+        <svg class="bloom-net" viewBox="-200 -200 400 400">
+          <g class="links">
+            <path class="link" data-link="cf" d="M-62,-38 C-110,-70 -140,-110 -168,-128"/>
+            <path class="link" data-link="salud" d="M58,-30 C110,-60 140,-80 172,-92"/>
+            <path class="link" data-link="emp" d="M30,54 C70,100 110,130 150,150"/>
+            <path class="link" data-link="emp" d="M-40,50 C-80,95 -120,120 -160,140"/>
+          </g>
+          <g class="flower">
+            <g class="petals">
+              <path class="petal" style="--d:0;--r:0deg" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/>
+              <path class="petal" style="--d:1;--r:60deg" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/>
+              <path class="petal" style="--d:2;--r:120deg" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/>
+              <path class="petal" style="--d:3;--r:180deg" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/>
+              <path class="petal" style="--d:4;--r:240deg" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/>
+              <path class="petal" style="--d:5;--r:300deg" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/>
+            </g>
+            <g class="veins">
+              <path pathLength="1" d="M0,0 C17,-16 15,-44 0,-62 C-15,-44 -17,-16 0,0"/>
+              <path pathLength="1" transform="rotate(-62)" d="M0,0 C17,-16 15,-44 0,-62 C-15,-44 -17,-16 0,0"/>
+              <path pathLength="1" transform="rotate(62)" d="M0,0 C17,-16 15,-44 0,-62 C-15,-44 -17,-16 0,0"/>
+              <path pathLength="1" transform="rotate(-132)" d="M0,0 C17,-16 15,-44 0,-62 C-15,-44 -17,-16 0,0"/>
+              <path pathLength="1" transform="rotate(132)" d="M0,0 C17,-16 15,-44 0,-62 C-15,-44 -17,-16 0,0"/>
+              <path pathLength="1" d="M0,0 V62"/>
+            </g>
+            <g class="nodes">
+              <circle r="9" style="--d:0"/>
+              <circle r="8" style="--d:1;--r:0deg;--y:-62px"/>
+              <circle r="8" style="--d:2;--r:-62deg;--y:-62px"/>
+              <circle r="8" style="--d:3;--r:62deg;--y:-62px"/>
+              <circle r="8" style="--d:4;--r:-132deg;--y:-62px"/>
+              <circle r="8" style="--d:5;--r:132deg;--y:-62px"/>
+            </g>
+          </g>
+        </svg>
+
+        <div class="frag frag-cf" data-frag="cf">
+          <span class="frag-label">CuentaFacil · WhatsApp</span>
+          <p class="bubble">Tu informe de actividades está listo para revisar. ¿Lo apruebas?</p>
+          <p class="bubble me">Sí, apruebo <svg class="i" aria-hidden="true"><use href="#i-check"/></svg></p>
+        </div>
+        <div class="frag frag-salud" data-frag="salud">
+          <span class="frag-label">Cobertura de vacunación</span>
+          <div class="bars"><i style="--h:.55"></i><i style="--h:.8"></i><i style="--h:.45"></i><i style="--h:.92"></i><i style="--h:.7"></i></div>
+          <span class="frag-note">Por municipio · datos de ejemplo</span>
+        </div>
+        <div class="frag frag-doc" data-frag="emp">
+          <span class="frag-ico"><svg class="i"><use href="#i-doc"/></svg></span>
+          <span><strong>Cotización lista</strong><span class="frag-note">PDF generado con tu plantilla</span></span>
+        </div>
+        <div class="frag frag-nfc" data-frag="emp">
+          <span class="frag-ico"><svg class="i"><use href="#i-nfc"/></svg></span>
+          <span><strong>Tarjeta NFC</strong><span class="frag-note">Acerca el celular</span></span>
         </div>
       </div>
-      <img class="hero-mark" src="/flower.svg" alt="Flor de PascalIA: pétalos amarillos unidos por una red de conexiones" width="400" height="400">
     </div>
   </section>
 
-  <div class="pillars" aria-label="Nuestra fórmula">
-    <ul>
-      <li>Conocimiento.</li>
-      <li>Tecnología.</li>
-      <li>Personas.</li>
-      <li>Resultados.</li>
-    </ul>
-  </div>
+  <!-- Fórmula -->
+  <section class="formula" aria-label="Nuestra fórmula">
+    <div class="wrap formula-inner">
+      <ul class="formula-words" data-reveal>
+        <li style="--d:0">Conocimiento.</li>
+        <li style="--d:1">Tecnología.</li>
+        <li style="--d:2">Personas.</li>
+        <li style="--d:3"><span class="formula-mark">Resultados.</span></li>
+      </ul>
+      <p class="formula-line">Ideas que hacen florecer tu organización.</p>
+    </div>
+  </section>
 
   <!-- Servicios -->
   <section class="section" id="servicios">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Servicios</span>
+      <header class="head head-split">
         <h2>Tres formas de hacer florecer tu organización</h2>
         <p>Te acompañamos desde la idea hasta que tu equipo la usa con confianza.</p>
-      </div>
-      <div class="grid three">
-        <article class="service">
-          <div class="ico" aria-hidden="true">
-            <svg width="34" height="34" viewBox="0 0 32 32" fill="none" stroke="#1F1F1F" stroke-width="2" stroke-linejoin="round"><rect x="5" y="19" width="5" height="8"/><rect x="13" y="14" width="5" height="13"/><rect x="21" y="9" width="5" height="18"/><path d="M4 14 C10 12 17 9 26 3" stroke="#FFC107" stroke-width="2.5" stroke-linecap="round"/><path d="M21 3h5v5" stroke="#FFC107" stroke-width="2.5" stroke-linecap="round"/></svg>
-          </div>
-          <h3>Consultoría</h3>
-          <div class="verbs">Analiza · Conecta · Transforma</div>
-          <div class="rule"></div>
+      </header>
+      <div class="services">
+        <article class="service service-lead">
+          <h3><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Consultoría</h3>
+          <p class="verbs">Analiza · Conecta · Transforma</p>
           <p class="claim">Visión integral para decisiones más inteligentes.</p>
           <p>Revisamos tus procesos y tus datos, identificamos dónde la tecnología y la IA generan valor real, y trazamos una ruta realista para llegar ahí.</p>
         </article>
         <article class="service">
-          <div class="ico" aria-hidden="true">
-            <svg width="34" height="34" viewBox="0 0 32 32" fill="none" stroke="#1F1F1F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="5" width="26" height="17" rx="2"/><path d="M12 27h8M16 22v5"/><path d="M12 10l-3 3.5 3 3.5M20 10l3 3.5-3 3.5M17.5 9l-3 9" stroke="#FFC107" stroke-width="2.5"/></svg>
-          </div>
-          <h3>Desarrollo</h3>
-          <div class="verbs">Automatiza · Integra · Escala</div>
-          <div class="rule"></div>
+          <h3><svg class="i" aria-hidden="true"><use href="#i-code"/></svg> Desarrollo</h3>
+          <p class="verbs">Automatiza · Integra · Escala</p>
           <p class="claim">Soluciones a la medida que generan valor.</p>
           <p>Construimos herramientas web, asistentes con IA y automatizaciones que se ajustan a tus formatos, tus normas y la forma en que trabaja tu equipo.</p>
         </article>
         <article class="service">
-          <div class="ico" aria-hidden="true">
-            <svg width="34" height="34" viewBox="0 0 32 32" fill="none" stroke="#1F1F1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="17" r="3"/><circle cx="23" cy="17" r="3"/><circle cx="16" cy="19" r="3"/><path d="M3 28c0-3 3-5 6-5M29 28c0-3-3-5-6-5M10 29c0-3 3-5 6-5s6 2 6 5"/><path d="M13.5 9.5a3.5 3.5 0 1 1 5 0c-.8.7-1 1.3-1 2h-3c0-.7-.2-1.3-1-2zM14.5 13.5h3" stroke="#FFC107" stroke-width="2.2"/></svg>
-          </div>
-          <h3>Capacitación</h3>
-          <div class="verbs">Aprende · Aplica · Florece</div>
-          <div class="rule"></div>
+          <h3><svg class="i" aria-hidden="true"><use href="#i-sprout"/></svg> Capacitación</h3>
+          <p class="verbs">Aprende · Aplica · Florece</p>
           <p class="claim">Talento preparado para un futuro real.</p>
           <p>Formamos a tu equipo para usar la IA y las nuevas herramientas en su trabajo diario, con ejemplos de su propio contexto.</p>
         </article>
@@ -111,204 +220,128 @@
   </section>
 
   <!-- Soluciones -->
-  <section class="section alt" id="soluciones">
+  <section class="section tint" id="soluciones">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Soluciones</span>
-        <h2>Para organizaciones y para personas</h2>
-      </div>
-
+      <h2 class="sr-only">Para organizaciones y para personas</h2>
       <div class="audience">
-        <article class="card feature">
-          <div class="emoji" aria-hidden="true">🏥</div>
-          <h3>Para organizaciones</h3>
+        <article class="aud">
+          <div class="aud-head"><span class="aud-ico"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg></span><h3>Para organizaciones</h3></div>
           <p>Empresas, comercios, hospitales y entidades que necesitan dejar atrás las planillas sueltas: páginas web, tableros de ventas e inventarios, asistentes por WhatsApp, captura en terreno y generación de documentos.</p>
-          <a class="link" href="/desarrollos/">Ver desarrollos para empresas</a> · <a class="link" href="#suite">Suite de Salud Pública</a>
+          <p class="aud-links"><a class="tlink" href="/desarrollos/">Ver desarrollos para empresas</a><a class="tlink" href="#suite">Suite de Salud Pública</a></p>
         </article>
-        <article class="card feature">
-          <div class="emoji" aria-hidden="true">🌱</div>
-          <h3>Para personas</h3>
+        <article class="aud">
+          <div class="aud-head"><span class="aud-ico"><svg class="i" aria-hidden="true"><use href="#i-sprout"/></svg></span><h3>Para personas</h3></div>
           <p>Profesionales y contratistas que repiten cada mes las mismas tareas. Con <strong>CuentaFacil</strong>, el contratista del Estado prepara su cuenta de cobro desde WhatsApp.</p>
-          <a class="link" href="/cuentafacil/">Conocer CuentaFacil</a>
+          <p class="aud-links"><a class="tlink" href="/cuentafacil/">Conocer CuentaFacil</a></p>
         </article>
       </div>
 
-      <h3 class="subhead" id="desarrollos">Desarrollos a la medida para empresas</h3>
-      <p class="subnote">Diez ejemplos de lo que construimos con tecnología e inteligencia artificial. Cada uno se adapta a tu negocio, tu marca y tus datos.</p>
-      <div class="grid five dev-grid">
-        <article class="card dev">
-          <span class="dev-n">01</span><div class="emoji" aria-hidden="true">📲</div>
-          <h3>Implementación NFC</h3>
-          <p>Tarjetas de presentación digitales, control de activos e inventario, registro de asistencia y llaveros o etiquetas que abren tu información con solo acercar el celular.</p>
-          <a class="link card-link" href="/desarrollos/#nfc">Ver más</a>
-        </article>
-        <article class="card dev">
-          <span class="dev-n">02</span><div class="emoji" aria-hidden="true">🌐</div>
-          <h3>Diseño de páginas web</h3>
-          <p>Sitios corporativos y páginas de producto rápidas, adaptadas al celular, con tu marca, formularios conectados y textos que se encuentran en Google.</p>
-          <a class="link card-link" href="/desarrollos/#web">Ver más</a>
-        </article>
-        <article class="card dev">
-          <span class="dev-n">03</span><div class="emoji" aria-hidden="true">🍽️</div>
-          <h3>Menús interactivos</h3>
-          <p>Cartas digitales por código QR o NFC con fotos, precios que actualizas en minutos, platos agotados, varios idiomas y pedidos por WhatsApp.</p>
-          <a class="link card-link" href="/desarrollos/#menus">Ver más</a>
-        </article>
-        <article class="card dev">
-          <span class="dev-n">04</span><div class="emoji" aria-hidden="true">📊</div>
-          <h3>Dashboards de ventas e inventarios</h3>
-          <p>Tableros que se alimentan de tu Excel o tu sistema: ventas por día y vendedor, rotación de productos y alertas cuando el inventario está por agotarse.</p>
-          <a class="link card-link" href="/desarrollos/#dashboards">Ver más</a>
-        </article>
-        <article class="card dev">
-          <span class="dev-n">05</span><div class="emoji" aria-hidden="true">💬</div>
-          <h3>Asistentes por WhatsApp</h3>
-          <p>Un asistente con IA que responde preguntas frecuentes, toma pedidos, agenda citas y pasa la conversación a una persona cuando hace falta.</p>
-          <a class="link card-link" href="/desarrollos/#whatsapp">Ver más</a>
-        </article>
-        <article class="card dev">
-          <span class="dev-n">06</span><div class="emoji" aria-hidden="true">🧾</div>
-          <h3>Lectura inteligente de documentos</h3>
-          <p>La IA lee facturas, formularios y soportes escaneados o fotografiados y los convierte en datos ordenados en Excel o en tu sistema, sin digitar.</p>
-          <a class="link card-link" href="/desarrollos/#lectura">Ver más</a>
-        </article>
-        <article class="card dev">
-          <span class="dev-n">07</span><div class="emoji" aria-hidden="true">📄</div>
-          <h3>Documentos automáticos</h3>
-          <p>Cotizaciones, contratos, certificados e informes que se generan solos a partir de tus plantillas y tus datos, listos para firmar y enviar.</p>
-          <a class="link card-link" href="/desarrollos/#documentos">Ver más</a>
-        </article>
-        <article class="card dev">
-          <span class="dev-n">08</span><div class="emoji" aria-hidden="true">🤝</div>
-          <h3>CRM y seguimiento de clientes</h3>
-          <p>Formularios que llegan a un tablero con etapas, próximas acciones y recordatorios, para que ningún cliente potencial se quede sin respuesta.</p>
-          <a class="link card-link" href="/desarrollos/#crm">Ver más</a>
-        </article>
-        <article class="card dev">
-          <span class="dev-n">09</span><div class="emoji" aria-hidden="true">📅</div>
-          <h3>Reservas y agendamiento</h3>
-          <p>Citas y reservas en línea con disponibilidad en tiempo real, confirmación y recordatorios automáticos para reducir las inasistencias.</p>
-          <a class="link card-link" href="/desarrollos/#reservas">Ver más</a>
-        </article>
-        <article class="card dev">
-          <span class="dev-n">10</span><div class="emoji" aria-hidden="true">📱</div>
-          <h3>Apps de captura en campo</h3>
-          <p>Formularios en el celular que funcionan sin señal, con GPS, fotos y firma, para visitas, inspecciones, entregas y auditorías.</p>
-          <a class="link card-link" href="/desarrollos/#campo">Ver más</a>
-        </article>
+      <div class="block" id="desarrollos">
+        <header class="block-head">
+          <h3>Desarrollos a la medida para empresas</h3>
+          <p>Diez ejemplos de lo que construimos con tecnología e inteligencia artificial. Cada uno se adapta a tu negocio, tu marca y tus datos.</p>
+        </header>
+        <ul class="catalog">
+          <li><a class="item" href="/desarrollos/#nfc"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-nfc"/></svg></span><span class="item-body"><strong>Implementación NFC</strong><span>Tarjetas de presentación digitales, control de activos e inventario, registro de asistencia y llaveros o etiquetas que abren tu información con solo acercar el celular.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/desarrollos/#web"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-web"/></svg></span><span class="item-body"><strong>Diseño de páginas web</strong><span>Sitios corporativos y páginas de producto rápidas, adaptadas al celular, con tu marca, formularios conectados y textos que se encuentran en Google.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/desarrollos/#menus"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-menu-card"/></svg></span><span class="item-body"><strong>Menús interactivos</strong><span>Cartas digitales por código QR o NFC con fotos, precios que actualizas en minutos, platos agotados, varios idiomas y pedidos por WhatsApp.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/desarrollos/#dashboards"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-dash"/></svg></span><span class="item-body"><strong>Dashboards de ventas e inventarios</strong><span>Tableros que se alimentan de tu Excel o tu sistema: ventas por día y vendedor, rotación de productos y alertas cuando el inventario está por agotarse.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/desarrollos/#whatsapp"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg></span><span class="item-body"><strong>Asistentes por WhatsApp</strong><span>Un asistente con IA que responde preguntas frecuentes, toma pedidos, agenda citas y pasa la conversación a una persona cuando hace falta.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/desarrollos/#lectura"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-scan"/></svg></span><span class="item-body"><strong>Lectura inteligente de documentos</strong><span>La IA lee facturas, formularios y soportes escaneados o fotografiados y los convierte en datos ordenados en Excel o en tu sistema, sin digitar.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/desarrollos/#documentos"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-doc"/></svg></span><span class="item-body"><strong>Documentos automáticos</strong><span>Cotizaciones, contratos, certificados e informes que se generan solos a partir de tus plantillas y tus datos, listos para firmar y enviar.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/desarrollos/#crm"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-people"/></svg></span><span class="item-body"><strong>CRM y seguimiento de clientes</strong><span>Formularios que llegan a un tablero con etapas, próximas acciones y recordatorios, para que ningún cliente potencial se quede sin respuesta.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/desarrollos/#reservas"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span><span class="item-body"><strong>Reservas y agendamiento</strong><span>Citas y reservas en línea con disponibilidad en tiempo real, confirmación y recordatorios automáticos para reducir las inasistencias.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/desarrollos/#campo"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg></span><span class="item-body"><strong>Apps de captura en campo</strong><span>Formularios en el celular que funcionan sin señal, con GPS, fotos y firma, para visitas, inspecciones, entregas y auditorías.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+        </ul>
+        <p class="more">¿Tienes otra idea? <a class="tlink" href="/desarrollos/">Ver todos los desarrollos</a> · <a class="tlink" href="#contacto">Cuéntanos qué quieres construir</a></p>
       </div>
-      <p class="more dev-more">¿Tienes otra idea? <a class="link" href="/desarrollos/">Ver todos los desarrollos</a> · <a class="link" href="#contacto">Cuéntanos qué quieres construir</a></p>
 
-      <h3 class="subhead" id="suite">Suite de Salud Pública</h3>
-      <p class="subnote">Herramientas probadas en la operación diaria, que adaptamos a los formatos, territorios y equipos de tu entidad.</p>
-      <div class="grid three">
-        <article class="card">
-          <div class="emoji" aria-hidden="true">💉</div>
-          <h3>Vacunación (PAI)</h3>
-          <p>Registros diarios, coberturas por municipio, trazadores, liquidaciones por vacunadora, población susceptible y certificados de vacunación.</p>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🔬</div>
-          <h3>Vigilancia epidemiológica</h3>
-          <p>Monitor SIVIGILA con indicadores, eventos críticos, gráficas por semana epidemiológica y análisis por municipio.</p>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📤</div>
-          <h3>Reportes a PISIS</h3>
-          <p>Archivos planos según el anexo técnico, con carga masiva desde Excel: usuarios institucionales SEG500USIN y seguimiento de recursos de transferencias SER124DREC.</p>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🏘️</div>
-          <h3>Atención primaria y EBS · SI-APS</h3>
-          <p>Caracterización sociofamiliar e individual en terreno, con familiograma, ecomapa, APGAR familiar y escala de Zarit; plan de cuidado por curso de vida y reporte APS124CCFP; soportes y certificados de los Equipos Básicos de Salud.</p>
-          <a class="link card-link" href="/si-aps/">Conocer SI-APS</a>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🥣</div>
-          <h3>Nutrición infantil · NANA DNT</h3>
-          <p>Seguimiento de la desnutrición aguda en menores de 5 años: puntaje Z con tablas OMS, prueba de apetito, criterios de remisión y check-list de atención.</p>
-          <a class="link card-link" href="/nana-dnt/">Conocer NANA DNT</a>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🛡️</div>
-          <h3>Misión Médica y operación</h3>
-          <p>Identificación del personal, gestión de emblemas y reporte de infracciones e incidentes; radicación de oficios; buscador de códigos CUPS.</p>
-          <a class="link card-link" href="/mision-medica/">Conocer Misión Médica</a>
-        </article>
-      </div>
-      <div class="product light" id="flota">
-        <div>
-          <span class="tag">Solución destacada</span>
-          <h2 class="product-name">
-            <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#1F1F1F"/><path d="M10 22h26v20H10zM36 28h9l7 7v7H36z" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/><circle cx="19" cy="44" r="4.5" fill="#FFC107"/><circle cx="44" cy="44" r="4.5" fill="#FFC107"/><path d="M20 27v10M15 32h10" stroke="#FFC107" stroke-width="3.5" stroke-linecap="round"/></svg>
-            Flota Vehicular
-          </h2>
-          <p>Del itinerario en Excel a la operación real, registrada desde el celular. Programa vehículos y conductores, registra cada salida y llegada con hora y GPS, y liquida los días de operación con soportes listos para firma.</p>
-          <p class="fine-print">Pensada para vehículos que trabajan bajo la figura de Misión Médica en zonas rurales, donde la señal no siempre llega.</p>
-          <a class="btn btn-dark" href="/flota/">Conocer Flota Vehicular</a>
-        </div>
-        <ul class="checks">
-          <li><strong>Itinerario digital:</strong> programación de vehículos y conductores, con historial de cambios.</li>
-          <li><strong>Marcas en vivo:</strong> el conductor registra salida y llegada desde el celular, con hora del servidor, ubicación GPS y fotografía.</li>
-          <li><strong>Funciona sin señal:</strong> se instala en Android y iPhone sin tienda de aplicaciones; guarda las marcas y las envía al recuperar conexión.</li>
-          <li><strong>Días de operación:</strong> contador para liquidar el pago por día, contrastando lo programado con lo ejecutado.</li>
-          <li><strong>Checklist</strong> de distintivos de Misión Médica y elementos del vehículo.</li>
-          <li><strong>Planilla de tiempos</strong> para firma y tablero que compara vehículos y conductores.</li>
+      <div class="block" id="suite">
+        <header class="block-head">
+          <h3>Suite de Salud Pública</h3>
+          <p>Herramientas probadas en la operación diaria, que adaptamos a los formatos, territorios y equipos de tu entidad.</p>
+        </header>
+        <ul class="catalog catalog-suite">
+          <li><div class="item"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-syringe"/></svg></span><span class="item-body"><strong>Vacunación (PAI)</strong><span>Registros diarios, coberturas por municipio, trazadores, liquidaciones por vacunadora, población susceptible y certificados de vacunación.</span></span></div></li>
+          <li><div class="item"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-pulse"/></svg></span><span class="item-body"><strong>Vigilancia epidemiológica</strong><span>Monitor SIVIGILA con indicadores, eventos críticos, gráficas por semana epidemiológica y análisis por municipio.</span></span></div></li>
+          <li><div class="item"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-upload"/></svg></span><span class="item-body"><strong>Reportes a PISIS</strong><span>Archivos planos según el anexo técnico, con carga masiva desde Excel: usuarios institucionales SEG500USIN y seguimiento de recursos de transferencias SER124DREC.</span></span></div></li>
+          <li><a class="item" href="/si-aps/"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span><span class="item-body"><strong>Atención primaria y EBS · <span class="nw">SI&#8209;APS</span></strong><span>Caracterización sociofamiliar e individual en terreno, con familiograma, ecomapa, APGAR familiar y escala de Zarit; plan de cuidado por curso de vida y reporte APS124CCFP; soportes y certificados de los Equipos Básicos de Salud.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/nana-dnt/"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-bowl"/></svg></span><span class="item-body"><strong>Nutrición infantil · <span class="nw">NANA DNT</span></strong><span>Seguimiento de la desnutrición aguda en menores de 5 años: puntaje Z con tablas OMS, prueba de apetito, criterios de remisión y check-list de atención.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a class="item" href="/mision-medica/"><span class="item-ico"><svg class="i" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="item-body"><strong>Misión Médica y operación</strong><span>Identificación del personal, gestión de emblemas y reporte de infracciones e incidentes; radicación de oficios; buscador de códigos CUPS.</span></span><svg class="i item-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
         </ul>
       </div>
 
-      <p class="more">¿Tu equipo tiene otro proceso que se lleva en Excel, en papel o en grupos de WhatsApp? <a class="link" href="#contacto">Cuéntanos</a></p>
+      <article class="showcase" id="flota">
+        <div class="showcase-copy">
+          <h3 class="showcase-name"><span class="app-ico"><svg class="i" aria-hidden="true"><use href="#i-truck"/></svg></span> Flota Vehicular</h3>
+          <p>Del itinerario en Excel a la operación real, registrada desde el celular. Programa vehículos y conductores, registra cada salida y llegada con hora y GPS, y liquida los días de operación con soportes listos para firma.</p>
+          <p class="note">Pensada para vehículos que trabajan bajo la figura de Misión Médica en zonas rurales, donde la señal no siempre llega.</p>
+          <a class="btn btn-ink" href="/flota/">Conocer Flota Vehicular</a>
+        </div>
+        <div class="showcase-side">
+          <div class="ui ui-flota" aria-hidden="true" data-reveal>
+            <div class="ui-bar"><span>Itinerario de hoy</span><span class="ui-chip">Sin señal · se enviará luego</span></div>
+            <ol class="ui-list">
+              <li style="--d:0"><span class="dot ok"></span><span>Salida registrada</span><span class="ui-meta">hora del servidor · GPS · foto</span></li>
+              <li style="--d:1"><span class="dot ok"></span><span>Llegada registrada</span><span class="ui-meta">hora del servidor · GPS · foto</span></li>
+              <li style="--d:2"><span class="dot"></span><span>Checklist de distintivos</span><span class="ui-meta">pendiente</span></li>
+            </ol>
+            <p class="ui-foot">Ejemplo ilustrativo</p>
+          </div>
+          <ul class="checks">
+            <li><strong>Itinerario digital:</strong> programación de vehículos y conductores, con historial de cambios.</li>
+            <li><strong>Marcas en vivo:</strong> el conductor registra salida y llegada desde el celular, con hora del servidor, ubicación GPS y fotografía.</li>
+            <li><strong>Funciona sin señal:</strong> se instala en Android y iPhone sin tienda de aplicaciones; guarda las marcas y las envía al recuperar conexión.</li>
+            <li><strong>Días de operación:</strong> contador para liquidar el pago por día, contrastando lo programado con lo ejecutado.</li>
+            <li><strong>Checklist</strong> de distintivos de Misión Médica y elementos del vehículo.</li>
+            <li><strong>Planilla de tiempos</strong> para firma y tablero que compara vehículos y conductores.</li>
+          </ul>
+        </div>
+      </article>
+
+      <p class="more">¿Tu equipo tiene otro proceso que se lleva en Excel, en papel o en grupos de WhatsApp? <a class="tlink" href="#contacto">Cuéntanos</a></p>
     </div>
   </section>
 
   <!-- CuentaFacil -->
   <section class="section">
     <div class="wrap">
-      <div class="product">
-        <div>
-          <span class="tag">Producto PascalIA</span>
-          <h2 class="product-name"><img src="/cuentafacil/icon.svg" alt="" width="56" height="56"> CuentaFacil</h2>
+      <article class="showcase showcase-dark">
+        <div class="showcase-copy">
+          <h2 class="showcase-name"><img src="/cuentafacil/icon.svg" alt="" width="48" height="48"> CuentaFacil</h2>
           <p>Tu cuenta de cobro, lista cada mes. Le cuentas por WhatsApp lo que hiciste, le envías tus soportes y al cierre del periodo recibes tu informe de actividades y tus PDF listos para firmar y cargar en SECOP II.</p>
-          <a class="btn btn-primary" href="/cuentafacil/">Conocer CuentaFacil</a>
+          <a class="btn btn-amber" href="/cuentafacil/">Conocer CuentaFacil</a>
         </div>
-        <ul class="checks">
-          <li><strong>Informe de actividades</strong> redactado con lo que tú envías, nunca inventado.</li>
-          <li><strong>Soportes validados:</strong> planilla PILA, antecedentes y afiliaciones.</li>
-          <li><strong>Documentos con el formato</strong> que pide tu entidad.</li>
-          <li><strong>Siempre con tu aprobación</strong> antes de generar los finales.</li>
-        </ul>
-      </div>
+        <div class="showcase-side">
+          <div class="ui ui-chat" aria-hidden="true" data-reveal>
+            <p class="msg me" style="--d:0">Hoy hice el taller de lavado de manos con 18 asistentes</p>
+            <p class="msg" style="--d:1">Listo, lo anoté en la obligación 3. ¿Está bien así?</p>
+            <p class="msg me" style="--d:2">Sí, perfecto</p>
+            <p class="msg doc" style="--d:3"><svg class="i"><use href="#i-doc"/></svg> Informe de actividades.pdf</p>
+            <p class="ui-foot">Ejemplo ilustrativo</p>
+          </div>
+          <ul class="checks">
+            <li><strong>Informe de actividades</strong> redactado con lo que tú envías, nunca inventado.</li>
+            <li><strong>Soportes validados:</strong> planilla PILA, antecedentes y afiliaciones.</li>
+            <li><strong>Documentos con el formato</strong> que pide tu entidad.</li>
+            <li><strong>Siempre con tu aprobación</strong> antes de generar los finales.</li>
+          </ul>
+        </div>
+      </article>
     </div>
   </section>
 
   <!-- Cómo trabajamos -->
-  <section class="section alt" id="como-trabajamos">
+  <section class="section tint" id="como-trabajamos">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Cómo trabajamos</span>
+      <header class="head head-split">
         <h2>Soluciones que funcionan pronto y crecen contigo</h2>
-      </div>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Entendemos el proceso</h3>
-          <p>Revisamos contigo cómo se hace hoy, qué formatos y normas aplican y dónde se pierde el tiempo.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Construimos un prototipo</h3>
-          <p>Una primera versión usable, con datos de ejemplo, para validarla con quienes la van a usar.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Implementamos y capacitamos</h3>
-          <p>La ponemos en marcha en el computador o en el celular, incluso en zonas con poca conexión.</p>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <h3>Acompañamos y mejoramos</h3>
-          <p>Ajustamos con el uso real y cuando cambia la norma o el formato.</p>
-        </li>
+      </header>
+      <ol class="steps" data-reveal>
+        <li style="--d:0"><span class="step-n">1</span><h3>Entendemos el proceso</h3><p>Revisamos contigo cómo se hace hoy, qué formatos y normas aplican y dónde se pierde el tiempo.</p></li>
+        <li style="--d:1"><span class="step-n">2</span><h3>Construimos un prototipo</h3><p>Una primera versión usable, con datos de ejemplo, para validarla con quienes la van a usar.</p></li>
+        <li style="--d:2"><span class="step-n">3</span><h3>Implementamos y capacitamos</h3><p>La ponemos en marcha en el computador o en el celular, incluso en zonas con poca conexión.</p></li>
+        <li style="--d:3"><span class="step-n">4</span><h3>Acompañamos y mejoramos</h3><p>Ajustamos con el uso real y cuando cambia la norma o el formato.</p></li>
       </ol>
     </div>
   </section>
@@ -316,45 +349,31 @@
   <!-- Valores -->
   <section class="section values" id="valores">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Lo que nos mueve</span>
+      <header class="head">
         <h2>Empresas que evolucionan, personas que florecen.</h2>
         <p>La IA organiza, calcula y propone; las decisiones siempre son de las personas.</p>
-      </div>
-      <div class="grid four">
-        <div class="value">
-          <div class="ico" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="#FFC107" stroke-width="2.2" stroke-linecap="round"><circle cx="15" cy="17" r="11"/><circle cx="15" cy="17" r="6"/><circle cx="15" cy="17" r="1.5" fill="#FFC107"/><path d="M15 17L27 5M22 5h5v5"/></svg></div>
-          <h3>Innovación con propósito</h3>
-          <p>Usamos la tecnología cuando resuelve un problema real, no por moda.</p>
-        </div>
-        <div class="value">
-          <div class="ico" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="#FFC107" stroke-width="2.2" stroke-linecap="round"><circle cx="16" cy="8" r="4"/><circle cx="7" cy="14" r="3"/><circle cx="25" cy="14" r="3"/><path d="M8 28c0-5 3.5-8 8-8s8 3 8 8M2 26c0-3 2-5 5-5M30 26c0-3-2-5-5-5"/></svg></div>
-          <h3>Soluciones humanas</h3>
-          <p>Diseñamos pensando en quien usa la herramienta todos los días.</p>
-        </div>
-        <div class="value">
-          <div class="ico" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="#FFC107" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 26C6 13 13 6 27 5c-1 14-8 21-21 21z"/><path d="M6 26L19 13"/></svg></div>
-          <h3>Crecimiento sostenible</h3>
-          <p>Empezamos pequeño, medimos y crecemos con tu equipo.</p>
-        </div>
-        <div class="value">
-          <div class="ico" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="#FFC107" stroke-width="2.2"><circle cx="16" cy="6" r="3.5"/><circle cx="6" cy="25" r="3.5"/><circle cx="26" cy="25" r="3.5"/><path d="M14 9L8 22M18 9l6 13M9.5 25h13"/></svg></div>
-          <h3>Conocimiento sin límites</h3>
-          <p>Compartimos lo que sabemos para que tu equipo gane autonomía.</p>
-        </div>
-      </div>
+      </header>
+      <ul class="value-list">
+        <li><svg class="i" aria-hidden="true"><use href="#i-target"/></svg><h3>Innovación con propósito</h3><p>Usamos la tecnología cuando resuelve un problema real, no por moda.</p></li>
+        <li><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg><h3>Soluciones humanas</h3><p>Diseñamos pensando en quien usa la herramienta todos los días.</p></li>
+        <li><svg class="i" aria-hidden="true"><use href="#i-leaf"/></svg><h3>Crecimiento sostenible</h3><p>Empezamos pequeño, medimos y crecemos con tu equipo.</p></li>
+        <li><svg class="i" aria-hidden="true"><use href="#i-network"/></svg><h3>Conocimiento sin límites</h3><p>Compartimos lo que sabemos para que tu equipo gane autonomía.</p></li>
+      </ul>
     </div>
   </section>
 
   <!-- Contacto -->
-  <section class="section cta" id="contacto">
-    <div class="wrap narrow center">
-      <h2>Hagamos florecer tu organización</h2>
-      <p>Cuéntanos a qué se dedica tu organización o tu equipo y qué tarea les quita más tiempo. Te respondemos para agendar una conversación.</p>
+  <section class="section contact" id="contacto">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <img class="contact-mark" src="/flower-outline.svg" alt="" width="120" height="120">
+        <h2>Hagamos florecer tu organización</h2>
+        <p>Cuéntanos a qué se dedica tu organización o tu equipo y qué tarea les quita más tiempo. Te respondemos para agendar una conversación.</p>
+        <p>O directamente a <a class="tlink" href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      </div>
       <div data-pascalia-form data-solucion="">
         <noscript><p>Para enviar el formulario activa JavaScript, o escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p></noscript>
       </div>
-      <p>O directamente a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
   </section>
 
@@ -363,12 +382,12 @@
 <footer class="footer">
   <div class="wrap footer-inner">
     <div>
-      <a class="brand" href="/"><img src="/flower.svg" alt="" width="34" height="34"> <span class="wordmark">Pascal<b>IA</b></span></a>
+      <a class="brand" href="/"><img src="/flower.svg" alt="" width="30" height="30"> <span class="wordmark">Pascal<b>IA</b></span></a>
       <p class="tagline">Ideas que hacen florecer tu organización</p>
     </div>
     <div>
       <p class="slogan">Empresas que evolucionan, personas que florecen.</p>
-      <p><a href="/cuentafacil/">CuentaFacil</a> · <a href="/flota/">Flota Vehicular</a> · <a href="/nana-dnt/">NANA DNT</a> · <a href="/si-aps/">SI-APS</a> · <a href="/mision-medica/">Misión Médica</a> · <a href="/desarrollos/">Desarrollos</a> · <a href="/politica-de-datos/">Política de datos</a> · <a href="/terminos/">Términos</a> · <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      <p class="footer-links"><a href="/cuentafacil/">CuentaFacil</a><a href="/flota/">Flota Vehicular</a><a href="/nana-dnt/">NANA DNT</a><a href="/si-aps/">SI-APS</a><a href="/mision-medica/">Misión Médica</a><a href="/desarrollos/">Desarrollos</a><a href="/politica-de-datos/">Política de datos</a><a href="/terminos/">Términos</a><a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
     <p class="legal">© 2026 PascalIA · Hecho en Colombia</p>
   </div>
