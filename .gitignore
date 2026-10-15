@@ -12,3 +12,7 @@
 
 # Carpeta temporal del flujo de publicación
 _site/
+
+# Archivos de trabajo de impeccable (capturas y rondas de decisión)
+.impeccable/review/
+.impeccable/questions/
