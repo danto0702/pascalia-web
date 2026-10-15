@@ -261,6 +261,18 @@ p { margin: 0 0 1em; }
 .id-foot { background: var(--cream); padding: 10px 18px; font-size: .8rem; font-weight: 600; }
 @media (max-width: 420px) { .id-body { grid-template-columns: 64px 1fr; } .id-qr { grid-column: 1 / -1; justify-self: start; grid-auto-flow: column; align-items: center; } }
 
+/* Desarrollos para empresas */
+.grid.five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.dev-grid { margin-bottom: 8px; }
+.card.dev { position: relative; padding: 24px 20px; }
+.card.dev h3 { font-size: 1.02rem; }
+.card.dev p { font-size: .92rem; }
+.dev-n { position: absolute; top: 16px; right: 18px; font-size: .8rem; font-weight: 800; color: var(--gold-text); letter-spacing: .06em; }
+.dev-more { margin-bottom: 56px; }
+@media (max-width: 1100px) { .grid.five { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .grid.five { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .grid.five { grid-template-columns: 1fr; } }
+
 /* Steps */
 .steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
 .steps li { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
