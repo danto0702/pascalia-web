@@ -5,6 +5,10 @@
 
 # .claude/ sí se versiona (habilidades de impeccable para Claude Code);
 # el flujo de publicación lo excluye del sitio. Ver .github/workflows/pages.yml.
+# Los binarios del motor no se suben: se reinstalan con
+#   npx impeccable install --project --providers=claude -y
+.claude/**/*.exe
+.claude/**/bin/
 
 # Carpeta temporal del flujo de publicación
 _site/
