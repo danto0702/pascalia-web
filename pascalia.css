@@ -393,3 +393,13 @@ p { margin: 0 0 1em; }
   html { scroll-behavior: auto; }
   .btn { transition: none; }
 }
+
+/* Marca de producto en el menú y el inicio (Flota) */
+.brand-logo { flex: none; filter: drop-shadow(0 3px 8px rgba(31, 31, 31, .18)); }
+.brand-text { display: grid; line-height: 1.05; }
+.brand-by { font-size: .72rem; font-weight: 600; color: #5A5754; letter-spacing: 0; }
+.hero-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.hero-brand img { flex: none; filter: drop-shadow(0 6px 14px rgba(31, 31, 31, .18)); }
+.hero-brand .eyebrow { margin: 0; }
+.hero-brand .eyebrow::before { display: none; }
+@media (max-width: 680px) { .brand-text .wordmark { font-size: 1.1rem; white-space: nowrap; } }
