@@ -10,147 +10,119 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_CO">
 <meta property="og:url" content="https://pascalia.lat/cuentafacil/">
-<meta property="og:title" content="CuentaFacil · Tu cuenta de cobro lista cada mes">
+<meta property="og:title" content="CuentaFacil · Tu cuenta de cobro lista cada mes, por WhatsApp">
 <meta property="og:description" content="Cuéntale a CuentaFacil por WhatsApp lo que haces en el mes. Al cierre recibes tu informe y tus soportes listos para firmar y cargar en SECOP II.">
 <link rel="icon" href="/cuentafacil/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/cuentafacil/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/sitio.css">
 <link rel="stylesheet" href="/contacto.css">
 <script src="/contacto.js" defer></script>
+<script src="/sitio.js" defer></script>
 </head>
 <body>
 
-<header class="nav">
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" data-nav>
   <div class="wrap nav-inner">
     <a class="brand" href="/cuentafacil/" aria-label="CuentaFacil, inicio">
       <img class="brand-logo" src="/cuentafacil/logo.webp" alt="" width="40" height="40">
-      <span>Cuenta<b class="cf">Facil</b> <small class="by">de PascalIA</small></span>
+      <span class="brand-text"><span class="brand-name">CuentaFacil</span><small class="brand-by">de Pascal<b>IA</b></small></span>
     </a>
-    <nav class="nav-links" aria-label="Secciones">
+    <nav class="nav-links" id="menu" aria-label="Secciones">
       <a href="#como-funciona">Cómo funciona</a>
       <a href="#que-recibes">Qué recibes</a>
       <a href="#precio">Precio</a>
       <a href="#preguntas">Preguntas</a>
       <a href="/">PascalIA</a>
+      <a class="btn btn-ink btn-sm nav-cta" href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20">Empezar</a>
     </nav>
-    <a class="btn btn-primary btn-sm" href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20">Empezar</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><svg class="i" aria-hidden="true"><use href="/iconos.svg#bars"/></svg><span>Menú</span></button>
   </div>
 </header>
 
-<main>
+<main id="contenido">
 
-  <!-- Hero -->
   <section class="hero">
     <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <span class="pill">Piloto 2026 · Ya puedes empezar</span>
-        <h1>Tu cuenta de cobro, lista cada mes. <span class="accent">Sin pelearte con Word.</span></h1>
-        <p class="lead">CuentaFacil te acompaña por WhatsApp. Le cuentas lo que hiciste, le envías tus soportes y, al cierre del periodo, recibes tu informe de actividades y tus PDF listos para firmar y cargar en SECOP II.</p>
+      <div>
+        <h1>Tu cuenta de cobro, lista cada mes. <span class="mark">Sin pelearte con Word.</span></h1>
+        <p class="lead">Le cuentas por WhatsApp lo que hiciste y, al cierre, recibes tu informe y tus PDF listos para firmar y cargar en SECOP II.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20">Empezar por WhatsApp</a>
-          <a class="btn btn-ghost" href="#precio">Ver precio</a>
+          <a class="btn btn-accent" href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20"><svg class="i" aria-hidden="true"><use href="/iconos.svg#whatsapp"/></svg> Empezar por WhatsApp</a>
+          <a class="btn btn-line" href="#precio">Ver precio</a>
         </div>
-        <p class="fine">Para contratistas de prestación de servicios de ESE, hospitales, alcaldías y gobernaciones.</p>
+        <ul class="points" aria-label="En resumen"><li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg>Piloto 2026 · ya puedes empezar</li><li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#whatsapp"/></svg>Todo por WhatsApp</li><li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#shield"/></svg>Siempre con tu aprobación</li></ul>
+        <p class="hero-fine">Para contratistas de prestación de servicios de ESE, hospitales, alcaldías y gobernaciones.</p>
       </div>
-
-      <div class="phone" aria-label="Ejemplo de conversación con CuentaFacil en WhatsApp" role="img">
-        <div class="phone-top">
-          <img src="/cuentafacil/logo.webp" alt="" width="34" height="34">
-          <div>
-            <strong>CuentaFacil</strong>
-            <small>en línea</small>
+      <div class="stage loop">
+        <div class="phone m-cf" role="img" aria-label="Ejemplo de conversación con CuentaFacil en WhatsApp: el contratista envía una nota de voz, CuentaFacil la anota en una obligación, revisa la planilla PILA y entrega el informe de actividades">
+          <div class="phone-top"><img src="/cuentafacil/logo.webp" alt=""><div><strong>CuentaFacil</strong><small>en línea</small></div></div>
+          <div class="chat">
+            <p class="msg me" style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#mic"/></svg> Nota de voz · 0:42</p>
+            <p class="msg" style="--d:1">Listo, la anoté en la obligación 3 <em>(capacitación comunitaria)</em>: “Taller de lavado de manos con 18 asistentes”. ¿Está bien así?</p>
+            <p class="msg me" style="--d:2">Sí, perfecto</p>
+            <p class="msg" style="--d:3">Recibí tu planilla PILA: periodo, IBC y pagos coinciden con tu contrato. Te faltan los antecedentes de Procuraduría.</p>
+            <p class="msg doc" style="--d:4"><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg> Informe de actividades No. 03 de 06.pdf</p>
           </div>
+          <p class="mock-foot">Ejemplo ilustrativo</p>
         </div>
-        <div class="chat">
-          <div class="msg me">🎙️ Nota de voz · 0:42<span class="t">10:14</span></div>
-          <div class="msg bot">Listo, la anoté en la obligación 3 <em>(capacitación comunitaria)</em>: “Taller de lavado de manos con 18 asistentes en el salón comunal”. ¿Está bien así?<span class="t">10:14</span></div>
-          <div class="msg me">Sí, perfecto 👍<span class="t">10:15</span></div>
-          <div class="msg bot">Recibí tu planilla PILA. Periodo de cotización: octubre. IBC y pagos coinciden con tu contrato ✅<br>Te faltan los antecedentes de Procuraduría. Aquí está el enlace para descargarlo.<span class="t">10:21</span></div>
-          <div class="msg doc">📄 Informe de actividades No. 03 de 06.pdf<span class="t">18:02</span></div>
-        </div>
+        <div class="float-card fc-a" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pen"/></svg></span><span><strong>Nunca inventa</strong>redacta con lo que envías</span></div>
+        <div class="float-card fc-b" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg></span><span><strong>Tú apruebas</strong>antes de los finales</span></div>
       </div>
     </div>
   </section>
 
-  <!-- Problema -->
+  <div class="ticker" role="img" aria-label="Informe de actividades. Soportes validados. PDF listos. Para SECOP II. Sin pelearte con Word.">
+    <div class="ticker-track" aria-hidden="true"><span>Informe de actividades.</span><span>Soportes validados.</span><span>PDF listos.</span><span>Para SECOP II.</span><span>Sin pelearte con Word.</span><span>Informe de actividades.</span><span>Soportes validados.</span><span>PDF listos.</span><span>Para SECOP II.</span><span>Sin pelearte con Word.</span></div>
+  </div>
+
   <section class="section">
     <div class="wrap">
-      <h2 class="section-title">Cada mes, la misma carrera</h2>
-      <p class="section-lead">Haces bien tu trabajo. Lo difícil es demostrarlo en el formato exacto, a tiempo y sin errores.</p>
-      <div class="cards three">
-        <article class="card">
-          <div class="icon" aria-hidden="true">📝</div>
-          <h3>El informe a última hora</h3>
-          <p>Reconstruir de memoria lo que hiciste en el mes y repartirlo entre las obligaciones del contrato.</p>
-        </article>
-        <article class="card">
-          <div class="icon" aria-hidden="true">🗂️</div>
-          <h3>Soportes por todas partes</h3>
-          <p>Planilla PILA, antecedentes, afiliaciones a EPS, ARL y pensión. Que estén vigentes y que los valores cuadren.</p>
-        </article>
-        <article class="card">
-          <div class="icon" aria-hidden="true">📎</div>
-          <h3>PDF, nombres y carpetas</h3>
-          <p>Unir archivos, numerar el pago “03 de 06”, escribir el valor en letras y organizarlo todo como lo pide tu entidad.</p>
-        </article>
-      </div>
+      <header class="head split">
+        <h2>Cada mes, la misma carrera</h2>
+        <p>Haces bien tu trabajo. Lo difícil es demostrarlo en el formato exacto, a tiempo y sin errores.</p>
+      </header>
+      <ul class="pains" data-reveal="up">
+        <li><svg class="i" aria-hidden="true"><use href="/iconos.svg#clock"/></svg><h3>El informe a última hora</h3><p>Reconstruir de memoria el mes y repartirlo entre las obligaciones.</p></li>
+        <li><svg class="i" aria-hidden="true"><use href="/iconos.svg#folder"/></svg><h3>Soportes por todas partes</h3><p>PILA, antecedentes, EPS, ARL y pensión: vigentes y con valores que cuadren.</p></li>
+        <li><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg><h3>PDF, nombres y carpetas</h3><p>Unir archivos, numerar “03 de 06”, valor en letras y el orden de tu entidad.</p></li>
+      </ul>
     </div>
   </section>
 
-  <!-- Cómo funciona -->
-  <section class="section alt" id="como-funciona">
+  <section class="section tint" id="como-funciona">
     <div class="wrap">
-      <h2 class="section-title">Cómo funciona</h2>
-      <p class="section-lead">Todo por WhatsApp. No instalas nada nuevo.</p>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <div>
-            <h3>Envías tu contrato</h3>
-            <p>CuentaFacil lee el PDF y extrae número, objeto, plazo, valores, supervisor y obligaciones. Tú confirmas cada dato.</p>
-          </div>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <div>
-            <h3>Durante el mes, cuentas lo que haces</h3>
-            <p>Un texto, una nota de voz, una foto o un documento. CuentaFacil lo organiza en la obligación que corresponde.</p>
-          </div>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <div>
-            <h3>Te recuerda los soportes</h3>
-            <p>Te avisa qué falta, lee tu planilla y tus certificados, y te advierte si algo no cuadra: periodo, IBC o vigencia.</p>
-          </div>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <div>
-            <h3>Revisas, apruebas y recibes</h3>
-            <p>Al cierre te muestra el borrador. Solo cuando lo apruebas genera los documentos finales y te los envía.</p>
-          </div>
-        </li>
+      <header class="head split">
+        <h2>Cómo funciona</h2>
+        <p>Todo por WhatsApp. No instalas nada nuevo.</p>
+      </header>
+      <ol class="flow" style="--n:4">
+        <li style="--d:0"><span class="flow-node" data-n="1" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg>Envías tu contrato</h3><p>Lee el PDF y extrae número, objeto, plazo, valores, supervisor y obligaciones. Tú confirmas.</p></li>
+        <li style="--d:1"><span class="flow-node" data-n="2" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#mic"/></svg>Cuentas lo que haces</h3><p>Texto, nota de voz, foto o documento: lo organiza en la obligación que corresponde.</p></li>
+        <li style="--d:2"><span class="flow-node" data-n="3" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#bell"/></svg>Te recuerda los soportes</h3><p>Te avisa qué falta y si algo no cuadra: periodo, IBC o vigencia.</p></li>
+        <li style="--d:3"><span class="flow-node" data-n="4" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg>Revisas, apruebas y recibes</h3><p>Solo cuando apruebas el borrador genera los documentos finales.</p></li>
       </ol>
     </div>
   </section>
 
-  <!-- Qué recibes -->
   <section class="section" id="que-recibes">
     <div class="wrap">
-      <h2 class="section-title">Qué recibes al cierre del periodo</h2>
-      <p class="section-lead">Con el formato de tu entidad, listo para firmar y cargar.</p>
-      <div class="cards two">
-        <ul class="checklist">
-          <li><strong>Informe de actividades</strong> en Word y PDF, con tus evidencias.</li>
-          <li><strong>Borrador del informe de supervisión</strong> prellenado para tu supervisor.</li>
-          <li><strong>PDF consolidados</strong> de antecedentes y afiliaciones.</li>
-          <li><strong>Archivo ZIP</strong> con los documentos organizados como los pide tu entidad.</li>
+      <header class="head split">
+        <h2>Qué recibes al cierre del periodo</h2>
+        <p>Con el formato de tu entidad, listo para firmar y cargar.</p>
+      </header>
+      <div class="deliver">
+        <ul class="files" data-reveal="up">
+          <li style="--d:0"><span class="file-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg></span><span><strong>Informe de actividades</strong>Word y PDF, con tus evidencias</span></li>
+          <li style="--d:1"><span class="file-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#file-check"/></svg></span><span><strong>Informe de supervisión</strong>borrador prellenado</span></li>
+          <li style="--d:2"><span class="file-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#folder"/></svg></span><span><strong>PDF consolidados</strong>antecedentes y afiliaciones</span></li>
+          <li style="--d:3"><span class="file-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#zip"/></svg></span><span><strong>Archivo ZIP</strong>organizado como lo pide tu entidad</span></li>
         </ul>
-        <ul class="checklist">
+        <ul class="ticks">
           <li><strong>Cálculos hechos:</strong> número de pago, valor en letras, porcentaje de ejecución y balance financiero.</li>
           <li><strong>Periodos a tu medida:</strong> del 1 al último día del mes o de fecha a fecha.</li>
           <li><strong>Varios contratos</strong>, incluso con entidades distintas, en el mismo chat.</li>
@@ -160,53 +132,39 @@
     </div>
   </section>
 
-  <!-- Precio -->
-  <section class="section alt" id="precio">
+  <section class="section tint" id="precio">
     <div class="wrap">
-      <h2 class="section-title">Cuánto cuesta</h2>
-      <p class="section-lead">Pagas por lo que usas. Sin mensualidades.</p>
-      <div class="price">
-        <div class="price-item">
-          <p class="price-amount">$15.000</p>
-          <h3>Configurar tu contrato</h3>
-          <p>Una sola vez por contrato. Incluye sus prórrogas y adiciones.</p>
-        </div>
-        <div class="price-item">
-          <p class="price-amount">$50.000</p>
-          <h3>Cada cuenta de cobro</h3>
-          <p>Tu informe y tus PDF del periodo. Las correcciones no tienen costo.</p>
-        </div>
+      <header class="head center">
+        <h2>Cuánto cuesta</h2>
+        <p>Pagas por lo que usas. Sin mensualidades.</p>
+      </header>
+      <div class="price" data-reveal="up">
+        <div class="price-item"><p class="price-amount">$15.000</p><h3>Configurar tu contrato</h3><p>Una sola vez por contrato. Incluye sus prórrogas y adiciones.</p></div>
+        <div class="price-item"><p class="price-amount">$50.000</p><h3>Cada cuenta de cobro</h3><p>Tu informe y tus PDF del periodo. Las correcciones no tienen costo.</p></div>
       </div>
-      <p class="price-note">Pagas en línea con Wompi o en efectivo con un código de pago, antes de recibir tus archivos. Durante el piloto podemos ofrecerte la configuración o algunos informes sin costo; te lo decimos en la conversación. <a href="/terminos/#precios">Ver los términos</a>.</p>
+      <p class="price-note">Pagas en línea con Wompi o en efectivo con un código de pago, antes de recibir tus archivos. Durante el piloto podemos ofrecerte la configuración o algunos informes sin costo; te lo decimos en la conversación. <a class="tlink" href="/terminos/#precios">Ver los términos</a>.</p>
     </div>
   </section>
 
-  <!-- Principio -->
-  <section class="section principle">
-    <div class="wrap principle-inner">
-      <h2>Tú firmas, tú decides.</h2>
-      <div class="cards three">
-        <div class="card dark">
-          <h3>Nunca inventa actividades</h3>
-          <p>Redacta solo con lo que tú le cuentas y le envías. Si falta información, te pregunta.</p>
-        </div>
-        <div class="card dark">
-          <h3>Siempre pide tu aprobación</h3>
-          <p>Nada se genera como documento final sin que lo revises y digas “sí”.</p>
-        </div>
-        <div class="card dark">
-          <h3>Tus datos son tuyos</h3>
-          <p>Tus documentos se guardan cifrados y solo se usan para configurar tu contrato y preparar tus cuentas. No los compartimos con tu entidad ni los vendemos. Se borran a los 24 meses, o antes si escribes “borrar mis datos”. <a href="/politica-de-datos/">Lee nuestra política de datos</a>.</p>
-        </div>
-      </div>
-      <p class="fine light">CuentaFacil no se conecta a SECOP II: te entrega los archivos y tú los cargas.</p>
+  <section class="section deep">
+    <div class="wrap">
+      <header class="head">
+        <h2>Tú firmas, tú decides.</h2>
+      </header>
+      <ul class="proofs proofs-3">
+        <li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pen"/></svg><h3>Nunca inventa actividades</h3><p>Redacta solo con lo que tú le cuentas y le envías. Si falta información, te pregunta.</p></li>
+        <li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg><h3>Siempre pide tu aprobación</h3><p>Nada se genera como documento final sin que lo revises y digas “sí”.</p></li>
+        <li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#lock"/></svg><h3>Tus datos son tuyos</h3><p>Tus documentos se guardan cifrados y solo se usan para configurar tu contrato y preparar tus cuentas. No los compartimos con tu entidad ni los vendemos. Se borran a los 24 meses, o antes si escribes “borrar mis datos”. <a class="tlink on-dark" href="/politica-de-datos/">Lee nuestra política de datos</a>.</p></li>
+      </ul>
+      <p class="deep-note">CuentaFacil no se conecta a SECOP II: te entrega los archivos y tú los cargas.</p>
     </div>
   </section>
 
-  <!-- Preguntas -->
   <section class="section" id="preguntas">
-    <div class="wrap narrow">
-      <h2 class="section-title">Preguntas frecuentes</h2>
+    <div class="wrap">
+      <header class="head">
+        <h2>Preguntas frecuentes</h2>
+      </header>
       <div class="faq">
         <details>
           <summary>¿Tengo que instalar algo?</summary>
@@ -218,7 +176,7 @@
         </details>
         <details>
           <summary>¿Sirve para mi entidad?</summary>
-          <p>Cada entidad tiene sus propios formatos y requisitos, y CuentaFacil se configura con ellos. Si tu entidad aún no está, la configuramos contigo. <a href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20">Escríbenos por WhatsApp</a> y cuéntanos dónde tienes tu contrato.</p>
+          <p>Cada entidad tiene sus propios formatos y requisitos, y CuentaFacil se configura con ellos. Si tu entidad aún no está, la configuramos contigo. <a class="tlink" href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20">Escríbenos por WhatsApp</a> y cuéntanos dónde tienes tu contrato.</p>
         </details>
         <details>
           <summary>¿Qué pasa con los antecedentes que tienen captcha?</summary>
@@ -230,26 +188,26 @@
         </details>
         <details>
           <summary>¿Cuánto cuesta?</summary>
-          <p>$15.000 una sola vez por configurar cada contrato y $50.000 por cada cuenta de cobro. Las correcciones no tienen costo. <a href="#precio">Ver el detalle</a>.</p>
+          <p>$15.000 una sola vez por configurar cada contrato y $50.000 por cada cuenta de cobro. Las correcciones no tienen costo. <a class="tlink" href="#precio">Ver el detalle</a>.</p>
         </details>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="section cta" id="empezar">
-    <div class="wrap narrow center">
-      <h2>¿Quieres que tu próxima cuenta de cobro sea la más fácil?</h2>
-      <p>Escríbenos por WhatsApp y cuéntanos con qué entidad tienes tu contrato. Te ayudamos a configurarlo para que empieces.</p>
-      <a class="btn btn-primary btn-lg" href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20">Empezar por WhatsApp</a>
-      <p class="fine"><a href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20">+57 312 388 5012</a></p>
+  <section class="contact" id="empezar">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <h2>¿Quieres que tu próxima cuenta de cobro sea la más fácil?</h2>
+        <p>Escríbenos por WhatsApp y cuéntanos con qué entidad tienes tu contrato. Te ayudamos a configurarlo para que empieces.</p>
+        <a class="btn btn-ink" href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20"><svg class="i" aria-hidden="true"><use href="/iconos.svg#whatsapp"/></svg> Empezar por WhatsApp</a>
+        <p class="contact-alt"><a class="tlink" href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20">+57 312 388 5012</a> · o al correo <a class="tlink" href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      </div>
       <details class="cta-alt">
         <summary><span>¿Prefieres que te escribamos? Déjanos tus datos</span></summary>
         <div data-pascalia-form data-solucion="cuentafacil" data-compacto>
           <noscript><p>Para enviar el formulario activa JavaScript, o escríbenos por <a href="https://wa.me/573123885012?text=Hola%2C%20quiero%20empezar%20con%20CuentaFacil.%20Mi%20entidad%20es%3A%20">WhatsApp</a> o a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p></noscript>
         </div>
       </details>
-      <p class="fine">También puedes escribirnos al correo <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p>
     </div>
   </section>
 
@@ -257,9 +215,15 @@
 
 <footer class="footer">
   <div class="wrap footer-inner">
-    <a class="brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"> PascalIA</a>
-    <p>CuentaFacil es una solución de <a href="/">PascalIA</a>, hecha en Colombia para contratistas del Estado.</p>
-    <p class="fine">© 2026 PascalIA · <a href="/politica-de-datos/">Política de tratamiento de datos</a> · <a href="/terminos/">Términos y condiciones</a> · <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+    <div>
+      <a class="brand" href="/"><img src="/flower.svg" alt="" width="30" height="30"><span>Pascal<b>IA</b></span></a>
+      <p class="tagline">Ideas que hacen florecer tu organización</p>
+    </div>
+    <div>
+      <p class="slogan">CuentaFacil es una solución de PascalIA, hecha en Colombia para contratistas del Estado.</p>
+      <p class="footer-links"><a href="/">Inicio</a><a href="/cuentafacil/">CuentaFacil</a><a href="/flota/">Flota Vehicular</a><a href="/nana-dnt/">NANA DNT</a><a href="/si-aps/">SI-APS</a><a href="/mision-medica/">Misión Médica</a><a href="/desarrollos/">Desarrollos</a><a href="/politica-de-datos/">Política de datos</a><a href="/terminos/">Términos</a><a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+    </div>
+    <p class="legal">© 2026 PascalIA · Hecho en Colombia</p>
   </div>
 </footer>
 

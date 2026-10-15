@@ -25,6 +25,7 @@
 .pf-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
 .pf-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
 .pf-submit {
+  position: relative; overflow: hidden; isolation: isolate;
   appearance: none; border: 0; cursor: pointer; font: inherit; font-weight: 700;
   background: var(--pf-accent); color: #fff; border-radius: 999px; padding: .95em 2em;
 }

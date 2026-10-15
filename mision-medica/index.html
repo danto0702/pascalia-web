@@ -10,203 +10,188 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_CO">
 <meta property="og:url" content="https://pascalia.lat/mision-medica/">
-<meta property="og:title" content="Misión Médica · PascalIA">
+<meta property="og:title" content="Misión Médica · Gestión y protección del personal de salud · PascalIA">
 <meta property="og:description" content="Proteger a quien protege la vida: gestión digital del programa de Misión Médica.">
+<meta property="og:image" content="https://pascalia.lat/mision-medica/logo-512.png">
 <link rel="icon" href="/mision-medica/logo-32.png" type="image/png">
 <link rel="apple-touch-icon" href="/mision-medica/logo-180.png">
-<meta property="og:image" content="https://pascalia.lat/mision-medica/logo-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/pascalia.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/sitio.css">
 <link rel="stylesheet" href="/contacto.css">
 <script src="/contacto.js" defer></script>
+<script src="/sitio.js" defer></script>
 </head>
 <body>
 
-<header class="nav">
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" data-nav>
   <div class="wrap nav-inner">
     <a class="brand" href="/mision-medica/" aria-label="Misión Médica, inicio">
-      <img class="brand-logo logo-mm" src="/mision-medica/logo-64.png" alt="" width="40" height="40">
-      <span class="brand-stack"><span class="wordmark">Misión Médica</span><small>de Pascal<b>IA</b></small></span>
+      <img class="brand-logo" src="/mision-medica/logo-64.png" alt="" width="40" height="40">
+      <span class="brand-text"><span class="brand-name">Misión Médica</span><small class="brand-by">de Pascal<b>IA</b></small></span>
     </a>
-    <nav class="nav-links" aria-label="Secciones">
+    <nav class="nav-links" id="menu" aria-label="Secciones">
       <a href="#modulos">Módulos</a>
       <a href="#infracciones">Infracciones</a>
       <a href="#capacitacion">Capacitación</a>
       <a href="/">PascalIA</a>
+      <a class="btn btn-ink btn-sm nav-cta" href="#contacto">Quiero conocerla</a>
     </nav>
-    <a class="btn btn-dark btn-sm" href="#contacto">Quiero conocerla</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><svg class="i" aria-hidden="true"><use href="/iconos.svg#bars"/></svg><span>Menú</span></button>
   </div>
 </header>
 
-<main>
+<main id="contenido">
 
-  <!-- Hero -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <span class="eyebrow">Derecho Internacional Humanitario · Res. 4481 de 2012</span>
-        <h1>Proteger a quien <span class="hl">protege la vida.</span></h1>
-        <p class="lead">La gestión del programa de Misión Médica en un solo lugar: reporte de infracciones e incidentes, identificación del personal, emblemas de protección, capacitación en DIH y gestión del riesgo, con trazabilidad y desde cualquier lugar del territorio.</p>
+        <h1>Proteger a quien <span class="mark">protege la vida.</span></h1>
+        <p class="lead">El programa de Misión Médica en un solo lugar, con trazabilidad y desde cualquier punto del territorio.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="#contacto">Quiero conocerla</a>
-          <a class="btn btn-ghost" href="#modulos">Ver módulos</a>
+          <a class="btn btn-accent" href="#contacto">Quiero conocerla <svg class="i" aria-hidden="true"><use href="/iconos.svg#arrow"/></svg></a>
+          <a class="btn btn-line" href="#modulos">Ver módulos</a>
         </div>
+        <ul class="points" aria-label="En resumen"><li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#megaphone"/></svg>Reporte de infracciones</li><li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#idcard"/></svg>Carnet con QR</li><li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#scale"/></svg>Res. 4481 de 2012</li></ul>
       </div>
-
-      <div class="idcard" role="img" aria-label="Ejemplo de carnet virtual del personal de salud con foto, cargo, número y código QR de verificación">
-        <div class="id-head">
-          <img class="logo-mm" src="/mision-medica/logo-64.png" alt="" width="34" height="34">
-          <div><strong>Carnet de identificación</strong><small>Personal de salud · ejemplo</small></div>
+      <div class="stage loop">
+        <div class="mock m-mm" role="img" aria-label="Ejemplo de carnet virtual del personal de salud: se escanea el código QR y aparece verificado">
+          <div class="mock-top"><img src="/mision-medica/logo-64.png" alt=""><div><strong>Carnet de identificación</strong><small>Personal de salud · ejemplo</small></div></div>
+          <div class="mock-body">
+            <div class="idc">
+              <svg class="idc-photo" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="12" fill="#F1EEE6"/><circle cx="32" cy="25" r="11" fill="#D9D4C7"/><path d="M12 60c2-12 10-18 20-18s18 6 20 18z" fill="#D9D4C7"/></svg>
+              <div class="idc-data"><b>Nombre Apellido</b><span>Auxiliar de enfermería</span><span>IPS · municipio</span><span class="idc-num">N.º 2026-0087</span></div>
+              <div class="idc-qr"><svg class="qr" viewBox="0 0 7 7" width="74" height="74" shape-rendering="crispEdges" aria-hidden="true"><path fill="#1F1F1F" d="M0 0h3v3H0zM4 0h3v3H4zM0 4h3v3H0zM3 3h1v1H3zM4 4h1v1H4zM6 4h1v1H6zM5 5h1v1H5zM4 6h1v1H4zM6 6h1v1H6zM3 5h1v1H3z"/><path fill="#fff" d="M1 1h1v1H1zM5 1h1v1H5zM1 5h1v1H1z"/></svg><span class="scan"></span></div>
+            </div>
+            <div class="row m-ok"><span><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg> <b>Verificado en línea</b></span><span class="tag ok">Vigente</span></div>
+            <div class="row"><span class="muted">Autorizado · consentimiento firmado</span></div>
+          </div>
+          <p class="mock-foot">Ejemplo ilustrativo</p>
         </div>
-        <div class="id-body">
-          <div class="id-photo" aria-hidden="true">
-            <svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="24" r="12" fill="#D9D4C7"/><path d="M10 60c2-13 11-20 22-20s20 7 22 20z" fill="#D9D4C7"/></svg>
-          </div>
-          <div class="id-data">
-            <b>Nombre Apellido</b>
-            <span>Auxiliar de enfermería</span>
-            <span>IPS · municipio</span>
-            <span class="id-num">N.º 2026-0087</span>
-          </div>
-          <div class="id-qr" aria-hidden="true">
-            <svg viewBox="0 0 7 7" width="74" height="74" shape-rendering="crispEdges"><path fill="#1F1F1F" d="M0 0h3v3H0zM4 0h3v3H4zM0 4h3v3H0zM1 1h1v1H1zM5 1h1v1H5zM1 5h1v1H1z"/><path fill="#fff" d="M1 1h1v1H1zM5 1h1v1H5zM1 5h1v1H1z"/><path fill="#1F1F1F" d="M3 3h1v1H3zM4 4h1v1H4zM6 4h1v1H6zM5 5h1v1H5zM4 6h1v1H4zM6 6h1v1H6zM3 5h1v1H3z"/></svg>
-            <small>Verificar en línea</small>
-          </div>
-        </div>
-        <div class="id-foot">✓ Autorizado · consentimiento firmado · vigente</div>
+        <div class="float-card fc-a" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#hash"/></svg></span><span><strong>Radicado consecutivo</strong>en cada reporte</span></div>
+        <div class="float-card fc-b" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg></span><span><strong>PDF y aviso inmediato</strong>a la coordinación</span></div>
       </div>
     </div>
   </section>
 
-  <!-- Módulos -->
-  <section class="section alt" id="modulos">
+  <div class="ticker" role="img" aria-label="Reporta. Identifica. Protege. Capacita. Coordina.">
+    <div class="ticker-track" aria-hidden="true"><span>Reporta.</span><span>Identifica.</span><span>Protege.</span><span>Capacita.</span><span>Coordina.</span><span>Reporta.</span><span>Identifica.</span><span>Protege.</span><span>Capacita.</span><span>Coordina.</span></div>
+  </div>
+
+  <section class="section tint" id="modulos">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Módulos</span>
+      <header class="head split">
         <h2>Todo el programa, sin papel ni hojas sueltas</h2>
-        <p>Formularios para el personal en terreno y un panel para quien coordina el programa.</p>
-      </div>
-      <div class="grid four">
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📣</div>
+        <p>Formularios para el personal en terreno y un panel para quien coordina. Elige un módulo.</p>
+      </header>
+      <div class="explorer" data-tabs>
+        <div class="ex-tabs" role="tablist" aria-label="Módulos de Misión Médica" aria-orientation="vertical">
+        <button class="ex-tab" role="tab" id="t-infracciones-mod" aria-controls="infracciones-mod" aria-selected="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#megaphone"/></svg></span>Infracciones e incidentes</button>
+        <button class="ex-tab" role="tab" id="t-carnet" aria-controls="carnet" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#idcard"/></svg></span>Carnet de identificación</button>
+        <button class="ex-tab" role="tab" id="t-emblemas" aria-controls="emblemas" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#flag"/></svg></span>Emblemas de protección</button>
+        <button class="ex-tab" role="tab" id="t-capacitacion-mod" aria-controls="capacitacion-mod" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#cap"/></svg></span>Capacitación en DIH</button>
+        <button class="ex-tab" role="tab" id="t-riesgos" aria-controls="riesgos" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#map"/></svg></span>Matriz de riesgos</button>
+        <button class="ex-tab" role="tab" id="t-desplazamientos" aria-controls="desplazamientos" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#truck"/></svg></span>Desplazamientos</button>
+        <button class="ex-tab" role="tab" id="t-inspeccion" aria-controls="inspeccion" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#search"/></svg></span>Inspección de emblemas</button>
+        <button class="ex-tab" role="tab" id="t-panel" aria-controls="panel" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#dash"/></svg></span>Panel de coordinación</button>
+        </div>
+        <div class="ex-panels">
+        <article class="ex-panel" role="tabpanel" id="infracciones-mod" aria-labelledby="t-infracciones-mod" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#megaphone"/></svg></div>
           <h3>Infracciones e incidentes</h3>
-          <p>Reporte desde cualquier lugar con el formato oficial, radicado consecutivo, PDF automático y seguimiento de cada caso.</p>
+          <p>Reporte desde cualquier lugar con el formato oficial.</p>
+          <ul class="ticks"><li>Radicado consecutivo.</li><li>PDF automático.</li><li>Seguimiento de cada caso.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🪪</div>
+        <article class="ex-panel" role="tabpanel" id="carnet" aria-labelledby="t-carnet" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#idcard"/></svg></div>
           <h3>Carnet de identificación</h3>
-          <p>Solicitud con soporte del documento, autorización, foto institucional y consentimiento, y tarjeta virtual con código QR de verificación.</p>
+          <p>Del documento a la tarjeta virtual que se verifica en línea.</p>
+          <ul class="ticks"><li>Soporte del documento, autorización, foto institucional y consentimiento.</li><li>Tarjeta virtual con código QR de verificación.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🦺</div>
+        <article class="ex-panel" role="tabpanel" id="emblemas" aria-labelledby="t-emblemas" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#flag"/></svg></div>
           <h3>Emblemas de protección</h3>
-          <p>Solicitud de chalecos, banderas y petos con talla y justificación, compromiso de uso y devolución, inventario y seguimiento de entregas.</p>
+          <p>Chalecos, banderas y petos con control de principio a fin.</p>
+          <ul class="ticks"><li>Solicitud con talla y justificación.</li><li>Compromiso de uso y devolución.</li><li>Inventario y seguimiento de entregas.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🎓</div>
+        <article class="ex-panel" role="tabpanel" id="capacitacion-mod" aria-labelledby="t-capacitacion-mod" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#cap"/></svg></div>
           <h3>Capacitación en DIH</h3>
-          <p>Sesiones y asistentes, pretest y postest, material audiovisual y presentaciones, y una ruleta de casos para aprender jugando.</p>
+          <p>Enseñar y medir lo aprendido en el mismo lugar.</p>
+          <ul class="ticks"><li>Sesiones y asistentes, pretest y postest.</li><li>Material audiovisual y presentaciones.</li><li>Ruleta de casos para aprender jugando.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🗺️</div>
+        <article class="ex-panel" role="tabpanel" id="riesgos" aria-labelledby="t-riesgos" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#map"/></svg></div>
           <h3>Matriz de riesgos</h3>
-          <p>Identificación de riesgos del territorio y plan de contingencia con sus actividades, para que el equipo sepa qué hacer antes de salir.</p>
+          <p>Para que el equipo sepa qué hacer antes de salir.</p>
+          <ul class="ticks"><li>Riesgos del territorio.</li><li>Plan de contingencia con sus actividades.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🚐</div>
+        <article class="ex-panel" role="tabpanel" id="desplazamientos" aria-labelledby="t-desplazamientos" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#truck"/></svg></div>
           <h3>Desplazamientos</h3>
-          <p>Reporte de cada desplazamiento con fecha, hora, destino y responsable, y autorización desde el panel.</p>
+          <p>Cada salida reportada y autorizada.</p>
+          <ul class="ticks"><li>Fecha, hora, destino y responsable.</li><li>Autorización desde el panel.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🔍</div>
+        <article class="ex-panel" role="tabpanel" id="inspeccion" aria-labelledby="t-inspeccion" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#search"/></svg></div>
           <h3>Inspección de emblemas</h3>
-          <p>Informes de inspección por IPS y municipio, con filtros por fecha y exportación.</p>
+          <p>Informes de inspección por IPS y municipio.</p>
+          <ul class="ticks"><li>Filtros por fecha.</li><li>Exportación.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📊</div>
+        <article class="ex-panel" role="tabpanel" id="panel" aria-labelledby="t-panel" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#dash"/></svg></div>
           <h3>Panel de coordinación</h3>
-          <p>Estadísticas en tiempo real, autorización de carnets, emblemas y desplazamientos, inventario y resultados de capacitación.</p>
+          <p>Todo el programa a la vista de quien coordina.</p>
+          <ul class="ticks"><li>Estadísticas en tiempo real.</li><li>Autorización de carnets, emblemas y desplazamientos.</li><li>Inventario y resultados de capacitación.</li></ul>
         </article>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Infracciones -->
-  <section class="section values" id="infracciones">
+  <section class="section deep" id="infracciones">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Infracciones e incidentes</span>
+      <header class="head">
         <h2>Cada infracción, documentada desde el primer minuto</h2>
         <p>Lo que no se reporta no existe. El reporte tiene que ser rápido, completo y con soporte.</p>
-      </div>
-      <div class="grid four">
-        <div class="value">
-          <h3>Formato oficial</h3>
-          <p>El formulario sigue el formato de reporte de infracciones e incidentes a la Misión Médica.</p>
-        </div>
-        <div class="value">
-          <h3>Radicado consecutivo</h3>
-          <p>Cada reporte recibe un número único por año que lo identifica en todo el proceso.</p>
-        </div>
-        <div class="value">
-          <h3>PDF y aviso inmediato</h3>
-          <p>Se genera el PDF del reporte y se notifica por correo a la coordinación del programa.</p>
-        </div>
-        <div class="value">
-          <h3>Seguimiento del caso</h3>
-          <p>Estado, datos de contacto del afectado y acciones, hasta cerrar el caso.</p>
-        </div>
-      </div>
+      </header>
+      <ul class="proofs">
+        <li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg><h3>Formato oficial</h3><p>El formulario sigue el formato de reporte de infracciones e incidentes a la Misión Médica.</p></li>
+        <li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#hash"/></svg><h3>Radicado consecutivo</h3><p>Un número único por año que identifica cada reporte en todo el proceso.</p></li>
+        <li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#bell"/></svg><h3>PDF y aviso inmediato</h3><p>Se genera el PDF y se notifica por correo a la coordinación del programa.</p></li>
+        <li style="--d:3"><svg class="i" aria-hidden="true"><use href="/iconos.svg#history"/></svg><h3>Seguimiento del caso</h3><p>Estado, contacto del afectado y acciones, hasta cerrar el caso.</p></li>
+      </ul>
     </div>
   </section>
 
-  <!-- Carnet -->
   <section class="section">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Carnet de identificación</span>
+      <header class="head">
         <h2>De la solicitud a la tarjeta virtual</h2>
-      </div>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Solicitud</h3>
-          <p>Datos personales e institucionales, IPS según el municipio y el documento de identidad en PDF.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Autorización</h3>
-          <p>La coordinación revisa y autoriza o rechaza; la persona recibe el aviso por correo.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Foto y consentimiento</h3>
-          <p>Con el enlace recibido, sube su foto institucional y firma el consentimiento informado.</p>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <h3>Tarjeta con QR</h3>
-          <p>Tarjeta virtual descargable o para compartir, con un código QR que permite verificarla en línea.</p>
-        </li>
+      </header>
+      <ol class="flow" style="--n:4">
+        <li style="--d:0"><span class="flow-node" data-n="1" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg>Solicitud</h3><p>Datos personales e institucionales, IPS y documento de identidad en PDF.</p></li>
+        <li style="--d:1"><span class="flow-node" data-n="2" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg>Autorización</h3><p>La coordinación autoriza o rechaza; la persona recibe el aviso por correo.</p></li>
+        <li style="--d:2"><span class="flow-node" data-n="3" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#camera"/></svg>Foto y consentimiento</h3><p>Con el enlace, sube su foto institucional y firma el consentimiento.</p></li>
+        <li style="--d:3"><span class="flow-node" data-n="4" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#qr"/></svg>Tarjeta con QR</h3><p>Tarjeta virtual para descargar o compartir, verificable en línea.</p></li>
       </ol>
     </div>
   </section>
 
-  <!-- Capacitación -->
-  <section class="section alt" id="capacitacion">
+  <section class="section tint" id="capacitacion">
     <div class="wrap">
-      <div class="product light">
+      <div class="showcase">
         <div>
-          <span class="tag">Capacitación</span>
           <h2>Un equipo que sabe cómo protegerse</h2>
-          <p>La protección empieza por conocer el DIH, los riesgos del territorio y qué hacer ante un incidente. Las herramientas de capacitación ayudan a enseñar y a medir lo aprendido.</p>
-          <a class="btn btn-dark" href="#contacto">Quiero capacitar a mi equipo</a>
+          <p>Conocer el DIH, los riesgos del territorio y qué hacer ante un incidente. Herramientas para enseñar y medir lo aprendido.</p>
+          <a class="btn btn-accent" href="#contacto">Quiero capacitar a mi equipo <svg class="i" aria-hidden="true"><use href="/iconos.svg#arrow"/></svg></a>
         </div>
-        <ul class="checks">
+        <ul class="ticks">
           <li><strong>Pretest y postest</strong> configurables, con resultados por sesión.</li>
-          <li><strong>Recomendaciones de seguridad</strong> para el personal sanitario: contexto, transporte, comunicaciones y actividades extramurales, con evaluación final.</li>
+          <li><strong>Recomendaciones de seguridad</strong>: contexto, transporte, comunicaciones y actividades extramurales, con evaluación final.</li>
           <li><strong>Ruleta de casos</strong> para discutir situaciones reales en grupo.</li>
           <li><strong>Material audiovisual</strong>: videos y presentaciones en un solo lugar.</li>
         </ul>
@@ -214,48 +199,31 @@
     </div>
   </section>
 
-  <!-- Implementación -->
   <section class="section">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Cómo empezamos</span>
+      <header class="head">
         <h2>Listo para el programa de tu entidad</h2>
-      </div>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Configuramos tu territorio</h3>
-          <p>Municipios, IPS y puestos de salud, cargos y tipos de emblema.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Ajustamos los documentos</h3>
-          <p>Encabezados y banners de los PDF, correos de notificación e inventario inicial.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Capacitamos</h3>
-          <p>Al personal para reportar y solicitar, y a la coordinación para gestionar el panel.</p>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <h3>Acompañamos</h3>
-          <p>Revisamos contigo los primeros reportes, carnets y entregas.</p>
-        </li>
+      </header>
+      <ol class="flow flow-num" style="--n:4">
+        <li style="--d:0"><span class="flow-node" data-n="1" aria-hidden="true"></span><h3>Configuramos tu territorio</h3><p>Municipios, IPS y puestos de salud, cargos y tipos de emblema.</p></li>
+        <li style="--d:1"><span class="flow-node" data-n="2" aria-hidden="true"></span><h3>Ajustamos los documentos</h3><p>Encabezados de los PDF, correos de notificación e inventario inicial.</p></li>
+        <li style="--d:2"><span class="flow-node" data-n="3" aria-hidden="true"></span><h3>Capacitamos</h3><p>Al personal para reportar y solicitar; a la coordinación, el panel.</p></li>
+        <li style="--d:3"><span class="flow-node" data-n="4" aria-hidden="true"></span><h3>Acompañamos</h3><p>Los primeros reportes, carnets y entregas.</p></li>
       </ol>
-      <p class="more">Si tu entidad también opera vehículos bajo la figura de Misión Médica, mira <a class="link" href="/flota/">Flota Vehicular</a>.</p>
+      <p class="flow-note">Si tu entidad también opera vehículos bajo la figura de Misión Médica, mira <a class="tlink" href="/flota/">Flota Vehicular</a>.</p>
     </div>
   </section>
 
-  <!-- Contacto -->
-  <section class="section cta" id="contacto">
-    <div class="wrap narrow center">
-      <h2>¿Tu programa de Misión Médica todavía vive en papel?</h2>
-      <p>Cuéntanos qué entidad representas, cuántos municipios e IPS cubre el programa y qué procesos quieres digitalizar primero.</p>
+  <section class="contact" id="contacto">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <h2>¿Tu programa de Misión Médica todavía vive en papel?</h2>
+        <p>Cuéntanos qué entidad representas, cuántos municipios e IPS cubre el programa y qué procesos quieres digitalizar primero.</p>
+        <p class="contact-alt">O directamente a <a class="tlink" href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      </div>
       <div data-pascalia-form data-solucion="mision_medica">
         <noscript><p>Para enviar el formulario activa JavaScript, o escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p></noscript>
       </div>
-      <p>O directamente a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
   </section>
 
@@ -264,12 +232,12 @@
 <footer class="footer">
   <div class="wrap footer-inner">
     <div>
-      <a class="brand" href="/"><img src="/flower.svg" alt="" width="34" height="34"> <span class="wordmark">Pascal<b>IA</b></span></a>
+      <a class="brand" href="/"><img src="/flower.svg" alt="" width="30" height="30"><span>Pascal<b>IA</b></span></a>
       <p class="tagline">Ideas que hacen florecer tu organización</p>
     </div>
     <div>
-      <p class="slogan">La solución de Misión Médica es de PascalIA.</p>
-      <p><a href="/">Inicio</a> · <a href="/flota/">Flota Vehicular</a> · <a href="/nana-dnt/">NANA DNT</a> · <a href="/si-aps/">SI-APS</a> · <a href="/cuentafacil/">CuentaFacil</a> · <a href="/desarrollos/">Desarrollos</a> · <a href="/politica-de-datos/">Política de datos</a> · <a href="/terminos/">Términos</a> · <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      <p class="slogan">Empresas que evolucionan, personas que florecen.</p>
+      <p class="footer-links"><a href="/">Inicio</a><a href="/cuentafacil/">CuentaFacil</a><a href="/flota/">Flota Vehicular</a><a href="/nana-dnt/">NANA DNT</a><a href="/si-aps/">SI-APS</a><a href="/mision-medica/">Misión Médica</a><a href="/desarrollos/">Desarrollos</a><a href="/politica-de-datos/">Política de datos</a><a href="/terminos/">Términos</a><a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
     <p class="legal">© 2026 PascalIA · Hecho en Colombia</p>
   </div>

@@ -10,244 +10,219 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_CO">
 <meta property="og:url" content="https://pascalia.lat/si-aps/">
-<meta property="og:title" content="SI-APS · Caracterización familiar y reporte PISIS">
+<meta property="og:title" content="SI-APS · Caracterización familiar y reporte PISIS · PascalIA">
 <meta property="og:description" content="Del hogar en la vereda al archivo plano de PISIS, sin perder un registro.">
 <link rel="icon" href="/si-aps/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/pascalia.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/sitio.css">
 <link rel="stylesheet" href="/contacto.css">
 <script src="/contacto.js" defer></script>
+<script src="/sitio.js" defer></script>
 </head>
 <body>
 
-<header class="nav">
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" data-nav>
   <div class="wrap nav-inner">
     <a class="brand" href="/si-aps/" aria-label="SI-APS, inicio">
       <img class="brand-logo" src="/si-aps/icon.svg" alt="" width="40" height="40">
-      <span class="brand-stack"><span class="wordmark">SI-APS</span><small>de Pascal<b>IA</b></small></span>
+      <span class="brand-text"><span class="brand-name">SI-APS</span><small class="brand-by">de Pascal<b>IA</b></small></span>
     </a>
-    <nav class="nav-links" aria-label="Secciones">
+    <nav class="nav-links" id="menu" aria-label="Secciones">
       <a href="#como-funciona">Cómo funciona</a>
       <a href="#funciones">Funciones</a>
       <a href="#pisis">PISIS</a>
       <a href="/">PascalIA</a>
+      <a class="btn btn-ink btn-sm nav-cta" href="#contacto">Quiero conocerla</a>
     </nav>
-    <a class="btn btn-dark btn-sm" href="#contacto">Quiero conocerla</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><svg class="i" aria-hidden="true"><use href="/iconos.svg#bars"/></svg><span>Menú</span></button>
   </div>
 </header>
 
-<main>
+<main id="contenido">
 
-  <!-- Hero -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <span class="eyebrow">Atención primaria en salud · APS124CCFP</span>
-        <h1>Del hogar en la vereda al <span class="hl">archivo plano de PISIS.</span></h1>
-        <p class="lead">SI-APS es la aplicación con la que los Equipos Básicos de Salud capturan la caracterización sociofamiliar e individual en terreno, incluso sin señal, y generan el reporte APS124CCFP validado y listo para cargar en PISIS.</p>
+        <h1>Del hogar en la vereda al <span class="mark">archivo plano de PISIS.</span></h1>
+        <p class="lead">Los Equipos Básicos de Salud caracterizan en terreno y generan el reporte APS124CCFP validado, listo para cargar.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="#contacto">Quiero conocerla</a>
-          <a class="btn btn-ghost" href="#como-funciona">Ver cómo funciona</a>
+          <a class="btn btn-accent" href="#contacto">Quiero conocerla <svg class="i" aria-hidden="true"><use href="/iconos.svg#arrow"/></svg></a>
+          <a class="btn btn-line" href="#como-funciona">Ver cómo funciona</a>
         </div>
+        <ul class="points" aria-label="En resumen"><li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#wifi-off"/></svg>Funciona sin señal</li><li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#upload"/></svg>Archivo plano + validador</li><li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#people"/></svg>Familiograma y ecomapa</li></ul>
       </div>
-
-      <div class="household" role="img" aria-label="Ejemplo de un hogar en captura: avance por tabla, instrumentos aplicados y cambios en cola sin señal">
-        <div class="hh-head">
-          <img src="/si-aps/icon.svg" alt="" width="38" height="38">
-          <div><strong>Hogar 0142 · ejemplo</strong><small>4 integrantes · geopunto ✓</small></div>
-          <span class="chip">Sin señal · 12 cambios en cola</span>
-        </div>
-        <div class="hh-body">
-          <div class="bar"><span>Identificación</span><i style="--p:100%"></i><b>100 %</b></div>
-          <div class="bar"><span>Caracterización</span><i style="--p:80%"></i><b>80 %</b></div>
-          <div class="bar"><span>Intervenciones</span><i style="--p:40%"></i><b>40 %</b></div>
-          <div class="tools">
-            <span>✓ Familiograma</span><span>✓ Ecomapa</span><span>APGAR 17/20</span><span>Zarit · sin sobrecarga</span>
+      <div class="stage loop">
+        <div class="mock m-siaps" role="img" aria-label="Ejemplo de un hogar en captura: el avance de cada tabla se completa, se aplican los instrumentos y se genera el archivo plano con su validación">
+          <div class="mock-top"><img src="/si-aps/icon.svg" alt=""><div><strong>Hogar 0142 · ejemplo</strong><small>4 integrantes · geopunto</small></div><span class="chip dark"><svg class="i" aria-hidden="true"><use href="/iconos.svg#wifi-off"/></svg> 12 en cola</span></div>
+          <div class="mock-body">
+            <div class="pbar" style="--p:100%;--d:0"><span>Identificación</span><i></i></div>
+            <div class="pbar" style="--p:100%;--d:1"><span>Caracterización</span><i></i></div>
+            <div class="pbar" style="--p:100%;--d:2"><span>Intervenciones</span><i></i></div>
+            <div class="tools"><span style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg> Familiograma</span><span style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg> Ecomapa</span><span style="--d:2">APGAR 17/20</span><span style="--d:3">Zarit · sin sobrecarga</span></div>
+            <div class="s-action"><svg class="i" aria-hidden="true"><use href="/iconos.svg#upload"/></svg> Generar archivo plano + validador</div>
           </div>
-          <div class="hh-action">Generar archivo plano + validador</div>
+          <p class="mock-foot">Ejemplo ilustrativo</p>
+          <div class="toast"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg> APS124CCFP listo para revisar</div>
         </div>
+        <div class="float-card fc-a" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#sync"/></svg></span><span><strong>Ningún registro perdido</strong>sale de la cola al confirmarse</span></div>
+        <div class="float-card fc-b" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pin"/></svg></span><span><strong>Geopunto</strong>de cada hogar</span></div>
       </div>
     </div>
   </section>
 
-  <!-- Cómo funciona -->
+  <div class="ticker" role="img" aria-label="Visita. Caracteriza. Planea el cuidado. Reporta a PISIS. Sin digitar dos veces.">
+    <div class="ticker-track" aria-hidden="true"><span>Visita.</span><span>Caracteriza.</span><span>Planea el cuidado.</span><span>Reporta a PISIS.</span><span>Sin digitar dos veces.</span><span>Visita.</span><span>Caracteriza.</span><span>Planea el cuidado.</span><span>Reporta a PISIS.</span><span>Sin digitar dos veces.</span></div>
+  </div>
+
   <section class="section" id="como-funciona">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Cómo funciona</span>
+      <header class="head split">
         <h2>Una visita, todo el ciclo</h2>
         <p>Lo que el equipo registra en el hogar es lo mismo que termina en el reporte, sin volver a digitar.</p>
-      </div>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Visita al hogar</h3>
-          <p>Identificación del hogar y de cada integrante, con geopunto. En el celular o el computador, con o sin señal.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Caracterización</h3>
-          <p>Vivienda, nutrición, salud mental y funcionalidad familiar, con familiograma, ecomapa y escalas que se calculan solas.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Plan de cuidado</h3>
-          <p>Las atenciones pendientes de la ruta para cada persona según su curso de vida, conforme a la Resolución 3280 de 2018.</p>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <h3>Reporte a PISIS</h3>
-          <p>Archivo plano APS124CCFP y reporte de validación, para corregir antes de cargar y no después del rechazo.</p>
-        </li>
+      </header>
+      <ol class="flow" style="--n:4">
+        <li style="--d:0"><span class="flow-node" data-n="1" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#home"/></svg>Visita al hogar</h3><p>Identificación del hogar y de cada integrante, con geopunto. Con o sin señal.</p></li>
+        <li style="--d:1"><span class="flow-node" data-n="2" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#list-check"/></svg>Caracterización</h3><p>Vivienda, nutrición, salud mental y funcionalidad familiar, con escalas que se calculan solas.</p></li>
+        <li style="--d:2"><span class="flow-node" data-n="3" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#folder"/></svg>Plan de cuidado</h3><p>Atenciones pendientes por curso de vida, según la Res. 3280 de 2018.</p></li>
+        <li style="--d:3"><span class="flow-node" data-n="4" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#upload"/></svg>Reporte a PISIS</h3><p>Archivo plano y validación para corregir antes de cargar, no después del rechazo.</p></li>
       </ol>
     </div>
   </section>
 
-  <!-- Funciones -->
-  <section class="section alt" id="funciones">
+  <section class="section tint" id="funciones">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Funciones</span>
+      <header class="head split">
         <h2>Más que un formulario</h2>
-      </div>
-      <div class="grid four">
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📝</div>
+        <p>Elige una función para ver qué incluye.</p>
+      </header>
+      <div class="explorer" data-tabs>
+        <div class="ex-tabs" role="tablist" aria-label="Funciones de SI-APS" aria-orientation="vertical">
+        <button class="ex-tab" role="tab" id="t-instrumento" aria-controls="instrumento" aria-selected="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#list-check"/></svg></span>Instrumento completo</button>
+        <button class="ex-tab" role="tab" id="t-familiograma" aria-controls="familiograma" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#people"/></svg></span>Familiograma y ecomapa</button>
+        <button class="ex-tab" role="tab" id="t-escalas" aria-controls="escalas" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#brain"/></svg></span>Escalas y tamizajes</button>
+        <button class="ex-tab" role="tab" id="t-plan" aria-controls="plan" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#folder"/></svg></span>Plan de cuidado</button>
+        <button class="ex-tab" role="tab" id="t-archivo" aria-controls="archivo" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#upload"/></svg></span>Archivo plano + validador</button>
+        <button class="ex-tab" role="tab" id="t-sin-senal" aria-controls="sin-senal" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#wifi-off"/></svg></span>Funciona sin señal</button>
+        <button class="ex-tab" role="tab" id="t-dispositivos" aria-controls="dispositivos" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#devices"/></svg></span>Varios dispositivos</button>
+        <button class="ex-tab" role="tab" id="t-mapa" aria-controls="mapa" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#map"/></svg></span>Georreferenciación y Excel</button>
+        </div>
+        <div class="ex-panels">
+        <article class="ex-panel" role="tabpanel" id="instrumento" aria-labelledby="t-instrumento" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#list-check"/></svg></div>
           <h3>Instrumento completo</h3>
-          <p>Las tres tablas del APS124CCFP —identificación, caracterización familiar y de persona, e intervenciones— con más de 90 campos, validación por sección e indicadores de avance.</p>
+          <p>Las tres tablas del APS124CCFP, con más de 90 campos.</p>
+          <ul class="ticks"><li>Identificación, caracterización familiar y de persona, e intervenciones.</li><li>Validación por sección.</li><li>Indicadores de avance.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">👨‍👩‍👧</div>
+        <article class="ex-panel" role="tabpanel" id="familiograma" aria-labelledby="t-familiograma" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#people"/></svg></div>
           <h3>Familiograma y ecomapa</h3>
-          <p>Genograma de tres generaciones con ocho tipos de relación emocional, y ecomapa con los sistemas externos de la familia y el tipo de vínculo.</p>
+          <p>La familia y su entorno, dibujados en la misma visita.</p>
+          <ul class="ticks"><li>Genograma de tres generaciones con ocho tipos de relación emocional.</li><li>Ecomapa con los sistemas externos de la familia y el tipo de vínculo.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🧠</div>
+        <article class="ex-panel" role="tabpanel" id="escalas" aria-labelledby="t-escalas" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#brain"/></svg></div>
           <h3>Escalas y tamizajes</h3>
-          <p>APGAR familiar y escala de Zarit con puntaje e interpretación automáticos. Módulo de tamizaje en salud mental con SRQ, RQC, AUDIT y ASSIST, firma del profesional e historial.</p>
+          <p>Los puntajes se calculan y se interpretan solos.</p>
+          <ul class="ticks"><li>APGAR familiar y escala de Zarit.</li><li>Tamizaje en salud mental con SRQ, RQC, AUDIT y ASSIST.</li><li>Firma del profesional e historial.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🗂️</div>
+        <article class="ex-panel" role="tabpanel" id="plan" aria-labelledby="t-plan" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#folder"/></svg></div>
           <h3>Plan de cuidado</h3>
-          <p>Atenciones pendientes de la ruta de promoción y mantenimiento de la salud por curso de vida, para que ninguna quede sin programar.</p>
+          <p>Las atenciones pendientes de la ruta de promoción y mantenimiento de la salud, por curso de vida.</p>
+          <ul class="ticks"><li>Para que ninguna quede sin programar.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📤</div>
+        <article class="ex-panel" role="tabpanel" id="archivo" aria-labelledby="t-archivo" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#upload"/></svg></div>
           <h3>Archivo plano + validador</h3>
-          <p>Genera el archivo para PISIS aplicando las reglas del anexo técnico y entrega un reporte de validación con lo que falta corregir.</p>
+          <p>Genera el archivo para PISIS aplicando las reglas del anexo técnico.</p>
+          <ul class="ticks"><li>Reporte de validación con lo que falta corregir, antes de cargar.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📶</div>
+        <article class="ex-panel" role="tabpanel" id="sin-senal" aria-labelledby="t-sin-senal" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#wifi-off"/></svg></div>
           <h3>Funciona sin señal</h3>
-          <p>Todo se guarda primero en el equipo y se envía al recuperar conexión. Un registro solo sale de la cola cuando el servidor confirma que lo recibió.</p>
+          <p>Todo se guarda primero en el equipo y se envía al recuperar conexión.</p>
+          <ul class="ticks"><li>Un registro solo sale de la cola cuando el servidor confirma que lo recibió.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🔄</div>
+        <article class="ex-panel" role="tabpanel" id="dispositivos" aria-labelledby="t-dispositivos" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#devices"/></svg></div>
           <h3>Varios dispositivos</h3>
-          <p>Sincronización entre equipos, panel de estado de sincronización y respaldo de emergencia en archivo para no perder nada.</p>
+          <p>El equipo trabaja en varios equipos sin perder nada.</p>
+          <ul class="ticks"><li>Sincronización entre equipos.</li><li>Panel de estado de sincronización.</li><li>Respaldo de emergencia en archivo.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📍</div>
+        <article class="ex-panel" role="tabpanel" id="mapa" aria-labelledby="t-mapa" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#map"/></svg></div>
           <h3>Georreferenciación y Excel</h3>
-          <p>Geopunto de cada hogar sobre el mapa y exportación de la información a Excel para análisis.</p>
+          <p>Cada hogar en el mapa y la información lista para analizar.</p>
+          <ul class="ticks"><li>Geopunto de cada hogar.</li><li>Exportación a Excel.</li></ul>
         </article>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- PISIS -->
-  <section class="section values" id="pisis">
+  <section class="section deep" id="pisis">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">PISIS</span>
+      <header class="head">
         <h2>Hecho para que el reporte no se devuelva</h2>
         <p>Las reglas del anexo técnico están en la aplicación, no en la memoria de quien digita.</p>
-      </div>
-      <div class="grid four">
-        <div class="value">
-          <h3>Reglas del anexo</h3>
-          <p>Longitudes, códigos, campos condicionales y orden de los registros como los exige PISIS.</p>
-        </div>
-        <div class="value">
-          <h3>Validación previa</h3>
-          <p>Un reporte de validación señala qué corregir y en qué registro, antes de cargar el archivo.</p>
-        </div>
-        <div class="value">
-          <h3>Ningún registro perdido</h3>
-          <p>Cola de envío con confirmación del servidor y rescate de registros que hayan quedado sin enviar.</p>
-        </div>
-        <div class="value">
-          <h3>Datos protegidos</h3>
-          <p>Acceso con usuario para el equipo de campo y la administración. El respaldo advierte que contiene datos de pacientes.</p>
-        </div>
-      </div>
+      </header>
+      <ul class="proofs">
+        <li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#book"/></svg><h3>Reglas del anexo</h3><p>Longitudes, códigos, campos condicionales y orden de los registros, como los exige PISIS.</p></li>
+        <li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#search"/></svg><h3>Validación previa</h3><p>Señala qué corregir y en qué registro, antes de cargar el archivo.</p></li>
+        <li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#sync"/></svg><h3>Ningún registro perdido</h3><p>Cola de envío con confirmación del servidor y rescate de lo que quedó sin enviar.</p></li>
+        <li style="--d:3"><svg class="i" aria-hidden="true"><use href="/iconos.svg#lock"/></svg><h3>Datos protegidos</h3><p>Acceso con usuario. El respaldo advierte que contiene datos de pacientes.</p></li>
+      </ul>
     </div>
   </section>
 
-  <!-- Roles -->
   <section class="section" id="roles">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Para cada rol</span>
+      <header class="head">
         <h2>Del equipo de campo a la coordinación</h2>
-      </div>
-      <div class="grid two">
-        <article class="card feature">
-          <h3>Equipo de campo</h3>
-          <p>Captura los hogares que visita, aplica los instrumentos y ve el avance de cada caracterización, en el celular o el computador, con o sin conexión.</p>
-        </article>
-        <article class="card feature">
-          <h3>Administración</h3>
-          <p>Ve los registros de todo el equipo, genera el archivo plano y su validación, consulta los tamizajes registrados en la nube y gestiona los respaldos.</p>
-        </article>
+      </header>
+      <div data-tabs>
+        <div class="seg" role="tablist" aria-label="Roles"><button class="ex-tab" role="tab" id="t-r-campo" aria-controls="r-campo" aria-selected="true"><svg class="i" aria-hidden="true"><use href="/iconos.svg#home"/></svg>Equipo de campo</button><button class="ex-tab" role="tab" id="t-r-admin" aria-controls="r-admin" aria-selected="false"><svg class="i" aria-hidden="true"><use href="/iconos.svg#dash"/></svg>Administración</button></div>
+        <div class="role-panel" role="tabpanel" id="r-campo" aria-labelledby="t-r-campo" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#home"/></svg></div>
+          <div><h3>Equipo de campo</h3><p>Captura los hogares que visita, aplica los instrumentos y ve el avance de cada caracterización, en el celular o el computador, con o sin conexión.</p></div>
+        </div>
+        <div class="role-panel" role="tabpanel" id="r-admin" aria-labelledby="t-r-admin" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#dash"/></svg></div>
+          <div><h3>Administración</h3><p>Ve los registros de todo el equipo, genera el archivo plano y su validación, consulta los tamizajes en la nube y gestiona los respaldos.</p></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Implementación -->
-  <section class="section alt">
+  <section class="section tint">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Cómo empezamos</span>
+      <header class="head">
         <h2>Lista para tus Equipos Básicos de Salud</h2>
-      </div>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Configuramos tu entidad</h3>
-          <p>Territorio, códigos de la entidad y usuarios del equipo.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Instalamos en los equipos</h3>
-          <p>Se instala desde el navegador en el celular y el computador, y queda lista para trabajar sin señal.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Capacitamos</h3>
-          <p>Captura, instrumentos, familiograma y ecomapa, y generación del reporte.</p>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <h3>Acompañamos el primer cargue</h3>
-          <p>Revisamos contigo la validación y el primer archivo que subes a PISIS.</p>
-        </li>
+      </header>
+      <ol class="flow flow-num" style="--n:4">
+        <li style="--d:0"><span class="flow-node" data-n="1" aria-hidden="true"></span><h3>Configuramos tu entidad</h3><p>Territorio, códigos de la entidad y usuarios del equipo.</p></li>
+        <li style="--d:1"><span class="flow-node" data-n="2" aria-hidden="true"></span><h3>Instalamos en los equipos</h3><p>Desde el navegador, en celular y computador, lista para trabajar sin señal.</p></li>
+        <li style="--d:2"><span class="flow-node" data-n="3" aria-hidden="true"></span><h3>Capacitamos</h3><p>Captura, instrumentos, familiograma, ecomapa y reporte.</p></li>
+        <li style="--d:3"><span class="flow-node" data-n="4" aria-hidden="true"></span><h3>Acompañamos el primer cargue</h3><p>La validación y el primer archivo que subes a PISIS.</p></li>
       </ol>
-      <p class="more">Funciona en Google Chrome y Microsoft Edge, en computador y en Android.</p>
+      <p class="flow-note">Funciona en Google Chrome y Microsoft Edge, en computador y en Android.</p>
     </div>
   </section>
 
-  <!-- Contacto -->
-  <section class="section cta" id="contacto">
-    <div class="wrap narrow center">
-      <h2>¿Tu equipo todavía digita la caracterización dos veces?</h2>
-      <p>Cuéntanos qué entidad representas, cuántos Equipos Básicos de Salud tienes y cómo reportan hoy el APS124CCFP. Te mostramos SI-APS con un caso como el tuyo.</p>
+  <section class="contact" id="contacto">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <h2>¿Tu equipo todavía digita la caracterización dos veces?</h2>
+        <p>Cuéntanos qué entidad representas, cuántos Equipos Básicos de Salud tienes y cómo reportan hoy el APS124CCFP. Te mostramos SI-APS con un caso como el tuyo.</p>
+        <p class="contact-alt">O directamente a <a class="tlink" href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      </div>
       <div data-pascalia-form data-solucion="si_aps">
         <noscript><p>Para enviar el formulario activa JavaScript, o escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p></noscript>
       </div>
-      <p>O directamente a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
   </section>
 
@@ -256,12 +231,12 @@
 <footer class="footer">
   <div class="wrap footer-inner">
     <div>
-      <a class="brand" href="/"><img src="/flower.svg" alt="" width="34" height="34"> <span class="wordmark">Pascal<b>IA</b></span></a>
+      <a class="brand" href="/"><img src="/flower.svg" alt="" width="30" height="30"><span>Pascal<b>IA</b></span></a>
       <p class="tagline">Ideas que hacen florecer tu organización</p>
     </div>
     <div>
-      <p class="slogan">SI-APS es una solución de PascalIA.</p>
-      <p><a href="/">Inicio</a> · <a href="/flota/">Flota Vehicular</a> · <a href="/nana-dnt/">NANA DNT</a> · <a href="/cuentafacil/">CuentaFacil</a> · <a href="/mision-medica/">Misión Médica</a> · <a href="/desarrollos/">Desarrollos</a> · <a href="/politica-de-datos/">Política de datos</a> · <a href="/terminos/">Términos</a> · <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      <p class="slogan">Empresas que evolucionan, personas que florecen.</p>
+      <p class="footer-links"><a href="/">Inicio</a><a href="/cuentafacil/">CuentaFacil</a><a href="/flota/">Flota Vehicular</a><a href="/nana-dnt/">NANA DNT</a><a href="/si-aps/">SI-APS</a><a href="/mision-medica/">Misión Médica</a><a href="/desarrollos/">Desarrollos</a><a href="/politica-de-datos/">Política de datos</a><a href="/terminos/">Términos</a><a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
     <p class="legal">© 2026 PascalIA · Hecho en Colombia</p>
   </div>

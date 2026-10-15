@@ -28,6 +28,22 @@
     if (e.key === "Escape" && menu.classList.contains("is-open")) { abrir(false); btn.focus(); }
   });
 
+  // Onda al tocar un botón: confirma la acción
+  document.addEventListener("pointerdown", function (e) {
+    var b = e.target.closest(".btn, .pf-submit");
+    if (!b || quieto) return;
+    var r = b.getBoundingClientRect(), d = Math.max(r.width, r.height) * 2.2;
+    var o = document.createElement("span");
+    o.className = "ripple";
+    o.style.width = o.style.height = d + "px";
+    o.style.left = (e.clientX - r.left - d / 2) + "px";
+    o.style.top = (e.clientY - r.top - d / 2) + "px";
+    if (getComputedStyle(b).position === "static") b.style.position = "relative";
+    b.style.overflow = "hidden";
+    b.appendChild(o);
+    setTimeout(function () { o.remove(); }, 650);
+  });
+
   // Rutas del hero: cada una ilumina su fragmento y su conexión con la flor
   var hero = document.querySelector("[data-hero]");
   var rutas = [].slice.call(document.querySelectorAll("[data-route]"));
