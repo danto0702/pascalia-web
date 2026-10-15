@@ -3,5 +3,8 @@
 .github/hooks/
 .github/skills/
 
-# impeccable para Claude Code (herramienta local; Pages publicaría .claude/)
-.claude/
+# .claude/ sí se versiona (habilidades de impeccable para Claude Code);
+# el flujo de publicación lo excluye del sitio. Ver .github/workflows/pages.yml.
+
+# Carpeta temporal del flujo de publicación
+_site/

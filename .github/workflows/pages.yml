@@ -23,8 +23,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # Solo se publica el sitio: quedan fuera las herramientas internas
+      # (.claude, .agents, .github, supabase) y los archivos del repositorio.
+      - name: Preparar el sitio
+        run: |
+          mkdir -p _site
+          git archive HEAD | tar -x -C _site
+          rm -rf _site/.github _site/.claude _site/.agents _site/supabase \
+                 _site/README.md _site/.gitignore _site/CLAUDE.md _site/AGENTS.md
+          test -f _site/index.html && test -f _site/CNAME && test -f _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
