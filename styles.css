@@ -1,17 +1,20 @@
 :root {
-  --green-900: #093d33;
-  --green-700: #0f5c4d;
-  --green-500: #1c8a73;
-  --green-100: #e3f2ee;
-  --amber: #f2a93b;
-  --ink: #15201d;
-  --muted: #55625e;
-  --line: #dfe7e4;
+  /* Paleta amarilla de CuentaFacil (marca PascalIA). Los nombres green-* se
+     conservan por compatibilidad: 900/700 son grafito, 100 es crema. */
+  --green-900: #000000;
+  --green-700: #1F1F1F;
+  --green-500: #F2B300;
+  --green-100: #FFF8E1;
+  --amber: #FFC107;
+  --amber-ink: #7D5B00;
+  --ink: #1F1F1F;
+  --muted: #55514B;
+  --line: #E6E2D8;
   --bg: #ffffff;
-  --bg-alt: #f5f8f7;
+  --bg-alt: #FFFBEF;
   --chat-bg: #ece5dd;
   --radius: 16px;
-  --shadow: 0 20px 50px -20px rgba(9, 61, 51, 0.35);
+  --shadow: 0 20px 50px -20px rgba(31, 31, 31, 0.3);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -28,7 +31,7 @@ body {
 }
 
 img { max-width: 100%; }
-a { color: var(--green-700); }
+a { color: var(--ink); text-decoration-color: var(--green-500); text-decoration-thickness: 2px; text-underline-offset: 3px; }
 h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; letter-spacing: -0.02em; }
 p { margin: 0 0 1em; }
 
@@ -44,11 +47,11 @@ p { margin: 0 0 1em; }
   transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 .btn:hover { transform: translateY(-1px); }
-.btn:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
-.btn-primary { background: var(--green-700); color: #fff; box-shadow: 0 8px 20px -8px rgba(15, 92, 77, 0.6); }
-.btn-primary:hover { background: var(--green-900); }
-.btn-ghost { color: var(--green-700); border: 2px solid var(--line); }
-.btn-ghost:hover { border-color: var(--green-500); }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 7px rgba(255, 193, 7, .6); }
+.btn-primary { background: var(--amber); color: var(--ink); box-shadow: 0 8px 20px -10px rgba(31, 31, 31, 0.45); }
+.btn-primary:hover { background: #F2B300; }
+.btn-ghost { color: var(--ink); border: 2px solid #8C877E; }
+.btn-ghost:hover { border-color: var(--ink); }
 .btn-sm { padding: 0.55em 1.1em; font-size: 0.92rem; }
 .btn-lg { padding: 1em 2em; font-size: 1.1rem; }
 
@@ -82,7 +85,10 @@ p { margin: 0 0 1em; }
   font-size: 0.85rem; font-weight: 600; color: var(--green-700); margin-bottom: 20px;
 }
 .hero h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 800; }
-.accent { color: var(--green-500); }
+.accent {
+  background: linear-gradient(transparent 60%, var(--amber) 60%, var(--amber) 90%, transparent 90%);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 0 .05em;
+}
 .lead { font-size: 1.15rem; color: var(--muted); max-width: 34em; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 16px; }
 .fine { font-size: 0.9rem; color: var(--muted); }
@@ -93,8 +99,9 @@ p { margin: 0 0 1em; }
   background: var(--chat-bg); border-radius: 28px; overflow: hidden;
   box-shadow: var(--shadow); border: 8px solid #1b2522; max-width: 380px; justify-self: center; width: 100%;
 }
-.phone-top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--green-700); color: #fff; }
-.phone-top img { border-radius: 50%; background: #fff; padding: 4px; }
+.phone-top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--amber); color: var(--ink); }
+.phone-top img { border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px #fff; }
+.brand-logo { flex: none; filter: drop-shadow(0 3px 8px rgba(31, 31, 31, .18)); }
 .phone-top small { display: block; opacity: 0.8; font-size: 0.78rem; }
 .chat { display: flex; flex-direction: column; gap: 8px; padding: 16px 12px 20px; font-size: 0.9rem; }
 .msg {
@@ -125,7 +132,7 @@ p { margin: 0 0 1em; }
 .steps li { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; gap: 16px; }
 .step-n {
   width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
-  background: var(--green-700); color: #fff; font-weight: 800;
+  background: var(--amber); color: var(--ink); font-weight: 800;
 }
 .steps h3 { font-size: 1.1rem; }
 .steps p { color: var(--muted); margin: 0; }
@@ -137,11 +144,11 @@ p { margin: 0 0 1em; }
 .checklist li::before {
   content: "✓"; position: absolute; left: 0; top: 1px;
   width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--green-500); color: #fff; font-size: 0.75rem; font-weight: 800;
+  background: var(--amber); color: var(--ink); font-size: 0.75rem; font-weight: 800;
 }
 
 /* Principle */
-.principle { background: linear-gradient(160deg, var(--green-900), var(--green-700)); color: #fff; }
+.principle { background: linear-gradient(160deg, #1F1F1F, #2E2B26); color: #fff; }
 .principle h2 { text-align: center; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 40px; }
 .principle-inner { text-align: center; }
 .card.dark { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.15); text-align: left; }
@@ -157,7 +164,7 @@ p { margin: 0 0 1em; }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary::after {
   content: "+"; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-  font-size: 1.4rem; color: var(--green-500); font-weight: 600;
+  font-size: 1.4rem; color: var(--amber-ink); font-weight: 600;
 }
 .faq details[open] summary::after { content: "–"; }
 .faq details p { color: var(--muted); padding-bottom: 18px; margin: 0; }
@@ -177,7 +184,7 @@ p { margin: 0 0 1em; }
 .cta-alt summary::-webkit-details-marker { display: none; }
 .cta-alt summary::after { content: "+"; font-size: 1.3rem; line-height: 1; text-decoration: none; }
 .cta-alt[open] summary::after { content: "–"; }
-.cta-alt summary:focus-visible { outline: 3px solid var(--green-900); outline-offset: 3px; border-radius: 6px; }
+.cta-alt summary:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 6px; }
 
 /* Precio */
 .price {
@@ -233,7 +240,7 @@ p { margin: 0 0 1em; }
 /* Pascalia home */
 .brand .by { display: block; font-size: 0.7rem; font-weight: 600; color: var(--muted); letter-spacing: 0; margin-top: -2px; }
 .brand span { line-height: 1.1; }
-.brand b.cf { color: #13795f; font-weight: 800; }
+.brand b.cf { color: #F2B300; font-weight: 800; }
 .panel {
   background: #fff; border: 1px solid var(--line); border-radius: 20px;
   box-shadow: var(--shadow); overflow: hidden; max-width: 440px; width: 100%; justify-self: center;
