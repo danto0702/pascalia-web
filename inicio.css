@@ -210,7 +210,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 .aud { padding: 36px 48px 40px 0; }
 .aud + .aud { padding: 36px 0 40px 48px; border-left: 1px solid var(--line-2); }
 .aud-head { display: flex; align-items: center; gap: 16px; }
-.aud-ico, .item-ico, .app-ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--cream); border: 1px solid var(--line-2); flex: none; }
+.aud-ico, .item-ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--cream); border: 1px solid var(--line-2); flex: none; }
 .aud .aud-ico { background: var(--amber); border-color: var(--amber); }
 .aud h3 { font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; }
 .aud p { margin-top: 14px; color: var(--ink-2); font-size: 1.08rem; max-width: 34em; }
@@ -239,9 +239,7 @@ a.item:hover .item-arrow { color: var(--ink); transform: translateX(4px); }
 
 .showcase { margin-top: 96px; display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: start; padding: 40px 0 0; border-top: 2px solid var(--ink); }
 .showcase-name { display: flex; align-items: center; gap: 14px; font-size: clamp(2rem, 3.6vw, 2.9rem); font-weight: 700; letter-spacing: -0.03em; }
-.showcase-name img { border-radius: 12px; }
-.app-ico { width: 52px; height: 52px; background: var(--ink); border: 0; color: var(--amber); }
-.app-ico .i { width: 28px; height: 28px; }
+.prod-logo { width: 72px; height: 72px; flex: none; filter: drop-shadow(0 6px 14px rgba(31, 31, 31, .18)); }
 .showcase-copy > p { margin-top: 18px; color: var(--ink-2); font-size: 1.08rem; }
 .showcase-copy .note { font-size: .97rem; padding-left: 14px; border-left: 1px solid var(--amber-2); }
 .showcase-copy .btn { margin-top: 28px; }

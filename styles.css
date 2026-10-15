@@ -94,7 +94,8 @@ p { margin: 0 0 1em; }
   box-shadow: var(--shadow); border: 8px solid #1b2522; max-width: 380px; justify-self: center; width: 100%;
 }
 .phone-top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--green-700); color: #fff; }
-.phone-top img { border-radius: 50%; background: #fff; padding: 4px; }
+.phone-top img { border-radius: 50%; object-fit: cover; }
+.brand-logo { flex: none; filter: drop-shadow(0 3px 8px rgba(31, 31, 31, .18)); }
 .phone-top small { display: block; opacity: 0.8; font-size: 0.78rem; }
 .chat { display: flex; flex-direction: column; gap: 8px; padding: 16px 12px 20px; font-size: 0.9rem; }
 .msg {
