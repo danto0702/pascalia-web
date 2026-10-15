@@ -27,7 +27,7 @@ Success for the site: a visitor from the primary audience understands what Cuent
 
 - Contratistas prepare their cuenta de cobro monthly for the contracting entity and upload documents to SECOP II themselves; CuentaFacil accompanies them over WhatsApp. Interaction with the site is a first evaluation before using a WhatsApp service.
 - The site's contact form is the conversion path; requests are tracked by the owner in `/panel/` (stages, next action, value, close reason, activity log).
-- Undecided: the visitors' dominant device and connection quality have not been measured.
+- Visitors arrive mainly from their phone (confirmed by the owner 2026-10-15; not measured with analytics). Connection quality is not known.
 
 ## Capabilities and Constraints
 
@@ -36,7 +36,9 @@ Success for the site: a visitor from the primary audience understands what Cuent
 - Contact form (`contacto.js`) posts to the Supabase Edge Function `pascalia-solicitud`, temporarily hosted in the client's SI-APS HRNO project and isolated with the `pascalia_` prefix and RLS; confirmation and notice emails via Resend from contacto@pascalia.lat.
 - Sub-brands keep their own identity inside the PascalIA site: CuentaFacil (green, calendar-with-check logo), NANA DNT (own logo and palette), Misión Médica (official module logo; its emblem's use is regulated by Res. 4481 de 2012).
 - Legal pages exist and are authoritative: Política de tratamiento de datos (v1.1) and Términos y condiciones of CuentaFacil.
-- Undecided product facts: prices (none published), a WhatsApp number for sales CTAs, and whether solutions are sold as licenses, subscriptions or projects.
+- CuentaFacil pricing (confirmed 2026-10-15, matches `/terminos/#precios`): **$15.000** one-time per contract configuration (covers that contract's prórrogas and adiciones) and **$50.000** per generated cuenta de cobro (informe). Prices in COP, final value.
+- Sales WhatsApp: **+57 312 388 5012** (`https://wa.me/573123885012`), also listed in the Términos as the attention line.
+- Undecided product facts: how the other solutions (Suite de Salud Pública, desarrollos) are sold (licenses, subscriptions or projects) and their prices; none are published.
 
 ## Brand Commitments
 
@@ -47,7 +49,7 @@ Success for the site: a visitor from the primary audience understands what Cuent
 ## Evidence on Hand
 
 - None to publish yet (confirmed 2026-10-15): no client names, usage figures or testimonials. Future work must not fabricate customers, case studies, metrics, testimonials, prices or certifications.
-- Open question for the owner: the site currently says the company was born solving real problems "en la operación de salud pública de una ESE en Norte de Santander" without naming it. Keep or remove is undecided.
+- Do not claim an origin story tied to an ESE in Norte de Santander (owner decided to remove it, 2026-10-15).
 
 ## Product Principles
 
