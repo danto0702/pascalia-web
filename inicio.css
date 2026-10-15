@@ -188,7 +188,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 /* Servicios */
 .services { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: auto auto; border-top: 2px solid var(--ink); }
 .service { padding: 32px 0 36px; }
-.service-lead { grid-row: span 2; padding-right: 56px; border-right: 1px solid var(--line-2); }
+.service-lead { grid-row: span 2; padding-right: 56px; border-right: 1px solid var(--line-2); display: flex; flex-direction: column; }
+.service-lead .claim { margin-top: auto; padding-top: 28px; }
+.nw { white-space: nowrap; }
+.item-body strong .nw { font: inherit; color: inherit; display: inline; }
 .service:not(.service-lead) { padding-left: 48px; }
 .service:not(.service-lead) + .service { border-top: 1px solid var(--line-2); }
 .service h3 { display: flex; align-items: center; gap: 12px; font-size: 1.6rem; font-weight: 700; }
@@ -231,6 +234,7 @@ div.item { grid-template-columns: auto 1fr; }
 a.item:hover { background: var(--paper); }
 a.item:hover .item-ico { background: var(--amber); border-color: var(--amber); }
 a.item:hover .item-arrow { color: var(--ink); transform: translateX(4px); }
+.more-btn { display: none; }
 .more { margin-top: 28px; text-align: center; color: var(--ink-2); }
 
 .showcase { margin-top: 96px; display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: start; padding: 40px 0 0; border-top: 2px solid var(--ink); }
@@ -360,6 +364,10 @@ a.item:hover .item-arrow { color: var(--ink); transform: translateX(4px); }
   .hero-grid { gap: 0; }
   .bloom { order: -1; width: 132px; max-width: none; margin: 0 0 14px -6px; }
   .bloom .frag, .bloom .links { display: none; }
+  .more-btn { display: inline; }
+  .catalog-suite .item-body > span:not(.nw) { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+  .catalog-suite .is-open .item-body > span { display: block; -webkit-line-clamp: unset; line-clamp: unset; }
+  .more-btn { justify-self: start; margin-top: 4px; min-height: 36px; padding: 0; border: 0; background: none; font: 600 .95rem var(--text); color: var(--ink); text-decoration: underline; text-decoration-color: var(--amber); text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer; }
   .catalog:not(.catalog-suite) .item-body span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
   .section { padding: 72px 0; }
   .head { margin-bottom: 36px; }

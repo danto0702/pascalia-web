@@ -45,8 +45,9 @@
     r.addEventListener("mouseleave", function () { activar(null); });
     r.addEventListener("blur", function () { activar(null); });
   });
-  // Sin interacción, recorre las rutas despacio para mostrar la idea (también en celular)
-  if (!quieto) {
+  // Sin interacción, recorre las rutas despacio para mostrar la idea
+  // En celular los fragmentos no se muestran, así que no hay nada que iluminar
+  if (!quieto && !window.matchMedia("(max-width: 680px)").matches) {
     setTimeout(function () {
       if (tocado) return;
       ciclo = setInterval(function () {
@@ -56,6 +57,18 @@
       }, 3200);
     }, 2600);
   }
+
+  // Suite en celular: las filas sin página propia se abren en el sitio
+  [].forEach.call(document.querySelectorAll(".catalog-suite div.item .item-body"), function (cuerpo) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "more-btn"; b.textContent = "Ver más"; b.setAttribute("aria-expanded", "false");
+    b.addEventListener("click", function () {
+      var abierto = cuerpo.parentNode.classList.toggle("is-open");
+      b.textContent = abierto ? "Ver menos" : "Ver más";
+      b.setAttribute("aria-expanded", abierto ? "true" : "false");
+    });
+    cuerpo.appendChild(b);
+  });
 
   // Apariciones: una sola vez por bloque
   var bloques = document.querySelectorAll("[data-reveal]");
