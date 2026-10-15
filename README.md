@@ -7,6 +7,7 @@ Publicado en https://pascalia.lat con GitHub Pages: `.github/workflows/pages.yml
 | Ruta | Contenido |
 |------|-----------|
 | `/` | Portada de PascalIA: servicios, soluciones (Suite de Salud Pública), CuentaFacil, cómo trabajamos, valores y contacto |
+| `/desarrollos/` | Desarrollos a la medida para empresas: NFC, web, menús, dashboards, WhatsApp, lectura de documentos, documentos automáticos, CRM, reservas y apps de campo |
 | `/flota/` | Solución Flota Vehicular: itinerario, marcas con GPS desde el celular, días de operación y planilla |
 | `/nana-dnt/` | NANA DNT: seguimiento nutricional infantil (desnutrición aguda en menores de 5 años), con su marca azul y dorado |
 | `/si-aps/` | SI-APS: caracterización sociofamiliar e individual en terreno y archivo plano APS124CCFP para PISIS |
