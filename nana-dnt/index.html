@@ -10,217 +10,201 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_CO">
 <meta property="og:url" content="https://pascalia.lat/nana-dnt/">
-<meta property="og:title" content="NANA DNT · Seguimiento nutricional infantil">
+<meta property="og:title" content="NANA DNT · Seguimiento nutricional infantil · PascalIA">
 <meta property="og:description" content="Ningún niño con desnutrición aguda sin seguimiento.">
 <meta property="og:image" content="https://pascalia.lat/nana-dnt/logo.png">
 <link rel="icon" href="/nana-dnt/icono-32.png" type="image/png">
 <link rel="apple-touch-icon" href="/nana-dnt/icono-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/pascalia.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/sitio.css">
 <link rel="stylesheet" href="/contacto.css">
 <script src="/contacto.js" defer></script>
+<script src="/sitio.js" defer></script>
 </head>
 <body class="theme-nana">
 
-<header class="nav">
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" data-nav>
   <div class="wrap nav-inner">
     <a class="brand" href="/nana-dnt/" aria-label="NANA DNT, inicio">
       <img class="brand-logo" src="/nana-dnt/logo.png" alt="" width="40" height="40">
-      <span class="brand-stack"><span class="wordmark">NANA DNT</span><small>de Pascal<b>IA</b></small></span>
+      <span class="brand-text"><span class="brand-name">NANA DNT</span><small class="brand-by">de Pascal<b>IA</b></small></span>
     </a>
-    <nav class="nav-links" aria-label="Secciones">
+    <nav class="nav-links" id="menu" aria-label="Secciones">
       <a href="#como-funciona">Cómo funciona</a>
       <a href="#funciones">Funciones</a>
       <a href="#roles">Roles</a>
       <a href="/">PascalIA</a>
+      <a class="btn btn-ink btn-sm nav-cta" href="#contacto">Quiero conocerla</a>
     </nav>
-    <a class="btn btn-dark btn-sm" href="#contacto">Quiero conocerla</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><svg class="i" aria-hidden="true"><use href="/iconos.svg#bars"/></svg><span>Menú</span></button>
   </div>
 </header>
 
-<main>
+<main id="contenido">
 
-  <!-- Hero -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <span class="eyebrow">Seguimiento nutricional infantil</span>
-        <h1>Ningún niño con desnutrición aguda <span class="hl">sin seguimiento.</span></h1>
-        <p class="lead">NANA DNT es el sistema de seguimiento nominal del riesgo y la desnutrición aguda en menores de 5 años para IPS de primer nivel, conforme a la Resolución 2350 de 2020 y la Resolución 115 de 2026.</p>
+        <h1>Ningún niño con desnutrición aguda <span class="mark">sin seguimiento.</span></h1>
+        <p class="lead">Seguimiento nominal del riesgo y la desnutrición aguda en menores de 5 años, para IPS de primer nivel.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="#contacto">Quiero conocerla</a>
-          <a class="btn btn-ghost" href="#como-funciona">Ver cómo funciona</a>
+          <a class="btn btn-accent" href="#contacto">Quiero conocerla <svg class="i" aria-hidden="true"><use href="/iconos.svg#arrow"/></svg></a>
+          <a class="btn btn-line" href="#como-funciona">Ver cómo funciona</a>
         </div>
+        <ul class="points" aria-label="En resumen"><li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#scale"/></svg>Res. 2350 de 2020 y Res. 115 de 2026</li><li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#ruler"/></svg>Tablas OMS 2006</li><li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#bell"/></svg>Alertas de controles</li></ul>
       </div>
-
-      <div class="case" role="img" aria-label="Ejemplo de ficha de un caso: clasificación desnutrición aguda moderada por perímetro braquial, prueba de apetito positiva y próximo control en 3 días">
-        <div class="case-head">
-          <img src="/nana-dnt/logo.png" alt="" width="40" height="40">
-          <div><strong>Ficha del caso</strong><small>Niña · 18 meses · ejemplo</small></div>
+      <div class="stage loop">
+        <div class="mock m-nana" role="img" aria-label="Ejemplo de ficha de un caso: puntaje Z de −1,8, perímetro braquial de 12,1 centímetros y clasificación de desnutrición aguda moderada por el criterio más severo">
+          <div class="mock-top"><img src="/nana-dnt/logo.png" alt=""><div><strong>Ficha del caso</strong><small>Niña · 18 meses · ejemplo</small></div></div>
+          <div class="mock-body">
+            <div class="gauge">
+              <div class="gauge-head"><span>Z peso para la talla</span><b>−1,8 DE</b></div>
+              <div class="gauge-bar"><i class="z-sev"></i><i class="z-mod"></i><i class="z-risk"></i><i class="z-ok"></i><span class="needle"></span></div>
+              <div class="gauge-scale"><span>−4</span><span>−3</span><span>−2</span><span>−1</span><span>0</span><span>+2</span></div>
+            </div>
+            <div class="row n-row" style="--d:0"><span>Perímetro braquial</span><span><b>12,1 cm</b> <span class="tag warn">Moderada</span></span></div>
+            <div class="row n-row" style="--d:1"><span>Edema</span><span><b>Ausente</b> <span class="tag ok">—</span></span></div>
+            <div class="verdict"><small>Clasificación · criterio más severo</small><strong>Desnutrición aguda moderada</strong><span>por perímetro braquial</span></div>
+          </div>
+          <p class="mock-foot">Ejemplo ilustrativo</p>
+          <div class="toast"><svg class="i" aria-hidden="true"><use href="/iconos.svg#bell"/></svg> Próximo control en 3 días</div>
         </div>
-        <div class="case-body">
-          <div class="z-row">
-            <span>Z P/T-L</span><b>−1,8 DE</b><span class="sem s-risk">Riesgo</span>
-          </div>
-          <div class="z-row">
-            <span>Perímetro braquial</span><b>12,1 cm</b><span class="sem s-mod">Moderada</span>
-          </div>
-          <div class="z-row">
-            <span>Edema</span><b>Ausente</b><span class="sem s-ok">—</span>
-          </div>
-          <div class="verdict">
-            <small>Clasificación (criterio más severo)</small>
-            <strong>Desnutrición aguda moderada</strong>
-            <span>por perímetro braquial</span>
-          </div>
-          <div class="case-foot">
-            <span>✓ Prueba de apetito positiva</span>
-            <span>⏱ Próximo control en 3 días</span>
-          </div>
-        </div>
+        <div class="float-card fc-a" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#target"/></svg></span><span><strong>Gana el más severo</strong>y muestra cuál fue</span></div>
+        <div class="float-card fc-b" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg></span><span><strong>Control semanal</strong>para todos los casos</span></div>
       </div>
     </div>
   </section>
 
-  <!-- Cómo funciona -->
+  <div class="ticker" role="img" aria-label="Mide. Clasifica. Orienta. Hace seguimiento. Ningún control perdido.">
+    <div class="ticker-track" aria-hidden="true"><span>Mide.</span><span>Clasifica.</span><span>Orienta.</span><span>Hace seguimiento.</span><span>Ningún control perdido.</span><span>Mide.</span><span>Clasifica.</span><span>Orienta.</span><span>Hace seguimiento.</span><span>Ningún control perdido.</span></div>
+  </div>
+
   <section class="section" id="como-funciona">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Cómo funciona</span>
+      <header class="head split">
         <h2>De la medición a la ruta de atención, en un solo lugar</h2>
         <p>El equipo registra; NANA DNT calcula, clasifica, orienta y recuerda.</p>
-      </div>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Mide y registra</h3>
-          <p>Peso, talla o longitud, perímetros braquial, cefálico y abdominal, y edema. Caso a caso o cargando un Excel.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Clasifica</h3>
-          <p>Calcula los puntajes Z con las tablas OMS 2006 e integra perímetro braquial y edema: gana el criterio más severo.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Orienta la atención</h3>
-          <p>Ruta por grupo de edad, prueba de apetito, criterios de remisión, esquema de FTLC y calculadora de medicamentos.</p>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <h3>Hace seguimiento</h3>
-          <p>Control semanal para todos los casos, alertas de controles vencidos y check-list hasta el egreso.</p>
-        </li>
+      </header>
+      <ol class="flow" style="--n:4">
+        <li style="--d:0"><span class="flow-node" data-n="1" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#ruler"/></svg>Mide y registra</h3><p>Peso, talla, perímetros y edema. Caso a caso o desde un Excel.</p></li>
+        <li style="--d:1"><span class="flow-node" data-n="2" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#target"/></svg>Clasifica</h3><p>Puntajes Z con tablas OMS 2006, perímetro braquial y edema: gana el criterio más severo.</p></li>
+        <li style="--d:2"><span class="flow-node" data-n="3" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#compass"/></svg>Orienta la atención</h3><p>Ruta por edad, prueba de apetito, remisión, FTLC y medicamentos.</p></li>
+        <li style="--d:3"><span class="flow-node" data-n="4" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#bell"/></svg>Hace seguimiento</h3><p>Control semanal, alertas de vencidos y check-list hasta el egreso.</p></li>
       </ol>
     </div>
   </section>
 
-  <!-- Funciones -->
-  <section class="section alt" id="funciones">
+  <section class="section tint" id="funciones">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Funciones</span>
+      <header class="head split">
         <h2>Todo el lineamiento, sin perder un control</h2>
-      </div>
-      <div class="grid four">
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📏</div>
+        <p>Elige una función para ver qué incluye.</p>
+      </header>
+      <div class="explorer" data-tabs>
+        <div class="ex-tabs" role="tablist" aria-label="Funciones de NANA DNT" aria-orientation="vertical">
+        <button class="ex-tab" role="tab" id="t-clasificacion" aria-controls="clasificacion" aria-selected="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#ruler"/></svg></span>Clasificación automática</button>
+        <button class="ex-tab" role="tab" id="t-algoritmo" aria-controls="algoritmo" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#compass"/></svg></span>Algoritmo de atención</button>
+        <button class="ex-tab" role="tab" id="t-tratamiento" aria-controls="tratamiento" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pill"/></svg></span>Apoyo al tratamiento</button>
+        <button class="ex-tab" role="tab" id="t-checklist" aria-controls="checklist" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#list-check"/></svg></span>Check-list con soportes</button>
+        <button class="ex-tab" role="tab" id="t-alertas" aria-controls="alertas" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#bell"/></svg></span>Alertas de seguimiento</button>
+        <button class="ex-tab" role="tab" id="t-indicadores" aria-controls="indicadores" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#chart"/></svg></span>Indicadores</button>
+        <button class="ex-tab" role="tab" id="t-apoyo" aria-controls="apoyo" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#box"/></svg></span>Gestión de apoyo</button>
+        <button class="ex-tab" role="tab" id="t-normatividad" aria-controls="normatividad" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#book"/></svg></span>Normatividad y simulador</button>
+        </div>
+        <div class="ex-panels">
+        <article class="ex-panel" role="tabpanel" id="clasificacion" aria-labelledby="t-clasificacion" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#ruler"/></svg></div>
           <h3>Clasificación automática</h3>
-          <p>Puntaje Z de peso para la talla, peso para la edad, talla para la edad, IMC y perímetro cefálico, con las tablas OMS 2006 adoptadas por la Res. 2465 de 2016.</p>
+          <p>Los puntajes Z se calculan solos con las tablas OMS 2006 adoptadas por la Res. 2465 de 2016.</p>
+          <ul class="ticks"><li>Peso para la talla, peso para la edad y talla para la edad.</li><li>IMC y perímetro cefálico.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🧭</div>
+        <article class="ex-panel" role="tabpanel" id="algoritmo" aria-labelledby="t-algoritmo" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#compass"/></svg></div>
           <h3>Algoritmo de atención</h3>
-          <p>Ruta para menores de 6 meses y de 6 a 59 meses, prueba de apetito con FTLC, criterios de remisión y paquete de estabilización.</p>
+          <p>La ruta correcta según la edad del niño o la niña, paso a paso.</p>
+          <ul class="ticks"><li>Menores de 6 meses y de 6 a 59 meses.</li><li>Prueba de apetito con FTLC.</li><li>Criterios de remisión y paquete de estabilización.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">💊</div>
+        <article class="ex-panel" role="tabpanel" id="tratamiento" aria-labelledby="t-tratamiento" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pill"/></svg></div>
           <h3>Apoyo al tratamiento</h3>
-          <p>Esquema de FTLC por diagnóstico y día, calculadora de amoxicilina, albendazol, ácido fólico y hierro, y esquema de transición.</p>
+          <p>Esquemas y cálculos de apoyo para el equipo, que no reemplazan la prescripción médica.</p>
+          <ul class="ticks"><li>Esquema de FTLC por diagnóstico y día.</li><li>Calculadora de amoxicilina, albendazol, ácido fólico y hierro.</li><li>Esquema de transición.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">✅</div>
+        <article class="ex-panel" role="tabpanel" id="checklist" aria-labelledby="t-checklist" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#list-check"/></svg></div>
           <h3>Check-list con soportes</h3>
-          <p>Listas de atención inicial, de cada control y de egreso, con estado, fecha, observación y soportes en PDF o imagen.</p>
+          <p>Cada atención queda documentada con su estado, fecha y observación.</p>
+          <ul class="ticks"><li>Listas de atención inicial, de cada control y de egreso.</li><li>Soportes en PDF o imagen.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">⏰</div>
+        <article class="ex-panel" role="tabpanel" id="alertas" aria-labelledby="t-alertas" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#bell"/></svg></div>
           <h3>Alertas de seguimiento</h3>
-          <p>Bandeja de controles vencidos y por vencer. Los 16 factores de riesgo con puntaje priorizan la agenda.</p>
+          <p>La agenda se ordena sola por prioridad.</p>
+          <ul class="ticks"><li>Bandeja de controles vencidos y por vencer.</li><li>Los 16 factores de riesgo con puntaje priorizan los casos.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📊</div>
+        <article class="ex-panel" role="tabpanel" id="indicadores" aria-labelledby="t-indicadores" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#chart"/></svg></div>
           <h3>Indicadores</h3>
-          <p>Los seis indicadores de las tablas 44 y 45 del anexo técnico, por municipio y por periodo.</p>
+          <p>Los seis indicadores de las tablas 44 y 45 del anexo técnico.</p>
+          <ul class="ticks"><li>Por municipio y por periodo.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📦</div>
+        <article class="ex-panel" role="tabpanel" id="apoyo" aria-labelledby="t-apoyo" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#box"/></svg></div>
           <h3>Gestión de apoyo</h3>
-          <p>Inventario de FTLC y fórmula de inicio, hoja de vida de los equipos antropométricos, búsqueda activa comunitaria y capacitación del talento humano.</p>
+          <p>Lo que rodea la atención, en el mismo lugar.</p>
+          <ul class="ticks"><li>Inventario de FTLC y fórmula de inicio.</li><li>Hoja de vida de los equipos antropométricos.</li><li>Búsqueda activa comunitaria y capacitación del talento humano.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📚</div>
+        <article class="ex-panel" role="tabpanel" id="normatividad" aria-labelledby="t-normatividad" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#book"/></svg></div>
           <h3>Normatividad y simulador</h3>
-          <p>Las dos resoluciones completas para consulta y un simulador del algoritmo para capacitar al equipo.</p>
+          <p>La norma a la mano y una forma de practicarla.</p>
+          <ul class="ticks"><li>Las dos resoluciones completas para consulta.</li><li>Simulador del algoritmo para capacitar al equipo.</li></ul>
         </article>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Rigor clínico -->
-  <section class="section values">
+  <section class="section deep">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Rigor clínico</span>
+      <header class="head">
         <h2>Cada decisión, escrita y verificable</h2>
         <p>Donde la norma deja espacio a interpretación, NANA DNT deja por escrito qué decidió y por qué.</p>
-      </div>
-      <div class="grid four">
-        <div class="value">
-          <h3>El criterio más severo</h3>
-          <p>Si el puntaje Z, el perímetro braquial y el edema no coinciden, clasifica por el más severo y muestra cuál fue.</p>
-        </div>
-        <div class="value">
-          <h3>81 comprobaciones</h3>
-          <p>Pruebas automáticas de los motores antropométrico y clínico contra los valores de corte publicados por la OMS.</p>
-        </div>
-        <div class="value">
-          <h3>Decisiones documentadas</h3>
-          <p>Cada interpretación de la norma tiene su justificación, para auditoría y para que el equipo la pueda cuestionar.</p>
-        </div>
-        <div class="value">
-          <h3>Seguimiento semanal</h3>
-          <p>Control cada 7 días para todos los casos, por encima del mínimo normativo.</p>
-        </div>
-      </div>
+      </header>
+      <ul class="proofs">
+        <li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#target"/></svg><h3>El criterio más severo</h3><p>Si el puntaje Z, el perímetro braquial y el edema no coinciden, clasifica por el más severo y lo muestra.</p></li>
+        <li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg><h3>81 comprobaciones</h3><p>Pruebas automáticas de los motores antropométrico y clínico contra los cortes de la OMS.</p></li>
+        <li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg><h3>Decisiones documentadas</h3><p>Cada interpretación de la norma tiene su justificación, para auditoría y para cuestionarla.</p></li>
+        <li style="--d:3"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg><h3>Seguimiento semanal</h3><p>Control cada 7 días para todos los casos, por encima del mínimo normativo.</p></li>
+      </ul>
     </div>
   </section>
 
-  <!-- Roles -->
   <section class="section" id="roles">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Roles y territorio</span>
+      <header class="head split">
         <h2>Cada responsable ve solo su territorio</h2>
         <p>Son datos de salud de niños y niñas: el acceso se limita por rol y por municipio en la propia base de datos, no solo en la pantalla.</p>
+      </header>
+      <div data-tabs>
+        <div class="seg" role="tablist" aria-label="Roles"><button class="ex-tab" role="tab" id="t-r-responsable" aria-controls="r-responsable" aria-selected="true"><svg class="i" aria-hidden="true"><use href="/iconos.svg#user"/></svg>Responsable</button><button class="ex-tab" role="tab" id="t-r-coordinador" aria-controls="r-coordinador" aria-selected="false"><svg class="i" aria-hidden="true"><use href="/iconos.svg#people"/></svg>Coordinador</button><button class="ex-tab" role="tab" id="t-r-admin" aria-controls="r-admin" aria-selected="false"><svg class="i" aria-hidden="true"><use href="/iconos.svg#lock"/></svg>Administrador</button></div>
+        <div class="role-panel" role="tabpanel" id="r-responsable" aria-labelledby="t-r-responsable" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#user"/></svg></div>
+          <div><h3>Responsable</h3><p>Carga, consulta y descarga únicamente los casos de los municipios que tiene asignados.</p></div>
+        </div>
+        <div class="role-panel" role="tabpanel" id="r-coordinador" aria-labelledby="t-r-coordinador" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#people"/></svg></div>
+          <div><h3>Coordinador</h3><p>Ve todos los municipios, descarga información y estadísticas, cierra casos y reasigna responsables. No edita datos clínicos.</p></div>
+        </div>
+        <div class="role-panel" role="tabpanel" id="r-admin" aria-labelledby="t-r-admin" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#lock"/></svg></div>
+          <div><h3>Administrador</h3><p>Gestiona usuarios y permisos, aprueba las solicitudes de acceso, restaura documentos y consulta la auditoría.</p></div>
+        </div>
       </div>
-      <div class="grid three">
-        <article class="card feature">
-          <h3>Responsable</h3>
-          <p>Carga, consulta y descarga únicamente los casos de los municipios que tiene asignados.</p>
-        </article>
-        <article class="card feature">
-          <h3>Coordinador</h3>
-          <p>Ve todos los municipios, descarga información y estadísticas, cierra casos y reasigna responsables. No edita datos clínicos.</p>
-        </article>
-        <article class="card feature">
-          <h3>Administrador</h3>
-          <p>Gestiona usuarios y permisos, aprueba las solicitudes de acceso, restaura documentos y consulta la auditoría.</p>
-        </article>
-      </div>
-
       <div class="limits">
         <h3>Lo que NANA DNT no hace</h3>
         <ul>
@@ -232,48 +216,31 @@
     </div>
   </section>
 
-  <!-- Implementación -->
-  <section class="section alt">
+  <section class="section tint">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Cómo empezamos</span>
+      <header class="head">
         <h2>Listo para tu equipo de salud pública</h2>
-      </div>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Configuramos tu territorio</h3>
-          <p>Municipios, responsables y roles de tu entidad.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Cargamos los casos</h3>
-          <p>Importamos el Excel de seguimiento que ya llevas, revisando las diferencias de clasificación.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Capacitamos al equipo</h3>
-          <p>Con el simulador del algoritmo y casos reales de práctica.</p>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <h3>Acompañamos el seguimiento</h3>
-          <p>Revisamos contigo alertas, check-list e indicadores en las primeras semanas.</p>
-        </li>
+      </header>
+      <ol class="flow flow-num" style="--n:4">
+        <li style="--d:0"><span class="flow-node" data-n="1" aria-hidden="true"></span><h3>Configuramos tu territorio</h3><p>Municipios, responsables y roles de tu entidad.</p></li>
+        <li style="--d:1"><span class="flow-node" data-n="2" aria-hidden="true"></span><h3>Cargamos los casos</h3><p>Desde tu Excel de seguimiento, revisando las diferencias de clasificación.</p></li>
+        <li style="--d:2"><span class="flow-node" data-n="3" aria-hidden="true"></span><h3>Capacitamos al equipo</h3><p>Con el simulador del algoritmo y casos de práctica.</p></li>
+        <li style="--d:3"><span class="flow-node" data-n="4" aria-hidden="true"></span><h3>Acompañamos el seguimiento</h3><p>Alertas, check-list e indicadores en las primeras semanas.</p></li>
       </ol>
-      <p class="more">NANA DNT funciona en línea, desde el navegador del computador o del celular.</p>
+      <p class="flow-note">NANA DNT funciona en línea, desde el navegador del computador o del celular.</p>
     </div>
   </section>
 
-  <!-- Contacto -->
-  <section class="section cta" id="contacto">
-    <div class="wrap narrow center">
-      <h2>Lleva el seguimiento nutricional a otro nivel</h2>
-      <p>Cuéntanos qué IPS o ESE representas, cuántos municipios cubren y cómo llevan hoy el seguimiento. Te mostramos NANA DNT con un caso como el tuyo.</p>
+  <section class="contact" id="contacto">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <h2>Lleva el seguimiento nutricional a otro nivel</h2>
+        <p>Cuéntanos qué IPS o ESE representas, cuántos municipios cubren y cómo llevan hoy el seguimiento. Te mostramos NANA DNT con un caso como el tuyo.</p>
+        <p class="contact-alt">O directamente a <a class="tlink" href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      </div>
       <div data-pascalia-form data-solucion="nana_dnt">
         <noscript><p>Para enviar el formulario activa JavaScript, o escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p></noscript>
       </div>
-      <p>O directamente a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
   </section>
 
@@ -282,12 +249,12 @@
 <footer class="footer">
   <div class="wrap footer-inner">
     <div>
-      <a class="brand" href="/"><img src="/flower.svg" alt="" width="34" height="34"> <span class="wordmark">Pascal<b>IA</b></span></a>
+      <a class="brand" href="/"><img src="/flower.svg" alt="" width="30" height="30"><span>Pascal<b>IA</b></span></a>
       <p class="tagline">Ideas que hacen florecer tu organización</p>
     </div>
     <div>
-      <p class="slogan">NANA DNT es una solución de PascalIA.</p>
-      <p><a href="/">Inicio</a> · <a href="/flota/">Flota Vehicular</a> · <a href="/cuentafacil/">CuentaFacil</a> · <a href="/si-aps/">SI-APS</a> · <a href="/mision-medica/">Misión Médica</a> · <a href="/desarrollos/">Desarrollos</a> · <a href="/politica-de-datos/">Política de datos</a> · <a href="/terminos/">Términos</a> · <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      <p class="slogan">Empresas que evolucionan, personas que florecen.</p>
+      <p class="footer-links"><a href="/">Inicio</a><a href="/cuentafacil/">CuentaFacil</a><a href="/flota/">Flota Vehicular</a><a href="/nana-dnt/">NANA DNT</a><a href="/si-aps/">SI-APS</a><a href="/mision-medica/">Misión Médica</a><a href="/desarrollos/">Desarrollos</a><a href="/politica-de-datos/">Política de datos</a><a href="/terminos/">Términos</a><a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
     <p class="legal">© 2026 PascalIA · Hecho en Colombia</p>
   </div>

@@ -15,272 +15,190 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/pascalia.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/sitio.css">
 <link rel="stylesheet" href="/contacto.css">
 <script src="/contacto.js" defer></script>
+<script src="/sitio.js" defer></script>
 </head>
 <body>
 
-<header class="nav">
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" data-nav>
   <div class="wrap nav-inner">
     <a class="brand" href="/" aria-label="PascalIA, inicio">
-      <img src="/flower.svg" alt="" width="38" height="38">
-      <span class="wordmark">Pascal<b>IA</b></span>
+      <img class="brand-logo" src="/flower.svg" alt="" width="40" height="40">
+      <span class="brand-text"><span class="brand-name">Desarrollos</span><small class="brand-by">de Pascal<b>IA</b></small></span>
     </a>
-    <nav class="nav-links" aria-label="Secciones">
+    <nav class="nav-links" id="menu" aria-label="Secciones">
       <a href="#catalogo">Desarrollos</a>
       <a href="#sectores">Por sector</a>
       <a href="#preguntas">Preguntas</a>
       <a href="/">PascalIA</a>
+      <a class="btn btn-ink btn-sm nav-cta" href="#contacto">Cotizar</a>
     </nav>
-    <a class="btn btn-dark btn-sm" href="#contacto">Cotizar</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><svg class="i" aria-hidden="true"><use href="/iconos.svg#bars"/></svg><span>Menú</span></button>
   </div>
 </header>
 
-<main>
+<main id="contenido">
 
-  <!-- Hero -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <span class="eyebrow">Desarrollo · Automatiza · Integra · Escala</span>
-        <h1>Tecnología a la medida que <span class="hl">trabaja para tu negocio.</span></h1>
-        <p class="lead">Páginas web, tableros, asistentes por WhatsApp, menús digitales, NFC y automatizaciones con inteligencia artificial, diseñados alrededor de cómo trabaja tu empresa y conectados con lo que ya usas.</p>
+        <h1>Tecnología a la medida que <span class="mark">trabaja para tu negocio.</span></h1>
+        <p class="lead">Webs, tableros, asistentes por WhatsApp, NFC y automatizaciones con IA, conectados con lo que ya usas.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="#contacto">Cotizar mi proyecto</a>
-          <a class="btn btn-ghost" href="#catalogo">Ver los desarrollos</a>
+          <a class="btn btn-accent" href="#contacto">Cotizar mi proyecto <svg class="i" aria-hidden="true"><use href="/iconos.svg#arrow"/></svg></a>
+          <a class="btn btn-line" href="#catalogo">Ver los desarrollos</a>
         </div>
+        <ul class="points" aria-label="En resumen"><li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#sparkle"/></svg>Con inteligencia artificial</li><li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#sync"/></svg>Conectado a tu Excel y WhatsApp</li><li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg>Propuesta clara antes de empezar</li></ul>
       </div>
-      <nav class="tiles" aria-label="Ir a un desarrollo">
-        <a href="#nfc"><span aria-hidden="true">📲</span>NFC</a>
-        <a href="#web"><span aria-hidden="true">🌐</span>Páginas web</a>
-        <a href="#menus"><span aria-hidden="true">🍽️</span>Menús</a>
-        <a href="#dashboards"><span aria-hidden="true">📊</span>Dashboards</a>
-        <a href="#whatsapp"><span aria-hidden="true">💬</span>WhatsApp</a>
-        <a href="#lectura"><span aria-hidden="true">🧾</span>Lectura con IA</a>
-        <a href="#documentos"><span aria-hidden="true">📄</span>Documentos</a>
-        <a href="#crm"><span aria-hidden="true">🤝</span>CRM</a>
-        <a href="#reservas"><span aria-hidden="true">📅</span>Reservas</a>
-        <a href="#campo"><span aria-hidden="true">📱</span>Apps de campo</a>
-      </nav>
+      <div class="stage loop">
+        <nav class="tiles" aria-label="Ir a un desarrollo">
+          <a class="tile" href="#nfc" data-open-tab="t-nfc" style="--d:0"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#nfc"/></svg></span><span>NFC</span></a>
+          <a class="tile" href="#web" data-open-tab="t-web" style="--d:1"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#web"/></svg></span><span>Web</span></a>
+          <a class="tile" href="#menus" data-open-tab="t-menus" style="--d:2"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#menu-card"/></svg></span><span>Menús</span></a>
+          <a class="tile" href="#dashboards" data-open-tab="t-dashboards" style="--d:3"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#dash"/></svg></span><span>Tableros</span></a>
+          <a class="tile" href="#whatsapp" data-open-tab="t-whatsapp" style="--d:4"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#chat"/></svg></span><span>WhatsApp</span></a>
+          <a class="tile" href="#lectura" data-open-tab="t-lectura" style="--d:5"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#scan"/></svg></span><span>Lectura IA</span></a>
+          <a class="tile" href="#documentos" data-open-tab="t-documentos" style="--d:6"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg></span><span>Documentos</span></a>
+          <a class="tile" href="#crm" data-open-tab="t-crm" style="--d:7"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#people"/></svg></span><span>CRM</span></a>
+          <a class="tile" href="#reservas" data-open-tab="t-reservas" style="--d:8"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg></span><span>Reservas</span></a>
+          <a class="tile" href="#campo" data-open-tab="t-campo" style="--d:9"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pin"/></svg></span><span>Campo</span></a>
+        </nav>
+        <div class="float-card fc-a" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#sync"/></svg></span><span><strong>Se combinan entre sí</strong>Menú + WhatsApp + ventas</span></div>
+        <div class="float-card fc-b" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg></span><span><strong>Entregas por partes</strong>Una primera versión usable</span></div>
+      </div>
     </div>
   </section>
 
-  <div class="pillars" aria-label="Lo que buscamos">
-    <ul>
-      <li>Menos digitación.</li>
-      <li>Menos errores.</li>
-      <li>Más tiempo.</li>
-      <li>Mejores decisiones.</li>
-    </ul>
+  <div class="ticker" role="img" aria-label="Menos digitación. Menos errores. Más tiempo. Mejores decisiones.">
+    <div class="ticker-track" aria-hidden="true"><span>Menos digitación.</span><span>Menos errores.</span><span>Más tiempo.</span><span>Mejores decisiones.</span><span>Menos digitación.</span><span>Menos errores.</span><span>Más tiempo.</span><span>Mejores decisiones.</span></div>
   </div>
 
-  <!-- Catálogo -->
   <section class="section" id="catalogo">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Desarrollos</span>
+      <header class="head split">
         <h2>Diez formas de poner la tecnología a trabajar</h2>
-        <p>Cada desarrollo se ajusta a tu marca, tus procesos y tus datos. Se pueden combinar: por ejemplo, un menú interactivo que recibe pedidos por WhatsApp y alimenta un tablero de ventas.</p>
-      </div>
-
-      <div class="dev-list">
-        <article class="dev-item" id="nfc">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">📲</span><div><span class="dev-n">01</span><h3>Implementación NFC</h3></div></div>
+        <p>Cada desarrollo se ajusta a tu marca, tus procesos y tus datos, y se pueden combinar.</p>
+      </header>
+      <div class="explorer" data-tabs>
+        <div class="ex-tabs" role="tablist" aria-label="Desarrollos" aria-orientation="vertical">
+        <button class="ex-tab" role="tab" id="t-nfc" aria-controls="nfc" aria-selected="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#nfc"/></svg></span>Implementación NFC</button>
+        <button class="ex-tab" role="tab" id="t-web" aria-controls="web" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#web"/></svg></span>Páginas web</button>
+        <button class="ex-tab" role="tab" id="t-menus" aria-controls="menus" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#menu-card"/></svg></span>Menús interactivos</button>
+        <button class="ex-tab" role="tab" id="t-dashboards" aria-controls="dashboards" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#dash"/></svg></span>Dashboards de ventas e inventarios</button>
+        <button class="ex-tab" role="tab" id="t-whatsapp" aria-controls="whatsapp" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#chat"/></svg></span>Asistentes por WhatsApp con IA</button>
+        <button class="ex-tab" role="tab" id="t-lectura" aria-controls="lectura" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#scan"/></svg></span>Lectura inteligente de documentos</button>
+        <button class="ex-tab" role="tab" id="t-documentos" aria-controls="documentos" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg></span>Documentos automáticos</button>
+        <button class="ex-tab" role="tab" id="t-crm" aria-controls="crm" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#people"/></svg></span>CRM y seguimiento de clientes</button>
+        <button class="ex-tab" role="tab" id="t-reservas" aria-controls="reservas" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg></span>Reservas y agendamiento</button>
+        <button class="ex-tab" role="tab" id="t-campo" aria-controls="campo" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pin"/></svg></span>Apps de captura en campo</button>
+        </div>
+        <div class="ex-panels">
+        <article class="ex-panel" role="tabpanel" id="nfc" aria-labelledby="t-nfc" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#nfc"/></svg></div>
+          <h3>Implementación NFC</h3>
           <p>Etiquetas, tarjetas y llaveros que abren tu información con solo acercar el celular, sin instalar aplicaciones.</p>
-          <ul class="dev-inc">
-            <li>Tarjetas de presentación digitales para tu equipo, actualizables sin reimprimir.</li>
-            <li>Control de activos e inventario: cada equipo con su hoja de vida al alcance del celular.</li>
-            <li>Registro de asistencia, rondas de vigilancia y puntos de control.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> equipos comerciales, bodegas, eventos, empresas de vigilancia.</p>
+          <ul class="ticks"><li>Tarjetas de presentación digitales para tu equipo, actualizables sin reimprimir.</li><li>Control de activos e inventario: cada equipo con su hoja de vida al alcance del celular.</li><li>Registro de asistencia, rondas de vigilancia y puntos de control.</li></ul><p class="ex-for"><b>Ideal para:</b> equipos comerciales, bodegas, eventos, empresas de vigilancia.</p>
         </article>
-
-        <article class="dev-item" id="web">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">🌐</span><div><span class="dev-n">02</span><h3>Diseño de páginas web</h3></div></div>
+        <article class="ex-panel" role="tabpanel" id="web" aria-labelledby="t-web" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#web"/></svg></div>
+          <h3>Páginas web</h3>
           <p>Sitios rápidos, con tu identidad visual, pensados primero para el celular y para que los clientes te encuentren.</p>
-          <ul class="dev-inc">
-            <li>Página corporativa, de producto o de servicios, con dominio propio y certificado de seguridad.</li>
-            <li>Formularios conectados a tu correo o a un tablero de seguimiento.</li>
-            <li>Textos y estructura preparados para aparecer en Google.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> empresas que empiezan, profesionales independientes, negocios que quieren vender más en línea.</p>
+          <ul class="ticks"><li>Página corporativa, de producto o de servicios, con dominio propio y certificado de seguridad.</li><li>Formularios conectados a tu correo o a un tablero de seguimiento.</li><li>Textos y estructura preparados para aparecer en Google.</li></ul><p class="ex-for"><b>Ideal para:</b> empresas que empiezan, profesionales independientes, negocios que quieren vender más en línea.</p>
         </article>
-
-        <article class="dev-item" id="menus">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">🍽️</span><div><span class="dev-n">03</span><h3>Menús interactivos</h3></div></div>
+        <article class="ex-panel" role="tabpanel" id="menus" aria-labelledby="t-menus" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#menu-card"/></svg></div>
+          <h3>Menús interactivos</h3>
           <p>Tu carta en el celular del cliente, por código QR o NFC en la mesa, siempre con los precios del día.</p>
-          <ul class="dev-inc">
-            <li>Fotos, descripciones, alérgenos y categorías; platos agotados que se ocultan en un clic.</li>
-            <li>Varios idiomas para turistas y cambios de precio sin reimprimir.</li>
-            <li>Pedidos y domicilios por WhatsApp con el pedido ya armado.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> restaurantes, cafés, bares, hoteles y panaderías.</p>
+          <ul class="ticks"><li>Fotos, descripciones, alérgenos y categorías; platos agotados que se ocultan en un clic.</li><li>Varios idiomas para turistas y cambios de precio sin reimprimir.</li><li>Pedidos y domicilios por WhatsApp con el pedido ya armado.</li></ul><p class="ex-for"><b>Ideal para:</b> restaurantes, cafés, bares, hoteles y panaderías.</p>
         </article>
-
-        <article class="dev-item" id="dashboards">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">📊</span><div><span class="dev-n">04</span><h3>Dashboards de ventas e inventarios</h3></div></div>
+        <article class="ex-panel" role="tabpanel" id="dashboards" aria-labelledby="t-dashboards" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#dash"/></svg></div>
+          <h3>Dashboards de ventas e inventarios</h3>
           <p>Los números de tu negocio en una sola pantalla, actualizados solos, para decidir con datos y no de memoria.</p>
-          <ul class="dev-inc">
-            <li>Ventas por día, producto, sede y vendedor, con comparación contra el mes anterior.</li>
-            <li>Inventario, rotación de productos y alertas cuando algo está por agotarse.</li>
-            <li>Conectados a tu Excel, Google Sheets o sistema de facturación.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> tiendas, distribuidoras, droguerías, cadenas con varias sedes.</p>
+          <ul class="ticks"><li>Ventas por día, producto, sede y vendedor, con comparación contra el mes anterior.</li><li>Inventario, rotación de productos y alertas cuando algo está por agotarse.</li><li>Conectados a tu Excel, Google Sheets o sistema de facturación.</li></ul><p class="ex-for"><b>Ideal para:</b> tiendas, distribuidoras, droguerías, cadenas con varias sedes.</p>
         </article>
-
-        <article class="dev-item" id="whatsapp">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">💬</span><div><span class="dev-n">05</span><h3>Asistentes por WhatsApp con IA</h3></div></div>
+        <article class="ex-panel" role="tabpanel" id="whatsapp" aria-labelledby="t-whatsapp" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#chat"/></svg></div>
+          <h3>Asistentes por WhatsApp con IA</h3>
           <p>Un asistente que atiende a tus clientes por WhatsApp a cualquier hora, con la información de tu negocio.</p>
-          <ul class="dev-inc">
-            <li>Respuestas a preguntas frecuentes: horarios, precios, servicios, ubicación.</li>
-            <li>Toma de pedidos y agendamiento de citas dentro de la conversación.</li>
-            <li>Pasa la conversación a una persona de tu equipo cuando hace falta.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> negocios con muchas consultas repetidas, consultorios, tiendas en línea.</p>
+          <ul class="ticks"><li>Respuestas a preguntas frecuentes: horarios, precios, servicios, ubicación.</li><li>Toma de pedidos y agendamiento de citas dentro de la conversación.</li><li>Pasa la conversación a una persona de tu equipo cuando hace falta.</li></ul><p class="ex-for"><b>Ideal para:</b> negocios con muchas consultas repetidas, consultorios, tiendas en línea.</p>
         </article>
-
-        <article class="dev-item" id="lectura">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">🧾</span><div><span class="dev-n">06</span><h3>Lectura inteligente de documentos</h3></div></div>
+        <article class="ex-panel" role="tabpanel" id="lectura" aria-labelledby="t-lectura" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#scan"/></svg></div>
+          <h3>Lectura inteligente de documentos</h3>
           <p>La inteligencia artificial lee lo que hoy alguien digita a mano y lo deja ordenado.</p>
-          <ul class="dev-inc">
-            <li>Facturas, remisiones, formularios y soportes, escaneados o fotografiados.</li>
-            <li>Extrae los datos clave y los valida antes de guardarlos.</li>
-            <li>Entrega en Excel, Google Sheets o directamente en tu sistema.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> áreas contables, compras, oficinas con mucho papel.</p>
+          <ul class="ticks"><li>Facturas, remisiones, formularios y soportes, escaneados o fotografiados.</li><li>Extrae los datos clave y los valida antes de guardarlos.</li><li>Entrega en Excel, Google Sheets o directamente en tu sistema.</li></ul><p class="ex-for"><b>Ideal para:</b> áreas contables, compras, oficinas con mucho papel.</p>
         </article>
-
-        <article class="dev-item" id="documentos">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">📄</span><div><span class="dev-n">07</span><h3>Documentos automáticos</h3></div></div>
+        <article class="ex-panel" role="tabpanel" id="documentos" aria-labelledby="t-documentos" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg></div>
+          <h3>Documentos automáticos</h3>
           <p>Los documentos que haces una y otra vez, generados en segundos con tus plantillas y tus datos.</p>
-          <ul class="dev-inc">
-            <li>Cotizaciones, contratos, certificados, actas e informes en Word o PDF.</li>
-            <li>Consecutivos, valores en letras y fechas sin errores de digitación.</li>
-            <li>Envío por correo o WhatsApp, listos para firmar.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> áreas administrativas, talento humano, empresas de servicios.</p>
+          <ul class="ticks"><li>Cotizaciones, contratos, certificados, actas e informes en Word o PDF.</li><li>Consecutivos, valores en letras y fechas sin errores de digitación.</li><li>Envío por correo o WhatsApp, listos para firmar.</li></ul><p class="ex-for"><b>Ideal para:</b> áreas administrativas, talento humano, empresas de servicios.</p>
         </article>
-
-        <article class="dev-item" id="crm">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">🤝</span><div><span class="dev-n">08</span><h3>CRM y seguimiento de clientes</h3></div></div>
+        <article class="ex-panel" role="tabpanel" id="crm" aria-labelledby="t-crm" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#people"/></svg></div>
+          <h3>CRM y seguimiento de clientes</h3>
           <p>Cada cliente potencial registrado y con su próximo paso, para que ninguno se quede sin respuesta.</p>
-          <ul class="dev-inc">
-            <li>Solicitudes de tu web, WhatsApp o teléfono en un solo tablero con etapas.</li>
-            <li>Próximas acciones con fecha, alertas de vencidas y bitácora de cada contacto.</li>
-            <li>Indicadores: tiempo de respuesta, tasa de cierre y valor en negociación.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> equipos comerciales pequeños, agencias, empresas de servicios.</p>
+          <ul class="ticks"><li>Solicitudes de tu web, WhatsApp o teléfono en un solo tablero con etapas.</li><li>Próximas acciones con fecha, alertas de vencidas y bitácora de cada contacto.</li><li>Indicadores: tiempo de respuesta, tasa de cierre y valor en negociación.</li></ul><p class="ex-for"><b>Ideal para:</b> equipos comerciales pequeños, agencias, empresas de servicios.</p>
         </article>
-
-        <article class="dev-item" id="reservas">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">📅</span><div><span class="dev-n">09</span><h3>Reservas y agendamiento</h3></div></div>
+        <article class="ex-panel" role="tabpanel" id="reservas" aria-labelledby="t-reservas" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg></div>
+          <h3>Reservas y agendamiento</h3>
           <p>Tus clientes reservan solos, a cualquier hora, y tú dejas de coordinar por mensajes.</p>
-          <ul class="dev-inc">
-            <li>Disponibilidad en tiempo real por persona, sala o servicio.</li>
-            <li>Confirmación y recordatorios automáticos para reducir las inasistencias.</li>
-            <li>Reprogramación y cancelación en línea, con reglas que tú defines.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> consultorios, peluquerías, gimnasios, talleres y restaurantes.</p>
+          <ul class="ticks"><li>Disponibilidad en tiempo real por persona, sala o servicio.</li><li>Confirmación y recordatorios automáticos para reducir las inasistencias.</li><li>Reprogramación y cancelación en línea, con reglas que tú defines.</li></ul><p class="ex-for"><b>Ideal para:</b> consultorios, peluquerías, gimnasios, talleres y restaurantes.</p>
         </article>
-
-        <article class="dev-item" id="campo">
-          <div class="dev-head"><span class="dev-ico" aria-hidden="true">📱</span><div><span class="dev-n">10</span><h3>Apps de captura en campo</h3></div></div>
+        <article class="ex-panel" role="tabpanel" id="campo" aria-labelledby="t-campo" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pin"/></svg></div>
+          <h3>Apps de captura en campo</h3>
           <p>Formularios en el celular para el equipo que trabaja fuera de la oficina, incluso sin señal.</p>
-          <ul class="dev-inc">
-            <li>Visitas, inspecciones, entregas y auditorías con GPS, fotos y firma.</li>
-            <li>Funcionan sin conexión y envían los datos al recuperar señal.</li>
-            <li>Reportes y tableros que se actualizan con lo que llega del terreno.</li>
-          </ul>
-          <p class="dev-for"><b>Ideal para:</b> logística, mantenimiento, ventas en ruta, interventoría y salud en terreno.</p>
+          <ul class="ticks"><li>Visitas, inspecciones, entregas y auditorías con GPS, fotos y firma.</li><li>Funcionan sin conexión y envían los datos al recuperar señal.</li><li>Reportes y tableros que se actualizan con lo que llega del terreno.</li></ul><p class="ex-for"><b>Ideal para:</b> logística, mantenimiento, ventas en ruta, interventoría y salud en terreno.</p>
         </article>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Sectores -->
-  <section class="section alt" id="sectores">
+  <section class="section tint" id="sectores">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Por sector</span>
+      <header class="head">
         <h2>¿Por dónde empezar en tu tipo de negocio?</h2>
         <p>Combinaciones que suelen dar resultados rápidos.</p>
-      </div>
-      <div class="grid three">
-        <article class="card">
-          <div class="emoji" aria-hidden="true">☕</div>
-          <h3>Restaurantes y cafés</h3>
-          <p>Menú interactivo con pedidos por WhatsApp, reservas en línea y un tablero de ventas por plato y por día.</p>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🛍️</div>
-          <h3>Comercio y tiendas</h3>
-          <p>Página web con catálogo, dashboard de ventas e inventarios y asistente por WhatsApp para consultas y pedidos.</p>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🩺</div>
-          <h3>Consultorios y clínicas</h3>
-          <p>Agendamiento con recordatorios, asistente por WhatsApp y documentos automáticos como certificados y constancias.</p>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">💼</div>
-          <h3>Servicios profesionales</h3>
-          <p>Página web, CRM para no perder clientes y cotizaciones y contratos que se generan solos.</p>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🚚</div>
-          <h3>Logística y operación en campo</h3>
-          <p>Apps de captura sin señal, NFC para activos y puntos de control, y tableros con lo que pasa en terreno.</p>
-        </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🏛️</div>
-          <h3>Entidades y organizaciones</h3>
-          <p>Lectura de documentos, informes automáticos y tableros de seguimiento. Mira también nuestra <a class="link" href="/#suite">Suite de Salud Pública</a>.</p>
-        </article>
-      </div>
+      </header>
+      <ul class="sectors" data-reveal="up">
+        <li class="sector"><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#cup"/></svg>Restaurantes y cafés</h3><div class="combo"><span>Menú interactivo</span><span>Pedidos por WhatsApp</span><span>Reservas</span><span>Tablero de ventas</span></div></li>
+        <li class="sector"><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#store"/></svg>Comercio y tiendas</h3><div class="combo"><span>Página web con catálogo</span><span>Ventas e inventarios</span><span>Asistente por WhatsApp</span></div></li>
+        <li class="sector"><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#steth"/></svg>Consultorios y clínicas</h3><div class="combo"><span>Agendamiento</span><span>Asistente por WhatsApp</span><span>Certificados automáticos</span></div></li>
+        <li class="sector"><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#briefcase"/></svg>Servicios profesionales</h3><div class="combo"><span>Página web</span><span>CRM</span><span>Cotizaciones y contratos</span></div></li>
+        <li class="sector"><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#truck"/></svg>Logística y operación en campo</h3><div class="combo"><span>Apps sin señal</span><span>NFC para activos</span><span>Tablero de terreno</span></div></li>
+        <li class="sector"><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#building"/></svg>Entidades y organizaciones</h3><div class="combo"><span>Lectura de documentos</span><span>Informes automáticos</span><span>Tableros de seguimiento</span></div><p>Mira también la <a class="tlink" href="/#suite">Suite de Salud Pública</a>.</p></li>
+      </ul>
     </div>
   </section>
 
-  <!-- Cómo trabajamos -->
   <section class="section">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Cómo trabajamos</span>
+      <header class="head">
         <h2>De la idea a la herramienta en uso</h2>
-      </div>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Conversamos</h3>
-          <p>Nos cuentas qué quieres resolver y cómo lo hacen hoy. Revisamos qué datos y herramientas ya tienes.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Propuesta clara</h3>
-          <p>Te enviamos el alcance, los tiempos y el valor por escrito antes de empezar.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Construimos contigo</h3>
-          <p>Ves avances desde el comienzo y los ajustamos con tu equipo antes de la entrega.</p>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <h3>Entregamos y acompañamos</h3>
-          <p>Capacitamos a tu equipo y seguimos disponibles para ajustes y mejoras.</p>
-        </li>
+      </header>
+      <ol class="flow" style="--n:4">
+        <li style="--d:0"><span class="flow-node" data-n="1" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#chat"/></svg>Conversamos</h3><p>Nos cuentas qué quieres resolver y revisamos lo que ya tienes.</p></li>
+        <li style="--d:1"><span class="flow-node" data-n="2" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#doc"/></svg>Propuesta clara</h3><p>Alcance, tiempos y valor por escrito antes de empezar.</p></li>
+        <li style="--d:2"><span class="flow-node" data-n="3" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#code"/></svg>Construimos contigo</h3><p>Ves avances desde el comienzo y los ajustamos juntos.</p></li>
+        <li style="--d:3"><span class="flow-node" data-n="4" aria-hidden="true"></span><h3><svg class="i" aria-hidden="true"><use href="/iconos.svg#sprout"/></svg>Entregamos y acompañamos</h3><p>Capacitamos a tu equipo y seguimos para ajustes y mejoras.</p></li>
       </ol>
     </div>
   </section>
 
-  <!-- Preguntas -->
-  <section class="section alt" id="preguntas">
-    <div class="wrap narrow">
-      <div class="section-head">
-        <span class="kicker">Preguntas frecuentes</span>
+  <section class="section tint" id="preguntas">
+    <div class="wrap">
+      <header class="head">
         <h2>Lo que suelen preguntarnos</h2>
-      </div>
+      </header>
       <div class="faq">
         <details>
           <summary>¿Cuánto cuesta un desarrollo?</summary>
@@ -310,15 +228,16 @@
     </div>
   </section>
 
-  <!-- Contacto -->
-  <section class="section cta" id="contacto">
-    <div class="wrap narrow center">
-      <h2>Cuéntanos qué quieres construir</h2>
-      <p>Descríbenos tu negocio y la tarea que quieres simplificar. Te respondemos para agendar una conversación y enviarte una propuesta.</p>
+  <section class="contact" id="contacto">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <h2>Cuéntanos qué quieres construir</h2>
+        <p>Descríbenos tu negocio y la tarea que quieres simplificar. Te respondemos para agendar una conversación y enviarte una propuesta.</p>
+        <p class="contact-alt">O directamente a <a class="tlink" href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      </div>
       <div data-pascalia-form data-solucion="desarrollo">
         <noscript><p>Para enviar el formulario activa JavaScript, o escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p></noscript>
       </div>
-      <p>O directamente a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
   </section>
 
@@ -327,12 +246,12 @@
 <footer class="footer">
   <div class="wrap footer-inner">
     <div>
-      <a class="brand" href="/"><img src="/flower.svg" alt="" width="34" height="34"> <span class="wordmark">Pascal<b>IA</b></span></a>
+      <a class="brand" href="/"><img src="/flower.svg" alt="" width="30" height="30"><span>Pascal<b>IA</b></span></a>
       <p class="tagline">Ideas que hacen florecer tu organización</p>
     </div>
     <div>
       <p class="slogan">Empresas que evolucionan, personas que florecen.</p>
-      <p><a href="/">Inicio</a> · <a href="/flota/">Flota Vehicular</a> · <a href="/nana-dnt/">NANA DNT</a> · <a href="/si-aps/">SI-APS</a> · <a href="/mision-medica/">Misión Médica</a> · <a href="/cuentafacil/">CuentaFacil</a> · <a href="/politica-de-datos/">Política de datos</a> · <a href="/terminos/">Términos</a> · <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      <p class="footer-links"><a href="/">Inicio</a><a href="/cuentafacil/">CuentaFacil</a><a href="/flota/">Flota Vehicular</a><a href="/nana-dnt/">NANA DNT</a><a href="/si-aps/">SI-APS</a><a href="/mision-medica/">Misión Médica</a><a href="/desarrollos/">Desarrollos</a><a href="/politica-de-datos/">Política de datos</a><a href="/terminos/">Términos</a><a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
     <p class="legal">© 2026 PascalIA · Hecho en Colombia</p>
   </div>

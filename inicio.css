@@ -56,8 +56,22 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   font: 600 1rem/1 var(--text); text-decoration: none; white-space: nowrap; cursor: pointer;
   transition: transform .2s var(--ease-out), background-color .2s, box-shadow .2s, border-color .2s;
 }
-.btn:hover { transform: translateY(-1px); }
-.btn:active { transform: translateY(0); }
+.btn { position: relative; isolation: isolate; overflow: hidden; }
+.btn::after {
+  content: ""; position: absolute; z-index: -1; inset: -2px auto -2px -60%; width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55), transparent);
+  transform: skewX(-18deg); opacity: 0; pointer-events: none;
+}
+.btn-ink::after { background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .28), transparent); }
+.btn-line::after { background: linear-gradient(100deg, transparent, rgba(255, 193, 7, .35), transparent); }
+.btn:hover { transform: translateY(-2px); }
+.btn:hover::after { opacity: 1; animation: shine .9s var(--ease-out); }
+.btn:active { transform: translateY(0) scale(.97); transition-duration: .08s; }
+@keyframes shine { from { transform: skewX(-18deg) translateX(0); } to { transform: skewX(-18deg) translateX(420%); } }
+.btn .i { width: 18px; height: 18px; transition: transform .3s var(--ease-out); }
+.btn:hover .i { transform: translateX(4px); }
+.ripple { position: absolute; z-index: -1; border-radius: 50%; background: currentColor; opacity: .22; transform: scale(0); animation: ripple .6s var(--ease-out) forwards; pointer-events: none; }
+@keyframes ripple { to { transform: scale(1); opacity: 0; } }
 .btn-amber { background: var(--amber); color: var(--ink); box-shadow: 0 10px 24px -14px rgba(31, 31, 31, .45); }
 .btn-amber:hover { background: var(--amber-2); box-shadow: 0 14px 28px -14px rgba(31, 31, 31, .5); }
 .btn-line { color: var(--ink); border-color: var(--ink-3); background: transparent; }

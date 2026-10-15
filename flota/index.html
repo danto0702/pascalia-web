@@ -16,244 +16,227 @@
 <link rel="apple-touch-icon" href="/flota/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/pascalia.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/sitio.css">
 <link rel="stylesheet" href="/contacto.css">
 <script src="/contacto.js" defer></script>
+<script src="/sitio.js" defer></script>
 </head>
-<body>
+<body class="theme-navy">
 
-<header class="nav">
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" data-nav>
   <div class="wrap nav-inner">
     <a class="brand" href="/flota/" aria-label="Flota Vehicular, inicio">
       <img class="brand-logo" src="/flota/logo.webp" alt="" width="40" height="40">
-      <span class="brand-text"><span class="wordmark">Flota Vehicular</span><small class="brand-by">de PascalIA</small></span>
+      <span class="brand-text"><span class="brand-name">Flota Vehicular</span><small class="brand-by">de Pascal<b>IA</b></small></span>
     </a>
-    <nav class="nav-links" aria-label="Secciones">
+    <nav class="nav-links" id="menu" aria-label="Secciones">
       <a href="#como-funciona">Cómo funciona</a>
       <a href="#funciones">Funciones</a>
       <a href="#roles">Para cada rol</a>
       <a href="/">PascalIA</a>
+      <a class="btn btn-ink btn-sm nav-cta" href="#contacto">Quiero conocerla</a>
     </nav>
-    <a class="btn btn-dark btn-sm" href="#contacto">Quiero conocerla</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><svg class="i" aria-hidden="true"><use href="/iconos.svg#bars"/></svg><span>Menú</span></button>
   </div>
 </header>
 
-<main>
+<main id="contenido">
 
-  <!-- Hero -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <div class="hero-brand"><img src="/flota/logo.webp" alt="" width="64" height="64"><span class="eyebrow">Solución PascalIA · Flota Vehicular</span></div>
-        <h1>Del itinerario en Excel a la <span class="hl">operación real.</span></h1>
-        <p class="lead">Programa vehículos y conductores, registra cada salida y llegada desde el celular con hora, GPS y fotografía, y liquida los días de operación con una planilla lista para firma. Incluso donde no hay señal.</p>
+        <h1>Del itinerario en Excel a la <span class="mark">operación real.</span></h1>
+        <p class="lead">Programa vehículos y conductores, registra cada salida y llegada desde el celular y liquida los días con una planilla lista para firma.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="#contacto">Quiero conocerla</a>
-          <a class="btn btn-ghost" href="#como-funciona">Ver cómo funciona</a>
+          <a class="btn btn-accent" href="#contacto">Quiero conocerla <svg class="i" aria-hidden="true"><use href="/iconos.svg#arrow"/></svg></a>
+          <a class="btn btn-line" href="#como-funciona">Ver cómo funciona</a>
         </div>
+        <ul class="points" aria-label="En resumen"><li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#wifi-off"/></svg>Funciona sin señal</li><li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pin"/></svg>GPS y foto en cada marca</li><li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#printer"/></svg>Planilla lista para firma</li></ul>
       </div>
-
-      <div class="device" role="img" aria-label="Pantalla del conductor con los botones Registrar salida y Registrar llegada">
-        <div class="device-top">
-          <strong>Mi día</strong>
-          <span class="chip">Sin señal · 2 marcas en cola</span>
+      <div class="stage loop">
+        <div class="mock m-flota" role="img" aria-label="Ejemplo de la pantalla del conductor: registra la salida sin señal y la marca queda en cola para enviarse">
+          <div class="mock-top"><img src="/flota/logo.webp" alt=""><div><strong>Mi día</strong><small>Conductor · ejemplo</small></div><span class="chip dark"><svg class="i" aria-hidden="true"><use href="/iconos.svg#wifi-off"/></svg> Sin señal</span></div>
+          <div class="mock-body">
+            <div class="row"><span><small class="muted">Programado para hoy</small><br><b>Vacunación extramural</b></span><span class="tag warn">Vehículo 03</span></div>
+            <div class="f-btn"><b>Registrar salida</b><span>hora del servidor · GPS · km · foto</span></div>
+            <div class="row f-mark"><span><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg> <b>Salida 06:12</b></span><span class="tag ok">GPS · foto</span></div>
+            <div class="row f-ghost"><b>Registrar llegada</b><span class="muted">pendiente</span></div>
+          </div>
+          <p class="mock-foot">Ejemplo ilustrativo</p>
+          <div class="toast"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg> Marca guardada · se enviará con señal</div>
         </div>
-        <div class="device-body">
-          <div class="today">
-            <small>Programado para hoy</small>
-            <strong>Vacunación extramural</strong>
-            <span>Vehículo 03 · Zona rural</span>
-          </div>
-          <div class="big-btn go">
-            <b>Registrar salida</b>
-            <span>06:12 · GPS ✓ · km 48.210 · foto ✓</span>
-          </div>
-          <div class="big-btn">
-            <b>Registrar llegada</b>
-            <span>municipio · lugar · GPS · km · foto</span>
-          </div>
-          <div class="device-row">
-            <span>☑ Checklist de distintivos</span>
-            <span>⚠ Reportar novedad</span>
-          </div>
-        </div>
+        <div class="float-card fc-a" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#clock"/></svg></span><span><strong>Hora del servidor</strong>No la del celular</span></div>
+        <div class="float-card fc-b" aria-hidden="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#sync"/></svg></span><span><strong>Se envía sola</strong>al recuperar la señal</span></div>
       </div>
     </div>
   </section>
 
-  <!-- Concepto -->
+  <div class="ticker" role="img" aria-label="Itinerario digital. Marcas en vivo. Sin señal. Días de operación. Planilla para firma.">
+    <div class="ticker-track" aria-hidden="true"><span>Itinerario digital.</span><span>Marcas en vivo.</span><span>Sin señal.</span><span>Días de operación.</span><span>Planilla para firma.</span><span>Itinerario digital.</span><span>Marcas en vivo.</span><span>Sin señal.</span><span>Días de operación.</span><span>Planilla para firma.</span></div>
+  </div>
+
   <section class="section" id="como-funciona">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Cómo funciona</span>
+      <header class="head split">
         <h2>El Excel dice lo que se planeó. Flota muestra lo que pasó.</h2>
-        <p>Todo sale de comparar dos capas: lo que coordinación programa y lo que el conductor registra en terreno.</p>
-      </div>
-      <div class="layers">
-        <article class="layer">
-          <span class="layer-tag">1 · Programado</span>
+        <p>Todo sale de comparar lo que coordinación programa con lo que el conductor registra en terreno.</p>
+      </header>
+      <div class="versus">
+        <article class="vs-card">
+          <span class="chip"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg> 1 · Programado</span>
           <h3>El itinerario</h3>
-          <p>Coordinación asigna cada día vehículo, conductor, tipo de jornada, municipio y destino. Sirve para planear el territorio y saber quién debía ir a dónde.</p>
+          <p>Cada día: vehículo, conductor, jornada, municipio y destino.</p>
+          <div class="mini-grid" aria-hidden="true"><i class="on" style="--d:0"></i><i></i><i class="on" style="--d:2"></i><i class="on" style="--d:3"></i><i></i><i class="on" style="--d:5"></i><i class="on" style="--d:6"></i><i></i><i class="on" style="--d:8"></i><i class="on" style="--d:9"></i><i></i><i class="on" style="--d:11"></i><i class="on" style="--d:12"></i><i class="on" style="--d:13"></i><i></i></div>
         </article>
-        <div class="vs" aria-hidden="true">vs</div>
-        <article class="layer">
-          <span class="layer-tag">2 · Ejecutado</span>
+        <div class="vs-dot" aria-hidden="true">vs</div>
+        <article class="vs-card">
+          <span class="chip"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pin"/></svg> 2 · Ejecutado</span>
           <h3>Los trayectos</h3>
-          <p>El conductor marca salida y llegada desde el celular, con hora del servidor, ubicación, kilometraje y foto. Prueba qué pasó realmente.</p>
+          <p>Salida y llegada con hora del servidor, ubicación, kilometraje y foto.</p>
+          <ul class="vs-marks" aria-hidden="true"><li><span class="dot ok"></span>Salida 06:12</li><li><span class="dot ok"></span>Llegada 08:40</li><li><span class="dot"></span>Regreso</li></ul>
         </article>
       </div>
-      <p class="result">De esa comparación salen el <strong>contador de días</strong>, el <strong>cumplimiento del itinerario</strong> y la <strong>planilla para el pago</strong>.</p>
+      <p class="result">De esa comparación salen <span class="chip"><svg class="i" aria-hidden="true"><use href="/iconos.svg#hash"/></svg> Contador de días</span><span class="chip"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg> Cumplimiento del itinerario</span><span class="chip"><svg class="i" aria-hidden="true"><use href="/iconos.svg#printer"/></svg> Planilla para el pago</span></p>
     </div>
   </section>
 
-  <!-- Funciones -->
-  <section class="section alt" id="funciones">
+  <section class="section tint" id="funciones">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Funciones</span>
+      <header class="head split">
         <h2>Todo lo que la hoja de cálculo no puede hacer</h2>
-      </div>
-      <div class="grid four">
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🗓️</div>
+        <p>Elige una función para ver qué incluye.</p>
+      </header>
+      <div class="explorer" data-tabs>
+        <div class="ex-tabs" role="tablist" aria-label="Funciones de Flota Vehicular" aria-orientation="vertical">
+        <button class="ex-tab" role="tab" id="t-itinerario" aria-controls="itinerario" aria-selected="true"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg></span>Itinerario digital</button>
+        <button class="ex-tab" role="tab" id="t-marcas" aria-controls="marcas" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pin"/></svg></span>Marcas en vivo</button>
+        <button class="ex-tab" role="tab" id="t-sin-senal" aria-controls="sin-senal" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#wifi-off"/></svg></span>Funciona sin señal</button>
+        <button class="ex-tab" role="tab" id="t-checklist" aria-controls="checklist" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#shield"/></svg></span>Checklist de Misión Médica</button>
+        <button class="ex-tab" role="tab" id="t-dias" aria-controls="dias" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#hash"/></svg></span>Días de operación</button>
+        <button class="ex-tab" role="tab" id="t-planilla" aria-controls="planilla" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#printer"/></svg></span>Planilla de tiempos</button>
+        <button class="ex-tab" role="tab" id="t-novedades" aria-controls="novedades" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#alert"/></svg></span>Novedades en ruta</button>
+        <button class="ex-tab" role="tab" id="t-tablero" aria-controls="tablero" aria-selected="false"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#chart"/></svg></span>Tablero comparativo</button>
+        </div>
+        <div class="ex-panels">
+        <article class="ex-panel" role="tabpanel" id="itinerario" aria-labelledby="t-itinerario" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg></div>
           <h3>Itinerario digital</h3>
-          <p>La misma matriz de vehículos por días, con tipo de jornada y destino, historial de cada cambio, detección de choques, copia de la semana anterior e importación desde Excel.</p>
+          <p>La misma matriz de vehículos por días que hoy llevas en Excel, pero con memoria.</p>
+          <ul class="ticks"><li>Tipo de jornada y destino por día.</li><li>Historial de cada cambio y detección de choques.</li><li>Copia de la semana anterior e importación desde Excel.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📍</div>
+        <article class="ex-panel" role="tabpanel" id="marcas" aria-labelledby="t-marcas" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pin"/></svg></div>
           <h3>Marcas en vivo</h3>
-          <p>Dos botones grandes: salida y llegada. Cada marca lleva hora del servidor, GPS, kilometraje, tripulantes y una fotografía con fecha, hora y ubicación.</p>
+          <p>Dos botones grandes en el celular del conductor: salida y llegada.</p>
+          <ul class="ticks"><li>Hora del servidor, GPS y kilometraje en cada marca.</li><li>Tripulantes a bordo.</li><li>Fotografía con fecha, hora y ubicación.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📶</div>
+        <article class="ex-panel" role="tabpanel" id="sin-senal" aria-labelledby="t-sin-senal" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#wifi-off"/></svg></div>
           <h3>Funciona sin señal</h3>
-          <p>Abre y se usa sin conexión. Guarda las marcas con su foto y las envía solas al recuperar señal. Se instala en Android y iPhone desde el navegador.</p>
+          <p>Abre y se usa sin conexión, como una aplicación más del celular.</p>
+          <ul class="ticks"><li>Guarda las marcas con su foto y las envía solas al recuperar señal.</li><li>Se instala en Android y iPhone desde el navegador.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🛡️</div>
+        <article class="ex-panel" role="tabpanel" id="checklist" aria-labelledby="t-checklist" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#shield"/></svg></div>
           <h3>Checklist de Misión Médica</h3>
-          <p>Antes de salir y al regresar: distintivos en cinco posiciones del vehículo y elementos como bandera, chaleco, carné y carta de presentación.</p>
+          <p>Antes de salir y al regresar, el vehículo se revisa con la misma lista.</p>
+          <ul class="ticks"><li>Distintivos en cinco posiciones del vehículo.</li><li>Bandera, chaleco, carné y carta de presentación.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🔢</div>
+        <article class="ex-panel" role="tabpanel" id="dias" aria-labelledby="t-dias" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#hash"/></svg></div>
           <h3>Días de operación</h3>
-          <p>Contador por vehículo de toda la operación para liquidar el pago por día, con los días fuera de servicio y su causa.</p>
+          <p>Contador por vehículo de toda la operación, listo para liquidar el pago por día.</p>
+          <ul class="ticks"><li>Días fuera de servicio con su causa.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🖨️</div>
+        <article class="ex-panel" role="tabpanel" id="planilla" aria-labelledby="t-planilla" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#printer"/></svg></div>
           <h3>Planilla de tiempos</h3>
-          <p>Planilla del período en PDF, prellenada con lo registrado o en blanco para llenar a mano, con espacio para la firma del conductor y de coordinación.</p>
+          <p>La planilla del período en PDF, con espacio para la firma del conductor y de coordinación.</p>
+          <ul class="ticks"><li>Prellenada con lo registrado.</li><li>O en blanco, para llenar a mano.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">🚧</div>
+        <article class="ex-panel" role="tabpanel" id="novedades" aria-labelledby="t-novedades" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#alert"/></svg></div>
           <h3>Novedades en ruta</h3>
-          <p>Varadas, retenes, bloqueos de vía, derrumbes o novedades de distintivos, reportados desde el celular con ubicación y gravedad.</p>
+          <p>Lo que pasa en la vía queda reportado desde el celular, con ubicación y gravedad.</p>
+          <ul class="ticks"><li>Varadas, retenes, bloqueos de vía y derrumbes.</li><li>Novedades de los distintivos.</li></ul>
         </article>
-        <article class="card">
-          <div class="emoji" aria-hidden="true">📊</div>
+        <article class="ex-panel" role="tabpanel" id="tablero" aria-labelledby="t-tablero" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#chart"/></svg></div>
           <h3>Tablero comparativo</h3>
-          <p>Qué vehículos y conductores están trabajando más, programado frente a ejecutado y revisión de viajes de cualquier período, con descarga a CSV.</p>
+          <p>Qué vehículos y conductores están trabajando más, y cuánto se cumplió lo programado.</p>
+          <ul class="ticks"><li>Programado frente a ejecutado.</li><li>Revisión de viajes de cualquier período.</li><li>Descarga a CSV.</li></ul>
         </article>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Roles -->
   <section class="section" id="roles">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Para cada rol</span>
+      <header class="head">
         <h2>Cada persona ve lo que necesita</h2>
-      </div>
-      <div class="grid three">
-        <article class="card feature">
-          <h3>Conductor</h3>
-          <p>Una pantalla sencilla en el celular: su programación de los próximos días, los botones de salida y llegada, el checklist y el reporte de novedades. Nada de menús de administración.</p>
-        </article>
-        <article class="card feature">
-          <h3>Coordinación</h3>
-          <p>Programa el itinerario, revisa los viajes, valida planillas y consulta el tablero. Cada cambio que hace queda registrado con quién, cuándo y qué decía antes.</p>
-        </article>
-        <article class="card feature">
-          <h3>Administración</h3>
-          <p>Crea los usuarios, los vehículos y las personas, define los parámetros y la tarifa por día, y es la única que puede ajustar días pagables o anular un viaje, con motivo.</p>
-        </article>
+      </header>
+      <div data-tabs>
+        <div class="seg" role="tablist" aria-label="Roles"><button class="ex-tab" role="tab" id="t-r-conductor" aria-controls="r-conductor" aria-selected="true"><svg class="i" aria-hidden="true"><use href="/iconos.svg#user"/></svg>Conductor</button><button class="ex-tab" role="tab" id="t-r-coordinacion" aria-controls="r-coordinacion" aria-selected="false"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg>Coordinación</button><button class="ex-tab" role="tab" id="t-r-admin" aria-controls="r-admin" aria-selected="false"><svg class="i" aria-hidden="true"><use href="/iconos.svg#lock"/></svg>Administración</button></div>
+        <div class="role-panel" role="tabpanel" id="r-conductor" aria-labelledby="t-r-conductor" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#user"/></svg></div>
+          <div><h3>Conductor</h3><p>Una pantalla sencilla en el celular: su programación, los botones de salida y llegada, el checklist y las novedades. Nada de menús de administración.</p></div>
+        </div>
+        <div class="role-panel" role="tabpanel" id="r-coordinacion" aria-labelledby="t-r-coordinacion" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#calendar"/></svg></div>
+          <div><h3>Coordinación</h3><p>Programa el itinerario, revisa los viajes, valida planillas y consulta el tablero. Cada cambio queda registrado con quién, cuándo y qué decía antes.</p></div>
+        </div>
+        <div class="role-panel" role="tabpanel" id="r-admin" aria-labelledby="t-r-admin" tabindex="0">
+          <div class="ex-visual"><svg class="i" aria-hidden="true"><use href="/iconos.svg#lock"/></svg></div>
+          <div><h3>Administración</h3><p>Crea usuarios, vehículos y personas, define la tarifa por día y es la única que puede ajustar días pagables o anular un viaje, con motivo.</p></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Confianza -->
-  <section class="section values">
+  <section class="section deep">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Trazabilidad</span>
+      <header class="head">
         <h2>Un soporte de pago que sí prueba algo</h2>
-        <p>Diseñada para que cada número tenga respaldo y cada cambio deje rastro.</p>
-      </div>
-      <div class="grid four">
-        <div class="value">
-          <h3>Historial de cambios</h3>
-          <p>El itinerario guarda quién cambió cada día, cuándo y por qué. Ese historial no se puede editar.</p>
-        </div>
-        <div class="value">
-          <h3>Marcas que no se corrigen solas</h3>
-          <p>El conductor no puede editar su propia marca: reporta el error y coordinación lo corrige con registro.</p>
-        </div>
-        <div class="value">
-          <h3>Ubicación solo al marcar</h3>
-          <p>El GPS se toma al registrar salida y llegada, nunca de forma continua ni en segundo plano.</p>
-        </div>
-        <div class="value">
-          <h3>Ajustada a la norma</h3>
-          <p>Distintivos según la Resolución 4481 de 2012 de Misión Médica y tratamiento de datos según la Ley 1581 de 2012.</p>
-        </div>
-      </div>
+        <p>Cada número tiene respaldo y cada cambio deja rastro.</p>
+      </header>
+      <ul class="proofs">
+        <li style="--d:0"><svg class="i" aria-hidden="true"><use href="/iconos.svg#history"/></svg><h3>Historial de cambios</h3><p>Quién cambió cada día del itinerario, cuándo y por qué. No se puede editar.</p></li>
+        <li style="--d:1"><svg class="i" aria-hidden="true"><use href="/iconos.svg#lock"/></svg><h3>Marcas que no se corrigen solas</h3><p>El conductor reporta el error; coordinación lo corrige con registro.</p></li>
+        <li style="--d:2"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pin"/></svg><h3>Ubicación solo al marcar</h3><p>El GPS se toma en la salida y la llegada, nunca en segundo plano.</p></li>
+        <li style="--d:3"><svg class="i" aria-hidden="true"><use href="/iconos.svg#scale"/></svg><h3>Ajustada a la norma</h3><p>Distintivos según la Res. 4481 de 2012 y datos según la Ley 1581 de 2012.</p></li>
+      </ul>
     </div>
   </section>
 
-  <!-- Implementación -->
-  <section class="section alt">
+  <section class="section tint">
     <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Cómo empezamos</span>
+      <header class="head">
         <h2>En marcha sin parar la operación</h2>
-      </div>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Cargamos tu operación</h3>
-          <p>Vehículos, conductores y destinos, importando el Excel de programación que ya usas.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Ajustamos a tu entidad</h3>
-          <p>Tipos de jornada, tarifa por día, encabezado de la planilla y reglas del checklist.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Instalamos y capacitamos</h3>
-          <p>La app queda en el celular de cada conductor, y coordinación aprende a programar y revisar.</p>
-        </li>
-        <li>
-          <span class="step-n">4</span>
-          <h3>Acompañamos el primer cierre</h3>
-          <p>Revisamos contigo el primer período: días, planillas y liquidación.</p>
-        </li>
+      </header>
+      <ol class="flow flow-num" style="--n:4">
+        <li style="--d:0"><span class="flow-node" data-n="1" aria-hidden="true"></span><h3>Cargamos tu operación</h3><p>Vehículos, conductores y destinos desde tu Excel de programación.</p></li>
+        <li style="--d:1"><span class="flow-node" data-n="2" aria-hidden="true"></span><h3>Ajustamos a tu entidad</h3><p>Tipos de jornada, tarifa por día, planilla y checklist.</p></li>
+        <li style="--d:2"><span class="flow-node" data-n="3" aria-hidden="true"></span><h3>Instalamos y capacitamos</h3><p>La app en cada celular; coordinación aprende a programar y revisar.</p></li>
+        <li style="--d:3"><span class="flow-node" data-n="4" aria-hidden="true"></span><h3>Acompañamos el primer cierre</h3><p>Días, planillas y liquidación del primer período.</p></li>
       </ol>
-      <p class="more"><strong>En el plan:</strong> mantenimiento preventivo por kilometraje, control de combustible y costos, y ficha pública del vehículo por código QR para los retenes.</p>
+      <p class="flow-note"><strong>En el plan:</strong> mantenimiento preventivo por kilometraje, control de combustible y costos, y ficha pública del vehículo por código QR para los retenes.</p>
     </div>
   </section>
 
-  <!-- Contacto -->
-  <section class="section cta" id="contacto">
-    <div class="wrap narrow center">
-      <h2>¿Tu flota todavía se programa en Excel?</h2>
-      <p>Cuéntanos cuántos vehículos y conductores manejas y en qué municipios operan. Te mostramos Flota Vehicular con un caso como el tuyo.</p>
+  <section class="contact" id="contacto">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <h2>¿Tu flota todavía se programa en Excel?</h2>
+        <p>Cuéntanos cuántos vehículos y conductores manejas y en qué municipios operan. Te mostramos Flota Vehicular con un caso como el tuyo.</p>
+        <p class="contact-alt">O directamente a <a class="tlink" href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      </div>
       <div data-pascalia-form data-solucion="flota">
         <noscript><p>Para enviar el formulario activa JavaScript, o escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p></noscript>
       </div>
-      <p>O directamente a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
   </section>
 
@@ -262,12 +245,12 @@
 <footer class="footer">
   <div class="wrap footer-inner">
     <div>
-      <a class="brand" href="/"><img src="/flower.svg" alt="" width="34" height="34"> <span class="wordmark">Pascal<b>IA</b></span></a>
+      <a class="brand" href="/"><img src="/flower.svg" alt="" width="30" height="30"><span>Pascal<b>IA</b></span></a>
       <p class="tagline">Ideas que hacen florecer tu organización</p>
     </div>
     <div>
       <p class="slogan">Empresas que evolucionan, personas que florecen.</p>
-      <p><a href="/">Inicio</a> · <a href="/cuentafacil/">CuentaFacil</a> · <a href="/nana-dnt/">NANA DNT</a> · <a href="/si-aps/">SI-APS</a> · <a href="/mision-medica/">Misión Médica</a> · <a href="/desarrollos/">Desarrollos</a> · <a href="/politica-de-datos/">Política de datos</a> · <a href="/terminos/">Términos</a> · <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      <p class="footer-links"><a href="/">Inicio</a><a href="/cuentafacil/">CuentaFacil</a><a href="/flota/">Flota Vehicular</a><a href="/nana-dnt/">NANA DNT</a><a href="/si-aps/">SI-APS</a><a href="/mision-medica/">Misión Médica</a><a href="/desarrollos/">Desarrollos</a><a href="/politica-de-datos/">Política de datos</a><a href="/terminos/">Términos</a><a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
     </div>
     <p class="legal">© 2026 PascalIA · Hecho en Colombia</p>
   </div>
