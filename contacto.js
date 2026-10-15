@@ -6,6 +6,7 @@
 
   var ENDPOINT = "https://wttljozqyaxlzilomnef.supabase.co/functions/v1/pascalia-solicitud";
   var CORREO = "contacto@pascalia.lat";
+  var WHATSAPP = "https://wa.me/573123885012";
 
   var SOLUCIONES = [
     ["flota", "Flota Vehicular"],
@@ -67,8 +68,36 @@
   function montar(cont, n) {
     var pre = cont.getAttribute("data-solucion") || "";
     var id = function (s) { return "pf" + n + "-" + s; };
+    var compacto = cont.hasAttribute("data-compacto");
+    var boton = compacto ? "Quiero empezar" : "Enviar solicitud";
     var form = el("form", { "class": "pf" + (cont.hasAttribute("data-verde") ? " pf-green" : ""), novalidate: "", "aria-label": "Formulario de contacto" });
-    form.innerHTML =
+    // Versión corta (CuentaFacil): WhatsApp obligatorio y la entidad en lugar del mensaje.
+    if (compacto) form.innerHTML =
+      '<div class="pf-grid">' +
+        '<div class="pf-field"><label for="' + id("nombre") + '">Nombre completo</label>' +
+          '<input type="text" id="' + id("nombre") + '" name="nombre" autocomplete="name" maxlength="120" required>' +
+          '<span class="pf-err" id="' + id("nombre-e") + '"></span></div>' +
+        '<div class="pf-field"><label for="' + id("whatsapp") + '">WhatsApp</label>' +
+          '<input type="tel" id="' + id("whatsapp") + '" name="whatsapp" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="Ej.: 300 123 4567" required>' +
+          '<span class="pf-err" id="' + id("whatsapp-e") + '"></span></div>' +
+        '<div class="pf-field"><label for="' + id("correo") + '">Correo <span class="pf-opt">(para la confirmación)</span></label>' +
+          '<input type="email" id="' + id("correo") + '" name="correo" autocomplete="email" inputmode="email" maxlength="160" required>' +
+          '<span class="pf-err" id="' + id("correo-e") + '"></span></div>' +
+        '<div class="pf-field"><label for="' + id("entidad") + '">Entidad contratante</label>' +
+          '<input type="text" id="' + id("entidad") + '" name="entidad" autocomplete="organization" maxlength="200" placeholder="Ej.: alcaldía, ESE u hospital" required>' +
+          '<span class="pf-err" id="' + id("entidad-e") + '"></span></div>' +
+        '<input type="hidden" name="solucion" value="' + esc(pre) + '">' +
+        '<div class="pf-hp" aria-hidden="true"><label for="' + id("sitio") + '">Sitio web</label>' +
+          '<input type="text" id="' + id("sitio") + '" name="sitio_web" tabindex="-1" autocomplete="off"></div>' +
+        '<div class="pf-field full"><label class="pf-check" for="' + id("acepta") + '">' +
+          '<input type="checkbox" id="' + id("acepta") + '" name="acepta_datos" required>' +
+          '<span>Autorizo a PascalIA a tratar mis datos para responder esta solicitud y hacerle seguimiento, según la ' +
+          '<a href="/politica-de-datos/" target="_blank" rel="noopener">Política de tratamiento de datos</a>.</span></label>' +
+          '<span class="pf-err" id="' + id("acepta-e") + '"></span></div>' +
+      "</div>" +
+      '<div class="pf-actions"><button type="submit" class="pf-submit">' + boton + '</button>' +
+        '<span class="pf-status" role="status" aria-live="polite"></span></div>';
+    else form.innerHTML =
       '<div class="pf-grid">' +
         '<div class="pf-field"><label for="' + id("nombre") + '">Nombre completo</label>' +
           '<input type="text" id="' + id("nombre") + '" name="nombre" autocomplete="name" maxlength="120" required>' +
@@ -100,17 +129,20 @@
         '<span class="pf-status" role="status" aria-live="polite"></span></div>';
 
     var inicio = Date.now();
-    var sel = form.querySelector("select[name=solucion]");
+    var sel = form.querySelector("[name=solucion]");
     var tamL = form.querySelector(".pf-tam-l"), tam = form.querySelector("input[name=tamano]");
     var msg = form.querySelector("textarea[name=mensaje]");
+    var ent = form.querySelector("input[name=entidad]");
     function ajustar() {
       var t = TAMANO[sel.value] || TAMANO._;
       tamL.textContent = t[0]; tam.placeholder = t[1];
       msg.placeholder = MENSAJE[sel.value] || MENSAJE._;
     }
-    if (pre) sel.value = pre;
-    ajustar();
-    sel.addEventListener("change", ajustar);
+    if (!compacto) {
+      if (pre) sel.value = pre;
+      ajustar();
+      sel.addEventListener("change", ajustar);
+    }
 
     function marcar(nombre, texto) {
       var campo = form.querySelector("[name=" + nombre + "]"), err = form.querySelector("#" + id((nombre === "acepta_datos" ? "acepta" : nombre) + "-e"));
@@ -127,16 +159,22 @@
         correo: form.correo.value.trim(),
         whatsapp: form.whatsapp.value.trim(),
         solucion: sel.value,
-        tamano: tam.value.trim(),
-        fuente: form.fuente.value,
-        mensaje: msg.value.trim(),
+        tamano: compacto ? "" : tam.value.trim(),
+        fuente: compacto ? "" : form.fuente.value,
+        mensaje: compacto ? "Entidad contratante: " + ent.value.trim() : msg.value.trim(),
         acepta_datos: form.acepta_datos.checked,
         sitio_web: form.sitio_web.value,
         pagina: location.pathname,
         utm: utm(),
         t: Date.now() - inicio
       };
-      var errores = {
+      var errores = compacto ? {
+        nombre: datos.nombre.length < 2 ? "Escribe tu nombre." : "",
+        whatsapp: datos.whatsapp.replace(/\D/g, "").length < 7 ? "Escribe tu número de WhatsApp." : "",
+        correo: /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(datos.correo) ? "" : "Escribe un correo válido.",
+        entidad: ent.value.trim().length < 2 ? "Escribe el nombre de tu entidad." : "",
+        acepta_datos: datos.acepta_datos ? "" : "Necesitamos tu autorización para responderte."
+      } : {
         nombre: datos.nombre.length < 2 ? "Escribe tu nombre." : "",
         correo: /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(datos.correo) ? "" : "Escribe un correo válido.",
         solucion: datos.solucion ? "" : "Elige qué te interesa.",
@@ -156,19 +194,21 @@
             var hecho = el("div", { "class": "pf-done", tabindex: "-1" },
               '<div class="pf-ok" aria-hidden="true">✓</div><h3>¡Recibimos tu solicitud!</h3>' +
               (res.j.radicado ? '<span class="pf-rad">' + esc(res.j.radicado) + "</span>" : "") +
-              "<p>Te responderemos pronto, normalmente el siguiente día hábil.</p>" +
+              (compacto ? "<p>Te escribiremos por WhatsApp para configurar tu contrato, normalmente el siguiente día hábil.</p>"
+                : "<p>Te responderemos pronto, normalmente el siguiente día hábil.</p>") +
               (res.j.correo ? "<p>Revisa tu correo: te enviamos una confirmación.</p>" : ""));
             form.innerHTML = ""; form.appendChild(hecho); hecho.focus();
             return;
           }
-          if (res.j.campos) res.j.campos.forEach(function (c) { marcar(c, "Revisa este campo."); });
+          if (res.j.campos) res.j.campos.forEach(function (c) { marcar(compacto && c === "mensaje" ? "entidad" : c, "Revisa este campo."); });
           throw new Error(res.j.error || "No pudimos enviar tu solicitud.");
         })
         .catch(function (e) {
-          btn.disabled = false; btn.textContent = "Enviar solicitud";
+          btn.disabled = false; btn.textContent = boton;
           status.className = "pf-status error";
           status.innerHTML = esc(e && e.message && e.message !== "Failed to fetch" ? e.message : "No pudimos enviar tu solicitud. Revisa tu conexión e intenta de nuevo.") +
-            ' También puedes escribirnos a <a href="mailto:' + CORREO + '">' + CORREO + "</a>.";
+            (compacto ? ' También puedes escribirnos por <a href="' + WHATSAPP + '">WhatsApp</a> o a <a href="mailto:' + CORREO + '">' + CORREO + "</a>."
+              : ' También puedes escribirnos a <a href="mailto:' + CORREO + '">' + CORREO + "</a>.");
         });
     });
 

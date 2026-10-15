@@ -37,6 +37,8 @@ Success for the site: a visitor from the primary audience understands what Cuent
 - Sub-brands keep their own identity inside the PascalIA site: CuentaFacil (green, calendar-with-check logo), NANA DNT (own logo and palette), Misión Médica (official module logo; its emblem's use is regulated by Res. 4481 de 2012).
 - Legal pages exist and are authoritative: Política de tratamiento de datos (v1.1) and Términos y condiciones of CuentaFacil.
 - CuentaFacil pricing (confirmed 2026-10-15, matches `/terminos/#precios`): **$15.000** one-time per contract configuration (covers that contract's prórrogas and adiciones) and **$50.000** per generated cuenta de cobro (informe). Prices in COP, final value.
+- CuentaFacil is open in pilot (confirmed 2026-10-15): a contratista who writes on WhatsApp can start now; if their entity is not configured yet, it is configured with them. CuentaFacil CTAs say "Empezar", not "lista de espera".
+- Documents a contratista sends over WhatsApp (contrato, PILA, cédula, soportes) are stored in Supabase, encrypted, and are the input used to configure the contract and each cuenta; retention and deletion follow the Política de datos (24 months, or earlier on "borrar mis datos").
 - Sales WhatsApp: **+57 312 388 5012** (`https://wa.me/573123885012`), also listed in the Términos as the attention line.
 - Undecided product facts: how the other solutions (Suite de Salud Pública, desarrollos) are sold (licenses, subscriptions or projects) and their prices; none are published.
 
@@ -49,7 +51,7 @@ Success for the site: a visitor from the primary audience understands what Cuent
 ## Evidence on Hand
 
 - None to publish yet (confirmed 2026-10-15): no client names, usage figures or testimonials. Future work must not fabricate customers, case studies, metrics, testimonials, prices or certifications.
-- Do not claim an origin story tied to an ESE in Norte de Santander (owner decided to remove it, 2026-10-15).
+- Do not name a region on the site: no origin story tied to an ESE in Norte de Santander, no "piloto en Norte de Santander", and no real place names in examples (owner decisions, 2026-10-15).
 
 ## Product Principles
 
