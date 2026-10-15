@@ -30,7 +30,8 @@ jobs:
           mkdir -p _site
           git archive HEAD | tar -x -C _site
           rm -rf _site/.github _site/.claude _site/.agents _site/supabase \
-                 _site/README.md _site/.gitignore _site/CLAUDE.md _site/AGENTS.md
+                 _site/README.md _site/.gitignore _site/CLAUDE.md _site/AGENTS.md \
+                 _site/PRODUCT.md _site/DESIGN.md _site/.impeccable
           test -f _site/index.html && test -f _site/CNAME && test -f _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
