@@ -1,0 +1,7 @@
+# impeccable para GitHub Copilot (no se usa)
+.github/agents/
+.github/hooks/
+.github/skills/
+
+# impeccable para Claude Code (herramienta local; Pages publicaría .claude/)
+.claude/
