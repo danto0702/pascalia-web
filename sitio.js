@@ -40,6 +40,37 @@
     setTimeout(function () { o.remove(); }, 650);
   });
 
+  // CuentaFacil: un globo sale del teléfono de la maqueta y viaja hasta «Empezar por WhatsApp»
+  var escena = document.querySelector("[data-courier]");
+  if (escena && !quieto && escena.animate) {
+    var globo = escena.querySelector(".courier"), origen = escena.querySelector("[data-courier-source]"), meta = escena.querySelector("[data-courier-target]");
+    var enVista = false;
+    var dentro = function (r) { return r.bottom > 0 && r.top < window.innerHeight; };
+    var lanzar = function () {
+      if (!enVista || document.hidden) return;
+      var e = escena.getBoundingClientRect(), o = origen.getBoundingClientRect(), m = meta.getBoundingClientRect(), g = globo.getBoundingClientRect();
+      if (!dentro(o) || !dentro(m)) return;
+      var x0 = o.left - e.left + o.width * 0.2, y0 = o.top - e.top + o.height * 0.55;
+      var x1 = m.right - e.left - g.width * 0.75, y1 = m.top - e.top - g.height - 6;
+      var mx = (x0 + x1) / 2, my = Math.min(y0, y1) - Math.max(90, Math.abs(x1 - x0) * 0.25);
+      var t = function (x, y, s) { return "translate(" + x + "px," + y + "px) scale(" + s + ")"; };
+      globo.animate([
+        { transform: t(x0, y0, .4), opacity: 0 },
+        { transform: t(x0, y0 - 14, 1), opacity: 1, offset: .14 },
+        { transform: t(x0, y0 - 14, 1), opacity: 1, offset: .3 },
+        { transform: t(mx, my, 1.05), opacity: 1, offset: .62 },
+        { transform: t(x1, y1, 1), opacity: 1, offset: .88 },
+        { transform: t(x1, y1 + 18, .5), opacity: 0 }
+      ], { duration: 2600, easing: "cubic-bezier(.45,.05,.3,1)" }).onfinish = function () {
+        meta.classList.remove("is-hit"); void meta.offsetWidth; meta.classList.add("is-hit");
+        setTimeout(function () { meta.classList.remove("is-hit"); }, 1700);
+      };
+    };
+    new IntersectionObserver(function (es) { enVista = es[0].isIntersecting; }, { threshold: 0.3 }).observe(escena);
+    setTimeout(lanzar, 1800);
+    setInterval(lanzar, 7000);
+  }
+
   // Pestañas: explorador de funciones y roles
   cada("[data-tabs]", function (grupo) {
     var tabs = [].slice.call(grupo.querySelectorAll('[role="tab"]'));

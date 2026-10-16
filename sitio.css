@@ -518,10 +518,12 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .loop *::before, .loop *::after { animation-play-state: paused; }
 .loop.is-playing *::before, .loop.is-playing *::after { animation-play-state: running; }
 .wa-wrap { position: relative; display: inline-flex; }
-.wa-wrap::before { content: ""; position: absolute; inset: 0; border-radius: 999px; border: 2px solid var(--amber-2); opacity: 0; pointer-events: none; animation: waring 3.2s 1.6s var(--ease-out) infinite; }
+.wa-wrap::before { content: ""; position: absolute; inset: 0; border-radius: 999px; border: 2px solid var(--amber-2); opacity: 0; pointer-events: none; }
+.contact .wa-wrap::before { animation: waring 3.2s 1.6s var(--ease-out) infinite; }
 .contact .wa-wrap::before { border-color: var(--ink); }
 @keyframes waring { 0% { transform: scale(1); opacity: .9; } 45%, 100% { transform: scale(1.22, 1.45); opacity: 0; } }
-.wa-btn .i { transform-origin: 50% 60%; animation: wave 3.2s 1.6s infinite; }
+.wa-btn .i { transform-origin: 50% 60%; }
+.contact .wa-btn .i { animation: wave 3.2s 1.6s infinite; }
 .wa-btn:hover .i { animation: none; transform: translateX(2px) rotate(-8deg); }
 @keyframes wave { 0%, 100% { transform: none; } 4% { transform: rotate(-16deg) scale(1.12); } 8% { transform: rotate(14deg) scale(1.12); } 12% { transform: rotate(-8deg); } 16% { transform: none; } }
 .typing { position: absolute; z-index: 2; top: -16px; right: -12px; display: flex; gap: 4px; padding: 8px 10px; border-radius: 14px 14px 14px 4px; background: #fff; border: 1px solid var(--line-2); box-shadow: var(--shadow-1); transform-origin: 0 100%; animation: typin 6.4s 1.2s infinite both; pointer-events: none; }
@@ -546,3 +548,13 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 }
 @media (prefers-reduced-motion: reduce) { .wa-wrap::before { display: none; } .typing { animation: none !important; } .typing i { animation: none !important; } }
 .contact-copy .wa-wrap { margin-top: 24px; } .contact-copy .wa-wrap .btn { margin-top: 0; }
+
+/* ---------- CuentaFacil: el globo que viaja del teléfono al botón ---------- */
+.courier { position: absolute; z-index: 6; left: 0; top: 0; opacity: 0; pointer-events: none; will-change: transform, opacity; }
+.courier-bubble { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 18px 18px 18px 5px; background: #fff; border: 1px solid var(--line-2); box-shadow: 0 16px 32px -14px rgba(31, 31, 31, .45); font-weight: 650; font-size: .95rem; white-space: nowrap; }
+.courier-bubble .i { width: 20px; height: 20px; color: #1D9E55; }
+.wa-wrap.is-hit::before { animation: waring .9s var(--ease-out); }
+.wa-wrap.is-hit .wa-btn { animation: catch .55s var(--ease-out); }
+.wa-wrap.is-hit .wa-btn .i { animation: wave 1.6s; }
+.wa-wrap.is-hit .wa-btn::after { opacity: 1; animation: shine .9s .15s var(--ease-out); }
+@keyframes catch { 0% { transform: none; } 35% { transform: scale(1.06) translateY(-2px); } 70% { transform: scale(.98); } 100% { transform: none; } }
