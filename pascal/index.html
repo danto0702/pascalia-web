@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conoce a Pascal · Muy pronto · PascalIA</title>
+<meta name="description" content="Pascal, del equipo de PascalIA, llega por WhatsApp a acompañar a los contratistas del Estado con su cuenta de cobro de cada mes. Muy pronto.">
+<!-- Teaser page reached by QR: kept out of search results and the sitemap until the official launch -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFC107">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CO">
+<meta property="og:title" content="Conoce a Pascal · Muy pronto">
+<meta property="og:description" content="Algo viene a cambiar tu fin de mes. Llega por WhatsApp.">
+<meta property="og:image" content="https://pascalia.lat/pascal/pascal.webp">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8E1; --paper: #FFFFFF; --ink: #1F1F1F; --ink-2: #55514B;
+    --amber: #FFC107; --amber-ink: #7D5B00; --amber-soft: #FFF1C2;
+    --night: #1F1F1F; --night-2: #2A2927; --on-night: #F4F1EA; --on-night-2: #C9C4BA;
+    --display: "Bricolage Grotesque", "Geist", system-ui, sans-serif;
+    --text: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --shadow: 0 1px 2px rgba(31,31,31,.06), 0 18px 40px -24px rgba(31,31,31,.4);
+    --ease: cubic-bezier(.16, 1, .3, 1);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--text); font-size: 1.0625rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, p, ul { margin: 0; padding: 0; }
+  ul { list-style: none; }
+  img { display: block; max-width: 100%; height: auto; }
+  .i { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .wrap { width: min(100% - 32px, 1040px); margin-inline: auto; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font: 700 .8rem/1 var(--text); letter-spacing: .16em; text-transform: uppercase; color: var(--amber-ink); }
+  .eyebrow::before { content: ""; width: 26px; height: 3px; border-radius: 2px; background: var(--amber); }
+  h2 { margin-top: 10px; font: 800 clamp(1.9rem, 6vw, 2.8rem)/1.04 var(--display); letter-spacing: -.03em; }
+  section { padding: 64px 0 0; }
+
+  /* Header: brand only, nothing clickable */
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 800 1.35rem/1 var(--display); letter-spacing: -.02em; }
+  .brand img { width: 34px; height: 34px; }
+  .brand em { font-style: normal; color: var(--amber-ink); }
+  .soon { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; background: var(--ink); color: var(--amber); font: 800 .95rem/1 var(--display); letter-spacing: .02em; }
+  .soon i { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); animation: blink 1.6s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+
+  /* Hero */
+  .hero { display: grid; gap: 28px; align-items: center; padding-top: 12px; }
+  .hero h1 { font: 800 clamp(2.9rem, 12vw, 5.2rem)/.95 var(--display); letter-spacing: -.045em; }
+  .hero h1 span { color: var(--amber-ink); }
+  .lead { margin-top: 18px; font-size: clamp(1.15rem, 3.6vw, 1.4rem); line-height: 1.45; color: var(--ink-2); }
+  .lead b { color: var(--ink); }
+  .bubble { position: relative; margin-top: 22px; padding: 18px 20px; border-radius: 22px 22px 22px 6px; background: var(--paper); box-shadow: var(--shadow); font-size: 1.08rem; line-height: 1.5; }
+  .bubble b { font-weight: 700; }
+  .face { justify-self: center; width: min(78vw, 360px); aspect-ratio: 384 / 452; border-radius: 180px 180px 36px 36px; overflow: hidden; border: 8px solid var(--paper); box-shadow: 0 40px 70px -40px rgba(31,31,31,.55); background: var(--amber-soft); }
+  .face img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Pain */
+  .pains { display: grid; gap: 12px; margin-top: 24px; }
+  .pain { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 18px; background: var(--paper); box-shadow: var(--shadow); font-weight: 600; }
+  .pain .i { font-size: 1.6rem; color: var(--amber-ink); }
+
+  /* What's coming */
+  .steps { display: grid; gap: 14px; margin-top: 26px; }
+  .step { display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: start; padding: 20px; border-radius: 24px; background: var(--paper); box-shadow: var(--shadow); }
+  .step .ico { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 18px; background: var(--amber); font-size: 1.7rem; }
+  .step.me .ico { background: var(--ink); color: var(--amber); }
+  .step h3 { font: 750 1.25rem/1.15 var(--display); letter-spacing: -.01em; }
+  .step p { margin-top: 6px; color: var(--ink-2); line-height: 1.5; }
+
+  /* Collage */
+  .gallery { margin-top: 26px; border-radius: 28px; overflow: hidden; border: 8px solid var(--paper); box-shadow: 0 40px 80px -44px rgba(31,31,31,.6); }
+
+  /* Promise band */
+  .band { margin-top: 64px; padding: 56px 0 60px; background: var(--night); color: var(--on-night); }
+  .band h2 b { color: var(--amber); }
+  .band .eyebrow { color: var(--amber); }
+  .promises { display: grid; gap: 14px; margin-top: 26px; }
+  .promise { padding: 20px; border-radius: 22px; background: var(--night-2); border: 1.5px solid #3A3835; }
+  .promise .i { font-size: 1.7rem; color: var(--amber); }
+  .promise h3 { margin-top: 10px; font: 750 1.2rem/1.15 var(--display); }
+  .promise p { margin-top: 6px; color: var(--on-night-2); line-height: 1.5; }
+
+  /* Who */
+  .who { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .who span { padding: 12px 18px; border-radius: 999px; background: var(--paper); box-shadow: var(--shadow); font: 700 1rem/1 var(--display); }
+  .who span.more { background: var(--ink); color: var(--amber); }
+
+  /* Closing */
+  .end { margin-top: 64px; padding: 64px 0 56px; background: var(--amber); text-align: center; }
+  .end h2 { margin: 0; font-size: clamp(3.2rem, 15vw, 6rem); line-height: .95; letter-spacing: -.05em; }
+  .end p { margin: 18px auto 0; max-width: 34ch; font-size: 1.15rem; line-height: 1.5; color: #3A2E00; }
+  .end .sig { display: inline-flex; align-items: center; gap: 12px; margin-top: 34px; padding: 12px 22px 12px 14px; border-radius: 999px; background: var(--ink); color: var(--on-night); font: 800 1.3rem/1 var(--display); }
+  .end .sig img { width: 34px; height: 34px; }
+  .end .sig em { font-style: normal; color: var(--amber); }
+  .fine { margin-top: 26px; font-size: .85rem; color: #4A3B00; }
+
+  /* Gentle entrance */
+  .rise { animation: rise .9s var(--ease) both; }
+  .rise.d1 { animation-delay: .1s; } .rise.d2 { animation-delay: .2s; } .rise.d3 { animation-delay: .3s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+  @media (prefers-reduced-motion: reduce) { .rise, .soon i { animation: none; } }
+
+  @media (min-width: 820px) {
+    .hero { grid-template-columns: 1fr 360px; gap: 48px; padding-top: 28px; }
+    .pains { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: repeat(3, 1fr); }
+    .step { grid-template-columns: 1fr; }
+    .promises { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="wrap">
+    <header class="top">
+      <span class="brand"><img src="/flower.svg" alt=""><span>Pascal<em>IA</em></span></span>
+      <span class="soon"><i></i>Muy pronto</span>
+    </header>
+
+    <div class="hero">
+      <div>
+        <h1 class="rise">Conoce a <span>Pascal.</span></h1>
+        <p class="lead rise d1">Tu próximo compañero para la <b>cuenta de cobro de cada mes</b>. Llega por <b>WhatsApp</b>.</p>
+        <p class="bubble rise d2">¡Hola! Soy <b>Pascal</b>, del equipo de PascalIA. Mi trabajo será quitarte el estrés del fin de mes, ahorrarte tiempo y facilitarte la vida, para que te centres en lo que realmente importa.</p>
+      </div>
+      <div class="face rise d3"><img src="pascal-rostro.webp" alt="Pascal, con gorra amarilla de PascalIA y gafas, sonriendo" width="384" height="452"></div>
+    </div>
+
+    <section>
+      <p class="eyebrow">El día 30</p>
+      <h2>¿Te suena?</h2>
+      <ul class="pains">
+        <li class="pain"><svg class="i" aria-hidden="true"><use href="/iconos.svg#brain"/></svg>Reconstruir el mes de memoria.</li>
+        <li class="pain"><svg class="i" aria-hidden="true"><use href="/iconos.svg#alert"/></svg>La planilla que no cuadra.</li>
+        <li class="pain"><svg class="i" aria-hidden="true"><use href="/iconos.svg#shield"/></svg>Antecedentes vencidos… otra vez.</li>
+        <li class="pain"><svg class="i" aria-hidden="true"><use href="/iconos.svg#folder"/></svg>Unir PDF a las 11:58 p. m.</li>
+      </ul>
+    </section>
+
+    <section>
+      <p class="eyebrow">Lo que viene</p>
+      <h2>Un mensaje al día y listo</h2>
+      <div class="steps">
+        <div class="step"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#mic"/></svg></span><div><h3>Tú le cuentas tu día</h3><p>Con un texto, una nota de voz o una foto, desde el mismo WhatsApp que ya usas.</p></div></div>
+        <div class="step me"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#list-check"/></svg></span><div><h3>Pascal organiza y revisa</h3><p>Ordena tus actividades por obligación, revisa tu planilla y tus soportes, y hace los cálculos.</p></div></div>
+        <div class="step"><span class="ico"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg></span><div><h3>Tú revisas y apruebas</h3><p>Al cierre recibes tus documentos listos para firmar y cargar.</p></div></div>
+      </div>
+    </section>
+
+    <section>
+      <p class="eyebrow">Así es Pascal</p>
+      <h2>Siempre contigo</h2>
+      <div class="gallery"><img src="pascal.webp" alt="Pascal, el asistente de WhatsApp de PascalIA: de cuerpo entero señalando, tocándose la gorra, sonriendo de perfil, con el pulgar arriba frente a un portátil, de espaldas con el logo de PascalIA y guiñando un ojo; y el lema «PascalIA, siempre contigo»" width="1254" height="1254" loading="lazy"></div>
+    </section>
+  </div>
+
+  <div class="band">
+    <div class="wrap">
+      <p class="eyebrow">Su palabra</p>
+      <h2>Tú firmas, <b>tú decides.</b></h2>
+      <div class="promises">
+        <div class="promise"><svg class="i" aria-hidden="true"><use href="/iconos.svg#pen"/></svg><h3>Nunca inventa actividades</h3><p>Redacta solo con lo que tú le cuentas y le envías.</p></div>
+        <div class="promise"><svg class="i" aria-hidden="true"><use href="/iconos.svg#check"/></svg><h3>Siempre pide tu aprobación</h3><p>Nada se genera como documento final sin que lo revises.</p></div>
+        <div class="promise"><svg class="i" aria-hidden="true"><use href="/iconos.svg#brain"/></svg><h3>Siempre está aprendiendo</h3><p>Puede fallar, pero lo respaldan su equipo técnico y una mesa de soporte.</p></div>
+        <div class="promise"><svg class="i" aria-hidden="true"><use href="/iconos.svg#lock"/></svg><h3>Tus datos, protegidos</h3><p>Tus documentos se guardan cifrados y solo se usan para preparar tus cuentas.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section>
+      <p class="eyebrow">Para quién</p>
+      <h2>Contratistas de prestación de servicios de</h2>
+      <p class="who"><span>ESE</span><span>Hospitales</span><span>Alcaldías</span><span>Gobernaciones</span><span class="more">y más entidades públicas</span></p>
+    </section>
+  </div>
+
+  <div class="end">
+    <div class="wrap">
+      <h2>Muy pronto.</h2>
+      <p>Algo viene a cambiar tu fin de mes. Guarda esta página y vuelve pronto.</p>
+      <span class="sig"><img src="/flower.svg" alt=""><span>Pascal<em>IA</em></span></span>
+      <p class="fine">© 2026 PascalIA · Hecho en Colombia</p>
+    </div>
+  </div>
+</main>
+</body>
+</html>
