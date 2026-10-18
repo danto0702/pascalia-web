@@ -2,7 +2,7 @@
 (function () {
   var script = document.currentScript;
   var ENDPOINT = (script && script.dataset.endpoint) || 'https://cuentasbotpanel-production.up.railway.app/api/pascalbot';
-  var AVATAR = (script && script.dataset.avatar) || '/pascal/pascal-rostro.webp';
+  var AVATAR = (script && script.dataset.avatar) || '/pascalbot/avatar.webp';
   var WHATSAPP = 'https://wa.me/573123885012';
   var STORE = 'pascalbot:v1';
   var GREETING = '¡Hola! Soy *PascalBot* 👋. Te cuento qué es CuentaFacil, cómo funciona y cuánto cuesta. ¿Qué quieres saber?';
