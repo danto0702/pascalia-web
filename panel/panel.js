@@ -15,7 +15,7 @@
   var CERRADAS = { ganada: 1, perdida: 1, descartada: 1 };
   var SOLUCIONES = [
     ["flota", "Flota Vehicular"], ["nana_dnt", "NANA DNT"], ["si_aps", "SI-APS"], ["mision_medica", "Misión Médica"],
-    ["cuentafacil", "CuentaFacil"], ["consultoria", "Consultoría"], ["desarrollo", "Desarrollo"],
+    ["cuentafacil", "CuentaFacil"], ["mesaviva", "MesaViva"], ["consultoria", "Consultoría"], ["desarrollo", "Desarrollo"],
     ["capacitacion", "Capacitación"], ["otro", "Otro"]
   ];
   var FUENTES = [
