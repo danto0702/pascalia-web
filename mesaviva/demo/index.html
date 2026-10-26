@@ -1329,7 +1329,7 @@ textarea {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 4px solid #1e2335;
+  border: 4px solid var(--graphite);
   box-shadow:
     0 0 0 1px var(--line-2),
     0 20px 40px -18px rgba(31, 31, 31, 0.3) inset,
@@ -3101,7 +3101,7 @@ strong,
     height: 720px;
     right: -160px;
     bottom: -200px;
-    z-index: 0;
+    z-index: -1;
     opacity: 0.45;
     pointer-events: none;
     background:
@@ -3945,8 +3945,15 @@ strong,
   text-wrap: balance;
 }
 
-.stage {
-  z-index: 1;
+html {
+  background: var(--cream);
+}
+body {
+  background: transparent;
+}
+.hint.served {
+  color: var(--graphite);
+  font-weight: 600;
 }
 
 </style>
@@ -4287,7 +4294,7 @@ strong,
     </div>
   </div>`}function Ga(){let e=t.tickets.filter(n=>n.status==="kitchen"||n.status==="ready"),a=e.length?e.map(n=>{let s=t.items.filter(o=>o.ticketId===n.id);return`<div class="ticket"><header><span>#${n.number} \xB7 Mesa 4</span><span>${G(n.at)}</span></header>
             <ul>${s.map(o=>`<li>${m(o.name)}${o.detail?` \xB7 ${m(o.detail)}`:""}${o.note?`<em>Nota: ${m(o.note)}</em>`:""}</li>`).join("")}</ul>
-            ${n.status==="kitchen"?`<button class="btn sm block" data-act="ready" data-id="${n.id}">${g("check","icon icon-sm")}Listo para servir</button>`:'<p class="hint" style="color:#2f6b4f">Servido</p>'}
+            ${n.status==="kitchen"?`<button class="btn sm block" data-act="ready" data-id="${n.id}">${g("check","icon icon-sm")}Listo para servir</button>`:'<p class="hint served">Servido</p>'}
           </div>`}).join(""):'<p class="hint">No hay comandas en cocina.</p>';return`<section class="panel"><h2>${g("chef-hat")}Cocina (KDS)</h2><p class="lead">Las comandas aprobadas llegan aqu\xED y se imprimen en la impresora de cocina.</p><div class="kds">${a}</div></section>`}function _a(){let e=Object.entries(t.stock).map(([a,n])=>{let s=Math.round(n.qty*100/n.max);return`<li><span>${m(a)}</span><span class="num">${n.qty.toLocaleString("es-CO")} ${n.unit}</span><span class="bar ${s<30?"low":""}"><i style="--p:${s}%"></i></span></li>`}).join("");return`<div class="erp-grid">
     <section class="panel"><h2>${g("package")}Existencias</h2><p class="lead">Al aprobar un pedido, la receta descuenta la materia prima. <span class="badge sim">Datos de ejemplo</span> <span class="badge soon">Fase 4</span></p><ul class="recipe">${e}</ul></section>
     <section class="panel"><h2>${g("scan-barcode")}Recetas, lotes y carga masiva</h2>
