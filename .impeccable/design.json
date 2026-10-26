@@ -1,0 +1,495 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T12:00:00Z",
+  "title": "Design System: PascalIA",
+  "extensions": {
+    "colorMeta": {
+      "yellow": {
+        "role": "primary",
+        "displayName": "Amarillo PascalIA",
+        "canonical": "#FFC107",
+        "tonalRamp": [
+          "#3D2D00",
+          "#5E4600",
+          "#8A6100",
+          "#B88800",
+          "#E6A800",
+          "#FFC107",
+          "#FFD54F",
+          "#FFF3C4"
+        ]
+      },
+      "yellow-hover": {
+        "role": "primary",
+        "displayName": "Amarillo Hover",
+        "canonical": "#FFB300",
+        "tonalRamp": [
+          "#3A2600",
+          "#5A3B00",
+          "#7F5400",
+          "#A86F00",
+          "#D48C00",
+          "#FFB300",
+          "#FFCA4D",
+          "#FFEDBF"
+        ]
+      },
+      "yellow-soft": {
+        "role": "primary",
+        "displayName": "Amarillo Suave",
+        "canonical": "#FFD54F",
+        "tonalRamp": [
+          "#3F3300",
+          "#614F00",
+          "#8A7000",
+          "#B59500",
+          "#E3BB1A",
+          "#FFD54F",
+          "#FFE38A",
+          "#FFF6D6"
+        ]
+      },
+      "gold-ink": {
+        "role": "primary",
+        "displayName": "Tinta Dorada",
+        "canonical": "#8A6100",
+        "tonalRamp": [
+          "#2A1D00",
+          "#4A3400",
+          "#6A4B00",
+          "#8A6100",
+          "#AE7C0C",
+          "#D29C2E",
+          "#EEC475",
+          "#FAEBCB"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Gris Grafito",
+        "canonical": "#1F1F1F",
+        "tonalRamp": [
+          "#111111",
+          "#1F1F1F",
+          "#333333",
+          "#4D4D4D",
+          "#6B6B6B",
+          "#8F8F8F",
+          "#BDBDBD",
+          "#E9E9E9"
+        ]
+      },
+      "graphite-deep": {
+        "role": "neutral",
+        "displayName": "Grafito Profundo",
+        "canonical": "#181818",
+        "tonalRamp": [
+          "#0E0E0E",
+          "#181818",
+          "#2B2B2B",
+          "#444444",
+          "#626262",
+          "#888888",
+          "#B7B7B7",
+          "#E6E6E6"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Texto Muted",
+        "canonical": "#5C5C5C",
+        "tonalRamp": [
+          "#1F1F1F",
+          "#333333",
+          "#474747",
+          "#5C5C5C",
+          "#7A7A7A",
+          "#9A9A9A",
+          "#C2C2C2",
+          "#EBEBEB"
+        ]
+      },
+      "gray": {
+        "role": "neutral",
+        "displayName": "Gris Claro",
+        "canonical": "#E9E9E9",
+        "tonalRamp": [
+          "#262626",
+          "#404040",
+          "#5E5E5E",
+          "#808080",
+          "#A6A6A6",
+          "#CFCFCF",
+          "#E9E9E9",
+          "#F7F7F7"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Crema",
+        "canonical": "#FFF8E1",
+        "tonalRamp": [
+          "#3D3420",
+          "#62553A",
+          "#8F7E5A",
+          "#BBA87F",
+          "#E0CFA5",
+          "#F3E7BE",
+          "#FFF8E1",
+          "#FFFDF5"
+        ]
+      },
+      "cream-line": {
+        "role": "neutral",
+        "displayName": "Línea Crema",
+        "canonical": "#F3E7BE",
+        "tonalRamp": [
+          "#3B321B",
+          "#5E5131",
+          "#8A7A51",
+          "#B6A372",
+          "#DCC896",
+          "#F3E7BE",
+          "#FAF1D6",
+          "#FFFBEE"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "Blanco",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "#1F1F1F",
+          "#5C5C5C",
+          "#8F8F8F",
+          "#BDBDBD",
+          "#E9E9E9",
+          "#F2F2F2",
+          "#FAFAFA",
+          "#FFFFFF"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline only; words rise in one by one."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings, centered; closing headline at 800."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Story beats, feature rows, step titles."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Big numbers and plan names; tabular figures, yellow on graphite."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Hero subtitle and section intros, muted."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Paragraphs and inputs."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, nav links, tabs, option chips, pills."
+      },
+      "fine": {
+        "displayName": "Fine",
+        "purpose": "Disclaimers and simulated-data notes."
+      }
+    },
+    "gradients": [
+      {
+        "name": "brand-grad",
+        "value": "linear-gradient(135deg, #FFD54F 0%, #FFC107 55%, #FFB300 100%)",
+        "purpose": "Small floating hero dots and split fill bars; never the flower, which is flat #FFC107 at 0.82 opacity."
+      },
+      {
+        "name": "hero-wash",
+        "value": "radial-gradient(60% 46% at 50% 8%, rgba(255,193,7,.14), transparent 70%), linear-gradient(180deg, #FFF8E1 0%, #FFFDF5 55%, #FFFFFF 100%)",
+        "purpose": "Hero background behind the spinning flower."
+      },
+      {
+        "name": "marker",
+        "value": "linear-gradient(transparent 58%, #FFC107 58%, #FFC107 90%, transparent 90%)",
+        "purpose": "Highlighter under one key phrase per heading; background-size animates 0 to 100%."
+      }
+    ],
+    "shadows": [
+      {
+        "name": "card",
+        "value": "inset 0 0 0 1px #E9E9E9, 0 8px 24px rgba(31,31,31,.08)",
+        "purpose": "Default white container: hairline outline plus soft lift."
+      },
+      {
+        "name": "brand",
+        "value": "0 10px 30px -10px rgba(255,193,7,.55)",
+        "purpose": "Yellow controls only: primary hover, play dot, send hover, back-to-top."
+      },
+      {
+        "name": "lift",
+        "value": "0 22px 48px -18px rgba(31,31,31,.28)",
+        "purpose": "Graphite result card."
+      },
+      {
+        "name": "askbar",
+        "value": "inset 0 0 0 1px #E9E9E9, 0 18px 44px -20px rgba(31,31,31,.25)",
+        "purpose": "Ask bar at rest; focus swaps to inset 0 0 0 2px #FFC107, 0 18px 44px -18px rgba(255,179,0,.45)."
+      },
+      {
+        "name": "device",
+        "value": "0 30px 60px -30px rgba(31,31,31,.5)",
+        "purpose": "Demo phone frame."
+      },
+      {
+        "name": "focus",
+        "value": "outline: 3px solid #1F1F1F; outline-offset: 2px",
+        "purpose": "Focus ring on light surfaces; yellow on graphite."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.22, 1, .36, 1)",
+        "purpose": "Single easing for every transition and reveal."
+      },
+      {
+        "name": "state",
+        "value": "200-220ms",
+        "purpose": "Color, lift and glow changes on controls."
+      },
+      {
+        "name": "reveal",
+        "value": "600ms, translateY(24px) to 0",
+        "purpose": "Sections and cards entering on scroll; staggered children at 60-260ms."
+      },
+      {
+        "name": "marker-draw",
+        "value": "900ms, 200ms delay",
+        "purpose": "Highlighter drawing under key phrases."
+      },
+      {
+        "name": "flower-spin",
+        "value": "60s linear infinite",
+        "purpose": "Hero and closing flower rotation; nodes pulse at 3.2s."
+      },
+      {
+        "name": "shimmer",
+        "value": "4s cycle, 1.5s delay",
+        "purpose": "Diagonal light sweep across the primary button; once on hover."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Stops all ambient loops and shows reveals in place."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "1240px"
+      },
+      {
+        "name": "desktop",
+        "value": "1080px"
+      },
+      {
+        "name": "tablet",
+        "value": "860px"
+      },
+      {
+        "name": "phone",
+        "value": "520px"
+      }
+    ],
+    "scope": "Recorded from /mesaviva/ (first surface in the PascalIA world). Home, /desarrollos/, /cuentafacil/, health-suite and legal pages still use sitio.css / pascalia.css / inicio.css and are not migrated yet. Sub-brands keep their own identities.",
+    "brandAssets": [
+      {
+        "name": "flower",
+        "path": "/flower.svg",
+        "purpose": "Original PascalIA mark: six pointed petals #FFC107 at 0.82 fill opacity, curved white veins, white nodes."
+      },
+      {
+        "name": "flower-outline",
+        "path": "/flower-outline.svg",
+        "purpose": "Line version for quiet backgrounds."
+      },
+      {
+        "name": "pascal-face",
+        "path": "/pascal/pascal-rostro.webp",
+        "purpose": "Avatar in the ask bar and replies; circle with 2px yellow ring."
+      },
+      {
+        "name": "pascal-panel",
+        "path": "/mesaviva/img/pascal-panel.webp",
+        "purpose": "Yellow full-body panel cropped from /pascal/pascal.webp; tilted -3deg card in the hero."
+      },
+      {
+        "name": "pascal-wink",
+        "path": "/mesaviva/img/pascal-guino.webp",
+        "purpose": "Wink panel beside the FAQ heading."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action: yellow pill, graphite text, lifts with a yellow glow on hover.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Arma tu plan <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h13M12 5l7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: .55em; min-height: 48px; padding: 14px 28px; border-radius: 999px; border: 0; cursor: pointer; font: 600 1rem/1.1 'Montserrat', system-ui, sans-serif; transition: transform 220ms cubic-bezier(.22, 1, .36, 1), background-color 200ms, box-shadow 220ms cubic-bezier(.22, 1, .36, 1), color 200ms; } .ds-btn:focus-visible { outline: 3px solid var(--graphite, #1F1F1F); outline-offset: 2px; } .ds-btn:active { transform: scale(.97); } .ds-btn svg { transition: transform 220ms cubic-bezier(.22, 1, .36, 1); } .ds-btn:hover svg { transform: translateX(4px); } .ds-btn-primary { background: var(--yellow, #FFC107); color: var(--graphite, #1F1F1F); } .ds-btn-primary:hover { background: var(--yellow-hover, #FFB300); transform: translateY(-2px); box-shadow: 0 10px 30px -10px rgba(255,193,7,.55); }"
+    },
+    {
+      "name": "Dark Button",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "Secondary action on light surfaces; hover gains a yellow ring.",
+      "html": "<button class=\"ds-btn ds-btn-dark\">Ver los planes</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: .55em; min-height: 48px; padding: 14px 28px; border-radius: 999px; border: 0; cursor: pointer; font: 600 1rem/1.1 'Montserrat', system-ui, sans-serif; transition: transform 220ms cubic-bezier(.22, 1, .36, 1), background-color 200ms, box-shadow 220ms cubic-bezier(.22, 1, .36, 1), color 200ms; } .ds-btn:focus-visible { outline: 3px solid var(--graphite, #1F1F1F); outline-offset: 2px; } .ds-btn:active { transform: scale(.97); } .ds-btn svg { transition: transform 220ms cubic-bezier(.22, 1, .36, 1); } .ds-btn:hover svg { transform: translateX(4px); } .ds-btn-dark { background: var(--graphite, #1F1F1F); color: #fff; box-shadow: inset 0 0 0 1.5px var(--graphite, #1F1F1F); } .ds-btn-dark:hover { background: #000; transform: translateY(-2px); box-shadow: inset 0 0 0 1.5px var(--yellow, #FFC107); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Quiet alternative: graphite ring, cream on hover.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\">Revisar</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: .55em; min-height: 48px; padding: 14px 28px; border-radius: 999px; border: 0; cursor: pointer; font: 600 1rem/1.1 'Montserrat', system-ui, sans-serif; transition: transform 220ms cubic-bezier(.22, 1, .36, 1), background-color 200ms, box-shadow 220ms cubic-bezier(.22, 1, .36, 1), color 200ms; } .ds-btn:focus-visible { outline: 3px solid var(--graphite, #1F1F1F); outline-offset: 2px; } .ds-btn:active { transform: scale(.97); } .ds-btn svg { transition: transform 220ms cubic-bezier(.22, 1, .36, 1); } .ds-btn:hover svg { transform: translateX(4px); } .ds-btn-ghost { background: transparent; color: var(--graphite, #1F1F1F); box-shadow: inset 0 0 0 1.5px var(--graphite, #1F1F1F); } .ds-btn-ghost:hover { background: var(--cream, #FFF8E1); }"
+    },
+    {
+      "name": "Play Button",
+      "kind": "button",
+      "refersTo": "play-dot",
+      "description": "Yellow circle with play triangle plus label; opens the demo.",
+      "html": "<button class=\"ds-play\"><span class=\"ds-play-dot\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z\" fill=\"currentColor\"/></svg></span>Ver la demo</button>",
+      "css": ".ds-play { display: inline-flex; align-items: center; gap: 12px; border: 0; background: none; cursor: pointer; font: 600 1rem 'Montserrat', system-ui, sans-serif; color: var(--graphite, #1F1F1F); border-radius: 999px; padding: 4px 6px 4px 0; } .ds-play-dot { width: 48px; height: 48px; border-radius: 50%; background: var(--yellow, #FFC107); display: grid; place-items: center; box-shadow: 0 10px 30px -10px rgba(255,193,7,.55); transition: transform 260ms cubic-bezier(.22, 1, .36, 1); } .ds-play-dot svg { margin-left: 3px; } .ds-play:hover .ds-play-dot { transform: scale(1.08); } .ds-play:focus-visible { outline: 3px solid var(--graphite, #1F1F1F); outline-offset: 2px; }"
+    },
+    {
+      "name": "Suggestion Chips",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Outlined white pills; hover cream with yellow ring; picked is solid yellow.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\">Quiero recibir pedidos por WhatsApp</button><button class=\"ds-chip is-picked\">Tengo 3 cajas en hora pico</button></div>",
+      "css": ".ds-chips { display: flex; flex-wrap: wrap; gap: 10px; } .ds-chip { border: 0; cursor: pointer; padding: 10px 18px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--gray, #E9E9E9); font: 500 .92rem 'Inter', system-ui, sans-serif; color: var(--graphite, #1F1F1F); transition: background-color 200ms, box-shadow 200ms, transform 200ms cubic-bezier(.22, 1, .36, 1); } .ds-chip:hover { background: var(--cream, #FFF8E1); box-shadow: inset 0 0 0 1.5px var(--yellow, #FFC107); transform: translateY(-1px); } .ds-chip.is-picked { background: var(--yellow, #FFC107); box-shadow: none; } .ds-chip:focus-visible { outline: 3px solid var(--graphite, #1F1F1F); outline-offset: 2px; }"
+    },
+    {
+      "name": "Option Group",
+      "kind": "chip",
+      "refersTo": "option",
+      "description": "Single-choice pills in the configurator; checked turns yellow.",
+      "html": "<div class=\"ds-seg\"><label><input type=\"radio\" name=\"ds-seg\" checked><span>Restaurante</span></label><label><input type=\"radio\" name=\"ds-seg\"><span>Comida rápida</span></label></div>",
+      "css": ".ds-seg { display: inline-flex; flex-wrap: wrap; gap: 8px; } .ds-seg label { position: relative; cursor: pointer; } .ds-seg input { position: absolute; opacity: 0; width: 1px; height: 1px; } .ds-seg span { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 18px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--gray, #E9E9E9); font: 600 .95rem 'Montserrat', system-ui, sans-serif; color: var(--muted, #5C5C5C); transition: background-color 200ms, box-shadow 200ms, color 200ms; } .ds-seg label:hover span { box-shadow: inset 0 0 0 1.5px var(--yellow, #FFC107); color: var(--graphite, #1F1F1F); } .ds-seg input:checked + span { background: var(--yellow, #FFC107); box-shadow: none; color: var(--graphite, #1F1F1F); } .ds-seg input:focus-visible + span { outline: 3px solid var(--graphite, #1F1F1F); outline-offset: 2px; }"
+    },
+    {
+      "name": "Ask Bar",
+      "kind": "input",
+      "refersTo": "askbar",
+      "description": "Signature 'Cuéntale a Pascal' pill input with circular yellow send button.",
+      "html": "<form class=\"ds-ask\" onsubmit=\"return false\"><input placeholder=\"Tengo 12 mesas y quiero que dividan la cuenta\" aria-label=\"Cuéntale a Pascal de tu negocio\"><button class=\"ds-ask-send\" aria-label=\"Enviar a Pascal\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h13M12 5l7 7-7 7\"/></svg></button></form>",
+      "css": ".ds-ask { display: flex; align-items: center; max-width: 640px; background: #fff; border-radius: 999px; padding: 8px 8px 8px 26px; box-shadow: inset 0 0 0 1px var(--gray, #E9E9E9), 0 18px 44px -20px rgba(31,31,31,.25); transition: box-shadow 250ms cubic-bezier(.22, 1, .36, 1); } .ds-ask:focus-within { box-shadow: inset 0 0 0 2px var(--yellow, #FFC107), 0 18px 44px -18px rgba(255,179,0,.45); } .ds-ask input { flex: 1; min-width: 0; height: 52px; border: 0; outline: none; background: transparent; font: 500 1.0625rem 'Inter', system-ui, sans-serif; color: var(--graphite, #1F1F1F); caret-color: var(--yellow-hover, #FFB300); } .ds-ask input::placeholder { color: #6B6B6B; } .ds-ask-send { width: 52px; height: 52px; flex: none; border: 0; border-radius: 50%; background: var(--yellow, #FFC107); color: var(--graphite, #1F1F1F); display: grid; place-items: center; cursor: pointer; transition: transform 220ms cubic-bezier(.22, 1, .36, 1), background-color 200ms, box-shadow 220ms; } .ds-ask-send:hover { background: var(--yellow-hover, #FFB300); transform: translateX(2px); box-shadow: 0 10px 30px -10px rgba(255,193,7,.55); } .ds-ask-send:focus-visible { outline: 3px solid var(--graphite, #1F1F1F); outline-offset: 2px; }"
+    },
+    {
+      "name": "Contact Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Shared contact form field: 12px radius, graphite border and yellow ring on focus.",
+      "html": "<label class=\"ds-field\"><span>Nombre del negocio</span><input type=\"text\" placeholder=\"Pizza Hamburgo\"></label>",
+      "css": ".ds-field { display: grid; gap: 6px; max-width: 320px; font: 700 .92rem 'Inter', system-ui, sans-serif; color: var(--graphite, #1F1F1F); } .ds-field input { font: 400 1rem 'Inter', system-ui, sans-serif; color: var(--graphite, #1F1F1F); background: #fff; border: 1.5px solid #E0E0E0; border-radius: 12px; padding: 11px 13px; } .ds-field input:focus { outline: 3px solid var(--yellow, #FFC107); outline-offset: 1px; border-color: var(--graphite, #1F1F1F); }"
+    },
+    {
+      "name": "Interface Window",
+      "kind": "card",
+      "refersTo": "card-window",
+      "description": "White mockup card: flower window bar, divided rows, cream totals footer.",
+      "html": "<div class=\"ds-win\"><div class=\"ds-win-bar\"><b>MesaViva</b><span>Mesa 7</span></div><ul><li><span>Doble Burger</span><b>$24.000</b></li><li><span>Picada Grande</span><b>$39.000</b></li></ul><div class=\"ds-win-foot\"><span>Total</span><b>$63.000</b></div></div>",
+      "css": ".ds-win { max-width: 380px; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--gray, #E9E9E9), 0 8px 24px rgba(31,31,31,.08); font: 400 1rem 'Inter', system-ui, sans-serif; color: var(--graphite, #1F1F1F); transition: transform 400ms cubic-bezier(.22, 1, .36, 1); } .ds-win:hover { transform: translateY(-2px); } .ds-win-bar { display: flex; gap: 8px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--gray, #E9E9E9); } .ds-win-bar b { font: 800 .9rem 'Montserrat', system-ui, sans-serif; letter-spacing: -.02em; } .ds-win-bar span { margin-left: auto; font: 600 .8rem 'Montserrat', system-ui, sans-serif; color: var(--muted, #5C5C5C); } .ds-win ul { list-style: none; margin: 0; padding: 4px 18px; } .ds-win li { display: flex; justify-content: space-between; padding: 14px 4px; border-bottom: 1px solid var(--gray, #E9E9E9); } .ds-win li:last-child { border-bottom: 0; } .ds-win li b, .ds-win-foot b { font: 600 .95rem 'Montserrat', system-ui, sans-serif; font-variant-numeric: tabular-nums; } .ds-win-foot { display: flex; justify-content: space-between; padding: 14px 22px; background: var(--cream, #FFF8E1); color: var(--muted, #5C5C5C); } .ds-win-foot b { font-weight: 800; color: var(--graphite, #1F1F1F); }"
+    },
+    {
+      "name": "Result Card",
+      "kind": "card",
+      "refersTo": "card-result",
+      "description": "Graphite card where the recommended plan resolves; yellow plan name.",
+      "html": "<div class=\"ds-result\"><b class=\"ds-result-plan\">Restaurante</b><p>Te lo recomendamos porque quieres que paguen por persona.</p><ul><li>Pedidos desde la mesa</li><li>Cuenta dividida al peso</li></ul></div>",
+      "css": ".ds-result { max-width: 360px; display: grid; gap: 12px; padding: 36px; border-radius: 24px; background: var(--graphite, #1F1F1F); color: #fff; box-shadow: 0 22px 48px -18px rgba(31,31,31,.28); font: 400 1rem/1.65 'Inter', system-ui, sans-serif; } .ds-result-plan { font: 800 2.6rem/1.05 'Montserrat', system-ui, sans-serif; color: var(--yellow, #FFC107); letter-spacing: -.02em; } .ds-result p { margin: 0; color: #E4E4E4; } .ds-result ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; } .ds-result li { position: relative; padding-left: 28px; } .ds-result li::before { content: ''; position: absolute; left: 0; top: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--yellow, #FFC107); }"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Muted Montserrat links with a yellow underline that grows from the left.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\">Cómo funciona</a><a href=\"#\">Planes</a><a href=\"#\">Preguntas</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 28px; } .ds-nav a { position: relative; text-decoration: none; font: 600 .95rem 'Montserrat', system-ui, sans-serif; color: var(--muted, #5C5C5C); padding: 6px 0; transition: color 200ms; } .ds-nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--yellow, #FFC107); transform: scaleX(0); transform-origin: left; transition: transform 300ms cubic-bezier(.22, 1, .36, 1); } .ds-nav a:hover, .ds-nav a:focus-visible { color: var(--graphite, #1F1F1F); } .ds-nav a:hover::after, .ds-nav a:focus-visible::after { transform: scaleX(1); } .ds-nav a:focus-visible { outline: 3px solid var(--graphite, #1F1F1F); outline-offset: 2px; border-radius: 6px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Idea That Blooms",
+    "overview": "PascalIA pages are bright, warm and conversational. White carries most of the page, cream (#FFF8E1 family) marks alternating sections and inner panels, and graphite takes over only where something resolves: the recommended plan, the strip of rules, the closing call, the footer. Yellow is not a background color; it is the color of doing something (buttons, the send button, picked chips, checked options), of emphasis (the marker drawn under a key phrase) and of the flower mark. Everything interactive is round: pills and circles, never sharp corners.\n\nThe signature is the original PascalIA flower (`/flower.svg`): six pointed petals in Amarillo PascalIA at 82 % fill opacity, so their overlaps read slightly deeper, with curved white veins running out from the center and white nodes at the vein tips. It is the logo mark, it turns slowly and very faintly behind the hero, it blooms from the corner of the graphite result card, and it watermarks the footer. Pascal, the 3D character in the yellow cap, is a real presence on the page, always in the site's own art from `/pascal/`: his face is the avatar in the ask bar and in his replies, a yellow full-body panel of him leans into the hero as a tilted card, and a wink panel stands beside the FAQ.\n\nThe page feels like a conversation you can touch: an ask bar where you write to Pascal, suggestion chips, white interface mockups that assemble themselves as you scroll, and numbers set in Montserrat with tabular figures so sums line up. Density is relaxed: sections breathe at 104px, cards have 22–36px of padding, and text sits at 1.65 line height.",
+    "keyCharacteristics": [
+      "White page with cream sections; graphite reserved for results and closings.",
+      "Yellow means act, mark or bloom; text on yellow is always graphite.",
+      "Pills (999px) for everything you press; 20–24px corners for containers.",
+      "Hairline 1px gray outlines drawn as inset shadows, plus soft warm-neutral lift.",
+      "Montserrat 600–800 for voice and numbers, Inter 400–500 for reading.",
+      "The original pointed-petal flower and Pascal (site art) as the two recurring brand figures."
+    ],
+    "rules": [
+      {
+        "name": "The Graphite-On-Yellow Rule",
+        "body": "Text and icons on any yellow fill are graphite. Never white on yellow.",
+        "section": "colors"
+      },
+      {
+        "name": "The Yellow Means Act Rule",
+        "body": "Yellow fills are for controls, selected state, the marker and the flower. Large yellow areas appear only as low-opacity glows (the hero radial at 14 %, the spotlight at 16 %), as the flower itself, or as Pascal's yellow art panels, never as a section background.",
+        "section": "colors"
+      },
+      {
+        "name": "The Graphite Resolves Rule",
+        "body": "Dark surfaces are reserved for the moment something resolves: the recommended plan, the rules, the closing call and the footer. On graphite, the big figures and the plan name turn yellow; secondary text steps down through light grays.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Montserrat speaks (headings, labels, buttons, numbers); Inter explains (paragraphs, chips you can type, inputs). Do not set paragraphs in Montserrat or headings in Inter.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Marker Rule",
+        "body": "At most one phrase per heading gets the yellow highlighter (a band from 58 % to 90 % of the line height), and it draws itself left to right on reveal (900ms). On graphite, emphasis is yellow text instead of a marker.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline-Plus-Warmth Rule",
+        "body": "Every white container is a 1px gray inset outline plus the soft card shadow. No heavy borders, no offset or solid shadows.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep text on yellow graphite, and keep yellow for controls, selected states, the marker and the flower.",
+      "**Do** alternate white and cream bands and save graphite for the result, the rules, the closing call and the footer.",
+      "**Do** make every pressable thing a pill or a circle, and give containers 20–24px corners.",
+      "**Do** outline white containers with the 1px gray inset and the soft card shadow; reserve the yellow glow for yellow controls.",
+      "**Do** set money and counts in Montserrat with tabular figures.",
+      "**Do** use the stroke icon set (`/iconos.svg` and inline symbols, 1.85 stroke, round caps) for icons.",
+      "**Do** use the original flower geometry from `/flower.svg` (six pointed petals at 0.82 opacity, curved white veins, white nodes) whenever the mark appears, and `/flower-outline.svg` for the line version.",
+      "**Do** draw Pascal only from the site art in `/pascal/` and its crops.",
+      "**Do** honor `prefers-reduced-motion`: the spinning flower, marquee, rings, tickets and petals stop, and reveals show in place.",
+      "**Do** keep sub-brand pages in their own identity inside this frame."
+    ],
+    "donts": [
+      "**Don't** put white text on yellow, or yellow text on white (use `gold-ink` for a small yellow-family accent on white).",
+      "**Don't** use yellow as a section background or a large flat fill.",
+      "**Don't** use sharp-cornered buttons or chips, solid or offset shadows, or heavy borders on cards.",
+      "**Don't** put a small label above section headlines; sections open on the headline itself.",
+      "**Don't** use text characters or emoji as icons; draw them with the stroke icon set.",
+      "**Don't** redraw the flower with round petals or a gradient fill, and don't use the brand-sheet character cutouts.",
+      "**Don't** take `sitio.css`, `pascalia.css` or `inicio.css` as the reference for new components; they predate this system."
+    ]
+  }
+}

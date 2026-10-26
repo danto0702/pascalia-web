@@ -7,24 +7,22 @@ related_targets: []
 
 # MesaViva · página de venta (pascalia.lat/mesaviva/)
 
-Scope: `mesaviva/index.html` + `mesaviva/mesaviva.css` + `mesaviva/mesaviva.js`; la demo publicada en `mesaviva/demo/`. Modo: Persuade.
+Scope: `mesaviva/index.html` + `mesaviva/mesaviva.css` + `mesaviva/mesaviva.js`, imágenes en `mesaviva/img/`; la demo publicada en `mesaviva/demo/` (su propio rediseño vive en el repo mesaviva). Modo: Persuade.
 
-Audiencia y trabajo: dueño o administrador de restaurante o comida rápida, desde el celular; debe entender qué hace MesaViva, ver que funciona (demo) y dejar sus datos para cotizar. Prueba: la demo en vivo (simulada, marcada). Sin clientes, cifras ni testimonios; MesaViva está en desarrollo y se dice.
+Audiencia y trabajo: dueño o administrador de restaurante o comida rápida, desde el celular; entiende qué hace MesaViva, ve que funciona (demo) y deja sus datos para cotizar con el plan ya armado. Prueba: la demo en vivo (simulada, marcada) y reglas de cálculo verificables. Sin clientes, logos, cifras de uso ni testimonios (decisión del dueño 2026-10-26: las secciones de testimonios, logos y cifras del prompt se cambian por pruebas reales). MesaViva está en desarrollo y se dice.
 
-Marco: menú y pie de PascalIA (sitio.css) y formulario de contacto del sitio; el contenido usa el mundo de MesaViva (transmisión nocturna, #07080C, Brasa/Ámbar/Esmeralda, Space Grotesk + Plus Jakarta Sans) como banda oscura de submarca, igual que CuentaFacil tiene su acento.
-
-Decisiones abiertas: número de WhatsApp de ventas de MesaViva (pendiente en Meta): el CTA usa el formulario del sitio; la opción "mesaviva" del formulario requiere desplegar la función `pascalia-solicitud` (pedir permiso al dueño); mientras tanto el formulario usa "desarrollo" con el resumen del plan en el mensaje.
+Rediseño 2026-10-26: el dueño rechazó "Partido en vivo" (no conecta con la imagen de PascalIA, se ve genérica). Mundo fijado por el dueño: hoja de marca PascalIA (flor de seis pétalos redondos con nodos, paleta #FFC107/#FFB300/#FFD54F/#1F1F1F/#E9E9E9/#FFF8E1/#FFFFFF/#5C5C5C, Montserrat 800 + Inter 400/500, Pascal en 3D, chips de sugerencia, botón play, mockups blancos) y el prompt "PROMPTS_LANDING_PASCALIA" (estructura y efectos estilo Passionfroot). Sitio estático, sin Next.js. Personajes recortados de la hoja de marca hasta tener PNG en alta.
 
 ## Direction contract
 
-THESIS: La página es un configurador que funciona en el primer pantallazo: respondes cuatro cosas de tu negocio y el marcador te dice qué plan de MesaViva necesitas y por qué, con la cotización lista para enviar. Rechaza el hero de titular + botón + fila de tarjetas iguales.
+THESIS: MesaViva se vende como lo que es: una idea de PascalIA que florece en tu restaurante. La página conversa: le cuentas a Pascal tu negocio en la barra del hero y el plan sale armado; luego ves la mesa, la cuenta al peso y la caja funcionando. Rechaza el hero oscuro de transmisión y el split de titular + tarjeta.
 
-OWN-WORLD: Banda oscura #07080C bajo el menú claro de PascalIA; el resultado del plan vive en un marcador de transmisión (placa opaca, cifras split-flap en Space Grotesk, barra Esmeralda); controles como chips y steppers de la demo; listas de "alineación" con dorsal para módulos en vez de tarjetas; Brasa solo para acción.
+OWN-WORLD: Blanco con secciones crema #FFF8E1, grafito para la tarjeta del plan recomendado (el resultado del configurador, como el banner oscuro de la hoja de marca), la franja de reglas, el cierre y el pie. Amarillo PascalIA solo para acción, marcador bajo palabras clave y la flor-red; texto sobre amarillo siempre grafito. Píldoras 999px, tarjetas 20–24px, bordes 1px #E9E9E9, sombras cálidas. Flor de seis pétalos redondos translúcidos con nodos blancos conectados, gigante y girando detrás del hero. Pascal 3D señalando la barra.
 
-STORY: Entiendo en una línea que mi mesa y mi caja ven lo mismo en vivo; armo mi plan en 20 segundos; pruebo la demo en un celular; veo módulos, cálculo al peso y facturación DIAN con proveedor autorizado; pido cotización con mi plan ya escrito.
+STORY: Entiendo en una línea que mesa y caja ven lo mismo en vivo; le escribo a Pascal o toco un chip y me responde con mi plan; veo tres mockups que se arman solos (pedir, dividir al peso, aprobar y facturar); recorro cómo arranco; ajusto el plan y pido cotización con el plan ya escrito.
 
-FIRST VIEWPORT: Escritorio: izquierda ~45 % titular grande "Tu mesa y tu caja, en vivo." + una línea + enlace a la demo; derecha ~55 % el configurador: mesas (stepper), cajas (chips), sedes (chips), cuatro interruptores (pedidos por WhatsApp, mesa NFC y pago por persona, domicilios, nómina) y debajo el marcador con el plan recomendado, el porqué y el botón Brasa "Pedir cotización". Celular: titular corto y el configurador debajo, el marcador fijo al pie de la tarjeta.
+FIRST VIEWPORT: Centrado. Chip "● Hecho por PascalIA · en desarrollo con los primeros restaurantes". H1 Montserrat 800 "Tu mesa y tu caja, en vivo." con "en vivo" en marcador amarillo que se dibuja. Subtítulo. CTAs: "Arma tu plan →" primario y "▶ Ver la demo" (abre la demo en modal de celular). Debajo, la barra "Cuéntale a Pascal…" con placeholder que se escribe solo, botón circular amarillo, tres pestañas con indicador deslizante (Restaurante · Comida rápida · Café o comercio) y chips. Pascal de pie a la izquierda señalando la barra (escritorio; el único recorte de la hoja de marca señala hacia la derecha). Flor gigante semitransparente detrás.
 
-FORM: "Arma tu plan", primera estructura repartida (seed key 0cc110dc, roll degradado sin retadores), elegida por el dueño. Firma: el marcador del plan cambia con efecto split-flap a cada respuesta. Ruta: code-led.
+FORM: Estructura del prompt PascalIA/Passionfroot, fijada por el dueño (sin tirada de concept-seed; dirección fijada). Firma: Pascal responde en la barra con el plan recomendado y llena el configurador y el formulario. Ruta: code-led.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
