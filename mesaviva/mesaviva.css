@@ -819,7 +819,7 @@
 }
 
 .mv-standings tr.is-picked th {
-  box-shadow: inset 3px 0 0 var(--mv-esmeralda);
+  color: var(--mv-esmeralda);
 }
 
 .mv-table-wrap + .mv-fine {
@@ -871,5 +871,70 @@
   .mv-bug .mv-btn {
     margin-top: 10px;
     min-height: 44px;
+  }
+}
+
+/* The plan panel is an opaque broadcast plate. */
+.mv-bug {
+  background: var(--mv-surface-2);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@media (max-width: 600px) {
+  .mv-bug {
+    background: var(--mv-surface-2);
+  }
+  .mv-table-wrap {
+    overflow: visible;
+  }
+  .mv-standings thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .mv-standings,
+  .mv-standings tbody,
+  .mv-standings tr {
+    display: block;
+  }
+  .mv-standings tr {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    gap: 4px 14px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--mv-line);
+  }
+  .mv-standings tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .mv-standings th,
+  .mv-standings td {
+    padding: 0;
+    border: 0;
+  }
+  .mv-standings tbody th {
+    grid-column: 1 / -1;
+  }
+  .mv-standings td.n::before {
+    color: var(--mv-ink-3);
+    font-family: var(--mv-text);
+    font-size: 0.8rem;
+    margin-right: 4px;
+  }
+  .mv-standings td.n:nth-of-type(1)::before {
+    content: 'Cajas';
+  }
+  .mv-standings td.n:nth-of-type(2)::before {
+    content: 'Usuarios';
+  }
+  .mv-standings td.n:nth-of-type(3)::before {
+    content: 'Sedes';
+  }
+  .mv-standings td:last-child {
+    grid-column: 1 / -1;
+    margin-top: 4px;
   }
 }

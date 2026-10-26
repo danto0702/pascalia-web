@@ -19,7 +19,7 @@ Decisiones abiertas: número de WhatsApp de ventas de MesaViva (pendiente en Met
 
 THESIS: La página es un configurador que funciona en el primer pantallazo: respondes cuatro cosas de tu negocio y el marcador te dice qué plan de MesaViva necesitas y por qué, con la cotización lista para enviar. Rechaza el hero de titular + botón + fila de tarjetas iguales.
 
-OWN-WORLD: Banda oscura #07080C bajo el menú claro de PascalIA; el resultado del plan vive en un marcador de transmisión (vidrio, cifras split-flap en Space Grotesk, barra Esmeralda); controles como chips y steppers de la demo; listas de "alineación" con dorsal para módulos en vez de tarjetas; Brasa solo para acción.
+OWN-WORLD: Banda oscura #07080C bajo el menú claro de PascalIA; el resultado del plan vive en un marcador de transmisión (placa opaca, cifras split-flap en Space Grotesk, barra Esmeralda); controles como chips y steppers de la demo; listas de "alineación" con dorsal para módulos en vez de tarjetas; Brasa solo para acción.
 
 STORY: Entiendo en una línea que mi mesa y mi caja ven lo mismo en vivo; armo mi plan en 20 segundos; pruebo la demo en un celular; veo módulos, cálculo al peso y facturación DIAN con proveedor autorizado; pido cotización con mi plan ya escrito.
 
