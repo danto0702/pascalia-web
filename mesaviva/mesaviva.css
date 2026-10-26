@@ -48,10 +48,6 @@ a { color: var(--graphite); text-underline-offset: 3px; text-decoration-color: v
 
 /* Flor-red: pétalos translúcidos, nodos blancos conectados */
 .flor { width: 34px; height: 34px; flex: none; }
-.flor-petals { opacity: .94; }
-.flor-petals circle { fill: url(#flor-g); }
-.flor-net path { stroke: #fff; stroke-width: 3.2; stroke-linecap: round; }
-.flor-nodes circle { fill: #fff; }
 
 /* Marcador amarillo que se dibuja bajo las palabras clave */
 .mark {
@@ -186,10 +182,11 @@ a { color: var(--graphite); text-underline-offset: 3px; text-decoration-color: v
 
 /* Barra de Pascal */
 .ask { position: relative; width: min(760px, 100%); margin-top: 44px; }
-.ask-pascal { position: absolute; width: 168px; left: -190px; top: -96px; pointer-events: none; }
+.ask-pascal { position: absolute; width: 150px; left: -186px; top: -150px; border-radius: 22px; box-shadow: var(--shadow-lift); pointer-events: none; transform: rotate(-3deg); }
+.ask-face { width: 40px; height: 40px; flex: none; margin-right: 12px; border-radius: 50%; object-fit: cover; object-position: 50% 20%; box-shadow: 0 0 0 2px var(--yellow); }
 .askbar {
   position: relative; display: flex; align-items: center; background: #fff; border-radius: 999px;
-  box-shadow: inset 0 0 0 1px var(--gray), 0 18px 44px -20px rgba(31, 31, 31, .25); padding: 8px 8px 8px 26px;
+  box-shadow: inset 0 0 0 1px var(--gray), 0 18px 44px -20px rgba(31, 31, 31, .25); padding: 8px 8px 8px 12px;
   transition: box-shadow 250ms var(--ease);
 }
 .askbar:focus-within { box-shadow: inset 0 0 0 2px var(--yellow), 0 18px 44px -18px rgba(255, 179, 0, .45); }
@@ -198,7 +195,7 @@ a { color: var(--graphite); text-underline-offset: 3px; text-decoration-color: v
   font: 500 1.0625rem var(--f-body); color: var(--graphite); caret-color: var(--yellow-hover);
 }
 .ask-ph {
-  position: absolute; left: 26px; right: 84px; top: 50%; transform: translateY(-50%); text-align: left;
+  position: absolute; left: 64px; right: 84px; top: 50%; transform: translateY(-50%); text-align: left;
   color: #6B6B6B; font: 500 1.0625rem var(--f-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none;
 }
 .ask-ph::after { content: ""; display: inline-block; width: 2px; height: 1.1em; margin-left: 2px; vertical-align: -3px; background: var(--yellow-hover); animation: blink 1s steps(1) infinite; }
@@ -231,8 +228,8 @@ a { color: var(--graphite); text-underline-offset: 3px; text-decoration-color: v
   margin: 22px auto 0; max-width: 640px; display: grid; grid-template-columns: 44px 1fr; gap: 14px; text-align: left;
   animation: rise 500ms var(--ease) both;
 }
-.reply-av { width: 44px; height: 44px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 1px var(--gray); display: grid; place-items: center; }
-.reply-av .flor { width: 30px; height: 30px; }
+.reply-av { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 2px var(--yellow); }
+.reply-av img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
 .reply-bubble { background: #fff; border-radius: 6px 22px 22px 22px; padding: 16px 20px; box-shadow: inset 0 0 0 1px var(--gray), var(--shadow-card); }
 .reply-bubble b.who { display: block; font: 700 .8rem var(--f-head); color: var(--muted); margin-bottom: 4px; }
 .reply-bubble p { color: var(--graphite); }
@@ -547,7 +544,7 @@ a { color: var(--graphite); text-underline-offset: 3px; text-decoration-color: v
 .faq-in { display: grid; grid-template-columns: .8fr 1.2fr; gap: 64px; align-items: start; }
 .faq-head { position: sticky; top: 110px; }
 .faq-head p { margin-top: 14px; color: var(--muted); }
-.faq-head img { width: 150px; margin-top: 28px; }
+.faq-head .faq-pascal { width: 220px; margin-top: 28px; border-radius: 22px; box-shadow: var(--shadow-card); }
 .faq { display: grid; gap: 12px; }
 .faq details { position: relative; background: #fff; border-radius: 18px; box-shadow: inset 0 0 0 1px var(--gray); transition: box-shadow 300ms; overflow: hidden; }
 .faq details::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--yellow); transform: scaleY(0); transition: transform 300ms var(--ease); }
@@ -580,7 +577,7 @@ a { color: var(--graphite); text-underline-offset: 3px; text-decoration-color: v
 /* Pie */
 .foot {
   position: relative; overflow: hidden; background: #181818; color: #CFCFCF; padding: 72px 0 40px;
-  background-image: url("/mesaviva/img/flor.svg"); background-repeat: no-repeat; background-size: 520px; background-position: 108% 140%;
+  background-image: url("/flower.svg"); background-repeat: no-repeat; background-size: 520px; background-position: 108% 140%;
 }
 .foot::before { content: ""; position: absolute; inset: 0; background: rgba(24, 24, 24, .94); }
 .foot-in { position: relative; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; }
@@ -621,7 +618,7 @@ a { color: var(--graphite); text-underline-offset: 3px; text-decoration-color: v
 
 /* Escritorio mediano */
 @media (max-width: 1240px) {
-  .ask-pascal { width: 130px; left: -142px; top: -60px; }
+  .ask-pascal { width: 120px; left: -138px; top: -110px; }
 }
 @media (max-width: 1080px) {
   .ask-pascal { display: none; }
@@ -662,10 +659,11 @@ a { color: var(--graphite); text-underline-offset: 3px; text-decoration-color: v
   .pill-live { font-size: .78rem; padding: 7px 14px; text-align: left; }
   .h1 { margin-top: 20px; }
   .ask { margin-top: 34px; }
-  .askbar { padding: 6px 6px 6px 18px; }
+  .askbar { padding: 6px 6px 6px 8px; }
+  .ask-face { width: 36px; height: 36px; margin-right: 8px; }
   .askbar input, .ask-ph { font-size: 1rem; }
   .askbar input { height: 48px; }
-  .ask-ph { left: 18px; right: 66px; }
+  .ask-ph { left: 52px; right: 66px; }
   .ask-send { width: 48px; height: 48px; }
   .tabs { width: 100%; justify-content: space-between; }
   .tabs button { padding: 9px 4px; font-size: .74rem; gap: 5px; flex: 1; justify-content: center; white-space: nowrap; }

@@ -12,7 +12,7 @@
 <meta property="og:url" content="https://pascalia.lat/mesaviva/">
 <meta property="og:title" content="MesaViva de PascalIA · Tu mesa y tu caja, en vivo">
 <meta property="og:description" content="Pedidos desde la mesa, cuenta dividida al peso, pago por persona y caja con facturación electrónica. Arma tu plan con Pascal.">
-<meta property="og:image" content="https://pascalia.lat/mesaviva/img/pascal-senala.webp">
+<meta property="og:image" content="https://pascalia.lat/pascal/pascal.webp">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,22 +41,19 @@
 
 <svg class="defs" aria-hidden="true" focusable="false">
   <defs>
-    <linearGradient id="flor-g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#FFD54F"/><stop offset=".55" stop-color="#FFC107"/><stop offset="1" stop-color="#FFB300"/>
-    </linearGradient>
-    <symbol id="flor" viewBox="-100 -100 200 200">
-      <g class="flor-petals">
-        <circle r="34"/>
-        <circle cy="-50" r="37"/><circle cy="-50" r="37" transform="rotate(60)"/><circle cy="-50" r="37" transform="rotate(120)"/>
-        <circle cy="-50" r="37" transform="rotate(180)"/><circle cy="-50" r="37" transform="rotate(240)"/><circle cy="-50" r="37" transform="rotate(300)"/>
+    <symbol id="flor" viewBox="-112 -112 224 224">
+      <defs><path id="flor-p" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/><path id="flor-v" d="M0,0 C17,-16 15,-44 0,-62 C-15,-44 -17,-16 0,0"/></defs>
+      <g class="flor-petals" fill="#FFC107" fill-opacity=".82">
+        <use href="#flor-p"/><use href="#flor-p" transform="rotate(60)"/><use href="#flor-p" transform="rotate(120)"/>
+        <use href="#flor-p" transform="rotate(180)"/><use href="#flor-p" transform="rotate(240)"/><use href="#flor-p" transform="rotate(300)"/>
       </g>
-      <g class="flor-net">
-        <path d="M0 0V-50"/><path d="M0 0V-50" transform="rotate(60)"/><path d="M0 0V-50" transform="rotate(120)"/>
-        <path d="M0 0V-50" transform="rotate(180)"/><path d="M0 0V-50" transform="rotate(240)"/><path d="M0 0V-50" transform="rotate(300)"/>
+      <g class="flor-net" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round">
+        <use href="#flor-v"/><use href="#flor-v" transform="rotate(-62)"/><use href="#flor-v" transform="rotate(62)"/>
+        <use href="#flor-v" transform="rotate(-132)"/><use href="#flor-v" transform="rotate(132)"/><path d="M0,0 V62"/>
       </g>
-      <g class="flor-nodes">
-        <circle r="9"/><circle cy="-50" r="7"/><circle cy="-50" r="7" transform="rotate(60)"/><circle cy="-50" r="7" transform="rotate(120)"/>
-        <circle cy="-50" r="7" transform="rotate(180)"/><circle cy="-50" r="7" transform="rotate(240)"/><circle cy="-50" r="7" transform="rotate(300)"/>
+      <g class="flor-nodes" fill="#fff">
+        <circle r="9"/><circle cy="-62" r="8"/><circle cy="-62" r="8" transform="rotate(-62)"/><circle cy="-62" r="8" transform="rotate(62)"/>
+        <circle cy="-62" r="8" transform="rotate(-132)"/><circle cy="-62" r="8" transform="rotate(132)"/>
       </g>
     </symbol>
     <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" fill="currentColor"/></symbol>
@@ -110,8 +107,9 @@
       </div>
 
       <div class="ask rise d4">
-        <img class="ask-pascal" src="/mesaviva/img/pascal-senala.webp" alt="Pascal, el asistente de PascalIA, señalando la barra para escribirle" width="230" height="470">
+        <img class="ask-pascal" src="/mesaviva/img/pascal-panel.webp" alt="Pascal, el asistente de PascalIA, con gorra amarilla y gafas, señalándote" width="465" height="1254">
         <form class="askbar" data-ask autocomplete="off">
+          <img class="ask-face" src="/pascal/pascal-rostro.webp" alt="" width="384" height="452">
           <label class="sr-only" for="ask-input">Cuéntale a Pascal de tu negocio</label>
           <input id="ask-input" name="q" type="text" maxlength="240" data-ask-input>
           <span class="ask-ph" aria-hidden="true" data-ask-ph></span>
@@ -461,7 +459,7 @@
       <div class="faq-head">
         <h2 id="faq-title">Preguntas frecuentes</h2>
         <p>¿Tienes otra? Escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p>
-        <img src="/mesaviva/img/pascal-portatil.webp" alt="" width="170" height="330" loading="lazy">
+        <img class="faq-pascal" src="/mesaviva/img/pascal-guino.webp" alt="Pascal guiñando un ojo con el gesto de todo bien" width="407" height="366" loading="lazy">
       </div>
       <div class="faq" data-faq>
         <details><summary>¿Ya puedo usar MesaViva en mi restaurante?<svg class="faq-i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>MesaViva está en desarrollo. Si te interesa, déjanos tus datos: entras en la lista de los primeros restaurantes y lo configuramos contigo.</p></div></details>

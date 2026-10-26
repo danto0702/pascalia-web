@@ -134,7 +134,7 @@
   }
 
   var ask = $('[data-ask]'), input = $('[data-ask-input]'), reply = $('[data-reply]');
-  var flor = '<svg class="flor" aria-hidden="true"><use href="#flor"/></svg>';
+  var flor = '<img src="/pascal/pascal-rostro.webp" alt="" width="44" height="44">';
   function answer(text) {
     if (!text.trim()) { input.focus(); return; }
     var found = read(text);
