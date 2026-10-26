@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MesaViva · Tu mesa y tu caja, en vivo</title>
+<meta name="description" content="MesaViva, de PascalIA: tus clientes piden, dividen la cuenta al peso y pagan desde el celular, y tu caja lo ve en el mismo segundo. Con facturación electrónica DIAN. Arma tu plan y prueba la demo.">
+<link rel="canonical" href="https://pascalia.lat/mesaviva/">
+<meta name="theme-color" content="#07080C">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CO">
+<meta property="og:url" content="https://pascalia.lat/mesaviva/">
+<meta property="og:title" content="MesaViva · Tu mesa y tu caja, en vivo">
+<meta property="og:description" content="Pedidos desde la mesa, cuenta dividida al peso, pago por persona y caja con facturación electrónica. Arma tu plan en 20 segundos.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Space+Grotesk:wght@500..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/sitio.css">
+<link rel="stylesheet" href="/contacto.css">
+<link rel="stylesheet" href="/mesaviva/mesaviva.css">
+<script src="/contacto.js" defer></script>
+<script src="/sitio.js" defer></script>
+<script src="/mesaviva/mesaviva.js" defer></script>
+</head>
+<body class="mv-page">
+
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" data-nav>
+  <div class="wrap nav-inner">
+    <a class="brand" href="/mesaviva/" aria-label="MesaViva, inicio">
+      <span class="mv-logo" aria-hidden="true">MV</span>
+      <span class="brand-text"><span class="brand-name">MesaViva</span><small class="brand-by">de Pascal<b>IA</b></small></span>
+    </a>
+    <nav class="nav-links" id="menu" aria-label="Secciones">
+      <a href="#demo">Demo</a>
+      <a href="#que-hace">Qué hace</a>
+      <a href="#planes">Planes</a>
+      <a href="#preguntas">Preguntas</a>
+      <a href="/">PascalIA</a>
+      <a class="btn btn-ink btn-sm nav-cta" href="#contacto">Cotizar</a>
+    </nav>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><svg class="i" aria-hidden="true"><use href="/iconos.svg#bars"/></svg><span>Menú</span></button>
+  </div>
+</header>
+
+<main id="contenido" class="mv">
+
+  <section class="mv-hero">
+    <div class="wrap mv-hero-grid">
+      <div class="mv-hero-copy">
+        <h1>Tu mesa y tu caja, <strong>en vivo.</strong></h1>
+        <p class="mv-lead">Tus clientes piden, dividen la cuenta al peso y pagan desde el celular. Tu caja lo ve en el mismo segundo y factura electrónicamente.</p>
+        <p class="mv-hero-links"><a class="mv-link" href="#demo">Prueba la demo</a><span aria-hidden="true">·</span><a class="mv-link" href="#que-hace">Mira qué hace</a></p>
+        <p class="mv-status">MesaViva está en desarrollo. Estamos armando la lista de los primeros restaurantes: lo configuramos contigo.</p>
+      </div>
+
+      <form class="mv-config" id="arma" aria-labelledby="arma-title" data-config>
+        <h2 id="arma-title">Arma tu plan</h2>
+        <div class="mv-q">
+          <span class="mv-q-label" id="q-mesas">Mesas en el local</span>
+          <div class="mv-stepper" role="group" aria-labelledby="q-mesas">
+            <button type="button" data-step="-1" aria-label="Menos mesas">−</button>
+            <output class="mv-num" name="mesas" data-mesas aria-live="polite">12</output>
+            <button type="button" data-step="1" aria-label="Más mesas">+</button>
+          </div>
+        </div>
+        <fieldset class="mv-q">
+          <legend class="mv-q-label">Cajas</legend>
+          <div class="mv-chips">
+            <label><input type="radio" name="cajas" value="1" checked><span>1</span></label>
+            <label><input type="radio" name="cajas" value="2"><span>2</span></label>
+            <label><input type="radio" name="cajas" value="4"><span>3 o 4</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="mv-q">
+          <legend class="mv-q-label">Sedes</legend>
+          <div class="mv-chips">
+            <label><input type="radio" name="sedes" value="1" checked><span>Una</span></label>
+            <label><input type="radio" name="sedes" value="2"><span>Varias</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="mv-q mv-q-wide">
+          <legend class="mv-q-label">Quiero</legend>
+          <div class="mv-toggles">
+            <label><input type="checkbox" name="whatsapp" checked><span>Pedidos por WhatsApp</span></label>
+            <label><input type="checkbox" name="nfc"><span>Mesa NFC y pago por persona</span></label>
+            <label><input type="checkbox" name="domicilios"><span>Domicilios con motorizado</span></label>
+            <label><input type="checkbox" name="nomina"><span>Nómina electrónica</span></label>
+          </div>
+        </fieldset>
+
+        <div class="mv-bug">
+          <div aria-live="polite">
+            <div class="mv-bug-name"><span class="mv-crest" aria-hidden="true">MV</span><span class="sr-only">Plan recomendado: <span data-plan-sr>Restaurante</span></span><p class="mv-plan" data-plan aria-hidden="true"></p></div>
+            <p class="mv-why" data-why>Porque quieres recibir pedidos por WhatsApp.</p>
+          </div>
+          <div class="mv-bar" aria-hidden="true"><i data-bar></i></div>
+          <ul class="mv-includes" data-includes></ul>
+          <p class="mv-kit" data-kit hidden></p>
+          <a class="mv-btn" href="#contacto" data-quote>Pedir cotización de este plan</a>
+          <p class="mv-fine">Licencia mensual. El precio te lo damos en la cotización.</p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="mv-section" id="demo">
+    <div class="wrap mv-demo">
+      <div class="mv-demo-copy">
+        <h2>Pruébalo como si estuvieras sentado en la mesa</h2>
+        <p>La demo usa un restaurante de ejemplo, Pizza Hamburgo, con 71 platos reales de comida rápida. Pide para ti o al centro, divide, gira la ruleta, paga por partes y cambia a la vista de la caja.</p>
+        <ul class="mv-lineup">
+          <li><span class="mv-dorsal">1</span><span><strong>Toca el chip de la mesa</strong>Se abre la cuenta compartida; cada toque cambia el contador para que un enlace viejo no sirva.</span></li>
+          <li><span class="mv-dorsal">2</span><span><strong>Pide y divide</strong>“Para mí” o “Al centro”; la cuenta de cada uno cuadra al peso.</span></li>
+          <li><span class="mv-dorsal">3</span><span><strong>Paga tu parte</strong>En línea, efectivo, datáfono o transferencia. Al 100 % sale una sola factura.</span></li>
+        </ul>
+        <a class="mv-btn" href="/mesaviva/demo/" target="_blank" rel="noopener">Abrir la demo completa</a>
+        <p class="mv-fine">Pagos, documentos DIAN y mensajes de la demo son simulados.</p>
+      </div>
+      <div class="mv-device">
+        <iframe src="/mesaviva/demo/" title="Demo de MesaViva con el restaurante de ejemplo Pizza Hamburgo" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="mv-section mv-alt" id="que-hace">
+    <div class="wrap">
+      <header class="mv-head">
+        <h2>Una sola jugada, de la mesa a la caja</h2>
+        <p>Lo que pasa en la mesa llega a la caja, a la cocina y a la factura sin volver a digitarlo.</p>
+      </header>
+      <div class="mv-modules">
+        <div>
+          <h3>En la mesa</h3>
+          <ul class="mv-lineup">
+            <li><span class="mv-dorsal">NFC</span><span><strong>Chip o QR en cada mesa</strong>Su destino se cambia desde la caja, sin reprogramarlo.</span></li>
+            <li><span class="mv-dorsal">DIV</span><span><strong>Cuenta dividida por plato</strong>Para uno, al centro o en partes distintas.</span></li>
+            <li><span class="mv-dorsal">PAG</span><span><strong>Pago por persona</strong>Con Wompi, efectivo, datáfono o transferencia.</span></li>
+            <li><span class="mv-dorsal">MES</span><span><strong>Llamar al mesero</strong>Y pedir cubiertos o servilletas sin levantar la mano.</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>En la caja y la cocina</h3>
+          <ul class="mv-lineup">
+            <li><span class="mv-dorsal">APR</span><span><strong>El mesero aprueba</strong>Nada llega a cocina sin su visto bueno, si así lo quieres.</span></li>
+            <li><span class="mv-dorsal">KDS</span><span><strong>Comandas en pantalla</strong>E impresas en la impresora de cocina.</span></li>
+            <li><span class="mv-dorsal">POS</span><span><strong>Facturación electrónica</strong>POS electrónico, factura, notas crédito y débito, por proveedor autorizado por la DIAN.</span></li>
+            <li><span class="mv-dorsal">PRO</span><span><strong>Meseros y propinas</strong>Comisión sobre la venta y propinas repartidas entre todo el personal.</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Fuera del local</h3>
+          <ul class="mv-lineup">
+            <li><span class="mv-dorsal">WA</span><span><strong>Pedidos por WhatsApp</strong>En el número de tu restaurante, con tu carta.</span></li>
+            <li><span class="mv-dorsal">DOM</span><span><strong>Domicilios propios</strong>Sin comisión a plataformas.</span></li>
+            <li><span class="mv-dorsal">INV</span><span><strong>Inventario con recetas</strong>Lotes, vencimientos y código de barras.</span></li>
+            <li><span class="mv-dorsal">SED</span><span><strong>Varias sedes</strong>Y nómina electrónica en el plan Cadena.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mv-section" id="al-peso">
+    <div class="wrap mv-split">
+      <header class="mv-head">
+        <h2>La cuenta cuadra al peso. Siempre.</h2>
+        <p>Cuando un plato se divide y no da exacto, el peso que sobra no le cae siempre al mismo. La suma de todas las partes es exactamente el total de la mesa, también después de descuentos, propina o la ruleta.</p>
+      </header>
+      <div class="mv-receipt" role="img" aria-label="Ejemplo: picada grande de 35.000 pesos al centro entre 3: 11.667, 11.667 y 11.666; Doble Burger de 10.500 para Mateo; total 45.500, y las partes suman exacto.">
+        <p class="mv-r-row"><span>Picada Grande · al centro ÷ 3</span><span>$35.000</span></p>
+        <p class="mv-r-sub">Sebas $11.667 · Valen $11.667 · Mateo $11.666 <em>(el peso que sobra rota en el siguiente plato)</em></p>
+        <p class="mv-r-row"><span>Doble Burger · Mateo</span><span>$10.500</span></p>
+        <p class="mv-r-row mv-r-total"><span>Total mesa</span><span>$45.500</span></p>
+        <p class="mv-r-sub">Sebas $11.667 + Valen $11.667 + Mateo $22.166 = $45.500</p>
+        <p class="mv-fine">Ejemplo con platos de Pizza Hamburgo, el restaurante de la demo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mv-section mv-alt" id="planes">
+    <div class="wrap">
+      <header class="mv-head">
+        <h2>Planes mensuales</h2>
+        <p>Todos facturan electrónicamente y traen una bolsa mensual de documentos y de mensajes de WhatsApp.</p>
+      </header>
+      <div class="mv-table-wrap">
+        <table class="mv-standings">
+          <thead><tr><th scope="col">Plan</th><th scope="col" class="n">Cajas</th><th scope="col" class="n">Usuarios</th><th scope="col" class="n">Sedes</th><th scope="col">Para qué</th></tr></thead>
+          <tbody>
+            <tr data-plan-card="esencial"><th scope="row">Esencial</th><td class="n">1</td><td class="n">4</td><td class="n">1</td><td>Cafés, panaderías y comercios: POS y factura electrónica, inventario, código de barras y carta QR.</td></tr>
+            <tr data-plan-card="restaurante"><th scope="row">Restaurante</th><td class="n">2</td><td class="n">10</td><td class="n">1</td><td>Todo Esencial más pedidos por WhatsApp, mesas, meseros y comisiones, cocina, recetas y lotes.</td></tr>
+            <tr data-plan-card="mesaviva"><th scope="row">MesaViva</th><td class="n">4</td><td class="n">15</td><td class="n">1</td><td>Todo Restaurante más mesa NFC, pago por persona, ruletas, CRM y domicilios con motorizado.</td></tr>
+            <tr data-plan-card="cadena"><th scope="row">Cadena</th><td class="n">4 por sede</td><td class="n">20+</td><td class="n">Varias</td><td>Todo MesaViva para varias sedes, con nómina electrónica, RADIAN y reportes consolidados.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mv-fine mv-center">El chip NFC de cada mesa y la configuración inicial (tu carta, tus colores, la capacitación) se cotizan aparte.</p>
+    </div>
+  </section>
+
+  <section class="section" id="preguntas">
+    <div class="wrap">
+      <header class="head">
+        <h2>Preguntas frecuentes</h2>
+      </header>
+      <div class="faq">
+        <details>
+          <summary>¿Ya puedo usar MesaViva en mi restaurante?</summary>
+          <p>MesaViva está en desarrollo. Si te interesa, déjanos tus datos: entras en la lista de los primeros restaurantes y lo configuramos contigo.</p>
+        </details>
+        <details>
+          <summary>¿Mis clientes tienen que instalar algo?</summary>
+          <p>No. Tocan el chip de la mesa o escanean el código QR y se abre en el navegador del celular. Solo escriben su nombre.</p>
+        </details>
+        <details>
+          <summary>¿Quién emite las facturas electrónicas?</summary>
+          <p>Un proveedor tecnológico autorizado por la DIAN, conectado a MesaViva. MesaViva emite una sola factura por mesa, aunque paguen varias personas, y la propina va aparte.</p>
+        </details>
+        <details>
+          <summary>¿Y si un cliente quiere pagar en efectivo?</summary>
+          <p>Lo marca el cajero. El efectivo se redondea a $50 y la diferencia queda registrada en la caja; la factura no cambia.</p>
+        </details>
+        <details>
+          <summary>¿Puedo personalizarlo con mi marca?</summary>
+          <p>Sí. En PascalIA cargamos tu carta, tu logo y tus colores. El chip NFC de cada mesa lo entregamos nosotros.</p>
+        </details>
+        <details>
+          <summary>¿La ruleta de premios es legal?</summary>
+          <p>Viene apagada. La ruleta de premios de la casa solo se activa cuando tengamos el concepto jurídico sobre juegos promocionales. La ruleta entre amigos para dividir la cuenta la activa cada restaurante.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contacto">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <h2>¿Lo quieres en tu restaurante?</h2>
+        <p>Déjanos tus datos y el plan que armaste. Te escribimos para mostrarte MesaViva con tu propia carta.</p>
+        <p class="contact-alt">O escríbenos al correo <a class="tlink" href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      </div>
+      <div data-pascalia-form data-solucion="desarrollo">
+        <noscript><p>Para enviar el formulario activa JavaScript, o escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p></noscript>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div>
+      <a class="brand" href="/"><img src="/flower.svg" alt="" width="30" height="30"><span>Pascal<b>IA</b></span></a>
+      <p class="tagline">Ideas que hacen florecer tu organización</p>
+    </div>
+    <div>
+      <p class="slogan">MesaViva es una solución de PascalIA, hecha en Colombia para restaurantes y comercios.</p>
+      <p class="footer-links"><a href="/">Inicio</a><a href="/cuentafacil/">CuentaFacil</a><a href="/mesaviva/">MesaViva</a><a href="/desarrollos/">Desarrollos</a><a href="/politica-de-datos/">Política de datos</a></p>
+    </div>
+    <p class="legal">© 2026 PascalIA · Hecho en Colombia</p>
+  </div>
+</footer>
+
+</body>
+</html>
