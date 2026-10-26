@@ -104,8 +104,6 @@
     if (!area.dataset.mvReady) {
       area.dataset.mvReady = '1';
       area.placeholder = 'Cuéntanos de tu restaurante: cuántas mesas y cajas tienes y qué quieres resolver.';
-      var opt = document.querySelector('#contacto select[name="solucion"] option[value="desarrollo"]');
-      if (opt) opt.textContent = 'MesaViva';
     }
     var text = quote.dataset.summary || '';
     if (!area.value.trim() || area.value === area.dataset.mvText) {

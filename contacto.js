@@ -14,6 +14,7 @@
     ["si_aps", "SI-APS · atención primaria"],
     ["mision_medica", "Misión Médica"],
     ["cuentafacil", "CuentaFacil · cuentas de cobro"],
+    ["mesaviva", "MesaViva · restaurantes"],
     ["consultoria", "Consultoría"],
     ["desarrollo", "Desarrollo a la medida"],
     ["capacitacion", "Capacitación"],

@@ -14,6 +14,7 @@ const SOLUCIONES: Record<string, string> = {
   si_aps: "SI-APS",
   mision_medica: "Misión Médica",
   cuentafacil: "CuentaFacil",
+  mesaviva: "MesaViva",
   consultoria: "Consultoría",
   desarrollo: "Desarrollo a la medida",
   capacitacion: "Capacitación",
