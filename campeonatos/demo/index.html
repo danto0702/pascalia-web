@@ -1,0 +1,1974 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FutbolPro Campeonatos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Demo de FutbolPro de PascalIA: gestión de campeonatos de fútbol aficionado con tabla en vivo, planilla arbitral, actas en PDF e imágenes para redes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&family=Oswald:wght@500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+/* Layout: app shell — sticky role bar, banner header, one view per role with scrollable tab rails; everything wraps to one column under 720px. */
+:root {
+  --bg: #161616;
+  --surface: #1F1F1F;
+  --surface-2: #2A2A2A;
+  --line: rgba(255,255,255,.1);
+  --text: #F7F7F7;
+  --muted: #B5B5B5;
+  --primary: #FFC107;
+  --on-primary: #1F1F1F;
+  --accent: #4FC3F7;
+  --hl: #FFC107;
+  --hl-text: #1F1F1F;
+  --ok: #3DDC84;
+  --warn: #FFB300;
+  --danger: #FF5A4F;
+  --c-yellow: #FFD600;
+  --c-blue: #2196F3;
+  --c-red: #E53935;
+  --zone-1: #3DDC84;
+  --zone-2: #4FC3F7;
+  --zone-3: #FF5A4F;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-display: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--surface); }
+img { max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; line-height: 1.15; text-wrap: balance; }
+p { margin: 0; }
+.i { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.muted { color: var(--muted); }
+.small { font-size: .82rem; }
+.tiny { font-size: .72rem; }
+.num { font-variant-numeric: tabular-nums; }
+.eyebrow { font: 700 .72rem/1.2 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--primary); }
+.trunc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.row { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.row.wrap-ok { flex-wrap: wrap; }
+.between { justify-content: space-between; }
+.stack { display: grid; gap: 12px; min-width: 0; }
+.stack-lg { display: grid; gap: 20px; min-width: 0; }
+.grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+.grid-3 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.grow { flex: 1; min-width: 0; }
+
+/* Role bar */
+.rolebar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: var(--surface); border-bottom: 1px solid var(--line); }
+.rolebar .wrap { display: flex; align-items: center; gap: 10px; padding-block: 8px; }
+.demo-tag { font: 800 .66rem/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; background: var(--primary); color: var(--on-primary); padding: 6px 9px; border-radius: 999px; flex: none; }
+.rail { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1; scroll-snap-type: x proximity; mask-image: linear-gradient(90deg, #000 92%, transparent); padding-right: 18px; }
+.rail::-webkit-scrollbar { display: none; }
+.rail > * { scroll-snap-align: start; flex: none; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); font: 600 .82rem/1 var(--font-display); cursor: pointer; white-space: nowrap; position: relative; }
+.pill:hover { color: var(--text); border-color: color-mix(in srgb, var(--primary) 50%, transparent); }
+.pill.on { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+.pill .dot { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--danger); color: #fff; font-size: .66rem; display: inline-grid; place-items: center; }
+
+/* Header */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: linear-gradient(120deg, color-mix(in srgb, var(--primary) 20%, var(--bg)), var(--bg) 70%); }
+.hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--bg) 92%, transparent) 0%, color-mix(in srgb, var(--bg) 55%, transparent) 100%); }
+.hero .wrap { position: relative; display: flex; align-items: center; gap: 16px; padding-block: 22px; flex-wrap: wrap; }
+.hero-logo { width: 76px; height: 76px; border-radius: 18px; object-fit: contain; background: color-mix(in srgb, var(--surface) 70%, transparent); padding: 6px; flex: none; }
+.hero h1 { font-size: clamp(1.25rem, 3.6vw, 2.1rem); font-weight: 800; letter-spacing: -.01em; text-transform: uppercase; }
+.hero .sub { color: var(--muted); font-size: .9rem; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font: 700 .68rem/1.4 var(--font-display); letter-spacing: .04em; text-transform: uppercase; background: color-mix(in srgb, var(--primary) 18%, transparent); color: var(--text); border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent); }
+.badge.neutral { background: var(--surface-2); border-color: var(--line); }
+.badge.ok { background: color-mix(in srgb, var(--ok) 18%, transparent); border-color: color-mix(in srgb, var(--ok) 45%, transparent); }
+.badge.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+.badge.danger { background: color-mix(in srgb, var(--danger) 18%, transparent); border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
+.badge.live { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+main { padding-block: 20px 40px; }
+.view-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.view-head h2 { font-size: 1.25rem; }
+.tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-bottom: 18px; padding-bottom: 2px; mask-image: linear-gradient(90deg, #000 94%, transparent); padding-right: 24px; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs .pill { flex: none; }
+
+/* Cards & controls */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; min-width: 0; }
+.card h3 { font-size: 1rem; font-weight: 700; }
+.card-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.card-head > div { min-width: 0; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); color: var(--text); font: 700 .84rem/1.1 var(--font-display); cursor: pointer; text-align: center; max-width: 100%; }
+.btn:hover { border-color: color-mix(in srgb, var(--primary) 60%, transparent); }
+.btn:focus-visible, .pill:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .tile:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.btn.primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+.btn.danger { background: color-mix(in srgb, var(--danger) 16%, transparent); color: var(--text); border-color: color-mix(in srgb, var(--danger) 50%, transparent); }
+.btn.ghost { background: transparent; }
+.btn.sm { padding: 7px 11px; font-size: .76rem; }
+.btn.icon { padding: 8px; border-radius: 10px; }
+.btn.block { width: 100%; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+label.field { display: grid; gap: 5px; font-size: .78rem; font-weight: 600; color: var(--muted); min-width: 0; }
+.input, select.input, textarea.input { width: 100%; min-width: 0; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: .92rem; }
+textarea.input { resize: vertical; }
+.fields { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); }
+.switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.switch:last-child { border-bottom: 0; }
+.switch .lbl { min-width: 0; }
+.switch .lbl b { display: block; font-size: .9rem; }
+.switch .lbl span { font-size: .76rem; color: var(--muted); }
+.toggle { appearance: none; width: 44px; height: 26px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); position: relative; cursor: pointer; flex: none; transition: background .2s; }
+.toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: var(--muted); transition: transform .2s, background .2s; }
+.toggle:checked { background: var(--primary); border-color: var(--primary); }
+.toggle:checked::after { transform: translateX(18px); background: var(--on-primary); }
+input[type=color].input { padding: 3px; height: 40px; cursor: pointer; }
+.upload { display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px dashed color-mix(in srgb, var(--text) 25%, transparent); border-radius: var(--radius-sm); min-width: 0; }
+.upload .thumb { width: 64px; height: 64px; border-radius: 10px; object-fit: contain; background: var(--bg); flex: none; }
+.upload .thumb.wide { width: 112px; object-fit: cover; }
+.file-btn { position: relative; overflow: hidden; }
+.file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.note { padding: 10px 12px; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--primary) 10%, transparent); border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent); font-size: .82rem; }
+.note.danger { background: color-mix(in srgb, var(--danger) 10%, transparent); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
+.note.ok { background: color-mix(in srgb, var(--ok) 10%, transparent); border-color: color-mix(in srgb, var(--ok) 35%, transparent); }
+fieldset.card { min-width: 0; }
+fieldset.card[disabled] { opacity: .6; }
+hr.sep { border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+
+/* Teams, players */
+.crest { object-fit: contain; flex: none; display: block; }
+.c20 { width: 22px; height: 22px; } .c28 { width: 30px; height: 30px; } .c40 { width: 42px; height: 42px; } .c56 { width: 58px; height: 58px; } .c80 { width: 84px; height: 84px; } .c120 { width: 120px; height: 120px; }
+.avatar { border-radius: 50%; object-fit: cover; flex: none; background: var(--surface-2); }
+.team-link { display: inline-flex; align-items: center; gap: 8px; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; text-align: left; min-width: 0; font-weight: 600; }
+.team-link:hover .tn { text-decoration: underline; text-decoration-color: var(--primary); }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; justify-items: center; gap: 8px; text-align: center; cursor: pointer; color: inherit; min-width: 0; }
+.tile:hover { border-color: var(--primary); }
+.tiles { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 118px), 1fr)); }
+.player-card { background: var(--surface-2); border-radius: var(--radius); overflow: hidden; min-width: 0; display: grid; }
+.player-card .ph { position: relative; aspect-ratio: 1; max-width: 100%; background: var(--bg); }
+.player-card .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.player-card .dorsal { position: absolute; left: 8px; top: 8px; font: 900 1.1rem/1 var(--font-display); background: var(--primary); color: var(--on-primary); padding: 5px 8px; border-radius: 8px; }
+.player-card .body { padding: 10px; display: grid; gap: 4px; min-width: 0; }
+.player-card .nm { font: 700 .88rem/1.2 var(--font-display); }
+.statline { display: flex; flex-wrap: wrap; gap: 6px; font-size: .74rem; color: var(--muted); }
+.statline span { display: inline-flex; align-items: center; gap: 3px; }
+.cardchip { display: inline-block; width: 9px; height: 13px; border-radius: 2px; vertical-align: -2px; }
+.cardchip.y { background: var(--c-yellow); } .cardchip.b { background: var(--c-blue); } .cardchip.r { background: var(--c-red); }
+
+/* KPIs */
+.kpis { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); margin-bottom: 20px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.kpi .k { font: 700 .7rem/1.2 var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+.kpi .v { font: 800 2rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.kpi .who { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: .82rem; }
+.kpi.feature { background: linear-gradient(140deg, color-mix(in srgb, var(--primary) 26%, var(--surface)), var(--surface)); }
+
+/* Tables */
+.table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); }
+table.t { width: 100%; border-collapse: collapse; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.t th { font: 700 .7rem/1 var(--font-display); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); text-align: center; padding: 11px 6px; background: var(--surface-2); white-space: nowrap; }
+.t th:nth-child(2) { text-align: left; }
+.t td { padding: 8px 6px; text-align: center; border-top: 1px solid var(--line); white-space: nowrap; }
+.t td:nth-child(2) { text-align: left; }
+.t td.pts, .t th.pts { background: var(--hl); color: var(--hl-text); font-weight: 800; }
+.t td.pos { font-weight: 800; position: relative; width: 38px; }
+.t td.pos::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 4px; border-radius: 0 4px 4px 0; background: var(--zone, transparent); }
+.t .tn { max-width: 11rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 12px; font-size: .74rem; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+/* Matches */
+.match { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; display: grid; gap: 10px; min-width: 0; }
+.match-top { display: flex; flex-wrap: wrap; gap: 6px; justify-content: space-between; align-items: center; font-size: .74rem; color: var(--muted); }
+.vs { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 8px; align-items: center; }
+.vs .side { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.vs .side.away { flex-direction: row-reverse; text-align: right; }
+.vs .score { font: 900 1.4rem/1 var(--font-display); font-variant-numeric: tabular-nums; padding: 6px 10px; border-radius: 10px; background: var(--surface-2); white-space: nowrap; }
+.vs .score.sched { font-size: .95rem; color: var(--muted); }
+.round-title { font: 800 .9rem/1.2 var(--font-display); margin: 6px 0 2px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* Lists */
+.lead-list { display: grid; gap: 6px; }
+.lead-item { display: grid; grid-template-columns: 26px 40px minmax(0,1fr) auto; gap: 10px; align-items: center; padding: 8px; border-radius: 12px; background: var(--surface-2); }
+.lead-item .rk { font: 800 .9rem/1 var(--font-display); color: var(--muted); text-align: center; }
+.lead-item .val { font: 900 1.25rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.lead-item .nm { font-weight: 700; font-size: .86rem; }
+
+/* Referee console */
+.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 12px; }
+.team-panel { background: var(--surface-2); border-radius: var(--radius); padding: 14px; display: grid; gap: 10px; justify-items: center; text-align: center; min-width: 0; }
+.team-panel .big { font: 900 3.4rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.act-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; width: 100%; }
+.act-grid .btn { padding: 12px 8px; border-radius: 12px; }
+.btn.y { background: var(--c-yellow); color: #1F1F1F; border-color: var(--c-yellow); }
+.btn.b { background: var(--c-blue); color: #fff; border-color: var(--c-blue); }
+.btn.r { background: var(--c-red); color: #fff; border-color: var(--c-red); }
+.clock { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: var(--radius); background: var(--bg); border: 1px solid var(--line); }
+.clock .time { font: 900 2.4rem/1 var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.timeline { display: grid; gap: 6px; }
+.ev { display: grid; grid-template-columns: 44px 22px minmax(0,1fr) auto; gap: 8px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--surface-2); }
+.ev .min { font: 800 .9rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.ev .what { min-width: 0; font-size: .84rem; }
+.ev .what b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev .what span { color: var(--muted); font-size: .74rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev-ico { width: 22px; height: 22px; display: grid; place-items: center; }
+.pick-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 96px), 1fr)); }
+.pick { border: 2px solid transparent; background: var(--surface-2); border-radius: 12px; padding: 8px 6px; display: grid; justify-items: center; gap: 4px; cursor: pointer; color: inherit; min-width: 0; text-align: center; }
+.pick.on { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 16%, var(--surface-2)); }
+.pick[disabled] { opacity: .4; cursor: not-allowed; }
+.pick .n { font: 900 .9rem/1 var(--font-display); }
+.pick .pn { font-size: .7rem; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.sigpad { width: 100%; height: 150px; border-radius: 12px; background: #fff; touch-action: none; cursor: crosshair; display: block; border: 2px dashed color-mix(in srgb, var(--text) 25%, transparent); }
+
+/* Flyer studio */
+.studio { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .studio { grid-template-columns: minmax(0, 340px) minmax(0, 1fr); } }
+.flyer-preview { background: var(--bg); border-radius: var(--radius); padding: 12px; display: grid; place-items: center; border: 1px solid var(--line); }
+.flyer-preview canvas { width: 100%; max-width: 460px; height: auto; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.35); display: block; }
+.sponsor-slots { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
+
+/* Social */
+.post { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.post .media { aspect-ratio: 16/9; max-width: 100%; background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 30%, var(--bg)), var(--bg)); display: grid; place-items: center; color: var(--muted); }
+.post .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.post .pb { padding: 12px 14px; display: grid; gap: 8px; }
+
+/* Modal */
+.modal { position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px); }
+.modal[hidden] { display: none; }
+.sheet { background: var(--surface); width: 100%; max-width: 760px; max-height: 92dvh; overflow-y: auto; border-radius: 22px 22px 0 0; padding: 18px max(16px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 14px; border: 1px solid var(--line); }
+@media (min-width: 720px) { .modal { align-items: center; padding: 24px; } .sheet { border-radius: 22px; padding: 22px; } }
+.sheet-head { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
+.sheet-head h3 { font-size: 1.1rem; }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 90; background: var(--text); color: var(--bg); padding: 11px 16px; border-radius: 999px; font: 600 .85rem/1.3 var(--font-body); box-shadow: 0 10px 30px rgba(0,0,0,.35); max-width: calc(100% - 32px); text-align: center; }
+.toast[hidden] { display: none; }
+
+/* Kiosk scoreboard */
+.kiosk { position: fixed; inset: 0; z-index: 95; background: #000; color: #fff; display: grid; grid-template-rows: auto 1fr auto; padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.kiosk[hidden] { display: none; }
+.kiosk .k-score { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 2vw; text-align: center; }
+.kiosk .k-team { display: grid; justify-items: center; gap: 1vh; min-width: 0; }
+.kiosk .k-team img { width: min(22vw, 26vh); height: min(22vw, 26vh); object-fit: contain; }
+.kiosk .k-team b { font: 800 clamp(1rem, 3vw, 2.4rem)/1.1 var(--font-display); text-transform: uppercase; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kiosk .k-goals { font: 900 clamp(4rem, 16vw, 14rem)/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.kiosk .k-clock { font: 900 clamp(2.5rem, 9vw, 7rem)/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--primary); text-align: center; }
+
+footer.site { border-top: 1px solid var(--line); padding-block: 18px; color: var(--muted); font-size: .8rem; }
+footer.site .wrap { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+.flor { width: 22px; height: 22px; }
+.drop { border: 2px dashed color-mix(in srgb, var(--text) 25%, transparent); border-radius: var(--radius); padding: 18px; text-align: center; display: grid; gap: 8px; justify-items: center; }
+.drop.over { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, transparent); }
+.row-bad td { background: color-mix(in srgb, var(--danger) 12%, transparent); }
+.ok-ic { color: var(--ok); } .bad-ic { color: var(--danger); }
+.list-item { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding: 10px; border-radius: 12px; background: var(--surface-2); min-width: 0; }
+.list-item > .row { flex: 1 1 220px; }
+.reorder { display: grid; gap: 6px; }
+.reorder .list-item { padding: 8px 10px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@media (max-width: 420px) {
+  .hero-logo { width: 58px; height: 58px; }
+  .t { font-size: .78rem; }
+  .t .tn { max-width: 7.5rem; }
+  .team-panel .big { font-size: 2.8rem; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="petal" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/>
+    <symbol id="flor" viewBox="-112 -112 224 224">
+      <g fill="#FFC107" fill-opacity=".85"><use href="#petal"/><use href="#petal" transform="rotate(60)"/><use href="#petal" transform="rotate(120)"/><use href="#petal" transform="rotate(180)"/><use href="#petal" transform="rotate(240)"/><use href="#petal" transform="rotate(300)"/></g>
+      <circle r="10" fill="#fff"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="rolebar">
+  <div class="wrap">
+    <span class="demo-tag">Demo</span>
+    <nav class="rail" id="roleRail" aria-label="Cambiar de rol"></nav>
+  </div>
+</div>
+
+<header class="hero" id="hero"></header>
+
+<main class="wrap" id="app"></main>
+
+<footer class="site">
+  <div class="wrap">
+    <span class="row"><svg class="flor" aria-hidden="true"><use href="#flor"/></svg> FutbolPro es un desarrollo de <b>PascalIA</b></span>
+    <span class="row wrap-ok">
+      <span>Datos de ejemplo: los equipos vienen de la tabla compartida; jugadores, árbitros y patrocinadores son ficticios.</span>
+      <button class="btn sm ghost" data-act="demoReset">Restablecer demo</button>
+    </span>
+  </div>
+</footer>
+
+<div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="kiosk" id="kiosk" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+'use strict';
+/* ============================================================
+   FutbolPro · prototipo interactivo (PascalIA)
+   Estado en memoria + localStorage del navegador (solo demo).
+   ============================================================ */
+
+// ---------- Utilidades ----------
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const uid = (p) => p + Math.random().toString(36).slice(2, 8);
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\b(F ?C|FC|FUTBOL CLUB)\b/g, '').replace(/\s+/g, ' ').trim();
+const cop = (n) => '$ ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+function mulberry32(a) { return function () { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+const ICONS = {
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  whistle: '<circle cx="9" cy="14" r="5"/><path d="M13 10.5L21 7v4l-5.5 2.2"/><path d="M5 6l2 2"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
+  upload: '<path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+  download: '<path d="M12 4v12M7 11l5 5 5-5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  check: '<path d="M5 12l5 5 9-10"/>',
+  x: '<path d="M6 6l12 12M18 6L6 18"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  play: '<path d="M7 5l12 7-12 7z"/>',
+  pause: '<path d="M8 5v14M16 5v14"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
+  file: '<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
+  ball: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5l4 2.9-1.5 4.6h-5L8 10.4z"/><path d="M12 3v4.5M16 10.4l4.3-1.4M14.5 15l2.7 3.7M9.5 15l-2.7 3.7M8 10.4L3.7 9"/>',
+  card: '<rect x="7" y="3" width="10" height="18" rx="1.5"/>',
+  star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  sliders: '<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  heart: '<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  chat: '<path d="M4 5h16v11H9l-5 4z"/>',
+  expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/>',
+  userPlus: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6"/>',
+  megaphone: '<path d="M3 10v4a1 1 0 0 0 1 1h3l7 4V5L7 9H4a1 1 0 0 0-1 1zM18 9a4 4 0 0 1 0 6"/>',
+  undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',
+  key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l2 2"/>',
+  trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
+  refresh: '<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+  sign: '<path d="M3 17c3-6 5-6 6-3s2 3 4-1 3-4 4 0M3 21h18"/>',
+  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  ban: '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+  pin: '<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>'
+};
+const ic = (n, cls = '') => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n] || ''}</svg>`;
+
+const DAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+const parseDate = (d) => { const [y, m, dd] = d.split('-').map(Number); return new Date(y, m - 1, dd); };
+const fmtDateLong = (d) => { const x = parseDate(d); return `${DAYS[x.getDay()]} ${x.getDate()} de ${MONTHS[x.getMonth()]}`; };
+const fmtDateShort = (d) => { const x = parseDate(d); return `${DAYS[x.getDay()].slice(0, 3)} ${x.getDate()} ${MONTHS[x.getMonth()].slice(0, 3)}`; };
+const fmtTime = (t) => { const [h, m] = t.split(':').map(Number); const h12 = ((h + 11) % 12) + 1; return `${h12}:${String(m).padStart(2, '0')} ${h < 12 ? 'A.M' : 'P.M'}`; };
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 3200);
+}
+
+// ---------- Colores ----------
+function hexToRgb(h) { h = h.replace('#', ''); if (h.length === 3) h = h.split('').map((c) => c + c).join(''); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+const rgbToHex = (r, g, b) => '#' + [r, g, b].map((v) => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join('');
+function mix(a, b, t) { const A = hexToRgb(a), B = hexToRgb(b); return rgbToHex(A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t); }
+function lum(h) { const [r, g, b] = hexToRgb(h).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; }
+const onColor = (h) => (lum(h) > 0.4 ? '#1F1F1F' : '#FFFFFF');
+const alpha = (h, a) => { const [r, g, b] = hexToRgb(h); return `rgba(${r},${g},${b},${a})`; };
+
+const PRESETS = {
+  pascalia: { name: 'PascalIA (grafito y amarillo)', primary: '#FFC107', accent: '#4FC3F7', bg: '#161616', surface: '#1F1F1F', text: '#F7F7F7', hl: '#FFC107' },
+  cesped: { name: 'Césped (verde deportivo)', primary: '#2ECC71', accent: '#FFD54F', bg: '#0A1C12', surface: '#11291B', text: '#F1F8F3', hl: '#FFF59D' },
+  noche: { name: 'Noche (azul y cian)', primary: '#38BDF8', accent: '#F472B6', bg: '#0B1020', surface: '#121A33', text: '#EEF2FF', hl: '#FDE68A' },
+  dia: { name: 'Día (alto contraste al sol)', primary: '#FFC107', accent: '#0057B8', bg: '#F2F3F5', surface: '#FFFFFF', text: '#111111', hl: '#FFE58A' },
+  vinotinto: { name: 'Vinotinto y oro', primary: '#E0B44C', accent: '#FF8A80', bg: '#1C0A10', surface: '#2A1018', text: '#FBEFF2', hl: '#E0B44C' }
+};
+const FONTS = { Montserrat: "'Montserrat', system-ui, sans-serif", Oswald: "'Oswald', 'Arial Narrow', sans-serif", 'Bebas Neue': "'Bebas Neue', 'Arial Narrow', sans-serif", Anton: "'Anton', Impact, sans-serif" };
+
+// ---------- Generadores gráficos (escudos, avatares, logos de ejemplo) ----------
+function canvasOf(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+function shieldPath(ctx, x, y, w, h) {
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.5, y);
+  ctx.lineTo(x + w, y + h * 0.12);
+  ctx.lineTo(x + w, y + h * 0.5);
+  ctx.bezierCurveTo(x + w, y + h * 0.78, x + w * 0.75, y + h * 0.92, x + w * 0.5, y + h);
+  ctx.bezierCurveTo(x + w * 0.25, y + h * 0.92, x, y + h * 0.78, x, y + h * 0.5);
+  ctx.lineTo(x, y + h * 0.12);
+  ctx.closePath();
+}
+function initials(name) {
+  const w = norm(name).split(' ').filter((x) => !['EL', 'LA', 'LOS', 'LAS', 'DE', 'DEL'].includes(x));
+  if (w.length === 1) return w[0].slice(0, 3);
+  return w.slice(0, 3).map((x) => x[0]).join('');
+}
+function makeCrest(name, c1, c2) {
+  const c = canvasOf(256, 256), x = c.getContext('2d');
+  shieldPath(x, 22, 10, 212, 236); x.fillStyle = c2; x.fill();
+  shieldPath(x, 34, 22, 188, 212); const g = x.createLinearGradient(0, 22, 0, 234); g.addColorStop(0, mix(c1, '#ffffff', 0.18)); g.addColorStop(1, mix(c1, '#000000', 0.25)); x.fillStyle = g; x.fill();
+  x.save(); shieldPath(x, 34, 22, 188, 212); x.clip();
+  x.fillStyle = alpha(c2, 0.22); x.fillRect(110, 0, 36, 256);
+  x.restore();
+  x.fillStyle = c2; x.font = '900 30px Montserrat, Arial Black, sans-serif'; x.textAlign = 'center';
+  x.fillText('★', 128, 64);
+  const ini = initials(name);
+  x.font = `900 ${ini.length > 2 ? 64 : 80}px Montserrat, Arial Black, sans-serif`;
+  x.lineWidth = 8; x.strokeStyle = alpha('#000000', 0.35); x.strokeText(ini, 128, 156);
+  x.fillStyle = '#FFFFFF'; x.fillText(ini, 128, 156);
+  x.font = '800 15px Montserrat, Arial, sans-serif'; x.fillStyle = c2;
+  x.fillText('F.C.', 128, 196);
+  return c.toDataURL('image/png');
+}
+function makeAvatar(name, color, num) {
+  const c = canvasOf(240, 240), x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 240, 240); g.addColorStop(0, mix(color, '#ffffff', 0.25)); g.addColorStop(1, mix(color, '#000000', 0.45));
+  x.fillStyle = g; x.fillRect(0, 0, 240, 240);
+  x.fillStyle = alpha('#ffffff', 0.85);
+  x.beginPath(); x.arc(120, 96, 44, 0, Math.PI * 2); x.fill();
+  x.beginPath(); x.ellipse(120, 236, 92, 82, 0, Math.PI, 0); x.fill();
+  x.fillStyle = color; x.font = '900 40px Montserrat, Arial Black, sans-serif'; x.textAlign = 'center'; x.fillText(String(num), 120, 214);
+  return c.toDataURL('image/jpeg', 0.82);
+}
+function makeWordmark(text, c1, c2, shape) {
+  const c = canvasOf(480, 200), x = c.getContext('2d');
+  x.fillStyle = c1;
+  if (shape === 'circle') { x.beginPath(); x.arc(90, 100, 74, 0, Math.PI * 2); x.fill(); }
+  else { x.beginPath(); x.roundRect(18, 30, 140, 140, 28); x.fill(); }
+  x.fillStyle = c2; x.font = '900 64px Montserrat, Arial Black, sans-serif'; x.textAlign = 'center'; x.fillText(text[0], shape === 'circle' ? 90 : 88, 124);
+  x.textAlign = 'left'; x.fillStyle = c1; x.font = '900 40px Montserrat, Arial Black, sans-serif';
+  const words = text.split(' '); const l1 = words.slice(0, Math.ceil(words.length / 2)).join(' '), l2 = words.slice(Math.ceil(words.length / 2)).join(' ');
+  x.fillText(l1.toUpperCase(), 186, l2 ? 96 : 116, 280); if (l2) { x.font = '700 32px Montserrat, Arial, sans-serif'; x.fillText(l2.toUpperCase(), 186, 140, 280); }
+  return c.toDataURL('image/png');
+}
+function makeTournamentLogo() {
+  const c = canvasOf(320, 320), x = c.getContext('2d');
+  x.fillStyle = '#1F1F1F'; x.beginPath(); x.arc(160, 160, 150, 0, Math.PI * 2); x.fill();
+  x.strokeStyle = '#FFC107'; x.lineWidth = 12; x.beginPath(); x.arc(160, 160, 136, 0, Math.PI * 2); x.stroke();
+  x.fillStyle = '#FFC107'; x.textAlign = 'center';
+  x.font = '900 112px Montserrat, Arial Black, sans-serif'; x.fillText('F8', 160, 178);
+  x.font = '800 26px Montserrat, Arial, sans-serif'; x.fillStyle = '#FFFFFF'; x.fillText('INACTIVOS', 160, 222);
+  x.font = '700 19px Montserrat, Arial, sans-serif'; x.fillStyle = '#FFC107'; x.fillText('LA CABAÑA', 160, 250);
+  x.font = '900 34px Montserrat, Arial, sans-serif'; x.fillText('★ ★ ★', 160, 84);
+  return c.toDataURL('image/png');
+}
+function makeBanner() {
+  const c = canvasOf(1600, 420), x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 1600, 420); g.addColorStop(0, '#0f2b17'); g.addColorStop(1, '#16391f'); x.fillStyle = g; x.fillRect(0, 0, 1600, 420);
+  for (let i = 0; i < 16; i++) { x.fillStyle = i % 2 ? 'rgba(255,255,255,.035)' : 'rgba(0,0,0,.05)'; x.fillRect(i * 100, 0, 100, 420); }
+  x.strokeStyle = 'rgba(255,255,255,.35)'; x.lineWidth = 5;
+  x.strokeRect(40, 30, 1520, 360); x.beginPath(); x.moveTo(800, 30); x.lineTo(800, 390); x.stroke();
+  x.beginPath(); x.arc(800, 210, 80, 0, Math.PI * 2); x.stroke();
+  x.strokeRect(40, 120, 150, 180); x.strokeRect(1410, 120, 150, 180);
+  const r = x.createRadialGradient(1300, 0, 10, 1300, 0, 700); r.addColorStop(0, 'rgba(255,214,79,.45)'); r.addColorStop(1, 'rgba(255,214,79,0)'); x.fillStyle = r; x.fillRect(0, 0, 1600, 420);
+  return c.toDataURL('image/jpeg', 0.86);
+}
+
+// ---------- Datos semilla ----------
+// Tabla después de la Fecha 2 (tomada de la imagen compartida por el organizador).
+const SEED_TABLE = [
+  ['Union Fox', 2, 1, 1, 0, 7, 4, '#E53935', '#FFFFFF'], ['Spartans', 2, 1, 1, 0, 6, 3, '#B71C1C', '#FFD54F'],
+  ['Agropecuarios', 2, 1, 1, 0, 5, 2, '#2E7D32', '#FFFFFF'], ['La Estancia', 2, 1, 1, 0, 2, 1, '#6D4C41', '#FFE0B2'],
+  ['Los Primos', 1, 1, 0, 0, 2, 1, '#7E57C2', '#FFFFFF'], ['Combo Guillín', 1, 1, 0, 0, 2, 1, '#1B5E20', '#FFC107'],
+  ['El Hoyo', 1, 1, 0, 0, 1, 0, '#1565C0', '#FFFFFF'], ['Combo Cris', 2, 1, 0, 1, 5, 5, '#F9A825', '#1F1F1F'],
+  ['Galácticos', 2, 1, 0, 1, 4, 6, '#283593', '#FFD54F'], ['Combo Nando', 2, 0, 2, 0, 3, 3, '#00838F', '#FFFFFF'],
+  ['Barrio FC', 1, 0, 1, 0, 2, 2, '#E65100', '#FFD54F'], ['Fénix', 2, 0, 1, 1, 2, 3, '#D84315', '#FFFFFF'],
+  ['Goat', 1, 0, 0, 1, 1, 2, '#37474F', '#FFFFFF'], ['Combo Sael', 1, 0, 0, 1, 0, 1, '#AD1457', '#FFFFFF'],
+  ['Combo Chicle', 2, 0, 0, 2, 5, 9, '#00897B', '#1F1F1F'], ['Sánchez', 2, 0, 0, 2, 2, 6, '#5D4037', '#FFFFFF'],
+  ['San Miguel FC', 0, 0, 0, 0, 0, 0, '#8E1B1B', '#E0B44C']
+];
+const FIRST = ['Andrés', 'Brayan', 'Camilo', 'Cristian', 'Daniel', 'Diego', 'Duván', 'Edwin', 'Fabián', 'Felipe', 'Germán', 'Harold', 'Iván', 'Jair', 'Jhon', 'Jorge', 'Julián', 'Kevin', 'Leider', 'Luis', 'Manuel', 'Mauricio', 'Nelson', 'Óscar', 'Pedro', 'Ronald', 'Santiago', 'Sebastián', 'Wilmer', 'Yeison', 'Yerson', 'Alexis', 'Arley', 'Deiver', 'Esneider', 'Fredy', 'Jhonatan', 'Michael', 'Robinson', 'Stiven'];
+const LAST = ['Pérez', 'Quintero', 'Navarro', 'Bayona', 'Sanguino', 'Pacheco', 'Carrascal', 'Ascanio', 'Rincón', 'Arévalo', 'Torrado', 'Velásquez', 'Jaimes', 'Ortega', 'Contreras', 'Páez', 'Guerrero', 'Álvarez', 'Trigos', 'Quintana', 'Durán', 'Claro', 'Sepúlveda', 'Ballesteros', 'Lobo', 'Meza', 'Peñaranda', 'Barbosa', 'Coronel', 'Vergel'];
+const POS = [['POR', 1], ['DEF', 2], ['DEF', 4], ['DEF', 5], ['MED', 6], ['MED', 8], ['MED', 10], ['DEL', 7], ['DEL', 9], ['DEL', 11]];
+const POS_NAME = { POR: 'Portero', DEF: 'Defensa', MED: 'Mediocampista', DEL: 'Delantero' };
+
+const MODALITIES = {
+  F11: { label: 'Fútbol 11', periods: 2, periodMin: 45, breakMin: 15, blueCard: false, foulLimitOn: false, foulLimit: 5, playersOnField: 11, subsUnlimited: false, maxSubs: 5, reentry: false, offside: true },
+  F8: { label: 'Fútbol 8', periods: 2, periodMin: 30, breakMin: 10, blueCard: true, foulLimitOn: true, foulLimit: 5, playersOnField: 8, subsUnlimited: true, maxSubs: 0, reentry: true, offside: false },
+  F7: { label: 'Fútbol 7', periods: 2, periodMin: 25, breakMin: 5, blueCard: false, foulLimitOn: false, foulLimit: 5, playersOnField: 7, subsUnlimited: true, maxSubs: 0, reentry: true, offside: false },
+  F5: { label: 'Fútbol 5', periods: 2, periodMin: 20, breakMin: 5, blueCard: false, foulLimitOn: true, foulLimit: 5, playersOnField: 5, subsUnlimited: true, maxSubs: 0, reentry: true, offside: false },
+  MICRO: { label: 'Microfútbol / Futsal', periods: 2, periodMin: 20, breakMin: 10, blueCard: true, foulLimitOn: true, foulLimit: 5, playersOnField: 5, subsUnlimited: true, maxSubs: 0, reentry: true, offside: false }
+};
+const TIEBREAK_LABELS = { pts: 'Puntos', dg: 'Diferencia de gol', gf: 'Goles a favor', gc: 'Menos goles en contra', fair: 'Juego limpio (menos tarjetas)', pg: 'Partidos ganados' };
+
+function buildSeed() {
+  const rnd = mulberry32(20261025);
+  const pickW = (arr, w) => { const tot = w.reduce((a, b) => a + b, 0); let r = rnd() * tot; for (let i = 0; i < arr.length; i++) { r -= w[i]; if (r <= 0) return arr[i]; } return arr[arr.length - 1]; };
+  const teams = [], players = [];
+  SEED_TABLE.forEach((row, i) => {
+    const [name, pj, pg, pe, pp, gf, gc, c1, c2] = row;
+    const id = 'T' + (i + 1);
+    teams.push({ id, name, color: c1, color2: c2, crest: makeCrest(name, c1, c2), logo: null, logoPending: null, delegate: `DT ${name}`, phone: '', base: { pj, pg, pe, pp, gf, gc }, finesPaid: 0 });
+    const roster = POS.map(([pos, num], k) => {
+      const nm = `${FIRST[Math.floor(rnd() * FIRST.length)]} ${LAST[Math.floor(rnd() * LAST.length)]}`;
+      return { id: `${id}P${k + 1}`, teamId: id, name: nm, number: num, pos, doc: String(1090400000 + Math.floor(rnd() * 899999)), photo: makeAvatar(nm, c1, num), status: 'APPROVED', base: { goals: 0, assists: 0, yellow: 0, blue: 0, red: 0 } };
+    });
+    const w = roster.map((p) => ({ POR: 0, DEF: 1, MED: 2.2, DEL: 4.5 })[p.pos]);
+    for (let g = 0; g < gf; g++) { const s = pickW(roster, w); s.base.goals++; if (rnd() < 0.6) { const others = roster.filter((p) => p !== s && p.pos !== 'POR'); others[Math.floor(rnd() * others.length)].base.assists++; } }
+    for (let c = 0; c < pj; c++) { if (rnd() < 0.85) roster[1 + Math.floor(rnd() * 9)].base.yellow++; if (rnd() < 0.3) roster[1 + Math.floor(rnd() * 9)].base.blue++; }
+    players.push(...roster);
+  });
+  // Rojas históricas (ejemplo) y jugadores pendientes de aprobación.
+  players.find((p) => p.id === 'T16P4').base.red = 1;
+  players.find((p) => p.id === 'T9P3').base.red = 1;
+  players.push({ id: 'T15P11', teamId: 'T15', name: 'Yerson Carrascal', number: 14, pos: 'MED', doc: '1091660231', photo: makeAvatar('Yerson Carrascal', '#00897B', 14), status: 'PENDING', base: { goals: 0, assists: 0, yellow: 0, blue: 0, red: 0 } });
+  players.push({ id: 'T7P11', teamId: 'T7', name: 'Arley Peñaranda', number: 17, pos: 'DEL', doc: '1091660587', photo: makeAvatar('Arley Peñaranda', '#1565C0', 17), status: 'PENDING', base: { goals: 0, assists: 0, yellow: 0, blue: 0, red: 0 } });
+
+  const users = [
+    { id: 'U1', name: 'Coordinación PascalIA', user: 'superadmin@futbolpro.demo', role: 'SUPER_ADMIN', phone: '', active: true },
+    { id: 'U2', name: 'Organización La Cabaña', user: 'admin@lacabana.demo', role: 'ADMIN', phone: '', active: true },
+    { id: 'R1', name: 'Carlos Betancur', user: 'cbetancur', role: 'REFEREE', refRole: 'Central', phone: '', active: true },
+    { id: 'R2', name: 'Edgar Rincón', user: 'erincon', role: 'REFEREE', refRole: 'Asistente', phone: '', active: true },
+    { id: 'R3', name: 'Luis Quintana', user: 'lquintana', role: 'REFEREE', refRole: 'Planillero', phone: '', active: true },
+    { id: 'R4', name: 'Wilmer Ortega', user: 'wortega', role: 'REFEREE', refRole: 'Central', phone: '', active: true },
+    { id: 'R5', name: 'Jhon Páez', user: 'jpaez', role: 'REFEREE', refRole: 'Asistente', phone: '', active: true },
+    { id: 'R6', name: 'Andrés Lobo', user: 'alobo', role: 'REFEREE', refRole: 'Planillero', phone: '', active: true }
+  ];
+  teams.forEach((t, i) => users.push({ id: 'D' + (i + 1), name: t.delegate, user: 'dt.' + norm(t.name).toLowerCase().replace(/ /g, ''), role: 'TEAM_DIR', teamId: t.id, phone: '', active: true }));
+  const refGroups = [
+    { id: 'G1', name: 'Grupo A', members: [{ userId: 'R1', role: 'Central' }, { userId: 'R2', role: 'Asistente 1' }, { userId: 'R3', role: 'Planillero' }] },
+    { id: 'G2', name: 'Grupo B', members: [{ userId: 'R4', role: 'Central' }, { userId: 'R5', role: 'Asistente 1' }, { userId: 'R6', role: 'Planillero' }] }
+  ];
+  const T = (n) => teams.find((t) => norm(t.name) === norm(n)).id;
+  const P = (tid, k) => `${tid}P${k}`;
+  const mk = (id, round, date, time, h, a, status, group) => ({ id, round, date, time, field: 'Cancha La Cabaña', homeId: T(h), awayId: T(a), status, refGroupId: group, events: [], added: [0, 0], clock: { period: 1, running: false, startTs: 0, acc: 0 }, signature: null, signedAt: null, hash: null, version: '—', clarification: null, override: null, wo: null });
+  const matches = [
+    mk('M1', 3, '2026-10-25', '08:00', 'Combo Chicle', 'Barrio FC', 'LOCKED', 'G1'),
+    mk('M2', 3, '2026-10-25', '09:20', 'San Miguel FC', 'Combo Cris', 'IN_PROGRESS', 'G1'),
+    mk('M3', 3, '2026-10-25', '10:40', 'Los Primos', 'Combo Guillín', 'SCHEDULED', 'G1'),
+    mk('M4', 3, '2026-10-25', '12:00', 'Galácticos', 'El Hoyo', 'SCHEDULED', 'G1'),
+    mk('M5', 4, '2026-11-01', '08:00', 'Union Fox', 'Spartans', 'SCHEDULED', null),
+    mk('M6', 4, '2026-11-01', '09:20', 'Agropecuarios', 'La Estancia', 'SCHEDULED', null),
+    mk('M7', 4, '2026-11-01', '10:40', 'Combo Nando', 'Fénix', 'SCHEDULED', null),
+    mk('M8', 4, '2026-11-01', '12:00', 'Goat', 'Combo Sael', 'SCHEDULED', null)
+  ];
+  const chicle = T('Combo Chicle'), barrio = T('Barrio FC'), sm = T('San Miguel FC'), cris = T('Combo Cris');
+  matches[0].events = [
+    { id: 'E1', type: 'GOAL', kind: 'Jugada', teamId: barrio, playerId: P(barrio, 9), assistId: P(barrio, 7), minute: 11, period: 1 },
+    { id: 'E2', type: 'YELLOW', teamId: chicle, playerId: P(chicle, 3), minute: 19, period: 1, note: 'Juego brusco' },
+    { id: 'E3', type: 'GOAL', kind: 'Tiro libre', teamId: chicle, playerId: P(chicle, 7), assistId: null, minute: 27, period: 1 },
+    { id: 'E4', type: 'BLUE', teamId: barrio, playerId: P(barrio, 5), minute: 38, period: 2, note: 'Antideportiva' },
+    { id: 'E5', type: 'GOAL', kind: 'Penal', teamId: barrio, playerId: P(barrio, 10), assistId: null, minute: 52, period: 2 }
+  ];
+  Object.assign(matches[0], { signedAt: '25/10/2026 09:07', version: 'v1.0', hash: 'demo', signature: null, added: [2, 3] });
+  matches[1].events = [
+    { id: 'E6', type: 'GOAL', kind: 'Cabeza', teamId: cris, playerId: P(cris, 9), assistId: P(cris, 6), minute: 12, period: 1 },
+    { id: 'E7', type: 'FOUL', teamId: sm, playerId: P(sm, 4), minute: 15, period: 1 },
+    { id: 'E8', type: 'YELLOW', teamId: sm, playerId: P(sm, 4), minute: 18, period: 1, note: 'Juego brusco' },
+    { id: 'E9', type: 'FOUL', teamId: cris, playerId: null, minute: 21, period: 1 }
+  ];
+  matches[1].clock = { period: 1, running: false, startTs: 0, acc: 23 * 60000 };
+
+  return {
+    v: 3,
+    settings: {
+      title: 'Campeonato Inactivos de Fútbol 8', subtitle: 'La Cabaña', footerText: 'Vereda El Hoyo', social: '@inactivoslacabana',
+      logo: makeTournamentLogo(), banner: makeBanner(), flyerBg: null,
+      preset: 'pascalia', colors: { ...PRESETS.pascalia }, displayFont: 'Montserrat', radius: 16,
+      labels: { round: 'Fecha', roundShort: 'F', topScorer: 'Goleador', assists: 'Asistencias', cleanSheet: 'Valla menos vencida', venue: 'Cancha', standings: 'Tabla de posiciones' },
+      zones: { qualify: 8, playoff: 0, relegate: 0 },
+      fines: { enabled: true, yellow: 10000, blue: 15000, red: 30000 },
+      showSocial: true, showReferees: true, logoApproval: true,
+      sponsors: {
+        main: { name: 'Agro La Cabaña', logo: makeWordmark('Agro La Cabaña', '#2E7D32', '#FFFFFF', 'circle') },
+        secondary: [
+          { name: 'Tienda Don Chepe', logo: makeWordmark('Tienda Don Chepe', '#E65100', '#FFFFFF', 'square') },
+          { name: 'Droguería Ábrego', logo: makeWordmark('Droguería Ábrego', '#1565C0', '#FFFFFF', 'circle') },
+          { name: 'Moto Repuestos', logo: makeWordmark('Moto Repuestos', '#B71C1C', '#FFFFFF', 'square') },
+          null
+        ]
+      },
+      flyer: { template: 'FIXTURE', format: 'poster', style: 'brand', round: 3, showBanner: true, showSponsors: true, sponsorPlate: true, showNames: true }
+    },
+    rules: {
+      modality: 'F8', ...clone(MODALITIES.F8), registerMinute: true, clockMode: 'up', addedTime: true, foulsResetPerPeriod: true,
+      blueMin: 2, ptsWin: 3, ptsDraw: 1, ptsLoss: 0, woGoals: 3, doubleYellowRed: true, yellowAccum: 3, redSuspension: 1,
+      shootout: false, shootoutBonus: 1, tiebreak: ['pts', 'dg', 'gf', 'fair'], format: 'Liga todos contra todos + Playoffs (8 mejores)'
+    },
+    teams, players, users, refGroups, matches,
+    posts: [
+      { id: 'S1', alias: 'HinchaDelHoyo', teamId: T('El Hoyo'), caption: '¡Listos para el domingo contra Galácticos! Vamos El Hoyo 💙', photo: null, likes: 18, liked: false, comments: [{ alias: 'Futbolero88', text: 'Partidazo el de las 12.' }] },
+      { id: 'S2', alias: 'BarraBarrio', teamId: T('Barrio FC'), caption: 'Primer triunfo de Barrio FC en el campeonato. ¡El penal de la remontada! 🔥', photo: null, likes: 31, liked: true, comments: [] }
+    ],
+    ui: { role: 'PUBLIC', pubTab: 'HOME', admTab: 'BRAND', saTab: 'RULES', refUser: 'R1', refMatch: 'M2', dtTeam: 'T15', alias: 'ElPibe10', importRows: null, importPlayers: null }
+  };
+}
+
+let state;
+const STORE_KEY = 'futbolpro-demo-v3';
+function save() {
+  clearTimeout(save._t);
+  save._t = setTimeout(() => {
+    try { const s = { ...state, ui: { ...state.ui, importRows: null, importPlayers: null } }; localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+    catch (e) { /* cuota llena o almacenamiento bloqueado: la demo sigue en memoria */ }
+  }, 300);
+}
+function load() {
+  try { const raw = localStorage.getItem(STORE_KEY); if (raw) { const s = JSON.parse(raw); if (s && s.v === 3) return s; } } catch (e) { /* sin almacenamiento */ }
+  return null;
+}
+
+// ---------- Selectores de datos ----------
+const team = (id) => state.teams.find((t) => t.id === id);
+const player = (id) => state.players.find((p) => p.id === id);
+const userById = (id) => state.users.find((u) => u.id === id);
+const group = (id) => state.refGroups.find((g) => g.id === id);
+const teamLogo = (t) => (t && (t.logo || t.crest)) || '';
+const L = () => state.settings.labels;
+const R = () => state.rules;
+
+function matchScore(m) {
+  if (m.override) return { h: m.override.h, a: m.override.a };
+  if (m.status === 'WO' && m.wo) return { h: m.wo.h, a: m.wo.a };
+  let h = 0, a = 0;
+  m.events.forEach((e) => { if (e.type === 'GOAL') { if (e.teamId === m.homeId) h++; else a++; } });
+  return { h, a };
+}
+const isPlayed = (m) => m.status === 'LOCKED' || m.status === 'WO';
+const isLive = (m) => m.status === 'IN_PROGRESS';
+
+function playerStats(p) {
+  const s = { ...p.base };
+  state.matches.forEach((m) => {
+    if (m.status === 'SCHEDULED') return;
+    m.events.forEach((e) => {
+      if (e.type === 'GOAL' && e.kind !== 'Autogol' && e.playerId === p.id) s.goals++;
+      if (e.type === 'GOAL' && e.assistId === p.id) s.assists++;
+      if (e.playerId === p.id) { if (e.type === 'YELLOW') s.yellow++; if (e.type === 'BLUE') s.blue++; if (e.type === 'RED') s.red++; }
+    });
+  });
+  return s;
+}
+function isSuspended(p, forMatch) {
+  // Roja: queda suspendido los próximos N partidos de su equipo (regla configurable).
+  const teamMatches = state.matches.filter((m) => (m.homeId === p.teamId || m.awayId === p.teamId)).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  const idx = forMatch ? teamMatches.findIndex((m) => m.id === forMatch.id) : teamMatches.length;
+  for (let i = Math.max(0, idx - R().redSuspension); i < idx; i++) {
+    if (teamMatches[i].events.some((e) => e.type === 'RED' && e.playerId === p.id)) return 'Roja en partido anterior';
+  }
+  if (p.base.red && !teamMatches.slice(0, idx).some((m) => isPlayed(m) || isLive(m))) return 'Roja en la fecha anterior';
+  return false;
+}
+function teamFair(tid) { return state.players.filter((p) => p.teamId === tid).reduce((acc, p) => { const s = playerStats(p); return acc + s.yellow + s.blue * 2 + s.red * 3; }, 0); }
+function teamCards(tid) { return state.players.filter((p) => p.teamId === tid).reduce((acc, p) => { const s = playerStats(p); acc.y += s.yellow; acc.b += s.blue; acc.r += s.red; return acc; }, { y: 0, b: 0, r: 0 }); }
+function teamFinesDue(tid) { const F = state.settings.fines; if (!F.enabled) return 0; const c = teamCards(tid); return c.y * F.yellow + c.b * F.blue + c.r * F.red - (team(tid).finesPaid || 0); }
+
+function standings() {
+  const rows = state.teams.map((t) => ({ t, pj: t.base.pj, pg: t.base.pg, pe: t.base.pe, pp: t.base.pp, gf: t.base.gf, gc: t.base.gc }));
+  const byId = Object.fromEntries(rows.map((r) => [r.t.id, r]));
+  state.matches.filter(isPlayed).forEach((m) => {
+    const { h, a } = matchScore(m); const H = byId[m.homeId], A = byId[m.awayId]; if (!H || !A) return;
+    H.pj++; A.pj++; H.gf += h; H.gc += a; A.gf += a; A.gc += h;
+    if (h > a) { H.pg++; A.pp++; } else if (h < a) { A.pg++; H.pp++; } else { H.pe++; A.pe++; }
+  });
+  rows.forEach((r) => { r.dg = r.gf - r.gc; r.pts = r.pg * R().ptsWin + r.pe * R().ptsDraw + r.pp * R().ptsLoss; r.fair = teamFair(r.t.id); });
+  const order = R().tiebreak;
+  rows.sort((a, b) => {
+    for (const k of order) { const d = (k === 'gc' || k === 'fair') ? a[k] - b[k] : b[k] - a[k]; if (d) return d; }
+    return a.t.name.localeCompare(b.t.name);
+  });
+  rows.forEach((r, i) => { r.pos = i + 1; });
+  return rows;
+}
+function zoneOf(pos, n) {
+  const Z = state.settings.zones;
+  if (pos <= Z.qualify) return 'var(--zone-1)';
+  if (pos <= Z.qualify + Z.playoff) return 'var(--zone-2)';
+  if (Z.relegate && pos > n - Z.relegate) return 'var(--zone-3)';
+  return 'transparent';
+}
+function leaders() {
+  const ps = state.players.filter((p) => p.status === 'APPROVED').map((p) => ({ p, s: playerStats(p) }));
+  const scorers = ps.filter((x) => x.s.goals).sort((a, b) => b.s.goals - a.s.goals || b.s.assists - a.s.assists);
+  const assists = ps.filter((x) => x.s.assists).sort((a, b) => b.s.assists - a.s.assists || b.s.goals - a.s.goals);
+  const st = standings().filter((r) => r.pj > 0);
+  const valla = [...st].sort((a, b) => (a.gc / a.pj) - (b.gc / b.pj) || a.gc - b.gc || b.pj - a.pj);
+  const tot = ps.reduce((acc, x) => { acc.y += x.s.yellow; acc.b += x.s.blue; acc.r += x.s.red; return acc; }, { y: 0, b: 0, r: 0 });
+  const goals = standings().reduce((a, r) => a + r.gf, 0);
+  const played = standings().reduce((a, r) => a + r.pj, 0) / 2;
+  return { scorers, assists, valla, tot, goals, played };
+}
+
+// ---------- Tema ----------
+function applyTheme() {
+  const S = state.settings, C = S.colors, root = document.documentElement.style;
+  const dark = lum(C.bg) < 0.3;
+  root.setProperty('--bg', C.bg);
+  root.setProperty('--surface', C.surface);
+  root.setProperty('--surface-2', mix(C.surface, C.text, dark ? 0.07 : 0.05));
+  root.setProperty('--line', dark ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.1)');
+  root.setProperty('--text', C.text);
+  root.setProperty('--muted', mix(C.text, C.bg, 0.38));
+  root.setProperty('--primary', C.primary);
+  root.setProperty('--on-primary', onColor(C.primary));
+  root.setProperty('--accent', C.accent);
+  root.setProperty('--hl', C.hl);
+  root.setProperty('--hl-text', onColor(C.hl));
+  root.setProperty('--radius', S.radius + 'px');
+  root.setProperty('--radius-sm', Math.max(4, Math.round(S.radius * 0.62)) + 'px');
+  root.setProperty('--font-display', FONTS[S.displayFont] || FONTS.Montserrat);
+  root.setProperty('color-scheme', dark ? 'dark' : 'light');
+  let meta = $('meta[name=theme-color]'); if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.appendChild(meta); } meta.content = C.surface;
+}
+
+// ---------- Descargas (PDF / PNG / XLSX) ----------
+async function saveFile(filename, blob) {
+  try {
+    if (window.claude && typeof window.claude.use === 'function') {
+      const d = await window.claude.use('downloads');
+      if (d) { await d.save({ filename, data: blob }); toast('Listo: ' + filename); return; }
+    }
+  } catch (e) {
+    if (e && e.code === 'declined') { toast('Descarga cancelada'); return; }
+    if (e && e.code === 'rate_limited') { toast('Espera un momento y vuelve a intentar'); return; }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  toast('Descargado: ' + filename);
+}
+const canvasBlob = (c) => new Promise((res) => c.toBlob(res, 'image/png'));
+const slug = (s) => norm(s).toLowerCase().replace(/ /g, '-');
+const libsMissing = (k) => { if (k === 'pdf' && !(window.jspdf && window.jspdf.jsPDF)) { toast('No cargó el generador de PDF. Revisa tu conexión y recarga.'); return true; } if (k === 'xlsx' && !window.XLSX) { toast('No cargó el lector de Excel. Revisa tu conexión y recarga.'); return true; } return false; };
+
+async function sha256(text) {
+  try { const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)); return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join(''); }
+  catch (e) { let h = 0; for (let i = 0; i < text.length; i++) h = (h * 31 + text.charCodeAt(i)) | 0; return 'fallback-' + (h >>> 0).toString(16); }
+}
+
+// Imagen → dataURL con tamaño acotado (conserva transparencia en PNG).
+function readImage(file, max = 600) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith('image/')) { reject(new Error('Formato no válido')); return; }
+    const r = new FileReader();
+    r.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const s = Math.min(1, max / Math.max(img.width, img.height));
+        const c = canvasOf(Math.max(1, Math.round(img.width * s)), Math.max(1, Math.round(img.height * s)));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        resolve(file.type === 'image/jpeg' ? c.toDataURL('image/jpeg', 0.88) : c.toDataURL('image/png'));
+      };
+      img.onerror = () => reject(new Error('No se pudo leer la imagen'));
+      img.src = r.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+const imgCache = new Map();
+function loadImg(src) {
+  if (!src) return Promise.resolve(null);
+  if (imgCache.has(src)) return imgCache.get(src);
+  const p = new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+  imgCache.set(src, p); return p;
+}
+
+// ---------- Render principal ----------
+const ROLES = [
+  ['PUBLIC', 'Público', 'globe'], ['REFEREE', 'Árbitro', 'whistle'], ['TEAM_DIR', 'Director de equipo', 'users'],
+  ['ADMIN', 'Admin', 'palette'], ['SUPER_ADMIN', 'Super Admin', 'shield']
+];
+function render() {
+  applyTheme();
+  const pend = state.players.filter((p) => p.status === 'PENDING').length + state.teams.filter((t) => t.logoPending).length;
+  const clar = state.matches.filter((m) => m.clarification && m.clarification.status === 'PENDING').length;
+  $('#roleRail').innerHTML = ROLES.map(([k, l, i]) => {
+    const dot = k === 'ADMIN' && pend ? `<span class="dot">${pend}</span>` : (k === 'TEAM_DIR' && clar ? `<span class="dot">${clar}</span>` : '');
+    return `<button class="pill ${state.ui.role === k ? 'on' : ''}" data-act="role" data-id="${k}">${ic(i)} ${l}${dot}</button>`;
+  }).join('');
+  renderHero();
+  const v = { PUBLIC: viewPublic, REFEREE: viewReferee, TEAM_DIR: viewTeamDir, ADMIN: viewAdmin, SUPER_ADMIN: viewSuper }[state.ui.role];
+  $('#app').innerHTML = v();
+  afterRender();
+  save();
+}
+function renderHero() {
+  const S = state.settings, Rr = R();
+  const live = state.matches.some(isLive);
+  const nextRound = Math.max(...state.matches.filter((m) => m.status !== 'SCHEDULED').map((m) => m.round), 0) || 1;
+  $('#hero').innerHTML = `
+    ${S.banner ? `<div class="hero-bg" style="background-image:url('${S.banner}')"></div>` : ''}
+    <div class="wrap">
+      ${S.logo ? `<img class="hero-logo" src="${S.logo}" alt="Logo del campeonato">` : ''}
+      <div class="grow">
+        <div class="badges">
+          <span class="badge">${esc(MODALITIES[Rr.modality]?.label || Rr.modality)} · ${Rr.periods}×${Rr.periodMin} min</span>
+          <span class="badge neutral">${esc(L().round)} ${nextRound}</span>
+          ${live ? '<span class="badge live">● En vivo</span>' : ''}
+        </div>
+        <h1>${esc(S.title)}</h1>
+        <p class="sub">${esc(S.subtitle)} · ${esc(S.footerText)}${S.social ? ' · ' + esc(S.social) : ''}</p>
+      </div>
+    </div>`;
+}
+const crestImg = (t, cls = 'c28') => `<img class="crest ${cls}" src="${teamLogo(t)}" alt="">`;
+const teamLink = (t, cls = 'c28') => `<button class="team-link" data-act="openTeam" data-id="${t.id}">${crestImg(t, cls)}<span class="tn trunc">${esc(t.name)}</span></button>`;
+
+// ================= PÚBLICO =================
+function viewPublic() {
+  const tabs = [['HOME', 'Inicio', 'chart'], ['TABLE', L().standings, 'table'], ['MATCHES', 'Partidos', 'calendar'], ['TEAMS', 'Equipos', 'shield'], ['STATS', 'Estadísticas', 'star']];
+  if (state.settings.showSocial) tabs.push(['SOCIAL', 'Red social', 'heart']);
+  if (!tabs.some((t) => t[0] === state.ui.pubTab)) state.ui.pubTab = 'HOME';
+  const body = { HOME: pubHome, TABLE: pubTable, MATCHES: pubMatches, TEAMS: pubTeams, STATS: pubStats, SOCIAL: pubSocial }[state.ui.pubTab]();
+  return `<nav class="tabs" aria-label="Secciones">${tabs.map(([k, l, i]) => `<button class="pill ${state.ui.pubTab === k ? 'on' : ''}" data-act="pubTab" data-id="${k}">${ic(i)} ${esc(l)}</button>`).join('')}</nav>${body}`;
+}
+function kpiBlock() {
+  const Ld = leaders(), top = Ld.scorers[0], ast = Ld.assists[0], v = Ld.valla[0];
+  const who = (x, val) => x ? `<div class="who"><img class="avatar" src="${x.p.photo}" width="34" height="34" alt=""><div class="grow"><b class="trunc" style="display:block">${esc(x.p.name)}</b><span class="tiny muted trunc" style="display:block">${esc(team(x.p.teamId).name)} · ${val}</span></div></div>` : '<span class="muted small">Sin registros</span>';
+  return `<section class="kpis" aria-label="Resumen del campeonato">
+    <div class="kpi feature"><span class="k">${ic('ball')} Goles marcados</span><span class="v">${Ld.goals}</span><span class="tiny muted">${Ld.played} partidos · ${(Ld.played ? Ld.goals / Ld.played : 0).toFixed(1).replace('.', ',')} por partido</span></div>
+    <div class="kpi"><span class="k"><span class="cardchip y"></span> Amarillas</span><span class="v">${Ld.tot.y}</span><span class="tiny muted">Todas las fechas</span></div>
+    <div class="kpi"><span class="k"><span class="cardchip r"></span> Rojas</span><span class="v">${Ld.tot.r}</span><span class="tiny muted">Expulsiones</span></div>
+    ${R().blueCard ? `<div class="kpi"><span class="k"><span class="cardchip b"></span> Azules</span><span class="v">${Ld.tot.b}</span><span class="tiny muted">Exclusión ${R().blueMin} min</span></div>` : ''}
+    <div class="kpi"><span class="k">${ic('trophy')} ${esc(L().topScorer)}</span>${who(top, top ? top.s.goals + ' goles' : '')}</div>
+    <div class="kpi"><span class="k">${ic('star')} ${esc(L().assists)}</span>${who(ast, ast ? ast.s.assists + ' asist.' : '')}</div>
+    <div class="kpi"><span class="k">${ic('shield')} ${esc(L().cleanSheet)}</span>${v ? `<div class="who">${crestImg(v.t, 'c40')}<div class="grow"><b class="trunc" style="display:block">${esc(v.t.name)}</b><span class="tiny muted">${v.gc} goles en contra · ${v.pj} PJ</span></div></div>` : ''}</div>
+  </section>`;
+}
+function pubHome() {
+  const live = state.matches.filter(isLive), recent = state.matches.filter(isPlayed).slice(-2), next = state.matches.filter((m) => m.status === 'SCHEDULED').slice(0, 4);
+  const top = standings().slice(0, 6);
+  return `${kpiBlock()}
+  <div class="grid-2">
+    <section class="stack">
+      <div class="card-head"><h2 style="font-size:1.05rem">Partidos</h2><button class="btn sm ghost" data-act="pubTab" data-id="MATCHES">Ver todos</button></div>
+      ${[...live, ...recent, ...next].map(matchCard).join('')}
+    </section>
+    <section class="stack">
+      <div class="card-head"><h2 style="font-size:1.05rem">${esc(L().standings)}</h2><button class="btn sm ghost" data-act="pubTab" data-id="TABLE">Tabla completa</button></div>
+      ${standingsTable(top, true)}
+    </section>
+  </div>`;
+}
+function standingsTable(rows, compact) {
+  const n = state.teams.length, Z = state.settings.zones;
+  return `<div class="table-wrap"><table class="t">
+    <thead><tr><th>#</th><th>Equipo</th><th>PJ</th>${compact ? '' : '<th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th>'}<th>DG</th><th class="pts">PTS</th></tr></thead>
+    <tbody>${rows.map((r) => `<tr><td class="pos" style="--zone:${zoneOf(r.pos, n)}">${r.pos}</td><td>${teamLink(r.t)}</td><td>${r.pj}</td>${compact ? '' : `<td>${r.pg}</td><td>${r.pe}</td><td>${r.pp}</td><td>${r.gf}</td><td>${r.gc}</td>`}<td>${r.dg > 0 ? '+' + r.dg : r.dg}</td><td class="pts">${r.pts}</td></tr>`).join('')}</tbody>
+  </table>
+  <div class="legend">${Z.qualify ? `<span><i style="background:var(--zone-1)"></i>Clasifica (1–${Z.qualify})</span>` : ''}${Z.playoff ? `<span><i style="background:var(--zone-2)"></i>Repechaje</span>` : ''}${Z.relegate ? `<span><i style="background:var(--zone-3)"></i>Eliminados</span>` : ''}<span>Desempate: ${R().tiebreak.map((k) => TIEBREAK_LABELS[k]).join(' › ')}</span></div></div>`;
+}
+function pubTable() {
+  return `<div class="view-head"><h2>${esc(L().standings)}</h2><div class="btns"><button class="btn sm" data-act="imgStandings">${ic('image')} Imagen PNG</button><button class="btn sm primary" data-act="pdfStandings">${ic('file')} PDF</button></div></div>
+  ${standingsTable(standings(), false)}
+  <p class="tiny muted" style="margin-top:8px">Toca un equipo para ver su plantilla. Puntos: victoria ${R().ptsWin}, empate ${R().ptsDraw}, derrota ${R().ptsLoss}.</p>`;
+}
+function matchCard(m) {
+  const H = team(m.homeId), A = team(m.awayId), sc = matchScore(m), g = group(m.refGroupId);
+  const status = m.status === 'LOCKED' ? '<span class="badge ok">Final · Acta firmada</span>' : m.status === 'WO' ? '<span class="badge warn">W.O.</span>' : m.status === 'IN_PROGRESS' ? '<span class="badge live">● En juego</span>' : `<span class="badge neutral">${fmtTime(m.time)}</span>`;
+  const central = g ? userById(g.members.find((x) => x.role === 'Central')?.userId) : null;
+  return `<article class="match">
+    <div class="match-top"><span>${esc(L().round)} ${m.round} · ${fmtDateShort(m.date)} · ${fmtTime(m.time)}</span>${status}</div>
+    <div class="vs">
+      <div class="side">${teamLink(H)}</div>
+      <div class="score ${m.status === 'SCHEDULED' ? 'sched' : ''}">${m.status === 'SCHEDULED' ? 'VS' : `${sc.h} - ${sc.a}`}</div>
+      <div class="side away">${teamLink(A)}</div>
+    </div>
+    <div class="row between wrap-ok tiny muted">
+      <span class="row trunc">${ic('pin')} ${esc(m.field)}${state.settings.showReferees ? ` · ${ic('whistle')} ${g ? esc(g.name) + (central ? ' (' + esc(central.name) + ')' : '') : 'Árbitros por asignar'}` : ''}</span>
+      <span class="btns">${m.status !== 'SCHEDULED' ? `<button class="btn sm ghost" data-act="viewMatch" data-id="${m.id}">${ic('eye')} Detalle</button>` : ''}${m.status === 'LOCKED' ? `<button class="btn sm" data-act="pdfActa" data-id="${m.id}">${ic('file')} Acta PDF</button>` : ''}</span>
+    </div>
+  </article>`;
+}
+function pubMatches() {
+  const rounds = [...new Set(state.matches.map((m) => m.round))].sort((a, b) => a - b);
+  return `<div class="view-head"><h2>Partidos y actas</h2></div><div class="stack-lg">${rounds.map((r) => {
+    const ms = state.matches.filter((m) => m.round === r).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+    return `<section class="stack"><h3 class="round-title">${esc(L().round)} ${r} <span class="badge neutral">${fmtDateLong(ms[0].date)}</span></h3><div class="grid-2">${ms.map(matchCard).join('')}</div></section>`;
+  }).join('')}</div>`;
+}
+function pubTeams() {
+  const st = standings();
+  return `<div class="view-head"><h2>Equipos</h2><span class="small muted">${state.teams.length} clubes · toca uno para ver su plantilla</span></div>
+  <div class="tiles">${st.map((r) => `<button class="tile" data-act="openTeam" data-id="${r.t.id}">${crestImg(r.t, 'c80')}<b class="trunc" style="max-width:100%">${esc(r.t.name)}</b><span class="tiny muted">${r.pos}º · ${r.pts} pts · ${state.players.filter((p) => p.teamId === r.t.id && p.status === 'APPROVED').length} jugadores</span></button>`).join('')}</div>`;
+}
+function leadList(items, valFn, max = 10) {
+  if (!items.length) return '<p class="small muted">Sin registros todavía.</p>';
+  return `<div class="lead-list">${items.slice(0, max).map((x, i) => `<div class="lead-item"><span class="rk">${i + 1}</span><img class="avatar" src="${x.p.photo}" width="40" height="40" alt=""><div style="min-width:0"><div class="nm trunc">${esc(x.p.name)}</div><button class="team-link tiny muted" data-act="openTeam" data-id="${x.p.teamId}">${crestImg(team(x.p.teamId), 'c20')}<span class="tn trunc">${esc(team(x.p.teamId).name)}</span></button></div><span class="val">${valFn(x)}</span></div>`).join('')}</div>`;
+}
+function pubStats() {
+  const Ld = leaders();
+  const cards = state.players.filter((p) => p.status === 'APPROVED').map((p) => ({ p, s: playerStats(p) })).filter((x) => x.s.yellow + x.s.blue + x.s.red).sort((a, b) => (b.s.red * 3 + b.s.blue * 2 + b.s.yellow) - (a.s.red * 3 + a.s.blue * 2 + a.s.yellow));
+  return `${kpiBlock()}<div class="grid-3">
+    <section class="card"><div class="card-head"><h3>${ic('ball')} ${esc(L().topScorer)}es</h3><button class="btn sm" data-act="imgScorers">${ic('image')} PNG</button></div>${leadList(Ld.scorers, (x) => x.s.goals)}</section>
+    <section class="card"><div class="card-head"><h3>${ic('star')} ${esc(L().assists)}</h3></div>${leadList(Ld.assists, (x) => x.s.assists)}</section>
+    <section class="card"><div class="card-head"><h3>${ic('shield')} ${esc(L().cleanSheet)}</h3></div><div class="lead-list">${Ld.valla.slice(0, 10).map((r, i) => `<div class="lead-item"><span class="rk">${i + 1}</span>${crestImg(r.t, 'c40')}<div style="min-width:0"><div class="nm trunc">${esc(r.t.name)}</div><span class="tiny muted">${r.pj} PJ · ${(r.gc / r.pj).toFixed(2).replace('.', ',')} por partido</span></div><span class="val">${r.gc}</span></div>`).join('')}</div></section>
+    <section class="card"><div class="card-head"><h3>${ic('card')} Tarjetas por jugador</h3></div>${leadList(cards, (x) => `<span class="statline" style="font-size:.8rem;color:var(--text)">${x.s.yellow ? `<span><span class="cardchip y"></span>${x.s.yellow}</span>` : ''}${x.s.blue ? `<span><span class="cardchip b"></span>${x.s.blue}</span>` : ''}${x.s.red ? `<span><span class="cardchip r"></span>${x.s.red}</span>` : ''}</span>`, 12)}</section>
+    <section class="card"><div class="card-head"><h3>${ic('trophy')} Juego limpio por equipo</h3></div><div class="lead-list">${state.teams.map((t) => ({ t, f: teamFair(t.id), c: teamCards(t.id) })).sort((a, b) => a.f - b.f).slice(0, 10).map((x, i) => `<div class="lead-item"><span class="rk">${i + 1}</span>${crestImg(x.t, 'c40')}<div style="min-width:0"><div class="nm trunc">${esc(x.t.name)}</div><span class="statline"><span><span class="cardchip y"></span>${x.c.y}</span><span><span class="cardchip b"></span>${x.c.b}</span><span><span class="cardchip r"></span>${x.c.r}</span></span></div><span class="val">${x.f}</span></div>`).join('')}</div><p class="tiny muted" style="margin-top:8px">Puntos de conducta: amarilla 1, azul 2, roja 3. Menos es mejor.</p></section>
+  </div>`;
+}
+function pubSocial() {
+  const tOpts = state.teams.map((t) => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
+  return `<div class="grid-2">
+    <section class="card stack"><h3>${ic('upload')} Publicar una jugada o foto</h3>
+      <label class="field">Tu alias<input class="input" id="alias" value="${esc(state.ui.alias)}" maxlength="24"></label>
+      <label class="field">Equipo protagonista<select class="input" id="postTeam">${tOpts}</select></label>
+      <label class="field">Foto (opcional)<input class="input" id="postPhoto" type="file" accept="image/*"></label>
+      <label class="field">Descripción<textarea class="input" id="postCaption" rows="3" placeholder="¡Qué golazo de tiro libre al ángulo!"></textarea></label>
+      <button class="btn primary" data-act="postPublish">${ic('upload')} Publicar en el muro</button>
+    </section>
+    <section class="stack">${state.posts.map((p) => {
+      const t = team(p.teamId);
+      return `<article class="post">${p.photo ? `<div class="media"><img src="${p.photo}" alt="Foto publicada"></div>` : ''}<div class="pb">
+        <div class="row between wrap-ok"><b>@${esc(p.alias)}</b>${t ? teamLink(t, 'c20') : ''}</div>
+        <p>${esc(p.caption)}</p>
+        <div class="btns"><button class="btn sm ${p.liked ? 'primary' : ''}" data-act="like" data-id="${p.id}">${ic('heart')} ${p.likes}</button><span class="small muted row">${ic('chat')} ${p.comments.length}</span></div>
+        ${p.comments.map((c) => `<p class="small"><b>@${esc(c.alias)}</b> ${esc(c.text)}</p>`).join('')}
+        <div class="row"><input class="input" id="cm-${p.id}" placeholder="Escribe un comentario"><button class="btn sm" data-act="comment" data-id="${p.id}">Enviar</button></div>
+      </div></article>`;
+    }).join('')}</section></div>`;
+}
+
+// Ficha de equipo (modal público)
+function openTeam(id) {
+  const t = team(id), st = standings().find((r) => r.t.id === id);
+  const roster = state.players.filter((p) => p.teamId === id && p.status === 'APPROVED').sort((a, b) => a.number - b.number);
+  const ms = state.matches.filter((m) => (m.homeId === id || m.awayId === id)).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  openModal(`
+    <div class="sheet-head"><div class="row">${crestImg(t, 'c80')}<div class="grow"><span class="eyebrow">Ficha oficial del equipo</span><h3 style="font-size:1.4rem">${esc(t.name)}</h3><p class="small muted">Delegado: ${esc(t.delegate)} · ${st.pos}º en la tabla</p></div></div><button class="btn icon ghost" data-act="closeModal" aria-label="Cerrar">${ic('x')}</button></div>
+    <div class="table-wrap"><table class="t"><thead><tr><th>Pos</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th><th class="pts">PTS</th></tr></thead><tbody><tr><td>${st.pos}</td><td>${st.pj}</td><td>${st.pg}</td><td>${st.pe}</td><td>${st.pp}</td><td>${st.gf}</td><td>${st.gc}</td><td>${st.dg}</td><td class="pts">${st.pts}</td></tr></tbody></table></div>
+    <div><h4 style="margin-bottom:8px">Plantilla (${roster.length})</h4>
+    <div class="tiles">${roster.map((p) => { const s = playerStats(p), susp = isSuspended(p); return `<div class="player-card"><div class="ph"><img src="${p.photo}" alt="Foto de ${esc(p.name)}"><span class="dorsal">${p.number}</span></div><div class="body"><span class="nm trunc">${esc(p.name)}</span><span class="tiny muted">${POS_NAME[p.pos]}</span><span class="statline"><span>${ic('ball')} ${s.goals}</span><span>A ${s.assists}</span><span><span class="cardchip y"></span>${s.yellow}</span>${R().blueCard ? `<span><span class="cardchip b"></span>${s.blue}</span>` : ''}<span><span class="cardchip r"></span>${s.red}</span></span>${susp ? '<span class="badge danger">Suspendido</span>' : ''}</div></div>`; }).join('')}</div></div>
+    <div><h4 style="margin-bottom:8px">Partidos</h4><div class="stack">${ms.map(matchCard).join('') || '<p class="small muted">Sin partidos programados.</p>'}</div></div>
+    <div class="btns"><button class="btn primary" data-act="pdfTeam" data-id="${id}">${ic('file')} Ficha en PDF</button><button class="btn" data-act="closeModal">Cerrar</button></div>`);
+}
+function viewMatch(id) {
+  const m = state.matches.find((x) => x.id === id), H = team(m.homeId), A = team(m.awayId), sc = matchScore(m);
+  openModal(`<div class="sheet-head"><div><span class="eyebrow">${esc(L().round)} ${m.round} · ${fmtDateLong(m.date)} · ${fmtTime(m.time)}</span><h3>${esc(H.name)} ${sc.h} - ${sc.a} ${esc(A.name)}</h3></div><button class="btn icon ghost" data-act="closeModal" aria-label="Cerrar">${ic('x')}</button></div>
+    <div class="vs"><div class="side">${teamLink(H, 'c56')}</div><div class="score">${sc.h} - ${sc.a}</div><div class="side away">${teamLink(A, 'c56')}</div></div>
+    ${timelineHtml(m, false)}
+    ${m.clarification ? clarifBox(m) : ''}
+    <div class="btns">${m.status === 'LOCKED' ? `<button class="btn primary" data-act="pdfActa" data-id="${m.id}">${ic('file')} Acta en PDF</button>` : ''}<button class="btn" data-act="closeModal">Cerrar</button></div>`);
+}
+function evLabel(e) {
+  const p = player(e.playerId), a = player(e.assistId);
+  const pn = p ? `#${p.number} ${p.name}` : 'Jugador sin especificar';
+  if (e.type === 'GOAL') return { ico: ic('ball'), t: `Gol · ${pn}`, d: [e.kind, a ? `Asistencia: #${a.number} ${a.name}` : (e.kind === 'Autogol' ? 'Autogol' : 'Sin asistencia')].filter(Boolean).join(' · ') };
+  if (e.type === 'YELLOW') return { ico: '<span class="cardchip y"></span>', t: `Amarilla · ${pn}`, d: e.note || '' };
+  if (e.type === 'BLUE') return { ico: '<span class="cardchip b"></span>', t: `Azul · ${pn}`, d: (e.note || '') + ` · Exclusión ${R().blueMin} min` };
+  if (e.type === 'RED') return { ico: '<span class="cardchip r"></span>', t: `Roja · ${pn}`, d: e.note || '' };
+  return { ico: ic('whistle'), t: `Falta${p ? ' · ' + pn : ''}`, d: 'Falta acumulativa' };
+}
+function timelineHtml(m, editable) {
+  const evs = [...m.events].sort((a, b) => a.minute - b.minute);
+  if (!evs.length) return '<p class="small muted">Aún no hay eventos registrados.</p>';
+  return `<div class="timeline">${evs.map((e) => { const l = evLabel(e), t = team(e.teamId); return `<div class="ev"><span class="min">${R().registerMinute ? e.minute + "'" : '—'}</span><span class="ev-ico">${l.ico}</span><div class="what"><b>${esc(l.t)}</b><span>${esc(t.name)}${l.d ? ' · ' + esc(l.d) : ''}</span></div>${editable ? `<span class="btns"><button class="btn icon sm" data-act="evEdit" data-id="${e.id}" aria-label="Corregir">${ic('edit')}</button><button class="btn icon sm danger" data-act="evDelete" data-id="${e.id}" aria-label="Eliminar">${ic('trash')}</button></span>` : crestImg(t, 'c20')}</div>`; }).join('')}</div>`;
+}
+function clarifBox(m) {
+  const c = m.clarification, H = team(m.homeId), A = team(m.awayId);
+  return `<div class="note ${c.status === 'APPROVED' ? 'ok' : ''}"><b>Acta aclaratoria · ${c.status === 'APPROVED' ? 'aplicada' : 'pendiente de firmas'}</b><br>${esc(c.note)}<br><span class="small">Marcador corregido: ${esc(H.name)} ${c.h} - ${c.a} ${esc(A.name)} · Delegado local: ${c.signedHome ? 'firmó' : 'pendiente'} · Delegado visitante: ${c.signedAway ? 'firmó' : 'pendiente'}</span></div>`;
+}
+
+// ================= ÁRBITRO =================
+function refMatches(uid_) { return state.matches.filter((m) => { const g = group(m.refGroupId); return g && g.members.some((x) => x.userId === uid_) && m.status !== 'WO'; }); }
+function viewReferee() {
+  const refs = state.users.filter((u) => u.role === 'REFEREE' && u.active);
+  if (!refs.some((u) => u.id === state.ui.refUser)) state.ui.refUser = refs[0]?.id;
+  const me = userById(state.ui.refUser);
+  const mine = me ? refMatches(me.id) : [];
+  if (!mine.some((m) => m.id === state.ui.refMatch)) state.ui.refMatch = (mine.find(isLive) || mine.find((m) => m.status === 'SCHEDULED') || mine[0])?.id;
+  const m = state.matches.find((x) => x.id === state.ui.refMatch);
+  const g = me && state.refGroups.find((gr) => gr.members.some((x) => x.userId === me.id));
+  return `<section class="card stack" style="margin-bottom:16px">
+    <div class="card-head" style="margin:0"><div><span class="eyebrow">Planilla arbitral · funciona sin conexión</span><h2 style="font-size:1.2rem">${me ? esc(me.name) : 'Sin árbitros activos'}</h2><p class="small muted">${g ? `${esc(g.name)} · ${esc(g.members.find((x) => x.userId === me.id).role)}` : 'Sin grupo arbitral asignado'}</p></div></div>
+    <div class="fields">
+      <label class="field">Iniciar sesión como<select class="input" id="refUser" data-act-change="refUser">${refs.map((u) => `<option value="${u.id}" ${u.id === state.ui.refUser ? 'selected' : ''}>${esc(u.name)} (${esc(u.refRole || 'Árbitro')})</option>`).join('')}</select></label>
+      <label class="field">Partido asignado<select class="input" id="refMatch" data-act-change="refMatch">${mine.map((x) => `<option value="${x.id}" ${x.id === state.ui.refMatch ? 'selected' : ''}>${esc(L().round)} ${x.round} · ${fmtTime(x.time)} · ${esc(team(x.homeId).name)} vs ${esc(team(x.awayId).name)} · ${({ LOCKED: 'Cerrado', IN_PROGRESS: 'En juego', SCHEDULED: 'Por jugar' })[x.status]}</option>`).join('') || '<option>Sin partidos asignados</option>'}</select></label>
+    </div>
+  </section>${m ? refConsole(m) : '<p class="muted">Pídele al Admin que asigne tu grupo arbitral a un partido.</p>'}`;
+}
+function clockMs(m) { const c = m.clock; return c.acc + (c.running ? Date.now() - c.startTs : 0); }
+function clockText(m) {
+  const ms = clockMs(m), per = R().periodMin * 60000;
+  const v = R().clockMode === 'down' ? Math.max(0, per - ms) : ms;
+  const mm = Math.floor(v / 60000), ss = Math.floor((v % 60000) / 1000);
+  return `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+}
+const currentMinute = (m) => Math.min(R().periodMin + 15, Math.floor(clockMs(m) / 60000) + 1) + (m.clock.period - 1) * R().periodMin;
+function periodFouls(m, tid) { return m.events.filter((e) => e.type === 'FOUL' && e.teamId === tid && (!R().foulsResetPerPeriod || e.period === m.clock.period)).length; }
+function refConsole(m) {
+  const H = team(m.homeId), A = team(m.awayId), sc = matchScore(m);
+  if (m.status === 'SCHEDULED') {
+    return `<section class="card stack"><div class="vs"><div class="side">${teamLink(H, 'c56')}</div><div class="score sched">VS</div><div class="side away">${teamLink(A, 'c56')}</div></div>
+      <p class="small muted">${fmtDateLong(m.date)} · ${fmtTime(m.time)} · ${esc(m.field)}. Tiempo de juego: ${R().periods} × ${R().periodMin} min, descanso ${R().breakMin} min.</p>
+      <button class="btn primary" data-act="startMatch" data-id="${m.id}">${ic('play')} Abrir planilla e iniciar partido</button></section>`;
+  }
+  if (m.status === 'LOCKED') {
+    return `<section class="card stack"><div class="card-head" style="margin:0"><div><span class="badge ok">${ic('lock')} Acta cerrada ${esc(m.version)}</span><h3 style="margin-top:6px">${esc(H.name)} ${sc.h} - ${sc.a} ${esc(A.name)}</h3><p class="small muted">Firmada el ${esc(m.signedAt)}. Nadie puede editar este resultado; las correcciones van por acta aclaratoria.</p></div>
+      <div class="btns"><button class="btn" data-act="pdfActa" data-id="${m.id}">${ic('file')} Acta PDF</button>${m.clarification ? '' : `<button class="btn primary" data-act="clarifOpen" data-id="${m.id}">${ic('edit')} Emitir acta aclaratoria</button>`}</div></div>
+      ${m.clarification ? clarifBox(m) : ''}${timelineHtml(m, false)}</section>`;
+  }
+  const side = (t) => {
+    const f = periodFouls(m, t.id), lim = R().foulLimit, goals = t.id === m.homeId ? sc.h : sc.a;
+    return `<div class="team-panel">${crestImg(t, 'c56')}<b class="trunc" style="max-width:100%">${esc(t.name)}</b><span class="big">${goals}</span>
+      <div class="act-grid">
+        <button class="btn primary" data-act="evNew" data-type="GOAL" data-team="${t.id}">${ic('ball')} Gol</button>
+        <button class="btn" data-act="evFoul" data-team="${t.id}">${ic('whistle')} Falta${R().foulLimitOn ? ` ${f}/${lim}` : ` (${f})`}</button>
+        <button class="btn y" data-act="evNew" data-type="YELLOW" data-team="${t.id}">Amarilla</button>
+        <button class="btn r" data-act="evNew" data-type="RED" data-team="${t.id}">Roja</button>
+        ${R().blueCard ? `<button class="btn b" data-act="evNew" data-type="BLUE" data-team="${t.id}" style="grid-column:1/-1">Azul · exclusión ${R().blueMin} min</button>` : ''}
+      </div>
+      ${R().foulLimitOn && f >= lim ? `<div class="note danger small" style="width:100%">Falta acumulada ${f}: desde la ${lim + 1}ª se cobra tiro libre sin barrera.</div>` : ''}
+    </div>`;
+  };
+  const excl = R().blueCard ? m.events.filter((e) => e.type === 'BLUE' && e.period === m.clock.period && currentMinute(m) < e.minute + R().blueMin) : [];
+  return `<div class="stack-lg">
+    <section class="card stack">
+      <div class="clock">
+        <span class="badge neutral">Tiempo ${m.clock.period} de ${R().periods}</span>
+        <span class="time" id="clockText">${clockText(m)}</span>
+        <div class="btns">
+          <button class="btn ${m.clock.running ? '' : 'primary'}" data-act="clockToggle" data-id="${m.id}">${ic(m.clock.running ? 'pause' : 'play')} ${m.clock.running ? 'Pausar' : 'Iniciar'}</button>
+          ${m.clock.period < R().periods ? `<button class="btn" data-act="clockNext" data-id="${m.id}">Siguiente tiempo</button>` : ''}
+          <button class="btn ghost" data-act="kiosk" data-id="${m.id}">${ic('expand')} Tablero</button>
+        </div>
+      </div>
+      ${excl.length ? `<div class="note small">Excluidos por azul: ${excl.map((e) => `#${player(e.playerId)?.number} ${esc(player(e.playerId)?.name || '')} (vuelve al ${e.minute + R().blueMin}')`).join(', ')}</div>` : ''}
+      <div class="board">${side(H)}${side(A)}</div>
+      ${R().addedTime ? `<div class="fields">${Array.from({ length: R().periods }, (_, i) => `<label class="field">Tiempo adicionado ${i + 1}º (min)<input class="input" type="number" min="0" max="20" value="${m.added[i] || 0}" data-act-change="added" data-id="${m.id}" data-i="${i}"></label>`).join('')}</div>` : ''}
+    </section>
+    <div class="grid-2">
+      <section class="card stack"><div class="card-head" style="margin:0"><h3>Cronología</h3><span class="tiny muted">Corrige o elimina antes de firmar</span></div>${timelineHtml(m, true)}</section>
+      <section class="card stack"><h3>${ic('sign')} Firma y cierre del acta</h3>
+        <p class="small muted">Al firmar, el acta queda bloqueada y se genera el PDF con código de verificación.</p>
+        <canvas class="sigpad" id="sigpad" width="600" height="220"></canvas>
+        <div class="btns"><button class="btn" data-act="sigClear">Borrar firma</button><button class="btn primary grow" data-act="lockMatch" data-id="${m.id}">${ic('lock')} Firmar y cerrar partido</button></div>
+      </section>
+    </div>
+  </div>`;
+}
+
+// Hoja para registrar o corregir un evento con jugador específico
+let draft = null;
+function eligible(tid, m) { return state.players.filter((p) => p.teamId === tid && p.status === 'APPROVED').sort((a, b) => a.number - b.number).map((p) => ({ p, susp: isSuspended(p, m) })); }
+function openEventSheet(m, d) {
+  draft = d;
+  const typeName = { GOAL: 'Gol', YELLOW: 'Tarjeta amarilla', BLUE: 'Tarjeta azul', RED: 'Tarjeta roja', FOUL: 'Falta' }[d.type];
+  const t = team(d.teamId), rival = d.teamId === m.homeId ? m.awayId : m.homeId;
+  const scorerTeam = d.type === 'GOAL' && d.kind === 'Autogol' ? rival : d.teamId;
+  const grid = (list, field, allowNone) => `<div class="pick-grid">${allowNone ? `<button class="pick ${d[field] ? '' : 'on'}" data-act="pickSet" data-field="${field}" data-id=""><span class="n">—</span><span class="pn">${field === 'assistId' ? 'Sin asistencia' : 'Sin especificar'}</span></button>` : ''}${list.map(({ p, susp }) => `<button class="pick ${d[field] === p.id ? 'on' : ''}" data-act="pickSet" data-field="${field}" data-id="${p.id}" ${susp || (field === 'assistId' && p.id === d.playerId) ? 'disabled' : ''} title="${susp ? 'Suspendido: ' + susp : ''}"><img class="avatar" src="${p.photo}" width="44" height="44" alt=""><span class="n">${p.number}</span><span class="pn">${esc(p.name.split(' ')[0])}</span></button>`).join('')}</div>`;
+  openModal(`<div class="sheet-head"><div class="row">${crestImg(t, 'c40')}<div><span class="eyebrow">${d.id ? 'Corregir evento' : 'Nuevo evento'}</span><h3>${typeName} · ${esc(t.name)}</h3></div></div><button class="btn icon ghost" data-act="closeModal" aria-label="Cerrar">${ic('x')}</button></div>
+    <div class="fields">
+      ${R().registerMinute ? `<label class="field">Minuto<input class="input" type="number" id="evMinute" min="0" max="200" value="${d.minute}"></label>` : ''}
+      <label class="field">Tiempo<select class="input" id="evPeriod">${Array.from({ length: R().periods }, (_, i) => `<option value="${i + 1}" ${d.period === i + 1 ? 'selected' : ''}>${i + 1}º tiempo</option>`).join('')}</select></label>
+      ${d.type !== 'GOAL' && d.type !== 'FOUL' ? `<label class="field">Motivo<select class="input" id="evNote">${['Juego brusco', 'Protesta', 'Conducta antideportiva', 'Mano intencional', 'Doble amarilla', 'Agresión', 'Otra'].map((x) => `<option ${d.note === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>` : ''}
+    </div>
+    ${d.type === 'GOAL' ? `<div class="stack"><span class="small muted">Tipo de gol</span><div class="chips">${['Jugada', 'Cabeza', 'Penal', 'Tiro libre', 'Autogol'].map((k) => `<button class="pill ${d.kind === k ? 'on' : ''}" data-act="pickKind" data-id="${k}">${k}</button>`).join('')}</div></div>` : ''}
+    <div class="stack"><b class="small">${d.type === 'GOAL' ? (d.kind === 'Autogol' ? `¿Quién hizo el autogol? (jugador de ${esc(team(rival).name)})` : '¿Quién marcó el gol?') : d.type === 'FOUL' ? '¿Quién cometió la falta? (opcional)' : '¿A quién se le muestra la tarjeta?'}</b>${grid(eligible(scorerTeam, state.matches.find((x) => x.id === d.matchId)), 'playerId', d.type === 'FOUL')}</div>
+    ${d.type === 'GOAL' && d.kind !== 'Autogol' ? `<div class="stack"><b class="small">¿Quién dio la asistencia?</b>${grid(eligible(d.teamId, m), 'assistId', true)}</div>` : ''}
+    <div class="btns"><button class="btn primary grow" data-act="evSave">${ic('check')} ${d.id ? 'Guardar corrección' : 'Registrar en el acta'}</button><button class="btn" data-act="closeModal">Cancelar</button></div>`);
+}
+function readDraftFields() {
+  if (!draft) return;
+  const mi = $('#evMinute'), pe = $('#evPeriod'), no = $('#evNote');
+  if (mi) draft.minute = Math.max(0, parseInt(mi.value, 10) || 0);
+  if (pe) draft.period = parseInt(pe.value, 10) || 1;
+  if (no) draft.note = no.value;
+}
+
+// ================= DIRECTOR DE EQUIPO =================
+function viewTeamDir() {
+  const t = team(state.ui.dtTeam) || state.teams[0]; state.ui.dtTeam = t.id;
+  const roster = state.players.filter((p) => p.teamId === t.id).sort((a, b) => a.number - b.number);
+  const clar = state.matches.filter((m) => m.clarification && (m.homeId === t.id || m.awayId === t.id));
+  const due = teamFinesDue(t.id), c = teamCards(t.id), F = state.settings.fines;
+  return `<section class="card stack" style="margin-bottom:16px">
+    <div class="card-head" style="margin:0"><div class="row">${crestImg(t, 'c56')}<div class="grow"><span class="eyebrow">Portal del director de equipo</span><h2 style="font-size:1.2rem" class="trunc">${esc(t.name)}</h2></div></div>
+      <label class="field" style="min-width:min(100%,240px)">Simular como DT de<select class="input" data-act-change="dtTeam">${state.teams.map((x) => `<option value="${x.id}" ${x.id === t.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></label></div>
+  </section>
+  ${clar.map((m) => { const isH = m.homeId === t.id, signed = isH ? m.clarification.signedHome : m.clarification.signedAway; return `<section class="card stack" style="margin-bottom:16px">${clarifBox(m)}${m.clarification.status === 'APPROVED' ? '' : signed ? '<p class="small muted">Ya firmaste. Falta el otro delegado.</p>' : `<button class="btn primary" data-act="dtSign" data-id="${m.id}">${ic('sign')} Firmar acta aclaratoria</button>`}</section>`; }).join('')}
+  <div class="grid-2">
+    <section class="card stack">
+      <h3>${ic('shield')} Identidad del club</h3>
+      <div class="upload"><img class="thumb" src="${teamLogo(t)}" alt="Escudo actual"><div class="grow stack" style="gap:6px"><b class="small">Escudo oficial</b><span class="tiny muted">PNG con fondo transparente o JPG. ${state.settings.logoApproval ? 'El Admin lo aprueba antes de publicarlo.' : 'Se publica de inmediato.'}</span>
+        ${t.logoPending ? `<span class="row tiny"><img class="crest c28" src="${t.logoPending}" alt=""> <span class="badge warn">Pendiente de aprobación</span></span>` : ''}
+        <span class="btns"><label class="btn sm primary file-btn">${ic('upload')} Subir escudo<input type="file" accept="image/*" data-upload="teamLogo" data-id="${t.id}"></label></span></div></div>
+      <div class="fields">
+        <label class="field">Delegado<input class="input" value="${esc(t.delegate)}" data-bind="team.${t.id}.delegate"></label>
+        <label class="field">Color principal<input class="input" type="color" value="${t.color}" data-bind="team.${t.id}.color"></label>
+        <label class="field">Color secundario<input class="input" type="color" value="${t.color2}" data-bind="team.${t.id}.color2"></label>
+      </div>
+      ${F.enabled ? `<div class="note ${due > 0 ? 'danger' : 'ok'}"><b>${due > 0 ? 'Pendiente de pago de tarjetas: ' + cop(due) : 'Paz y salvo por tarjetas'}</b><br><span class="small">Amarillas ${c.y} × ${cop(F.yellow)} · Azules ${c.b} × ${cop(F.blue)} · Rojas ${c.r} × ${cop(F.red)} · Pagado ${cop(t.finesPaid || 0)}</span></div>` : ''}
+    </section>
+    <section class="card stack">
+      <h3>${ic('userPlus')} Inscribir jugador</h3>
+      <div class="upload"><img class="thumb" id="npPreview" src="${state.ui.npPhoto || makeAvatar('?', t.color, '?')}" alt="Foto del jugador"><div class="grow stack" style="gap:6px"><b class="small">Foto tipo documento</b><span class="tiny muted">Rostro de frente, fondo claro.</span><span class="btns"><label class="btn sm file-btn">${ic('upload')} Subir foto<input type="file" accept="image/*" data-upload="newPlayer"></label></span></div></div>
+      <div class="fields">
+        <label class="field">Nombre completo<input class="input" id="npName" placeholder="Ej: Duván Quintero"></label>
+        <label class="field">Dorsal<input class="input" id="npNumber" type="number" min="1" max="99" placeholder="9"></label>
+        <label class="field">Posición<select class="input" id="npPos">${Object.entries(POS_NAME).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
+        <label class="field">Documento<input class="input" id="npDoc" inputmode="numeric" placeholder="1090…"></label>
+      </div>
+      <button class="btn primary" data-act="dtRegister">${ic('upload')} Enviar inscripción al Admin</button>
+    </section>
+  </div>
+  <section class="card" style="margin-top:16px"><div class="card-head"><h3>Plantilla oficial (${roster.length})</h3><button class="btn sm" data-act="pdfTeam" data-id="${t.id}">${ic('file')} Ficha PDF</button></div>
+    <div class="tiles">${roster.map((p) => { const s = playerStats(p), susp = isSuspended(p); return `<div class="player-card"><div class="ph"><img src="${p.photo}" alt="Foto de ${esc(p.name)}"><span class="dorsal">${p.number}</span></div><div class="body"><span class="nm trunc">${esc(p.name)}</span><span class="tiny muted">${POS_NAME[p.pos]} · CC ${esc(p.doc)}</span><span class="statline"><span>${ic('ball')} ${s.goals}</span><span>A ${s.assists}</span><span><span class="cardchip y"></span>${s.yellow}</span><span><span class="cardchip r"></span>${s.red}</span></span>
+      <span class="chips">${p.status === 'APPROVED' ? '<span class="badge ok">Aprobado</span>' : '<span class="badge warn">Pendiente</span>'}${susp ? '<span class="badge danger">Suspendido</span>' : ''}</span>
+      <label class="btn sm ghost file-btn">${ic('image')} Cambiar foto<input type="file" accept="image/*" data-upload="playerPhoto" data-id="${p.id}"></label></div></div>`; }).join('')}</div></section>`;
+}
+
+// ================= ADMIN =================
+const ADM_TABS = [['BRAND', 'Personalización', 'palette'], ['SPONSORS', 'Patrocinadores', 'megaphone'], ['STUDIO', 'Imágenes para redes', 'image'], ['MATCHES', 'Partidos y árbitros', 'whistle'], ['USERS', 'Usuarios', 'userPlus'], ['APPROVALS', 'Aprobaciones', 'check'], ['IMPORT', 'Importar Excel', 'table'], ['GAME', 'Tiempo y reglas', 'clock']];
+function viewAdmin() {
+  const pend = state.players.filter((p) => p.status === 'PENDING').length + state.teams.filter((t) => t.logoPending).length;
+  const body = { BRAND: admBrand, SPONSORS: admSponsors, STUDIO: admStudio, MATCHES: admMatches, USERS: () => usersPanel('ADMIN'), APPROVALS: admApprovals, IMPORT: importPanel, GAME: () => rulesPanel('ADMIN') }[state.ui.admTab]();
+  return `<nav class="tabs" aria-label="Panel del Admin">${ADM_TABS.map(([k, l, i]) => `<button class="pill ${state.ui.admTab === k ? 'on' : ''}" data-act="admTab" data-id="${k}">${ic(i)} ${l}${k === 'APPROVALS' && pend ? `<span class="dot">${pend}</span>` : ''}</button>`).join('')}</nav>${body}`;
+}
+function uploadRow(label, hint, key, src, wide) {
+  return `<div class="upload">${src ? `<img class="thumb ${wide ? 'wide' : ''}" src="${src}" alt="">` : `<div class="thumb ${wide ? 'wide' : ''}" style="display:grid;place-items:center">${ic('image')}</div>`}<div class="grow stack" style="gap:6px"><b class="small">${label}</b><span class="tiny muted">${hint}</span><span class="btns"><label class="btn sm primary file-btn">${ic('upload')} Subir<input type="file" accept="image/*" data-upload="${key}"></label>${src ? `<button class="btn sm ghost" data-act="clearImg" data-id="${key}">${ic('trash')} Quitar</button>` : ''}</span></div></div>`;
+}
+function admBrand() {
+  const S = state.settings, C = S.colors;
+  const bind = (path, label, type = 'text') => `<label class="field">${label}<input class="input" type="${type}" value="${esc(path.split('.').reduce((o, k) => o[k], state))}" data-bind="${path}"></label>`;
+  return `<div class="grid-2">
+    <section class="card stack"><h3>${ic('trophy')} Identidad del campeonato</h3>
+      ${uploadRow('Logotipo del campeonato', 'Cuadrado, PNG transparente. Aparece en la cabecera, actas e imágenes.', 'logo', S.logo)}
+      ${uploadRow('Banner principal', 'Horizontal 1600 × 420 px aprox. Va en la cabecera y en las imágenes para redes.', 'banner', S.banner, true)}
+      ${uploadRow('Fondo opcional para imágenes', 'Solo si eliges el estilo “Con foto”. Puede ser la foto de la cancha.', 'flyerBg', S.flyerBg, true)}
+      <div class="fields">${bind('settings.title', 'Nombre del campeonato')}${bind('settings.subtitle', 'Subtítulo o sede')}${bind('settings.footerText', 'Texto de pie (ubicación)')}${bind('settings.social', 'Redes (@usuario o #hashtag)')}</div>
+    </section>
+    <section class="card stack"><h3>${ic('palette')} Tema y colores</h3>
+      <div class="chips">${Object.entries(PRESETS).map(([k, p]) => `<button class="pill ${S.preset === k ? 'on' : ''}" data-act="preset" data-id="${k}"><span style="width:12px;height:12px;border-radius:50%;background:${p.primary};box-shadow:0 0 0 3px ${p.bg}"></span>${p.name}</button>`).join('')}</div>
+      <div class="fields">
+        ${[['primary', 'Primario (botones)'], ['accent', 'Acento'], ['bg', 'Fondo'], ['surface', 'Tarjetas'], ['text', 'Texto'], ['hl', 'Resaltado PTS']].map(([k, l]) => `<label class="field">${l}<input class="input" type="color" value="${C[k]}" data-bind="settings.colors.${k}"></label>`).join('')}
+      </div>
+      <div class="fields">
+        <label class="field">Tipografía de títulos<select class="input" data-bind="settings.displayFont">${Object.keys(FONTS).map((f) => `<option ${S.displayFont === f ? 'selected' : ''}>${f}</option>`).join('')}</select></label>
+        <label class="field">Esquinas (${S.radius}px)<input class="input" type="range" min="0" max="28" value="${S.radius}" data-bind="settings.radius"></label>
+      </div>
+      <p class="tiny muted">El color del texto sobre botones se calcula solo para que siempre sea legible.</p>
+    </section>
+    <section class="card stack"><h3>${ic('table')} Tabla de posiciones</h3>
+      <div class="fields">
+        <label class="field">Clasifican (verde)<input class="input" type="number" min="0" max="32" value="${S.zones.qualify}" data-bind="settings.zones.qualify"></label>
+        <label class="field">Repechaje (azul)<input class="input" type="number" min="0" max="32" value="${S.zones.playoff}" data-bind="settings.zones.playoff"></label>
+        <label class="field">Eliminados (rojo)<input class="input" type="number" min="0" max="32" value="${S.zones.relegate}" data-bind="settings.zones.relegate"></label>
+      </div>
+      <h4 class="small">Nombres que usa tu liga</h4>
+      <div class="fields">${[['round', 'Jornada se llama'], ['roundShort', 'Abreviatura'], ['topScorer', 'Goleador'], ['assists', 'Asistencias'], ['cleanSheet', 'Valla menos vencida'], ['standings', 'Tabla']].map(([k, l]) => bind('settings.labels.' + k, l)).join('')}</div>
+    </section>
+    <section class="card stack"><h3>${ic('sliders')} Más opciones</h3>
+      ${switchRow('settings.showSocial', 'Red social pública', 'Muro de fotos y jugadas para la hinchada.')}
+      ${switchRow('settings.showReferees', 'Mostrar árbitros al público', 'Nombre del grupo arbitral en cada partido.')}
+      ${switchRow('settings.logoApproval', 'Aprobar escudos antes de publicarlos', 'Los escudos que suben los DT esperan tu visto bueno.')}
+      ${switchRow('settings.fines.enabled', 'Multas por tarjetas', 'Calcula paz y salvo por equipo.')}
+      ${S.fines.enabled ? `<div class="fields"><label class="field">Amarilla (COP)<input class="input" type="number" step="1000" min="0" value="${S.fines.yellow}" data-bind="settings.fines.yellow"></label><label class="field">Azul (COP)<input class="input" type="number" step="1000" min="0" value="${S.fines.blue}" data-bind="settings.fines.blue"></label><label class="field">Roja (COP)<input class="input" type="number" step="1000" min="0" value="${S.fines.red}" data-bind="settings.fines.red"></label></div>
+      <div class="stack">${state.teams.map((t) => ({ t, d: teamFinesDue(t.id) })).filter((x) => x.d > 0).map((x) => `<div class="list-item"><span class="row">${crestImg(x.t)}<span class="trunc">${esc(x.t.name)}</span></span><span class="row"><b class="num">${cop(x.d)}</b><button class="btn sm" data-act="finePay" data-id="${x.t.id}">Registrar pago</button></span></div>`).join('') || '<p class="small muted">Todos los equipos están a paz y salvo.</p>'}</div>` : ''}
+    </section>
+  </div>`;
+}
+function switchRow(path, title, hint) {
+  const v = path.split('.').reduce((o, k) => o[k], state);
+  return `<label class="switch"><span class="lbl"><b>${title}</b><span>${hint}</span></span><input class="toggle" type="checkbox" ${v ? 'checked' : ''} data-bind="${path}"></label>`;
+}
+function admSponsors() {
+  const Sp = state.settings.sponsors;
+  return `<div class="stack-lg">
+    <section class="card stack"><h3>${ic('megaphone')} Patrocinador principal</h3><p class="small muted">Va grande en el centro de las imágenes para redes, en la cabecera de las actas y en las fichas.</p>
+      <div class="grid-2">${uploadRow('Logo del patrocinador principal', 'PNG transparente, horizontal o cuadrado.', 'sponsorMain', Sp.main?.logo)}<label class="field">Nombre<input class="input" value="${esc(Sp.main?.name || '')}" data-bind="settings.sponsors.main.name"></label></div>
+    </section>
+    <section class="card stack"><h3>Patrocinadores secundarios (hasta 4)</h3><p class="small muted">Se ubican en una fila en la parte inferior de cada publicación.</p>
+      <div class="sponsor-slots">${[0, 1, 2, 3].map((i) => { const s = Sp.secondary[i]; return `<div class="stack">${uploadRow('Secundario ' + (i + 1), s ? esc(s.name) : 'Espacio libre', 'sponsor' + i, s?.logo)}${s ? `<label class="field">Nombre<input class="input" value="${esc(s.name)}" data-bind="settings.sponsors.secondary.${i}.name"></label>` : ''}</div>`; }).join('')}</div>
+    </section>
+    <button class="btn primary" data-act="admTab" data-id="STUDIO">${ic('image')} Ver cómo quedan en las imágenes</button>
+  </div>`;
+}
+function admStudio() {
+  const F = state.settings.flyer;
+  const rounds = [...new Set(state.matches.map((m) => m.round))].sort((a, b) => a - b);
+  const sel = (key, opts) => `<select class="input" data-flyer="${key}">${opts.map(([v, l]) => `<option value="${v}" ${String(F[key]) === String(v) ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
+  const chk = (key, l) => `<label class="switch"><span class="lbl"><b>${l}</b></span><input class="toggle" type="checkbox" ${F[key] ? 'checked' : ''} data-flyer="${key}"></label>`;
+  return `<div class="studio">
+    <section class="card stack"><h3>${ic('image')} Estudio de imágenes</h3>
+      <label class="field">Pieza${sel('template', [['FIXTURE', 'Programación de la fecha'], ['RESULTS', 'Resultados de la fecha'], ['TABLE', L().standings], ['SCORERS', L().topScorer + 'es']])}</label>
+      <label class="field">${esc(L().round)}${sel('round', rounds.map((r) => [r, `${L().round} ${r} · ${fmtDateShort(state.matches.find((m) => m.round === r).date)}`]))}</label>
+      <label class="field">Formato${sel('format', [['poster', 'Afiche vertical 1080 × 1528'], ['portrait', 'Instagram 4:5 · 1080 × 1350'], ['square', 'Cuadrado 1:1 · 1080 × 1080'], ['story', 'Historia / Estado 9:16 · 1080 × 1920']])}</label>
+      <label class="field">Estilo${sel('style', [['brand', 'Colores del campeonato'], ['dark', 'Oscuro deportivo'], ['light', 'Claro'], ['photo', 'Con foto de fondo']])}</label>
+      <div>${chk('showBanner', 'Banner arriba')}${chk('showSponsors', 'Patrocinadores')}${chk('sponsorPlate', 'Placa blanca detrás de los logos')}${chk('showNames', 'Nombres bajo los escudos')}</div>
+      <div class="btns"><button class="btn primary grow" data-act="flyerPng">${ic('download')} PNG</button><button class="btn grow" data-act="flyerPdf">${ic('file')} PDF</button></div>
+    </section>
+    <section class="flyer-preview"><canvas id="flyerCanvas" width="1080" height="1528" aria-label="Vista previa de la imagen"></canvas></section>
+  </div>`;
+}
+function admMatches() {
+  const dates = [...new Set(state.matches.map((m) => m.date))].sort();
+  const gOpts = (sel) => `<option value="">Sin asignar</option>` + state.refGroups.map((g) => `<option value="${g.id}" ${sel === g.id ? 'selected' : ''}>${esc(g.name)} · ${esc(userById(g.members.find((x) => x.role === 'Central')?.userId)?.name || '')}</option>`).join('');
+  const refs = state.users.filter((u) => u.role === 'REFEREE' && u.active);
+  const rOpts = `<option value="">—</option>` + refs.map((u) => `<option value="${u.id}">${esc(u.name)} (${esc(u.refRole)})</option>`).join('');
+  return `<div class="stack-lg">
+    ${dates.map((d) => { const ms = state.matches.filter((m) => m.date === d).sort((a, b) => a.time.localeCompare(b.time)); return `<section class="card stack">
+      <div class="card-head" style="margin:0"><div><span class="eyebrow">${esc(L().round)} ${ms[0].round}</span><h3 style="text-transform:capitalize">${fmtDateLong(d)}</h3></div>
+        <div class="row wrap-ok"><select class="input" id="day-${d}" style="width:auto;min-width:0;flex:1 1 160px">${gOpts('')}</select><button class="btn sm primary" data-act="assignDay" data-id="${d}">${ic('whistle')} Asignar a todo el día</button></div></div>
+      ${ms.map((m) => `<div class="list-item"><span class="row"><b class="num" style="min-width:64px">${fmtTime(m.time)}</b>${crestImg(team(m.homeId))}<span class="trunc">${esc(team(m.homeId).name)} vs ${esc(team(m.awayId).name)}</span>${crestImg(team(m.awayId))}</span>
+        <span class="row wrap-ok"><select class="input" style="width:auto;min-width:0;flex:1 1 150px" data-act-change="assignMatch" data-id="${m.id}" ${m.status === 'LOCKED' ? 'disabled' : ''}>${gOpts(m.refGroupId)}</select>${m.status === 'SCHEDULED' ? `<button class="btn sm ghost" data-act="woOpen" data-id="${m.id}">W.O.</button>` : `<span class="badge ${m.status === 'LOCKED' ? 'ok' : 'live'}">${m.status === 'LOCKED' ? 'Cerrado' : m.status === 'WO' ? 'W.O.' : 'En juego'}</span>`}</span></div>`).join('')}
+    </section>`; }).join('')}
+    <div class="grid-2">
+      <section class="card stack"><h3>${ic('users')} Grupos arbitrales</h3>
+        ${state.refGroups.map((g) => `<div class="list-item"><div class="grow"><b>${esc(g.name)}</b><p class="tiny muted">${g.members.map((x) => `${esc(x.role)}: ${esc(userById(x.userId)?.name || '—')}`).join(' · ')}</p></div><button class="btn sm danger" data-act="groupDelete" data-id="${g.id}">${ic('trash')}</button></div>`).join('')}
+        <hr class="sep"><b class="small">Crear grupo</b>
+        <div class="fields"><label class="field">Nombre<input class="input" id="gName" placeholder="Grupo C"></label><label class="field">Central<select class="input" id="gC">${rOpts}</select></label><label class="field">Asistente 1<select class="input" id="gA1">${rOpts}</select></label><label class="field">Asistente 2<select class="input" id="gA2">${rOpts}</select></label><label class="field">Planillero<select class="input" id="gP">${rOpts}</select></label></div>
+        <button class="btn primary" data-act="groupCreate">${ic('plus')} Crear grupo arbitral</button>
+      </section>
+      <section class="card stack"><h3>${ic('calendar')} Programar partido</h3>
+        <div class="fields">
+          <label class="field">${esc(L().round)}<input class="input" id="nmRound" type="number" min="1" value="${Math.max(...state.matches.map((m) => m.round))}"></label>
+          <label class="field">Fecha<input class="input" id="nmDate" type="date" value="2026-11-01"></label>
+          <label class="field">Hora<input class="input" id="nmTime" type="time" value="14:00"></label>
+          <label class="field">Local<select class="input" id="nmHome">${state.teams.map((t) => `<option value="${t.id}">${esc(t.name)}</option>`).join('')}</select></label>
+          <label class="field">Visitante<select class="input" id="nmAway">${state.teams.map((t, i) => `<option value="${t.id}" ${i === 16 ? 'selected' : ''}>${esc(t.name)}</option>`).join('')}</select></label>
+          <label class="field">${esc(L().venue)}<input class="input" id="nmField" value="Cancha La Cabaña"></label>
+        </div>
+        <button class="btn primary" data-act="matchCreate">${ic('plus')} Agregar a la programación</button>
+      </section>
+    </div>
+  </div>`;
+}
+const ROLE_NAMES = { SUPER_ADMIN: 'Super Admin', ADMIN: 'Admin', REFEREE: 'Árbitro', TEAM_DIR: 'Director de equipo' };
+function usersPanel(as) {
+  const allowed = as === 'SUPER_ADMIN' ? ['ADMIN', 'REFEREE', 'TEAM_DIR', 'SUPER_ADMIN'] : ['REFEREE', 'TEAM_DIR'];
+  const f = state.ui.userFilter || 'ALL';
+  const nr = allowed.includes(state.ui.nuRole) ? state.ui.nuRole : allowed[0];
+  const list = state.users.filter((u) => (as === 'SUPER_ADMIN' || allowed.includes(u.role)) && (f === 'ALL' || u.role === f));
+  return `<div class="grid-2">
+    <section class="card stack"><h3>${ic('userPlus')} Crear usuario</h3>
+      <p class="small muted">${as === 'SUPER_ADMIN' ? 'Como Super Admin puedes crear administradores, árbitros y directores de equipo.' : 'Como Admin puedes crear árbitros y directores de equipo.'}</p>
+      <div class="fields">
+        <label class="field">Nombre completo<input class="input" id="nuName" placeholder="Ej: María Contreras"></label>
+        <label class="field">Usuario o correo<input class="input" id="nuUser" placeholder="mcontreras"></label>
+        <label class="field">Celular<input class="input" id="nuPhone" inputmode="tel" placeholder="300 000 0000"></label>
+        <label class="field">Rol<select class="input" id="nuRole" data-act-change="nuRole">${allowed.map((r) => `<option value="${r}" ${nr === r ? 'selected' : ''}>${ROLE_NAMES[r]}</option>`).join('')}</select></label>
+        ${nr === 'TEAM_DIR' ? `<label class="field">Equipo<select class="input" id="nuTeam">${state.teams.map((t) => `<option value="${t.id}">${esc(t.name)}</option>`).join('')}</select></label>` : ''}
+        ${nr === 'REFEREE' ? `<label class="field">Función<select class="input" id="nuRef"><option>Central</option><option>Asistente</option><option>Planillero</option></select></label>` : ''}
+      </div>
+      <button class="btn primary" data-act="userCreate" data-as="${as}">${ic('plus')} Crear y generar clave temporal</button>
+    </section>
+    <section class="card stack"><div class="card-head" style="margin:0"><h3>Usuarios (${list.length})</h3>
+      <select class="input" style="width:auto" data-act-change="userFilter"><option value="ALL">Todos</option>${allowed.map((r) => `<option value="${r}" ${f === r ? 'selected' : ''}>${ROLE_NAMES[r]}</option>`).join('')}</select></div>
+      <div class="stack" style="max-height:620px;overflow:auto">${list.map((u) => `<div class="list-item"><div class="grow" style="min-width:0"><b class="trunc" style="display:block">${esc(u.name)}</b><span class="tiny muted trunc" style="display:block">${esc(u.user)} · ${ROLE_NAMES[u.role]}${u.teamId ? ' · ' + esc(team(u.teamId)?.name || '') : ''}${u.refRole ? ' · ' + esc(u.refRole) : ''}</span></div>
+        <span class="row">${u.role === 'SUPER_ADMIN' && as !== 'SUPER_ADMIN' ? '' : `<input class="toggle" type="checkbox" ${u.active ? 'checked' : ''} data-act-change="userActive" data-id="${u.id}" aria-label="Activo"><button class="btn icon sm" data-act="userReset" data-id="${u.id}" aria-label="Nueva clave">${ic('key')}</button>${u.id === 'U1' ? '' : `<button class="btn icon sm danger" data-act="userDelete" data-id="${u.id}" aria-label="Eliminar">${ic('trash')}</button>`}`}</span></div>`).join('')}</div>
+    </section></div>`;
+}
+function admApprovals() {
+  const pend = state.players.filter((p) => p.status === 'PENDING'), logos = state.teams.filter((t) => t.logoPending);
+  return `<div class="grid-2">
+    <section class="card stack"><h3>${ic('users')} Jugadores por aprobar (${pend.length})</h3>
+      ${pend.map((p) => `<div class="list-item"><span class="row"><img class="avatar" src="${p.photo}" width="48" height="48" alt=""><span style="min-width:0"><b class="trunc" style="display:block">#${p.number} ${esc(p.name)}</b><span class="tiny muted">${esc(team(p.teamId).name)} · ${POS_NAME[p.pos]} · CC ${esc(p.doc)}</span></span></span><span class="btns"><button class="btn sm primary" data-act="approvePlayer" data-id="${p.id}">Aprobar</button><button class="btn sm danger" data-act="rejectPlayer" data-id="${p.id}">Rechazar</button></span></div>`).join('') || '<p class="small muted">No hay jugadores pendientes.</p>'}
+    </section>
+    <section class="card stack"><h3>${ic('shield')} Escudos por aprobar (${logos.length})</h3>
+      ${logos.map((t) => `<div class="list-item"><span class="row"><img class="crest c56" src="${t.logoPending}" alt=""><span><b>${esc(t.name)}</b><br><span class="tiny muted">Reemplaza al escudo actual</span></span></span><span class="btns"><button class="btn sm primary" data-act="approveLogo" data-id="${t.id}">Aprobar</button><button class="btn sm danger" data-act="rejectLogo" data-id="${t.id}">Rechazar</button></span></div>`).join('') || '<p class="small muted">No hay escudos pendientes. Cambia al rol Director de equipo para subir uno.</p>'}
+    </section></div>`;
+}
+
+// ---------- Importador de Excel ----------
+const IMPORT_COLS = ['POS', 'EQUIPO', 'PJ', 'PG', 'PE', 'PP', 'GF', 'GC', 'DG', 'PTS'];
+const SAMPLE_ROWS = [[1, 'UNION FOX', 2, 1, 1, 0, 7, 4, 3, 4], [2, 'SPARTANS', 2, 1, 1, 0, 6, 3, 3, 4], [3, 'AGROPECUARIOS', 2, 1, 1, 0, 5, 2, 3, 4], [4, 'LA ESTANCIA', 2, 1, 1, 0, 2, 1, 1, 4], [5, 'LOS PRIMOS', 1, 1, 0, 0, 2, 1, 1, 3], [6, 'COMBO GUILLIN', 1, 1, 0, 0, 2, 1, 1, 3], [7, 'EL HOYO', 1, 1, 0, 0, 1, 0, 1, 3], [8, 'COMBO CRIS', 2, 1, 0, 1, 5, 5, 0, 3], [9, 'GALACTICOS', 2, 1, 0, 1, 4, 6, -2, 3], [10, 'COMBO NANDO', 2, 0, 2, 0, 3, 3, 0, 2], [11, 'BARRIO', 1, 0, 1, 0, 2, 2, 0, 1], [12, 'FENIX', 2, 0, 1, 1, 2, 3, -1, 1], [13, 'GOAT', 1, 0, 0, 1, 1, 2, -1, 0], [14, 'COMBO SAEL', 1, 0, 0, 1, 0, 1, -1, 0], [15, 'COMBO CHICLE', 2, 0, 0, 2, 5, 9, -4, 0], [16, 'SANCHEZ', 2, 0, 0, 2, 2, 6, -4, 0]];
+function rowsFromMatrix(mx) {
+  const hi = mx.findIndex((r) => r.some((c) => norm(c) === 'EQUIPO'));
+  if (hi < 0) return { error: 'No encontré la fila de encabezados. La hoja debe tener las columnas POS, EQUIPO, PJ, PG, PE, PP, GF, GC, DG y PTS.' };
+  const head = mx[hi].map((c) => norm(c));
+  const idx = Object.fromEntries(IMPORT_COLS.map((c) => [c, head.indexOf(c)]));
+  const missing = IMPORT_COLS.filter((c) => idx[c] < 0 && c !== 'POS');
+  if (missing.length) return { error: 'Faltan columnas: ' + missing.join(', ') };
+  const rows = mx.slice(hi + 1).filter((r) => r[idx.EQUIPO] != null && String(r[idx.EQUIPO]).trim()).map((r) => {
+    const o = { equipo: String(r[idx.EQUIPO]).trim() };
+    IMPORT_COLS.filter((c) => c !== 'EQUIPO').forEach((c) => { o[c.toLowerCase()] = idx[c] >= 0 ? parseInt(r[idx[c]], 10) : NaN; });
+    return o;
+  });
+  return { rows };
+}
+function validateRow(o) {
+  const errs = [];
+  ['pj', 'pg', 'pe', 'pp', 'gf', 'gc'].forEach((k) => { if (!Number.isInteger(o[k]) || o[k] < 0) errs.push(`${k.toUpperCase()} no es un entero válido`); });
+  if (!errs.length) {
+    if (o.pj !== o.pg + o.pe + o.pp) errs.push(`PJ (${o.pj}) ≠ PG+PE+PP (${o.pg + o.pe + o.pp})`);
+    if (Number.isInteger(o.dg) && o.dg !== o.gf - o.gc) errs.push(`DG (${o.dg}) ≠ GF−GC (${o.gf - o.gc})`);
+    const pts = o.pg * R().ptsWin + o.pe * R().ptsDraw + o.pp * R().ptsLoss;
+    if (Number.isInteger(o.pts) && o.pts !== pts) errs.push(`PTS (${o.pts}) ≠ ${pts} según las reglas`);
+  }
+  return errs;
+}
+function findTeamByName(n) { const k = norm(n); return state.teams.find((t) => norm(t.name) === k || norm(t.name).replace(/^COMBO /, '') === k.replace(/^COMBO /, '')); }
+function importPanel() {
+  const rows = state.ui.importRows;
+  const pl = state.ui.importPlayers;
+  return `<div class="stack-lg">
+    <section class="card stack"><h3>${ic('table')} Cargar un campeonato que ya empezó</h3>
+      <p class="small muted">Sube la tabla en Excel (.xlsx) o CSV con las columnas <b>POS · EQUIPO · PJ · PG · PE · PP · GF · GC · DG · PTS</b>, igual a la hoja que ya usas. Si el libro trae una hoja <b>JUGADORES</b> (EQUIPO, NOMBRE, DORSAL, POSICION, DOCUMENTO, GOLES, ASISTENCIAS, AMARILLAS, ROJAS), también se cargan goleadores y tarjetas.</p>
+      <div class="drop" id="dropZone">${ic('upload')}<b>Arrastra aquí tu archivo</b><span class="tiny muted">o elige uno desde el celular o el computador</span>
+        <span class="btns" style="justify-content:center"><label class="btn primary file-btn">${ic('upload')} Elegir archivo<input type="file" accept=".xlsx,.xls,.csv" data-upload="excel"></label><button class="btn" data-act="importSample">Usar la tabla de ejemplo</button><button class="btn ghost" data-act="importTemplate">${ic('download')} Plantilla .xlsx</button></span></div>
+      <label class="field">O pega aquí las celdas copiadas de Excel<textarea class="input" id="pasteBox" rows="3" placeholder="POS	EQUIPO	PJ	PG	PE	PP	GF	GC	DG	PTS"></textarea></label>
+      <button class="btn" data-act="importPaste">Leer lo pegado</button>
+    </section>
+    ${rows ? `<section class="card stack"><div class="card-head" style="margin:0"><div><h3>Vista previa (${rows.length} equipos)</h3><p class="small muted">${rows.filter((r) => r.errs.length).length ? `<span class="bad-ic">${rows.filter((r) => r.errs.length).length} fila(s) con descuadres.</span> Puedes corregir el archivo o importar igual: el sistema recalcula DG y PTS.` : '<span class="ok-ic">Todas las filas cuadran.</span>'} Los equipos nuevos se crean con un escudo genérico hasta que su DT suba el oficial.</p></div>
+      <div class="btns"><button class="btn primary" data-act="importApply">${ic('check')} Importar ${rows.length} equipos</button><button class="btn ghost" data-act="importCancel">Descartar</button></div></div>
+      <div class="table-wrap"><table class="t"><thead><tr><th>POS</th><th>EQUIPO</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th><th class="pts">PTS</th><th>Estado</th></tr></thead><tbody>
+      ${rows.map((r) => `<tr class="${r.errs.length ? 'row-bad' : ''}"><td>${Number.isNaN(r.pos) ? '' : r.pos}</td><td>${esc(r.equipo)} ${findTeamByName(r.equipo) ? '' : '<span class="badge warn">Nuevo</span>'}</td><td>${r.pj}</td><td>${r.pg}</td><td>${r.pe}</td><td>${r.pp}</td><td>${r.gf}</td><td>${r.gc}</td><td>${Number.isNaN(r.dg) ? '' : r.dg}</td><td class="pts">${Number.isNaN(r.pts) ? '' : r.pts}</td><td style="text-align:left">${r.errs.length ? `<span class="bad-ic small">${r.errs.map(esc).join('<br>')}</span>` : `<span class="ok-ic">${ic('check')}</span>`}</td></tr>`).join('')}
+      </tbody></table></div>${pl ? `<p class="small">También se cargarán ${pl.length} jugadores de la hoja JUGADORES.</p>` : ''}</section>` : ''}
+  </div>`;
+}
+
+// ---------- Reglas y tiempo de juego (Super Admin y Admin) ----------
+function rulesPanel(as) {
+  const r = R();
+  const num = (k, l, min = 0, max = 120, step = 1) => `<label class="field">${l}<input class="input" type="number" min="${min}" max="${max}" step="${step}" value="${r[k]}" data-bind="rules.${k}"></label>`;
+  const sw = (k, t, h) => switchRow('rules.' + k, t, h);
+  const readOnly = as === 'ADMIN' && !state.settings.adminRules;
+  return `${readOnly ? `<div class="note" style="margin-bottom:12px">Estás viendo las reglas que definió el Super Admin. Puedes editar el tiempo de juego; el resto lo cambia el Super Admin.</div>` : ''}
+  <div class="grid-2">
+    <section class="card stack"><h3>${ic('clock')} Tiempo de juego</h3>
+      <div class="fields">${num('periods', 'Cantidad de tiempos', 1, 4)}${num('periodMin', 'Minutos por tiempo', 5, 60)}${num('breakMin', 'Descanso (min)', 0, 30)}</div>
+      <label class="field">Reloj del árbitro<select class="input" data-bind="rules.clockMode"><option value="up" ${r.clockMode === 'up' ? 'selected' : ''}>Progresivo (0 → ${r.periodMin})</option><option value="down" ${r.clockMode === 'down' ? 'selected' : ''}>Regresivo (${r.periodMin} → 0)</option></select></label>
+      ${sw('registerMinute', 'Anotar el minuto de cada evento', 'Goles, tarjetas y faltas quedan con su minuto en el acta.')}
+      ${sw('addedTime', 'Registrar tiempo adicionado', 'El árbitro anota los minutos de reposición por tiempo.')}
+      <p class="small muted">Duración total: ${r.periods * r.periodMin + (r.periods - 1) * r.breakMin} min por partido.</p>
+    </section>
+    <fieldset class="card stack" ${readOnly ? 'disabled' : ''} style="margin:0"><h3>${ic('sliders')} Modalidad y reglas</h3>
+      <label class="field">Modalidad base<select class="input" data-act-change="modality">${Object.entries(MODALITIES).map(([k, v]) => `<option value="${k}" ${r.modality === k ? 'selected' : ''}>${v.label}</option>`).join('')}</select></label>
+      <p class="tiny muted">La modalidad solo precarga valores. Cada regla se puede activar, quitar o cambiar.</p>
+      ${sw('blueCard', 'Tarjeta azul', 'Exclusión temporal. Apágala si tu fútbol 8 se juega sin azul.')}
+      ${r.blueCard ? `<div class="fields">${num('blueMin', 'Minutos de exclusión', 1, 15)}</div>` : ''}
+      ${sw('foulLimitOn', 'Límite de faltas acumuladas', 'Ej.: desde la 6ª falta, tiro libre sin barrera. Apágalo si no aplica la “falta 5”.')}
+      ${r.foulLimitOn ? `<div class="fields">${num('foulLimit', 'Límite de faltas', 1, 15)}</div>${sw('foulsResetPerPeriod', 'Reiniciar faltas en cada tiempo', '')}` : ''}
+      ${sw('doubleYellowRed', 'Doble amarilla es roja', 'Se registra la roja automáticamente.')}
+      ${sw('subsUnlimited', 'Cambios ilimitados', '')}
+      ${r.subsUnlimited ? '' : `<div class="fields">${num('maxSubs', 'Máximo de cambios', 0, 15)}</div>`}
+      ${sw('reentry', 'Reingreso de jugadores', '')}
+      ${sw('offside', 'Fuera de lugar', '')}
+      <div class="fields">${num('playersOnField', 'Jugadores en cancha', 3, 11)}</div>
+    </fieldset>
+    <fieldset class="card stack" ${readOnly ? 'disabled' : ''} style="margin:0"><h3>${ic('trophy')} Puntos y sanciones</h3>
+      <div class="fields">${num('ptsWin', 'Victoria', 0, 5)}${num('ptsDraw', 'Empate', 0, 5)}${num('ptsLoss', 'Derrota', 0, 5)}${num('woGoals', 'Marcador W.O. (goles)', 0, 10)}${num('yellowAccum', 'Amarillas para suspensión', 0, 10)}${num('redSuspension', 'Fechas de suspensión por roja', 0, 10)}</div>
+      ${sw('shootout', 'Penales en caso de empate', 'Punto extra para el ganador de la tanda.')}
+      ${r.shootout ? `<div class="fields">${num('shootoutBonus', 'Punto extra', 0, 3)}</div>` : ''}
+    </fieldset>
+    <fieldset class="card stack" ${readOnly ? 'disabled' : ''} style="margin:0"><h3>${ic('table')} Orden de desempate</h3>
+      <div class="reorder">${r.tiebreak.map((k, i) => `<div class="list-item"><span class="row"><b class="num">${i + 1}</b>${TIEBREAK_LABELS[k]}</span><span class="btns"><button class="btn icon sm" data-act="tbMove" data-id="${i}" data-dir="-1" ${i === 0 ? 'disabled' : ''} aria-label="Subir">↑</button><button class="btn icon sm" data-act="tbMove" data-id="${i}" data-dir="1" ${i === r.tiebreak.length - 1 ? 'disabled' : ''} aria-label="Bajar">↓</button>${r.tiebreak.length > 1 && k !== 'pts' ? `<button class="btn icon sm danger" data-act="tbRemove" data-id="${i}" aria-label="Quitar">${ic('x')}</button>` : ''}</span></div>`).join('')}</div>
+      ${Object.keys(TIEBREAK_LABELS).filter((k) => !r.tiebreak.includes(k)).length ? `<div class="chips">${Object.keys(TIEBREAK_LABELS).filter((k) => !r.tiebreak.includes(k)).map((k) => `<button class="pill" data-act="tbAdd" data-id="${k}">${ic('plus')} ${TIEBREAK_LABELS[k]}</button>`).join('')}</div>` : ''}
+    </fieldset>
+  </div>`;
+}
+
+// ================= SUPER ADMIN =================
+const SA_TABS = [['RULES', 'Reglas del campeonato', 'sliders'], ['USERS', 'Usuarios', 'userPlus'], ['FORMAT', 'Formato', 'trophy'], ['IMPORT', 'Importar Excel', 'table'], ['AUDIT', 'Integridad de actas', 'lock']];
+function viewSuper() {
+  const body = { RULES: () => `${switchRow('settings.adminRules', 'Permitir que el Admin cambie las reglas', 'Si está apagado, el Admin solo ajusta el tiempo de juego.')}<div style="height:12px"></div>${rulesPanel('SUPER_ADMIN')}`, USERS: () => usersPanel('SUPER_ADMIN'), FORMAT: saFormat, IMPORT: importPanel, AUDIT: saAudit }[state.ui.saTab]();
+  return `<nav class="tabs" aria-label="Panel del Super Admin">${SA_TABS.map(([k, l, i]) => `<button class="pill ${state.ui.saTab === k ? 'on' : ''}" data-act="saTab" data-id="${k}">${ic(i)} ${l}</button>`).join('')}</nav>${body}`;
+}
+function saFormat() {
+  const n = state.ui.teamCount || state.teams.length;
+  const recs = n <= 8 ? [['Liga ida y vuelta + final', 'Con pocos equipos, garantiza suficientes partidos para todos.'], ['Doble eliminación', 'Nadie queda por fuera en su primera derrota.']]
+    : n <= 18 ? [['Liga todos contra todos + Playoffs (8 mejores)', 'El formato más equilibrado para esta cantidad de clubes.'], ['Todos contra todos + cuadrangulares semifinales', 'Estilo liga profesional colombiana.']]
+      : [['Grupos + eliminación directa ida y vuelta', 'Optimiza las semanas de cancha en torneos grandes.'], ['Sistema suizo (6 fechas) + Playoffs top 16', 'Todos compiten en una tabla única.']];
+  return `<section class="card stack"><h3>${ic('trophy')} Recomendador de formato</h3>
+    <label class="field">Equipos inscritos: <b>${n}</b><input class="input" type="range" min="4" max="32" value="${n}" data-act-change="teamCount"></label>
+    ${recs.map(([t, d]) => `<div class="list-item"><div class="grow"><b>${t}</b><p class="tiny muted">${d}</p></div>${R().format === t ? '<span class="badge ok">Activo</span>' : `<button class="btn sm primary" data-act="formatSet" data-id="${esc(t)}">Activar</button>`}</div>`).join('')}
+    <p class="small muted">Formato actual: <b>${esc(R().format)}</b></p></section>`;
+}
+function saAudit() {
+  return `<section class="card stack"><h3>${ic('lock')} Integridad de actas</h3><p class="small muted">Tienes control total de usuarios y reglas, pero <b>nadie puede alterar resultados firmados por los árbitros</b>. Las correcciones se hacen con acta aclaratoria firmada por ambos delegados.</p>
+    ${state.matches.filter((m) => m.status !== 'SCHEDULED').map((m) => { const s = matchScore(m); return `<div class="list-item"><div class="grow" style="min-width:0"><b class="trunc" style="display:block">${esc(team(m.homeId).name)} ${s.h} - ${s.a} ${esc(team(m.awayId).name)}</b><span class="tiny muted">${esc(L().round)} ${m.round} · ${m.status === 'LOCKED' ? 'Firmada ' + esc(m.signedAt) + ' · ' + esc(m.version) : 'En juego'}${m.hash && m.hash !== 'demo' ? ' · SHA-256 ' + m.hash.slice(0, 12) + '…' : ''}</span></div><button class="btn sm danger" data-act="attemptEdit">${ic('ban')} Editar marcador</button></div>`; }).join('')}</section>`;
+}
+
+// ================= Modal =================
+function openModal(html) { $('#sheet').innerHTML = html; $('#modal').hidden = false; $('#sheet').scrollTop = 0; }
+function closeModal() { $('#modal').hidden = true; $('#sheet').innerHTML = ''; draft = null; }
+
+// ================= Firma =================
+let sigDrawn = false;
+function initSig(id) {
+  const c = document.getElementById(id); if (!c) return;
+  const x = c.getContext('2d'); x.lineWidth = 3.2; x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#1F1F1F';
+  sigDrawn = false; let on = false;
+  const pos = (e) => { const r = c.getBoundingClientRect(); return [(e.clientX - r.left) * (c.width / r.width), (e.clientY - r.top) * (c.height / r.height)]; };
+  c.addEventListener('pointerdown', (e) => { on = true; sigDrawn = true; c.setPointerCapture(e.pointerId); const [a, b] = pos(e); x.beginPath(); x.moveTo(a, b); });
+  c.addEventListener('pointermove', (e) => { if (!on) return; const [a, b] = pos(e); x.lineTo(a, b); x.stroke(); });
+  c.addEventListener('pointerup', () => { on = false; });
+  c.addEventListener('pointercancel', () => { on = false; });
+}
+
+// ================= Imágenes para redes (canvas) =================
+const FORMATS = { poster: [1080, 1528], portrait: [1080, 1350], square: [1080, 1080], story: [1080, 1920] };
+function fitText(ctx, text, maxW, size, weight, family, min = 18) {
+  let s = size; do { ctx.font = `${weight} ${s}px ${family}`; if (ctx.measureText(text).width <= maxW) break; s -= 2; } while (s > min);
+  return s;
+}
+function drawContain(ctx, img, x, y, w, h) { if (!img) return; const s = Math.min(w / img.width, h / img.height); const dw = img.width * s, dh = img.height * s; ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh); }
+function drawCover(ctx, img, x, y, w, h) { if (!img) return; const s = Math.max(w / img.width, h / img.height); const sw = w / s, sh = h / s; ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h); }
+async function fontsReady() {
+  const fam = state.settings.displayFont;
+  try { await Promise.race([Promise.all([document.fonts.load(`800 40px "${fam}"`), document.fonts.load('900 40px Montserrat'), document.fonts.load('700 20px Inter')]), new Promise((r) => setTimeout(r, 1500))]); } catch (e) { /* usa la fuente de respaldo */ }
+}
+async function renderFlyer(canvas, o) {
+  const S = state.settings, C = S.colors;
+  const [W, H] = FORMATS[o.format] || FORMATS.poster;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  await fontsReady();
+  const fam = FONTS[S.displayFont] || FONTS.Montserrat;
+  const light = o.style === 'light';
+  const ink = light ? '#1F1F1F' : '#FFFFFF', sub = light ? '#4A4A4A' : 'rgba(255,255,255,.82)';
+  const accent = light ? mix(C.primary, '#000000', lum(C.primary) > 0.5 ? 0.35 : 0) : C.primary;
+  const [logo, banner, bgPhoto, mainSp, ...secs] = await Promise.all([loadImg(S.logo), loadImg(S.banner), loadImg(S.flyerBg), loadImg(S.sponsors.main?.logo), ...[0, 1, 2, 3].map((i) => loadImg(S.sponsors.secondary[i]?.logo))]);
+
+  // Fondo
+  if (light) { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#F1F2F4'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+  else if (o.style === 'photo' && bgPhoto) { drawCover(ctx, bgPhoto, 0, 0, W, H); ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, H); }
+  else {
+    const base = o.style === 'dark' ? '#0E0F12' : C.bg;
+    const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, mix(base, C.primary, 0.16)); g.addColorStop(0.55, base); g.addColorStop(1, mix(base, '#000000', 0.35)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.save(); ctx.globalAlpha = 0.07; ctx.fillStyle = C.primary; for (let i = -H; i < W; i += 140) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + 46, 0); ctx.lineTo(i + 46 + H * 0.6, H); ctx.lineTo(i + H * 0.6, H); ctx.fill(); } ctx.restore();
+  }
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  const k = H / 1528; // escala vertical relativa al afiche
+  let y = 0;
+  // Banner
+  if (o.showBanner && banner) {
+    const bh = Math.round(Math.min(300, 250 * Math.max(0.8, k)));
+    drawCover(ctx, banner, 0, 0, W, bh);
+    const fade = ctx.createLinearGradient(0, bh * 0.45, 0, bh); fade.addColorStop(0, 'rgba(0,0,0,0)'); fade.addColorStop(1, light ? 'rgba(255,255,255,1)' : (o.style === 'photo' ? 'rgba(0,0,0,.6)' : (o.style === 'dark' ? '#0E0F12' : mix(C.bg, C.primary, 0.08))));
+    ctx.fillStyle = fade; ctx.fillRect(0, 0, W, bh);
+    y = bh - 70;
+  } else y = 40;
+  // Encabezado: logo + 3 líneas
+  const logoS = Math.round(170 * Math.max(0.75, Math.min(1.1, k)));
+  const textX0 = logo ? 60 + logoS + 20 : 60, textW = W - textX0 - 60, cx = textX0 + textW / 2;
+  if (logo) { ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = 20; drawContain(ctx, logo, 50, y + 6, logoS, logoS); ctx.restore(); }
+  const round = o.round; const rMatches = state.matches.filter((m) => m.round === Number(round)).sort((a, b) => a.time.localeCompare(b.time));
+  const d0 = rMatches[0]?.date;
+  const line3 = o.template === 'TABLE' ? `${S.labels.standings}`.toUpperCase() : o.template === 'SCORERS' ? `${S.labels.topScorer}ES DEL CAMPEONATO`.toUpperCase() : `${d0 ? fmtDateLong(d0) : ''} - ${S.labels.roundShort}${round}${o.template === 'RESULTS' ? ' · RESULTADOS' : ''}`.toUpperCase();
+  ctx.save(); ctx.shadowColor = light ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,.55)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 4;
+  let ty = y + 62;
+  ctx.fillStyle = ink; let fs = fitText(ctx, S.title.toUpperCase(), textW, 64, 900, fam, 30); ctx.fillText(S.title.toUpperCase(), cx, ty);
+  ty += 14;
+  if (S.subtitle) { fs = fitText(ctx, S.subtitle.toUpperCase(), textW, 58, 900, fam, 26); ty += fs * 0.8; ctx.fillText(S.subtitle.toUpperCase(), cx, ty); ty += fs * 0.25 + 12; }
+  ty += 44;
+  ctx.fillStyle = accent; fs = fitText(ctx, line3, textW, 46, 800, fam, 22); ctx.fillText(line3, cx, ty);
+  ctx.restore();
+  const headerBottom = Math.max(ty + 30, y + logoS + 30);
+
+  // Pie: patrocinadores + ubicación
+  const sp = o.showSponsors ? S.sponsors : { main: null, secondary: [] };
+  const secList = o.showSponsors ? secs.filter(Boolean) : [];
+  const footH = S.footerText ? Math.round(96 * Math.max(0.8, k)) : 30;
+  const secH = secList.length ? Math.round(118 * Math.max(0.75, k)) : 0;
+  const mainH = sp.main && mainSp ? Math.round(170 * Math.max(0.7, k)) : 0;
+  const bodyTop = headerBottom, bodyBot = H - footH - secH - mainH - (mainH ? 18 : 0) - (secH ? 12 : 0);
+  const plate = (x, yy, w, h) => { if (!o.sponsorPlate) return; ctx.save(); ctx.fillStyle = 'rgba(255,255,255,.94)'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 16; ctx.beginPath(); ctx.roundRect(x, yy, w, h, 18); ctx.fill(); ctx.restore(); };
+  let fy = bodyBot + (mainH ? 10 : 0);
+  if (mainH) { const w = Math.min(520, mainH * 2.8); plate(W / 2 - w / 2, fy, w, mainH); drawContain(ctx, mainSp, W / 2 - w / 2 + 18, fy + 12, w - 36, mainH - 24); fy += mainH + 12; }
+  if (secH) {
+    const n = secList.length, gap = 24, w = Math.min(230, (W - 120 - gap * (n - 1)) / n), tot = n * w + (n - 1) * gap; let sx = W / 2 - tot / 2;
+    secList.forEach((im) => { plate(sx, fy, w, secH - 10); drawContain(ctx, im, sx + 12, fy + 10, w - 24, secH - 30); sx += w + gap; });
+    fy += secH;
+  }
+  if (S.footerText) {
+    ctx.save(); ctx.shadowColor = light ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,.5)'; ctx.shadowBlur = 12; ctx.fillStyle = ink;
+    const t = S.footerText.toUpperCase(); fitText(ctx, t, W - 120, Math.round(64 * Math.max(0.8, k)), 900, fam, 26); ctx.fillText(t, W / 2, H - footH * 0.34 - (S.social ? 18 : 0));
+    if (S.social) { ctx.font = `600 24px Inter, sans-serif`; ctx.fillStyle = sub; ctx.fillText(S.social, W / 2, H - 18); }
+    ctx.restore();
+  }
+
+  // Cuerpo
+  const bodyH = bodyBot - bodyTop;
+  if (o.template === 'FIXTURE' || o.template === 'RESULTS') {
+    const list = rMatches.length ? rMatches : [];
+    const n = Math.max(1, list.length), rowH = bodyH / n;
+    const nameH = o.showNames ? 30 : 0;
+    const cs = Math.min(rowH - nameH - 14, 220);
+    const imgs = await Promise.all(list.flatMap((m) => [loadImg(teamLogo(team(m.homeId))), loadImg(teamLogo(team(m.awayId)))]));
+    list.forEach((m, i) => {
+      const cyy = bodyTop + rowH * i + (rowH - cs - nameH) / 2;
+      const hx = W * 0.2, ax = W * 0.58, vx = W * 0.39, tx = W * 0.83;
+      ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6;
+      drawContain(ctx, imgs[i * 2], hx - cs / 2, cyy, cs, cs); drawContain(ctx, imgs[i * 2 + 1], ax - cs / 2, cyy, cs, cs); ctx.restore();
+      if (o.showNames) { ctx.fillStyle = sub; ctx.font = `700 ${Math.min(24, Math.max(16, cs * 0.14))}px Inter, sans-serif`; ctx.fillText(team(m.homeId).name.toUpperCase(), hx, cyy + cs + 26, 300); ctx.fillText(team(m.awayId).name.toUpperCase(), ax, cyy + cs + 26, 300); }
+      const mid = cyy + cs / 2;
+      const sc = matchScore(m), showScore = o.template === 'RESULTS' && m.status !== 'SCHEDULED';
+      ctx.fillStyle = showScore ? accent : ink; ctx.font = `${showScore ? 900 : 500} ${Math.round(Math.min(cs * (showScore ? 0.42 : 0.4), 92))}px ${showScore ? fam : 'Inter, sans-serif'}`; ctx.textBaseline = 'middle';
+      ctx.fillText(showScore ? `${sc.h} - ${sc.a}` : 'VS', vx, mid);
+      ctx.fillStyle = ink; ctx.font = `500 ${Math.round(Math.min(cs * 0.3, 62))}px Inter, sans-serif`;
+      const right = o.template === 'RESULTS' ? (m.status === 'LOCKED' ? 'FINAL' : m.status === 'IN_PROGRESS' ? 'EN JUEGO' : fmtTime(m.time)) : fmtTime(m.time);
+      fitText(ctx, right, W - tx - 30 + (W * 0.17 - 30), Math.round(Math.min(cs * 0.3, 62)), 500, 'Inter, sans-serif', 18); ctx.fillText(right, tx, mid);
+      ctx.textBaseline = 'alphabetic';
+    });
+    if (!list.length) { ctx.fillStyle = sub; ctx.font = '600 32px Inter, sans-serif'; ctx.fillText('No hay partidos en esta fecha', W / 2, bodyTop + bodyH / 2); }
+  } else if (o.template === 'TABLE') {
+    const rows = standings(); const n = rows.length; const rh = Math.min(64, (bodyH - 56) / n); const x0 = 60, x1 = W - 60;
+    const cols = [[x0 + 34, '#'], [x0 + 150, 'EQUIPO'], [x1 - 330, 'PJ'], [x1 - 265, 'G'], [x1 - 205, 'E'], [x1 - 145, 'P'], [x1 - 85, 'DG'], [x1 - 28, 'PTS']];
+    ctx.fillStyle = accent; ctx.font = `800 22px ${fam}`; cols.forEach(([cx_, l], i) => { ctx.textAlign = i === 1 ? 'left' : 'center'; ctx.fillText(l, i === 1 ? x0 + 110 : cx_, bodyTop + 34); });
+    const imgs = await Promise.all(rows.map((r) => loadImg(teamLogo(r.t))));
+    rows.forEach((r, i) => {
+      const yy = bodyTop + 50 + i * rh;
+      ctx.fillStyle = light ? (i % 2 ? '#F4F5F7' : '#FFFFFF') : (i % 2 ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.1)'); ctx.fillRect(x0, yy, x1 - x0, rh - 4);
+      const z = zoneOf(r.pos, n); const zc = { 'var(--zone-1)': '#3DDC84', 'var(--zone-2)': '#4FC3F7', 'var(--zone-3)': '#FF5A4F' }[z]; if (zc) { ctx.fillStyle = zc; ctx.fillRect(x0, yy, 7, rh - 4); }
+      ctx.fillStyle = C.hl; ctx.fillRect(x1 - 58, yy, 58, rh - 4);
+      const my = yy + (rh - 4) / 2; ctx.textBaseline = 'middle';
+      ctx.fillStyle = ink; ctx.textAlign = 'center'; ctx.font = `900 ${Math.round(rh * 0.42)}px ${fam}`; ctx.fillText(String(r.pos), cols[0][0], my);
+      drawContain(ctx, imgs[i], x0 + 62, yy + 3, rh - 10, rh - 10);
+      ctx.textAlign = 'left'; ctx.font = `700 ${Math.round(rh * 0.38)}px Inter, sans-serif`; ctx.fillText(r.t.name.toUpperCase(), x0 + 110, my, x1 - 360 - (x0 + 110));
+      ctx.textAlign = 'center'; ctx.font = `600 ${Math.round(rh * 0.38)}px Inter, sans-serif`;
+      [r.pj, r.pg, r.pe, r.pp, (r.dg > 0 ? '+' : '') + r.dg].forEach((v, j) => ctx.fillText(String(v), cols[2 + j][0], my));
+      ctx.fillStyle = onColor(C.hl); ctx.font = `900 ${Math.round(rh * 0.44)}px ${fam}`; ctx.fillText(String(r.pts), cols[7][0], my);
+      ctx.textBaseline = 'alphabetic';
+    });
+    ctx.textAlign = 'center';
+  } else if (o.template === 'SCORERS') {
+    const top = leaders().scorers.slice(0, 8); const rh = Math.min(132, bodyH / Math.max(top.length, 1));
+    const imgs = await Promise.all(top.flatMap((x) => [loadImg(x.p.photo), loadImg(teamLogo(team(x.p.teamId)))]));
+    top.forEach((x, i) => {
+      const yy = bodyTop + i * rh, s = rh - 16, my = yy + rh / 2;
+      ctx.fillStyle = light ? '#F4F5F7' : 'rgba(255,255,255,.08)'; ctx.beginPath(); ctx.roundRect(60, yy + 6, W - 120, rh - 12, 20); ctx.fill();
+      ctx.textBaseline = 'middle'; ctx.fillStyle = accent; ctx.font = `900 ${Math.round(s * 0.45)}px ${fam}`; ctx.fillText(String(i + 1), 110, my);
+      ctx.save(); ctx.beginPath(); ctx.arc(170 + s / 2, my, s / 2, 0, Math.PI * 2); ctx.clip(); if (imgs[i * 2]) drawCover(ctx, imgs[i * 2], 170, my - s / 2, s, s); ctx.restore();
+      ctx.textAlign = 'left'; ctx.fillStyle = ink; ctx.font = `800 ${Math.round(s * 0.3)}px Inter, sans-serif`; ctx.fillText(x.p.name.toUpperCase(), 190 + s, my - s * 0.14, W - 190 - s - 300);
+      ctx.fillStyle = sub; ctx.font = `600 ${Math.round(s * 0.22)}px Inter, sans-serif`; ctx.fillText(team(x.p.teamId).name.toUpperCase(), 190 + s + s * 0.42, my + s * 0.24, W - 400);
+      drawContain(ctx, imgs[i * 2 + 1], 190 + s, my + s * 0.24 - s * 0.17, s * 0.34, s * 0.34);
+      ctx.textAlign = 'center'; ctx.fillStyle = ink; ctx.font = `900 ${Math.round(s * 0.55)}px ${fam}`; ctx.fillText(String(x.s.goals), W - 130, my);
+      ctx.textBaseline = 'alphabetic';
+    });
+  }
+  ctx.textAlign = 'left';
+}
+async function refreshFlyer() { const c = $('#flyerCanvas'); if (c) await renderFlyer(c, state.settings.flyer); }
+async function flyerToPdf(canvas, name) {
+  if (libsMissing('pdf')) return;
+  const { jsPDF } = window.jspdf; const w = canvas.width, h = canvas.height;
+  const doc = new jsPDF({ orientation: h >= w ? 'portrait' : 'landscape', unit: 'px', format: [w, h], hotfixes: ['px_scaling'] });
+  doc.addImage(canvas.toDataURL('image/jpeg', 0.93), 'JPEG', 0, 0, w, h);
+  await saveFile(name, doc.output('blob'));
+}
+
+// ================= PDF =================
+function pdfDoc() { const { jsPDF } = window.jspdf; return new jsPDF({ unit: 'mm', format: 'a4' }); }
+const pdfRgb = (h) => hexToRgb(h);
+function imgFormat(src) { return src && src.startsWith('data:image/jpeg') ? 'JPEG' : 'PNG'; }
+function pdfHeader(doc, title, subtitle) {
+  const S = state.settings, C = S.colors, W = 210;
+  doc.setFillColor(...pdfRgb('#1F1F1F')); doc.rect(0, 0, W, 34, 'F');
+  doc.setFillColor(...pdfRgb(C.primary)); doc.rect(0, 34, W, 1.6, 'F');
+  if (S.logo) doc.addImage(S.logo, imgFormat(S.logo), 10, 5, 24, 24);
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold');
+  let fs = 14; doc.setFontSize(fs); while (doc.getTextWidth(S.title.toUpperCase()) > 124 && fs > 8) { fs -= 0.5; doc.setFontSize(fs); }
+  doc.text(S.title.toUpperCase(), 38, 14);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.text(`${S.subtitle} · ${S.footerText}`, 38, 20);
+  doc.setTextColor(...pdfRgb(C.primary)); doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text(title, 38, 28);
+  if (S.sponsors.main?.logo) { doc.setFillColor(255, 255, 255); doc.roundedRect(166, 6, 36, 22, 2, 2, 'F'); doc.addImage(S.sponsors.main.logo, imgFormat(S.sponsors.main.logo), 168, 8, 32, 18); }
+  doc.setTextColor(30, 30, 30);
+  if (subtitle) { doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(90, 90, 90); doc.text(subtitle, 10, 42); doc.setTextColor(30, 30, 30); }
+}
+function pdfFooter(doc, extra) {
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(7.5); doc.setTextColor(120, 120, 120); doc.text(`FutbolPro · PascalIA · Generado ${new Date().toLocaleString('es-CO')}${extra ? ' · ' + extra : ''}`, 10, 290); doc.text(`Página ${i} de ${n}`, 200, 290, { align: 'right' }); }
+}
+// Tabla sencilla con soporte de imágenes por celda
+function pdfTable(doc, x, y, cols, rows, opt = {}) {
+  const rh = opt.rowH || 8, hh = 8;
+  const head = () => { doc.setFillColor(31, 31, 31); doc.rect(x, y, cols.reduce((a, c) => a + c.w, 0), hh, 'F'); doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(8); let cx = x; cols.forEach((c) => { doc.text(c.h, c.align === 'left' ? cx + 2 : cx + c.w / 2, y + 5.4, { align: c.align === 'left' ? 'left' : 'center' }); cx += c.w; }); y += hh; doc.setTextColor(30, 30, 30); };
+  head();
+  rows.forEach((r, ri) => {
+    if (y + rh > 280) { doc.addPage(); y = 16; head(); }
+    if (ri % 2) { doc.setFillColor(245, 246, 248); doc.rect(x, y, cols.reduce((a, c) => a + c.w, 0), rh, 'F'); }
+    let cx = x;
+    cols.forEach((c, ci) => {
+      const v = r[ci];
+      if (c.hl) { doc.setFillColor(...pdfRgb(state.settings.colors.hl)); doc.rect(cx, y, c.w, rh, 'F'); }
+      if (v && typeof v === 'object' && v.img) {
+        try { doc.addImage(v.img, imgFormat(v.img), cx + 1.5, y + 0.8, rh - 1.6, rh - 1.6); } catch (e) { /* imagen inválida */ }
+        if (v.text) { doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.text(String(v.text), cx + rh + 2, y + rh / 2 + 1.2, { maxWidth: c.w - rh - 3 }); }
+      } else {
+        doc.setFont('helvetica', c.bold ? 'bold' : 'normal'); doc.setFontSize(8.5);
+        const s = String(v ?? ''); const lines = doc.splitTextToSize(s, c.w - 3);
+        doc.text(lines[0] || '', c.align === 'left' ? cx + 2 : cx + c.w / 2, y + rh / 2 + 1.2, { align: c.align === 'left' ? 'left' : 'center' });
+      }
+      cx += c.w;
+    });
+    y += rh;
+  });
+  return y;
+}
+async function pdfActa(id) {
+  if (libsMissing('pdf')) return;
+  const m = state.matches.find((x) => x.id === id), H = team(m.homeId), A = team(m.awayId), sc = matchScore(m), g = group(m.refGroupId);
+  const doc = pdfDoc();
+  pdfHeader(doc, `ACTA OFICIAL DEL PARTIDO · ${m.version}`, `${L().round} ${m.round} · ${fmtDateLong(m.date)} · ${fmtTime(m.time)} · ${m.field} · ${MODALITIES[R().modality]?.label} ${R().periods}x${R().periodMin} min`);
+  doc.addImage(teamLogo(H), imgFormat(teamLogo(H)), 28, 50, 30, 30); doc.addImage(teamLogo(A), imgFormat(teamLogo(A)), 152, 50, 30, 30);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text(H.name.toUpperCase(), 43, 87, { align: 'center' }); doc.text(A.name.toUpperCase(), 167, 87, { align: 'center' });
+  doc.setFontSize(34); doc.text(`${sc.h}  -  ${sc.a}`, 105, 70, { align: 'center' });
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(90, 90, 90);
+  const fh = m.events.filter((e) => e.type === 'FOUL' && e.teamId === H.id).length, fa = m.events.filter((e) => e.type === 'FOUL' && e.teamId === A.id).length;
+  doc.text(`Faltas: ${fh}`, 43, 92, { align: 'center' }); doc.text(`Faltas: ${fa}`, 167, 92, { align: 'center' });
+  if (R().addedTime) doc.text(`Tiempo adicionado: ${m.added.map((v, i) => `${i + 1}º ${v || 0}'`).join(' · ')}`, 105, 80, { align: 'center' });
+  doc.setTextColor(30, 30, 30);
+  const evs = [...m.events].filter((e) => e.type !== 'FOUL').sort((a, b) => a.minute - b.minute).map((e) => {
+    const p = player(e.playerId), a = player(e.assistId);
+    const type = { GOAL: 'Gol' + (e.kind ? ' (' + e.kind + ')' : ''), YELLOW: 'Amarilla', BLUE: 'Azul', RED: 'Roja' }[e.type];
+    return [R().registerMinute ? e.minute + "'" : '-', { img: teamLogo(team(e.teamId)), text: team(e.teamId).name }, type, p ? `#${p.number} ${p.name}` : '-', e.type === 'GOAL' ? (a ? `Asist.: #${a.number} ${a.name}` : 'Sin asistencia') : (e.note || '')];
+  });
+  let y = pdfTable(doc, 10, 100, [{ h: 'MIN', w: 14 }, { h: 'EQUIPO', w: 46, align: 'left' }, { h: 'EVENTO', w: 30 }, { h: 'JUGADOR', w: 50, align: 'left' }, { h: 'DETALLE', w: 50, align: 'left' }], evs.length ? evs : [['', '', 'Sin eventos', '', '']], { rowH: 8 });
+  y += 8;
+  if (m.clarification) {
+    if (y > 240) { doc.addPage(); y = 20; }
+    doc.setFillColor(255, 248, 225); doc.rect(10, y, 190, 22, 'F'); doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.text(`ANEXO · ACTA ACLARATORIA (${m.clarification.status === 'APPROVED' ? 'APLICADA' : 'PENDIENTE DE FIRMAS'})`, 13, y + 6);
+    doc.setFont('helvetica', 'normal'); doc.text(doc.splitTextToSize(m.clarification.note, 182), 13, y + 11); doc.text(`Marcador corregido: ${m.clarification.h} - ${m.clarification.a}`, 13, y + 19); y += 28;
+  }
+  if (y > 230) { doc.addPage(); y = 20; }
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.text('CUERPO ARBITRAL', 10, y + 4);
+  doc.setFont('helvetica', 'normal'); (g ? g.members : []).forEach((x, i) => doc.text(`${x.role}: ${userById(x.userId)?.name || '-'}`, 10, y + 10 + i * 5));
+  if (m.signature) doc.addImage(m.signature, 'PNG', 130, y, 60, 22);
+  doc.line(130, y + 24, 195, y + 24); doc.setFontSize(8); doc.text(`Firma del árbitro central · ${m.signedAt || 'sin firmar'}`, 162, y + 28, { align: 'center' });
+  doc.setFont('courier', 'normal'); doc.setFontSize(7); doc.text(`SHA-256: ${m.hash && m.hash !== 'demo' ? m.hash : await sha256(JSON.stringify(m.events))}`, 10, y + 38);
+  pdfFooter(doc, 'Documento inmutable: las correcciones se hacen con acta aclaratoria');
+  await saveFile(`acta-${slug(H.name)}-vs-${slug(A.name)}.pdf`, doc.output('blob'));
+}
+async function pdfStandings() {
+  if (libsMissing('pdf')) return;
+  const doc = pdfDoc(); pdfHeader(doc, L().standings.toUpperCase(), `Puntos: victoria ${R().ptsWin}, empate ${R().ptsDraw}, derrota ${R().ptsLoss}. Desempate: ${R().tiebreak.map((k) => TIEBREAK_LABELS[k]).join(' › ')}`);
+  pdfTable(doc, 10, 48, [{ h: 'POS', w: 12 }, { h: 'EQUIPO', w: 70, align: 'left' }, { h: 'PJ', w: 13 }, { h: 'PG', w: 13 }, { h: 'PE', w: 13 }, { h: 'PP', w: 13 }, { h: 'GF', w: 13 }, { h: 'GC', w: 13 }, { h: 'DG', w: 14 }, { h: 'PTS', w: 16, hl: true, bold: true }],
+    standings().map((r) => [r.pos, { img: teamLogo(r.t), text: r.t.name }, r.pj, r.pg, r.pe, r.pp, r.gf, r.gc, r.dg, r.pts]), { rowH: 9 });
+  pdfFooter(doc); await saveFile(`tabla-${slug(state.settings.title)}.pdf`, doc.output('blob'));
+}
+async function pdfTeam(id) {
+  if (libsMissing('pdf')) return;
+  const t = team(id), st = standings().find((r) => r.t.id === id);
+  const doc = pdfDoc(); pdfHeader(doc, 'FICHA OFICIAL DEL EQUIPO', '');
+  doc.addImage(teamLogo(t), imgFormat(teamLogo(t)), 10, 42, 34, 34);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.text(t.name.toUpperCase(), 50, 54);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.text(`Delegado: ${t.delegate}`, 50, 61);
+  doc.text(`Posición ${st.pos}º · PJ ${st.pj} · PG ${st.pg} · PE ${st.pe} · PP ${st.pp} · GF ${st.gf} · GC ${st.gc} · DG ${st.dg} · PTS ${st.pts}`, 50, 67);
+  const roster = state.players.filter((p) => p.teamId === id && p.status === 'APPROVED').sort((a, b) => a.number - b.number);
+  pdfTable(doc, 10, 84, [{ h: '#', w: 12, bold: true }, { h: 'JUGADOR', w: 70, align: 'left' }, { h: 'POSICIÓN', w: 30 }, { h: 'GOLES', w: 16 }, { h: 'ASIST.', w: 16 }, { h: 'AMAR.', w: 15 }, { h: 'AZUL', w: 15 }, { h: 'ROJA', w: 16 }],
+    roster.map((p) => { const s = playerStats(p); return [p.number, { img: p.photo, text: p.name }, POS_NAME[p.pos], s.goals, s.assists, s.yellow, s.blue, s.red]; }), { rowH: 12 });
+  pdfFooter(doc); await saveFile(`ficha-${slug(t.name)}.pdf`, doc.output('blob'));
+}
+
+// ================= Acciones =================
+function setPath(path, value) {
+  const parts = path.split('.');
+  if (parts[0] === 'team') { const t = team(parts[1]); t[parts[2]] = value; if (parts[2] === 'color' || parts[2] === 'color2') t.crest = makeCrest(t.name, t.color, t.color2); return; }
+  let o = state; for (let i = 0; i < parts.length - 1; i++) o = o[parts[i]]; o[parts[parts.length - 1]] = value;
+}
+function getMatch(id) { return state.matches.find((m) => m.id === id); }
+function currentRefMatch() { return getMatch(state.ui.refMatch); }
+
+const ACT = {
+  role: (d) => { state.ui.role = d.id; closeModal(); render(); window.scrollTo({ top: 0 }); },
+  pubTab: (d) => { state.ui.pubTab = d.id; if (state.ui.role !== 'PUBLIC') state.ui.role = 'PUBLIC'; render(); },
+  admTab: (d) => { state.ui.admTab = d.id; render(); },
+  saTab: (d) => { state.ui.saTab = d.id; render(); },
+  openTeam: (d) => openTeam(d.id),
+  viewMatch: (d) => viewMatch(d.id),
+  closeModal: () => closeModal(),
+  pdfActa: (d) => pdfActa(d.id),
+  pdfStandings: () => pdfStandings(),
+  pdfTeam: (d) => pdfTeam(d.id),
+  imgStandings: async () => { const c = canvasOf(10, 10); await renderFlyer(c, { ...state.settings.flyer, template: 'TABLE' }); await saveFile(`tabla-${slug(state.settings.title)}.png`, await canvasBlob(c)); },
+  imgScorers: async () => { const c = canvasOf(10, 10); await renderFlyer(c, { ...state.settings.flyer, template: 'SCORERS' }); await saveFile(`goleadores-${slug(state.settings.title)}.png`, await canvasBlob(c)); },
+  flyerPng: async () => { const c = $('#flyerCanvas'); await refreshFlyer(); await saveFile(`${state.settings.flyer.template.toLowerCase()}-${L().roundShort.toLowerCase()}${state.settings.flyer.round}.png`, await canvasBlob(c)); },
+  flyerPdf: async () => { const c = $('#flyerCanvas'); await refreshFlyer(); await flyerToPdf(c, `${state.settings.flyer.template.toLowerCase()}-${L().roundShort.toLowerCase()}${state.settings.flyer.round}.pdf`); },
+  demoReset: () => { openModal(`<div class="sheet-head"><h3>¿Restablecer la demo?</h3><button class="btn icon ghost" data-act="closeModal" aria-label="Cerrar">${ic('x')}</button></div><p>Se borran los cambios, logos e imágenes que subiste en este navegador.</p><div class="btns"><button class="btn danger" data-act="demoResetGo">Sí, restablecer</button><button class="btn" data-act="closeModal">Cancelar</button></div>`); },
+  demoResetGo: () => { try { localStorage.removeItem(STORE_KEY); } catch (e) { /* nada que borrar */ } state = buildSeed(); closeModal(); render(); toast('Demo restablecida'); },
+
+  // Social
+  postPublish: async () => {
+    const cap = $('#postCaption').value.trim(); if (!cap) { toast('Escribe una descripción para publicar'); return; }
+    const f = $('#postPhoto').files[0]; let photo = null; if (f) { try { photo = await readImage(f, 900); } catch (e) { toast(e.message); return; } }
+    state.ui.alias = ($('#alias').value.trim() || 'Hincha').replace(/^@/, '');
+    state.posts.unshift({ id: uid('S'), alias: state.ui.alias, teamId: $('#postTeam').value, caption: cap, photo, likes: 0, liked: false, comments: [] });
+    render(); toast('Publicado en el muro del campeonato');
+  },
+  like: (d) => { const p = state.posts.find((x) => x.id === d.id); p.liked = !p.liked; p.likes += p.liked ? 1 : -1; render(); },
+  comment: (d) => { const i = $('#cm-' + d.id); const v = i.value.trim(); if (!v) return; state.posts.find((x) => x.id === d.id).comments.push({ alias: state.ui.alias, text: v }); render(); },
+
+  // Árbitro
+  startMatch: (d) => { const m = getMatch(d.id); m.status = 'IN_PROGRESS'; m.version = 'Borrador en vivo'; m.clock = { period: 1, running: true, startTs: Date.now(), acc: 0 }; render(); toast('Partido iniciado. El reloj está corriendo.'); },
+  clockToggle: (d) => { const m = getMatch(d.id), c = m.clock; if (c.running) { c.acc += Date.now() - c.startTs; c.running = false; } else { c.startTs = Date.now(); c.running = true; } render(); },
+  clockNext: (d) => { const m = getMatch(d.id); m.clock = { period: m.clock.period + 1, running: false, startTs: 0, acc: 0 }; render(); toast(`Inicia el ${m.clock.period}º tiempo`); },
+  kiosk: (d) => { state.ui.kiosk = d.id; renderKiosk(); $('#kiosk').hidden = false; try { $('#kiosk').requestFullscreen?.().catch(() => {}); } catch (e) { /* pantalla completa opcional */ } },
+  kioskClose: () => { $('#kiosk').hidden = true; state.ui.kiosk = null; try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) { /* nada */ } },
+  evNew: (d) => { const m = currentRefMatch(); openEventSheet(m, { matchId: m.id, type: d.type, teamId: d.team, playerId: null, assistId: null, kind: d.type === 'GOAL' ? 'Jugada' : null, minute: currentMinute(m), period: m.clock.period, note: d.type === 'GOAL' ? null : 'Juego brusco' }); },
+  evFoul: (d) => { const m = currentRefMatch(); m.events.push({ id: uid('E'), type: 'FOUL', teamId: d.team, playerId: null, minute: currentMinute(m), period: m.clock.period }); render(); const f = periodFouls(m, d.team); toast(`Falta para ${team(d.team).name}${R().foulLimitOn ? ` (${f}/${R().foulLimit})` : ''}. Toca ✎ en la cronología para indicar el jugador.`); },
+  evEdit: (d) => { const m = currentRefMatch(); const e = m.events.find((x) => x.id === d.id); openEventSheet(m, { ...clone(e), matchId: m.id }); },
+  evDelete: (d) => { const m = currentRefMatch(); const e = m.events.find((x) => x.id === d.id); const l = evLabel(e); openModal(`<div class="sheet-head"><h3>¿Eliminar este evento?</h3><button class="btn icon ghost" data-act="closeModal" aria-label="Cerrar">${ic('x')}</button></div><div class="ev"><span class="min">${e.minute}'</span><span class="ev-ico">${l.ico}</span><div class="what"><b>${esc(l.t)}</b><span>${esc(team(e.teamId).name)}</span></div><span></span></div>${m.events.some((x) => x.autoFrom === e.id) ? '<p class="small muted">También se elimina la roja automática por doble amarilla.</p>' : ''}<div class="btns"><button class="btn danger" data-act="evDeleteGo" data-id="${e.id}">${ic('trash')} Eliminar</button><button class="btn" data-act="closeModal">Cancelar</button></div>`); },
+  evDeleteGo: (d) => { const m = currentRefMatch(); m.events = m.events.filter((x) => x.id !== d.id && x.autoFrom !== d.id); closeModal(); render(); toast('Evento eliminado. El marcador se recalculó.'); },
+  pickSet: (d) => { readDraftFields(); draft[d.field] = d.id || null; if (d.field === 'playerId' && draft.assistId === draft.playerId) draft.assistId = null; const sc = $('#sheet').scrollTop; openEventSheet(currentRefMatch(), draft); $('#sheet').scrollTop = sc; },
+  pickKind: (d) => { readDraftFields(); const wasOwn = draft.kind === 'Autogol'; draft.kind = d.id; if (wasOwn !== (d.id === 'Autogol')) { draft.playerId = null; draft.assistId = null; } if (d.id === 'Autogol') draft.assistId = null; const sc = $('#sheet').scrollTop; openEventSheet(currentRefMatch(), draft); $('#sheet').scrollTop = sc; },
+  evSave: () => {
+    readDraftFields(); const d = draft, m = getMatch(d.matchId);
+    if (d.type !== 'FOUL' && !d.playerId) { toast(d.type === 'GOAL' ? 'Elige quién marcó el gol' : 'Elige el jugador que recibe la tarjeta'); return; }
+    const ev = { id: d.id || uid('E'), type: d.type, teamId: d.teamId, playerId: d.playerId, assistId: d.type === 'GOAL' ? d.assistId : undefined, kind: d.kind || undefined, minute: d.minute, period: d.period, note: d.note || undefined };
+    if (d.id) { const i = m.events.findIndex((x) => x.id === d.id); m.events[i] = { ...m.events[i], ...ev }; } else m.events.push(ev);
+    let extra = '';
+    if (ev.type === 'YELLOW' && R().doubleYellowRed && !d.id) {
+      const ys = m.events.filter((x) => x.type === 'YELLOW' && x.playerId === ev.playerId);
+      if (ys.length >= 2 && !m.events.some((x) => x.type === 'RED' && x.playerId === ev.playerId)) { m.events.push({ id: uid('E'), type: 'RED', teamId: ev.teamId, playerId: ev.playerId, minute: ev.minute, period: ev.period, note: 'Doble amarilla', autoFrom: ev.id }); extra = ' Segunda amarilla: se registró la roja.'; }
+    }
+    closeModal(); render();
+    const p = player(ev.playerId);
+    toast((d.id ? 'Evento corregido' : ({ GOAL: 'Gol', YELLOW: 'Amarilla', BLUE: 'Azul', RED: 'Roja', FOUL: 'Falta' })[ev.type] + ' registrada') + (p ? ` · #${p.number} ${p.name}` : '') + '.' + extra);
+  },
+  sigClear: () => { const c = $('#sigpad'); c.getContext('2d').clearRect(0, 0, c.width, c.height); sigDrawn = false; },
+  lockMatch: async (d) => {
+    if (!sigDrawn) { toast('Firma en el recuadro antes de cerrar el partido'); return; }
+    const m = getMatch(d.id); if (m.clock.running) { m.clock.acc += Date.now() - m.clock.startTs; m.clock.running = false; }
+    m.signature = $('#sigpad').toDataURL('image/png'); m.status = 'LOCKED'; m.version = 'v1.0';
+    m.signedAt = new Date().toLocaleString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    m.hash = await sha256(JSON.stringify({ id: m.id, events: m.events, signedAt: m.signedAt }));
+    render(); toast('Acta firmada y cerrada. Ya puedes descargar el PDF.');
+  },
+  clarifOpen: (d) => {
+    const m = getMatch(d.id), H = team(m.homeId), A = team(m.awayId), s = matchScore(m);
+    openModal(`<div class="sheet-head"><div><span class="eyebrow">Fe de erratas</span><h3>Acta aclaratoria</h3></div><button class="btn icon ghost" data-act="closeModal" aria-label="Cerrar">${ic('x')}</button></div>
+      <p class="small muted">El acta original ${esc(m.version)} queda intacta. Los delegados de ${esc(H.name)} y ${esc(A.name)} deben firmar para que se aplique.</p>
+      <div class="fields"><label class="field">Goles ${esc(H.name)}<input class="input" type="number" id="clH" min="0" value="${s.h}"></label><label class="field">Goles ${esc(A.name)}<input class="input" type="number" id="clA" min="0" value="${s.a}"></label></div>
+      <label class="field">Justificación<textarea class="input" id="clNote" rows="3">Se corrige error de digitación en el marcador.</textarea></label>
+      <canvas class="sigpad" id="clSig" width="600" height="200"></canvas>
+      <div class="btns"><button class="btn primary" data-act="clarifSubmit" data-id="${m.id}">Firmar y notificar a los delegados</button><button class="btn" data-act="closeModal">Cancelar</button></div>`);
+    initSig('clSig');
+  },
+  clarifSubmit: (d) => { if (!sigDrawn) { toast('Firma el anexo para enviarlo'); return; } const m = getMatch(d.id); m.clarification = { h: parseInt($('#clH').value, 10) || 0, a: parseInt($('#clA').value, 10) || 0, note: $('#clNote').value.trim(), status: 'PENDING', signedHome: false, signedAway: false }; closeModal(); render(); toast('Acta aclaratoria enviada. Cambia a “Director de equipo” para firmarla.'); },
+  dtSign: (d) => {
+    const m = getMatch(d.id);
+    openModal(`<div class="sheet-head"><h3>Firma del delegado</h3><button class="btn icon ghost" data-act="closeModal" aria-label="Cerrar">${ic('x')}</button></div><p class="small muted">Con tu firma avalas la corrección. Cuando firmen ambos delegados se actualizan el marcador, la tabla y el PDF.</p><canvas class="sigpad" id="dtSig" width="600" height="200"></canvas><div class="btns"><button class="btn primary" data-act="dtSignGo" data-id="${m.id}">Firmar por mi equipo</button><button class="btn" data-act="dtSignGo" data-id="${m.id}" data-both="1">Firmar ambos (atajo de demo)</button></div>`);
+    initSig('dtSig');
+  },
+  dtSignGo: (d) => {
+    if (!sigDrawn) { toast('Firma en el recuadro'); return; }
+    const m = getMatch(d.id), c = m.clarification, me = state.ui.dtTeam;
+    if (m.homeId === me || d.both) c.signedHome = true; if (m.awayId === me || d.both) c.signedAway = true;
+    if (c.signedHome && c.signedAway) { c.status = 'APPROVED'; m.override = { h: c.h, a: c.a }; m.version = 'v1.1 con anexo'; toast('Firmas completas: marcador y tabla actualizados.'); } else toast('Firma registrada. Falta el otro delegado.');
+    closeModal(); render();
+  },
+
+  // Director de equipo
+  dtRegister: () => {
+    const name = $('#npName').value.trim(), num = parseInt($('#npNumber').value, 10), doc = $('#npDoc').value.trim(), pos = $('#npPos').value;
+    if (!name || !num || !doc) { toast('Completa nombre, dorsal y documento'); return; }
+    const t = team(state.ui.dtTeam);
+    if (state.players.some((p) => p.teamId === t.id && p.number === num && p.status !== 'REJECTED')) { toast(`El dorsal ${num} ya está en uso en ${t.name}`); return; }
+    state.players.push({ id: uid('P'), teamId: t.id, name, number: num, pos, doc, photo: state.ui.npPhoto || makeAvatar(name, t.color, num), status: 'PENDING', base: { goals: 0, assists: 0, yellow: 0, blue: 0, red: 0 } });
+    state.ui.npPhoto = null; render(); toast('Inscripción enviada. El Admin la verá en Aprobaciones.');
+  },
+
+  // Admin
+  approvePlayer: (d) => { player(d.id).status = 'APPROVED'; render(); toast('Jugador aprobado: ya aparece en la planilla arbitral'); },
+  rejectPlayer: (d) => { state.players = state.players.filter((p) => p.id !== d.id); render(); toast('Inscripción rechazada'); },
+  approveLogo: (d) => { const t = team(d.id); t.logo = t.logoPending; t.logoPending = null; render(); toast(`Escudo de ${t.name} publicado en tablas, partidos e imágenes`); },
+  rejectLogo: (d) => { team(d.id).logoPending = null; render(); toast('Escudo rechazado'); },
+  preset: (d) => { state.settings.preset = d.id; state.settings.colors = { ...PRESETS[d.id] }; delete state.settings.colors.name; render(); toast('Tema aplicado: ' + PRESETS[d.id].name); },
+  clearImg: (d) => { const S = state.settings; if (d.id === 'sponsorMain') S.sponsors.main = { name: S.sponsors.main?.name || '', logo: null }; else if (d.id.startsWith('sponsor')) S.sponsors.secondary[+d.id.slice(7)] = null; else S[d.id] = null; render(); },
+  finePay: (d) => { const t = team(d.id); t.finesPaid = (t.finesPaid || 0) + teamFinesDue(t.id); render(); toast(`${t.name} queda a paz y salvo`); },
+  assignDay: (d) => { const g = $('#day-' + d.id).value; const ms = state.matches.filter((m) => m.date === d.id && m.status !== 'LOCKED'); ms.forEach((m) => { m.refGroupId = g || null; }); render(); toast(g ? `${group(g).name} asignado a ${ms.length} partidos del ${fmtDateLong(d.id)}` : 'Árbitros retirados de la jornada'); },
+  groupCreate: () => {
+    const name = $('#gName').value.trim() || `Grupo ${String.fromCharCode(65 + state.refGroups.length)}`;
+    const mem = [['gC', 'Central'], ['gA1', 'Asistente 1'], ['gA2', 'Asistente 2'], ['gP', 'Planillero']].map(([id, role]) => ({ userId: $('#' + id).value, role })).filter((x) => x.userId);
+    if (!mem.some((x) => x.role === 'Central')) { toast('El grupo necesita un árbitro central'); return; }
+    state.refGroups.push({ id: uid('G'), name, members: mem }); render(); toast(`${name} creado`);
+  },
+  groupDelete: (d) => { if (state.matches.some((m) => m.refGroupId === d.id && m.status !== 'SCHEDULED')) { toast('Ese grupo ya dirigió partidos: no se puede borrar'); return; } state.matches.forEach((m) => { if (m.refGroupId === d.id) m.refGroupId = null; }); state.refGroups = state.refGroups.filter((g) => g.id !== d.id); render(); },
+  matchCreate: () => {
+    const h = $('#nmHome').value, a = $('#nmAway').value; if (h === a) { toast('Elige dos equipos distintos'); return; }
+    state.matches.push({ id: uid('M'), round: parseInt($('#nmRound').value, 10) || 1, date: $('#nmDate').value, time: $('#nmTime').value, field: $('#nmField').value || 'Cancha', homeId: h, awayId: a, status: 'SCHEDULED', refGroupId: null, events: [], added: [0, 0], clock: { period: 1, running: false, startTs: 0, acc: 0 }, signature: null, signedAt: null, hash: null, version: '—', clarification: null, override: null, wo: null });
+    render(); toast('Partido programado');
+  },
+  woOpen: (d) => { const m = getMatch(d.id); openModal(`<div class="sheet-head"><h3>Declarar W.O.</h3><button class="btn icon ghost" data-act="closeModal" aria-label="Cerrar">${ic('x')}</button></div><p class="small muted">¿Qué equipo se presentó? Gana ${R().woGoals}-0.</p><div class="btns"><button class="btn" data-act="woGo" data-id="${m.id}" data-w="h">${esc(team(m.homeId).name)}</button><button class="btn" data-act="woGo" data-id="${m.id}" data-w="a">${esc(team(m.awayId).name)}</button></div>`); },
+  woGo: (d) => { const m = getMatch(d.id), g = R().woGoals; m.status = 'WO'; m.wo = d.w === 'h' ? { h: g, a: 0 } : { h: 0, a: g }; closeModal(); render(); toast('W.O. registrado en la tabla'); },
+  userCreate: (d) => {
+    const name = $('#nuName').value.trim(), user = $('#nuUser').value.trim(), role = $('#nuRole').value;
+    if (!name || !user) { toast('Escribe el nombre y el usuario'); return; }
+    if (state.users.some((u) => u.user.toLowerCase() === user.toLowerCase())) { toast('Ese usuario ya existe'); return; }
+    const u = { id: uid('U'), name, user, role, phone: $('#nuPhone').value.trim(), active: true };
+    if (role === 'TEAM_DIR') u.teamId = $('#nuTeam').value; if (role === 'REFEREE') u.refRole = $('#nuRef').value;
+    state.users.push(u); render(); showPassword(u);
+  },
+  userReset: (d) => showPassword(userById(d.id)),
+  userDelete: (d) => { const u = userById(d.id); if (state.refGroups.some((g) => g.members.some((x) => x.userId === u.id))) { toast('Está en un grupo arbitral: desactívalo en lugar de borrarlo'); return; } state.users = state.users.filter((x) => x.id !== d.id); render(); toast('Usuario eliminado'); },
+  tbMove: (d) => { const t = R().tiebreak, i = +d.id, j = i + +d.dir; [t[i], t[j]] = [t[j], t[i]]; render(); },
+  tbRemove: (d) => { R().tiebreak.splice(+d.id, 1); render(); },
+  tbAdd: (d) => { R().tiebreak.push(d.id); render(); },
+  formatSet: (d) => { R().format = d.id; render(); toast('Formato activado'); },
+  attemptEdit: () => toast('Acceso denegado: los resultados firmados solo cambian con acta aclaratoria.'),
+
+  // Importador
+  importSample: () => { setImportRows(SAMPLE_ROWS.map((r) => Object.fromEntries(['pos', 'equipo', 'pj', 'pg', 'pe', 'pp', 'gf', 'gc', 'dg', 'pts'].map((k, i) => [k, r[i]]))), null); },
+  importPaste: () => { const txt = $('#pasteBox').value.trim(); if (!txt) { toast('Pega primero las celdas copiadas'); return; } const mx = txt.split(/\r?\n/).map((l) => l.split(/\t|;|,(?=\S)/)); const r = rowsFromMatrix(mx); if (r.error) { toast(r.error); return; } setImportRows(r.rows, null); },
+  importCancel: () => { state.ui.importRows = null; state.ui.importPlayers = null; render(); },
+  importTemplate: () => {
+    if (libsMissing('xlsx')) return;
+    const wb = XLSX.utils.book_new();
+    const st = standings();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([IMPORT_COLS, ...st.map((r) => [r.pos, r.t.name.toUpperCase(), r.pj, r.pg, r.pe, r.pp, r.gf, r.gc, r.dg, r.pts])]), 'TABLA');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['EQUIPO', 'NOMBRE', 'DORSAL', 'POSICION', 'DOCUMENTO', 'GOLES', 'ASISTENCIAS', 'AMARILLAS', 'ROJAS'], ...state.players.filter((p) => p.status === 'APPROVED').map((p) => { const s = playerStats(p); return [team(p.teamId).name.toUpperCase(), p.name, p.number, p.pos, p.doc, s.goals, s.assists, s.yellow, s.red]; })]), 'JUGADORES');
+    saveFile('plantilla-campeonato.xlsx', new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+  },
+  importApply: () => {
+    const rows = state.ui.importRows; let created = 0;
+    const touched = new Set();
+    rows.forEach((r, i) => {
+      let t = findTeamByName(r.equipo);
+      if (!t) {
+        const pal = ['#455A64', '#6A1B9A', '#00695C', '#C62828', '#283593', '#EF6C00'], c1 = pal[i % pal.length];
+        const nm = r.equipo.toLowerCase().replace(/\b\p{L}/gu, (c) => c.toUpperCase());
+        t = { id: uid('T'), name: nm, color: c1, color2: '#FFFFFF', crest: makeCrest(nm, '#78909C', '#ECEFF1'), logo: null, logoPending: null, delegate: 'Por asignar', phone: '', base: {}, finesPaid: 0 };
+        state.teams.push(t); created++;
+      }
+      // La tabla importada es la base; los partidos que se firmen en la app se suman encima.
+      t.base = { pj: r.pj, pg: r.pg, pe: r.pe, pp: r.pp, gf: r.gf, gc: r.gc };
+      touched.add(t.id);
+    });
+    let pc = 0;
+    if (state.ui.importPlayers) {
+      state.ui.importPlayers.forEach((r) => {
+        const t = findTeamByName(r.equipo); if (!t) return;
+        let p = state.players.find((x) => x.teamId === t.id && (norm(x.name) === norm(r.nombre) || x.number === r.dorsal));
+        if (!p) { p = { id: uid('P'), teamId: t.id, name: r.nombre, number: r.dorsal || 0, pos: ['POR', 'DEF', 'MED', 'DEL'].includes(norm(r.posicion).slice(0, 3)) ? norm(r.posicion).slice(0, 3) : 'MED', doc: String(r.documento || ''), photo: makeAvatar(r.nombre, t.color, r.dorsal || 0), status: 'APPROVED', base: {} }; state.players.push(p); }
+        p.base = { goals: r.goles || 0, assists: r.asistencias || 0, yellow: r.amarillas || 0, blue: 0, red: r.rojas || 0 }; pc++;
+      });
+    }
+    state.ui.importRows = null; state.ui.importPlayers = null; render();
+    toast(`Importados ${rows.length} equipos${created ? ` (${created} nuevos con escudo genérico)` : ''}${pc ? ` y ${pc} jugadores` : ''}. La tabla se recalculó.`);
+  }
+};
+function setImportRows(rows, players) {
+  state.ui.importRows = rows.map((r) => ({ ...r, errs: validateRow(r) }));
+  state.ui.importPlayers = players; render();
+  toast(`${rows.length} filas leídas. Revisa la vista previa.`);
+}
+function showPassword(u) {
+  const pw = Array.from(crypto.getRandomValues(new Uint8Array(8)), (b) => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
+  openModal(`<div class="sheet-head"><div><span class="eyebrow">${ROLE_NAMES[u.role]}</span><h3>Credenciales de ${esc(u.name)}</h3></div><button class="btn icon ghost" data-act="closeModal" aria-label="Cerrar">${ic('x')}</button></div>
+    <div class="note"><p>Usuario: <b>${esc(u.user)}</b></p><p>Clave temporal: <b class="num" id="pwText">${pw}</b></p></div>
+    <p class="small muted">Compártela por un canal privado. Al primer ingreso se le pedirá cambiarla. En producción se envía por correo o WhatsApp.</p>
+    <div class="btns"><button class="btn primary" data-act="copyPw">Copiar</button><button class="btn" data-act="closeModal">Listo</button></div>`);
+}
+ACT.copyPw = () => { const t = `${$('#pwText').textContent}`; navigator.clipboard?.writeText(t).then(() => toast('Clave copiada'), () => { const r = document.createRange(); r.selectNodeContents($('#pwText')); getSelection().removeAllRanges(); getSelection().addRange(r); toast('Selecciónala y cópiala'); }); };
+
+const CHANGE = {
+  refUser: (v) => { state.ui.refUser = v; state.ui.refMatch = null; render(); },
+  refMatch: (v) => { state.ui.refMatch = v; render(); },
+  dtTeam: (v) => { state.ui.dtTeam = v; state.ui.npPhoto = null; render(); },
+  assignMatch: (v, d) => { getMatch(d.id).refGroupId = v || null; render(); toast(v ? `${group(v).name} asignado` : 'Partido sin árbitros'); },
+  added: (v, d) => { getMatch(d.id).added[+d.i] = Math.max(0, parseInt(v, 10) || 0); save(); },
+  modality: (v) => { Object.assign(state.rules, clone(MODALITIES[v]), { modality: v }); delete state.rules.label; render(); toast(`Reglas de ${MODALITIES[v].label} precargadas. Ajusta las que necesites.`); },
+  userActive: (v, d, el) => { userById(d.id).active = el.checked; render(); toast(el.checked ? 'Usuario activado' : 'Usuario desactivado'); },
+  userFilter: (v) => { state.ui.userFilter = v; render(); },
+  nuRole: (v) => { state.ui.nuRole = v; const keep = { n: $('#nuName').value, u: $('#nuUser').value, p: $('#nuPhone').value }; render(); $('#nuName').value = keep.n; $('#nuUser').value = keep.u; $('#nuPhone').value = keep.p; },
+  teamCount: (v) => { state.ui.teamCount = +v; render(); }
+};
+
+// Archivos subidos (logos, banner, fotos, Excel)
+async function handleUpload(el) {
+  const f = el.files[0]; if (!f) return;
+  const key = el.dataset.upload, S = state.settings;
+  if (key === 'excel') { await readExcel(f); return; }
+  let data;
+  try { data = await readImage(f, ['banner', 'flyerBg'].includes(key) ? 1600 : key === 'playerPhoto' || key === 'newPlayer' ? 360 : 600); } catch (e) { toast(e.message + '. Usa PNG o JPG.'); return; }
+  imgCache.delete(data);
+  if (key === 'logo' || key === 'banner' || key === 'flyerBg') { S[key] = data; toast('Imagen actualizada'); }
+  else if (key === 'sponsorMain') { S.sponsors.main = { name: S.sponsors.main?.name || f.name.replace(/\.\w+$/, ''), logo: data }; toast('Patrocinador principal actualizado'); }
+  else if (key.startsWith('sponsor')) { const i = +key.slice(7); S.sponsors.secondary[i] = { name: S.sponsors.secondary[i]?.name || f.name.replace(/\.\w+$/, ''), logo: data }; toast(`Patrocinador secundario ${i + 1} actualizado`); }
+  else if (key === 'teamLogo') { const t = team(el.dataset.id); if (S.logoApproval) { t.logoPending = data; toast('Escudo enviado al Admin para aprobación'); } else { t.logo = data; toast('Escudo publicado'); } }
+  else if (key === 'playerPhoto') { player(el.dataset.id).photo = data; toast('Foto actualizada'); }
+  else if (key === 'newPlayer') { state.ui.npPhoto = data; const keep = { n: $('#npName').value, u: $('#npNumber').value, d: $('#npDoc').value, p: $('#npPos').value }; render(); $('#npName').value = keep.n; $('#npNumber').value = keep.u; $('#npDoc').value = keep.d; $('#npPos').value = keep.p; return; }
+  render();
+}
+async function readExcel(f) {
+  try {
+    let mx, pl = null;
+    if (/\.csv$/i.test(f.name)) { const txt = await f.text(); mx = txt.split(/\r?\n/).filter(Boolean).map((l) => l.split(/;|,|\t/)); }
+    else {
+      if (libsMissing('xlsx')) return;
+      const wb = XLSX.read(await f.arrayBuffer(), { type: 'array' });
+      const sheetName = wb.SheetNames.find((n) => norm(n) !== 'JUGADORES') || wb.SheetNames[0];
+      mx = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, raw: true });
+      const js = wb.SheetNames.find((n) => norm(n) === 'JUGADORES');
+      if (js) pl = XLSX.utils.sheet_to_json(wb.Sheets[js], { defval: '' }).map((r) => { const o = {}; Object.entries(r).forEach(([k, v]) => { o[norm(k).toLowerCase()] = typeof v === 'number' ? v : String(v).trim(); }); ['dorsal', 'goles', 'asistencias', 'amarillas', 'rojas'].forEach((k) => { o[k] = parseInt(o[k], 10) || 0; }); return o; }).filter((o) => o.equipo && o.nombre);
+    }
+    const r = rowsFromMatrix(mx); if (r.error) { toast(r.error); return; }
+    setImportRows(r.rows, pl);
+  } catch (e) { toast('No pude leer el archivo. Verifica que sea .xlsx o .csv.'); }
+}
+
+// Tablero de cancha a pantalla completa
+function renderKiosk() {
+  const m = getMatch(state.ui.kiosk); if (!m) return; const H = team(m.homeId), A = team(m.awayId), s = matchScore(m);
+  $('#kiosk').innerHTML = `<div class="row between"><span class="row" style="font:800 1.1rem var(--font-display)">${state.settings.logo ? `<img src="${state.settings.logo}" width="44" height="44" alt="">` : ''}${esc(state.settings.title)}</span><button class="btn" data-act="kioskClose">${ic('x')} Salir</button></div>
+    <div style="display:grid;align-content:center;gap:4vh"><div class="k-clock" id="kioskClock">${clockText(m)}</div><div class="k-score"><div class="k-team"><img src="${teamLogo(H)}" alt=""><b>${esc(H.name)}</b></div><div class="k-goals">${s.h}<span style="opacity:.4"> : </span>${s.a}</div><div class="k-team"><img src="${teamLogo(A)}" alt=""><b>${esc(A.name)}</b></div></div></div>
+    <div style="text-align:center;opacity:.7">Tiempo ${m.clock.period} de ${R().periods} · ${esc(L().round)} ${m.round}</div>`;
+}
+
+// ---------- Eventos globales ----------
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-act]'); if (!el || el.disabled) return;
+  const fn = ACT[el.dataset.act]; if (fn) { e.preventDefault(); fn({ ...el.dataset }, el, e); }
+});
+$('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (!$('#kiosk').hidden) ACT.kioskClose(); else if (!$('#modal').hidden) closeModal(); } });
+document.addEventListener('change', (e) => {
+  const el = e.target;
+  if (el.matches('input[data-upload]')) { handleUpload(el).finally(() => { el.value = ''; }); return; }
+  if (el.dataset.actChange && CHANGE[el.dataset.actChange]) { CHANGE[el.dataset.actChange](el.value, { ...el.dataset }, el); return; }
+  if (el.dataset.flyer) { const k = el.dataset.flyer; state.settings.flyer[k] = el.type === 'checkbox' ? el.checked : el.value; save(); refreshFlyer(); return; }
+  if (el.dataset.bind) { applyBind(el); render(); }
+});
+document.addEventListener('input', (e) => {
+  const el = e.target;
+  if (el.dataset.bind && el.type !== 'checkbox' && el.tagName !== 'SELECT') { applyBind(el); applyTheme(); renderHero(); save(); }
+});
+function applyBind(el) {
+  const p = el.dataset.bind;
+  let v = el.type === 'checkbox' ? el.checked : (el.type === 'number' || el.type === 'range') ? (el.value === '' ? 0 : Number(el.value)) : el.value;
+  if (p.startsWith('settings.colors.')) state.settings.preset = 'custom';
+  if (p === 'rules.periods') { v = Math.max(1, Math.min(4, v)); }
+  setPath(p, v);
+}
+function afterRender() {
+  if ($('#sigpad')) initSig('sigpad');
+  if ($('#flyerCanvas')) refreshFlyer();
+  const dz = $('#dropZone');
+  if (dz) {
+    dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+    dz.addEventListener('drop', (e) => { e.preventDefault(); dz.classList.remove('over'); const f = e.dataTransfer.files[0]; if (f) readExcel(f); });
+  }
+}
+setInterval(() => {
+  if (!state) return;
+  if (state.ui.role === 'REFEREE') { const m = currentRefMatch(); const el = $('#clockText'); if (m && el && m.status === 'IN_PROGRESS') el.textContent = clockText(m); }
+  if (state.ui.kiosk) { const m = getMatch(state.ui.kiosk); const el = $('#kioskClock'); if (m && el) el.textContent = clockText(m); }
+}, 500);
+
+// ---------- Arranque ----------
+(async function start() {
+  try { await Promise.race([Promise.all([document.fonts.load('900 40px Montserrat'), document.fonts.load('400 16px Inter')]), new Promise((r) => setTimeout(r, 1500))]); } catch (e) { /* fuentes de respaldo */ }
+  state = load() || buildSeed();
+  render();
+})();
+</script>
+</body>
+</html>
