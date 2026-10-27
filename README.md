@@ -12,6 +12,7 @@ Publicado en https://pascalia.lat con GitHub Pages: `.github/workflows/pages.yml
 | `/nana-dnt/` | NANA DNT: seguimiento nutricional infantil (desnutrición aguda en menores de 5 años), con su marca azul y dorado |
 | `/si-aps/` | SI-APS: caracterización sociofamiliar e individual en terreno y archivo plano APS124CCFP para PISIS |
 | `/mision-medica/` | Misión Médica: infracciones, carnet con QR, emblemas, capacitación DIH, riesgos, desplazamientos e inspección. Logotipo del módulo en `mision-medica/logo-*.png` (bordes redondeados) |
+| `/fanatikos/` | Fanátikos: gestión de campeonatos de fútbol aficionado (tabla, planilla arbitral, actas PDF, afiches para redes). Demo en `/fanatikos/demo/` (`noindex`, un solo HTML; lo que se hace se guarda solo en el navegador) |
 | `/cuentafacil/` | Página del producto CuentaFacil (cuentas de cobro de contratistas por WhatsApp) |
 | `/politica-de-datos/` | Política de tratamiento de datos personales (Ley 1581 de 2012), versión 1.1 aprobada por el abogado |
 | `/terminos/` | Términos y condiciones del servicio CuentaFacil, versión 1.0 |
