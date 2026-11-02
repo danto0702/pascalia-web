@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firmar documento · PascalPDF</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#1F1F1F">
+    <link rel="icon" href="/PascalPDF_Studio/img/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="../config.js"></script>
+    <style>
+        :root {
+            --yellow: #FFC107; --yellow-hover: #FFB300; --graphite: #1F1F1F; --muted: #5C5C5C;
+            --gray: #E9E9E9; --cream: #FFF8E1; --stage: #F2EBD6; --ok: #166534; --bad: #991B1B;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--stage); color: var(--graphite); font: 16px/1.6 Inter, system-ui, sans-serif; }
+        ::selection { background: #FFD54F; }
+        header { background: var(--graphite); color: #fff; padding: 12px 16px; display: flex; align-items: center; gap: 10px; }
+        header img { width: 34px; height: 34px; border-radius: 9px; }
+        header b { font: 800 16px Montserrat, sans-serif; }
+        header small { display: block; color: #ABA597; font-size: 11px; }
+        main { max-width: 760px; margin: 0 auto; padding: 20px 16px 64px; }
+        .card { background: #fff; border-radius: 20px; padding: 22px; box-shadow: inset 0 0 0 1px var(--gray), 0 10px 30px -18px rgba(74,58,18,.35); margin-bottom: 16px; animation: rise .45s var(--ease) both; }
+        @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { .card { animation: none; } }
+        h1 { font: 800 clamp(1.35rem, 4vw, 1.75rem)/1.2 Montserrat, sans-serif; margin: 0 0 6px; letter-spacing: -0.01em; }
+        h2 { font: 700 1.05rem/1.3 Montserrat, sans-serif; margin: 0 0 10px; }
+        p { margin: 0 0 10px; }
+        .muted { color: var(--muted); font-size: 14px; }
+        .meta { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 14px; margin: 12px 0 0; }
+        .meta dt { color: var(--muted); }
+        .meta dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+        .quote { background: var(--cream); border-radius: 14px; padding: 12px 14px; font-size: 15px; margin-top: 12px; }
+        button, .btn { font: 600 15px Montserrat, sans-serif; border: 0; border-radius: 999px; padding: 13px 24px; cursor: pointer; min-height: 48px; transition: background-color .16s, transform .16s var(--ease); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        button:active { transform: scale(.97); }
+        .primary { background: var(--yellow); color: var(--graphite); }
+        .primary:hover { background: var(--yellow-hover); }
+        .ghost { background: transparent; color: var(--graphite); box-shadow: inset 0 0 0 1px var(--gray); }
+        .ghost:hover { background: var(--cream); }
+        .danger { background: transparent; color: var(--bad); box-shadow: inset 0 0 0 1px #FECACA; }
+        button:disabled { opacity: .55; cursor: progress; }
+        :focus-visible { outline: 2px solid var(--graphite); outline-offset: 2px; }
+        input[type=text], input[inputmode] { width: 100%; font: 16px Inter, sans-serif; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--gray); background: #fff; color: var(--graphite); caret-color: var(--yellow-hover); }
+        input:focus { outline: 2px solid var(--yellow); border-color: transparent; }
+        .code { letter-spacing: .5em; text-align: center; font-size: 22px; font-weight: 600; }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+        .row > * { flex: 1 1 200px; }
+        .pages { display: grid; gap: 14px; }
+        .page { position: relative; background: #fff; border-radius: 4px; box-shadow: 0 18px 40px -22px rgba(74,58,18,.45), inset 0 0 0 1px rgba(31,31,31,.06); overflow: hidden; }
+        .page canvas { display: block; width: 100%; height: auto; }
+        .slot { position: absolute; border: 2px dashed var(--yellow-hover); background: rgba(255,193,7,.16); border-radius: 8px; display: flex; align-items: center; justify-content: center; font: 600 12px Inter, sans-serif; color: #8A6100; text-align: center; }
+        .slot img { max-width: 100%; max-height: 100%; }
+        .tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--cream); border-radius: 999px; padding: 4px; margin-bottom: 12px; }
+        .tabs button { min-height: 40px; padding: 8px; background: transparent; font-size: 14px; }
+        .tabs button[aria-selected=true] { background: var(--yellow); }
+        .pad { position: relative; background: #fff; border-radius: 14px; box-shadow: inset 0 0 0 2px var(--yellow); }
+        .pad canvas { display: block; width: 100%; height: 160px; touch-action: none; cursor: crosshair; }
+        .pad .clear { position: absolute; top: 8px; right: 8px; min-height: 32px; padding: 4px 12px; font-size: 12px; background: var(--gray); }
+        .typed { font: 600 44px Caveat, cursive; color: #1d4ed8; text-align: center; min-height: 72px; padding: 6px; background: #fff; border-radius: 14px; box-shadow: inset 0 0 0 2px var(--yellow); margin-top: 10px; }
+        label.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; margin-top: 10px; }
+        label.check input { width: 20px; height: 20px; accent-color: var(--yellow-hover); margin-top: 2px; flex: none; }
+        details { font-size: 13px; color: var(--muted); margin-top: 10px; }
+        summary { cursor: pointer; font-weight: 600; color: var(--graphite); }
+        .badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font: 600 13px Inter, sans-serif; }
+        .b-pendiente { background: var(--cream); color: #8A6100; }
+        .b-firmada { background: #DCFCE7; color: var(--ok); }
+        .b-vencida, .b-cancelada { background: #FEE2E2; color: var(--bad); }
+        .msg { padding: 12px 14px; border-radius: 14px; font-size: 14px; margin-top: 12px; }
+        .msg.error { background: #FEE2E2; color: var(--bad); }
+        .msg.ok { background: #DCFCE7; color: var(--ok); }
+        .hidden { display: none !important; }
+        .spinner { width: 46px; height: 46px; margin: 30px auto; animation: spin 1.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .mono { font-family: ui-monospace, Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="/PascalPDF_Studio/img/mark-96.png" alt="" width="34" height="34">
+        <div><b>PascalPDF</b><small>de PascalIA · firma electrónica</small></div>
+    </header>
+    <main id="app">
+        <div class="card" style="text-align:center">
+            <svg class="spinner" viewBox="-112 -112 224 224" aria-hidden="true"><g fill="#FFC107" fill-opacity=".82"><path id="p" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/><use href="#p" transform="rotate(60)"/><use href="#p" transform="rotate(120)"/><use href="#p" transform="rotate(180)"/><use href="#p" transform="rotate(240)"/><use href="#p" transform="rotate(300)"/></g></svg>
+            <p class="muted">Cargando…</p>
+        </div>
+    </main>
+
+<script>
+(function () {
+    'use strict';
+    const API = window.PASCALPDF_API;
+    const app = document.getElementById('app');
+    const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const ACEPTACION = 'firma-terceros-1';
+
+    const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const hex = (buf) => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+    const unb64url = (s) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)), c => c.charCodeAt(0));
+    const fecha = (iso, conHora = true) => iso ? new Date(iso).toLocaleString('es-CO', conHora ? { dateStyle: 'long', timeStyle: 'short' } : { dateStyle: 'long' }) : '—';
+    const ESTADOS = { pendiente: 'Pendiente de firma', firmada: 'Firmada', vencida: 'Vencida', cancelada: 'Cancelada' };
+
+    async function api(accion, datos) {
+        const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion, ...datos }) });
+        let j = {};
+        try { j = await r.json(); } catch (e) { /* vacío */ }
+        if (!r.ok || !j.ok) throw new Error(j.error || 'No se pudo conectar con el servicio. Revisa tu conexión.');
+        return j;
+    }
+
+    function pantalla(html) { app.innerHTML = html; window.scrollTo({ top: 0 }); }
+    function errorFatal(msg) { pantalla(`<div class="card"><h1>No se puede continuar</h1><p class="msg error">${esc(msg)}</p></div>`); }
+    function aviso(el, msg, tipo = 'error') {
+        el.innerHTML = msg ? `<div class="msg ${tipo}">${esc(msg)}</div>` : '';
+    }
+    async function conBoton(btn, fn) {
+        const t = btn.textContent;
+        btn.disabled = true;
+        try { return await fn(); } finally { btn.disabled = false; btn.textContent = t; }
+    }
+
+    async function importarClave(b64) {
+        return crypto.subtle.importKey('raw', unb64url(b64), 'AES-GCM', false, ['encrypt', 'decrypt']);
+    }
+    async function descifrar(clave, paquete) {
+        const p = new Uint8Array(paquete);
+        return new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: p.subarray(0, 12) }, clave, p.subarray(12)));
+    }
+    async function cifrar(clave, bytes) {
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, clave, bytes));
+        const out = new Uint8Array(12 + ct.length);
+        out.set(iv, 0);
+        out.set(ct, 12);
+        return out;
+    }
+    function descargar(bytes, nombre) {
+        const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+        const a = Object.assign(document.createElement('a'), { href: url, download: nombre });
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+
+    // ------------------------------------------------------------------ inicio
+    const frag = new URLSearchParams(location.hash.slice(1));
+    if (!API) return errorFatal('El servicio de firmas todavía no está activo.');
+    if (frag.get('s')) iniciarFirma(...frag.get('s').split('.'));
+    else if (frag.get('t')) iniciarSeguimiento(...frag.get('t').split('.'));
+    else errorFatal('El enlace está incompleto. Pide a quien te lo envió que lo copie de nuevo.');
+
+    // ------------------------------------------------------------------ firmante
+    async function iniciarFirma(id, claveB64) {
+        let info, clave;
+        try {
+            clave = await importarClave(claveB64 || '');
+            info = await api('info', { id });
+        } catch (e) {
+            return errorFatal(e.message.includes('importKey') || e.name === 'DataError' ? 'El enlace está incompleto. Pide a quien te lo envió que lo copie de nuevo.' : e.message);
+        }
+        if (info.estado !== 'pendiente') {
+            return pantalla(`<div class="card"><h1>${info.estado === 'firmada' ? 'Este documento ya fue firmado' : 'Esta solicitud ya no está disponible'}</h1>
+                <p><span class="badge b-${info.estado}">${ESTADOS[info.estado]}</span></p>
+                <p class="muted">Si necesitas firmar de nuevo, pide a ${esc(info.remitente_nombre)} una nueva solicitud.</p></div>`);
+        }
+        pantalla(`
+            <div class="card">
+                <h1>${esc(info.remitente_nombre)} te pidió firmar un documento</h1>
+                <dl class="meta">
+                    <dt>Documento</dt><dd>${esc(info.documento_nombre)}</dd>
+                    <dt>Tipo</dt><dd>${esc(info.documento_tipo)}</dd>
+                    <dt>Para</dt><dd>${esc(info.firmante_nombre)}</dd>
+                    <dt>Disponible hasta</dt><dd>${fecha(info.vence_en, false)}</dd>
+                </dl>
+                ${info.mensaje ? `<div class="quote">${esc(info.mensaje)}</div>` : ''}
+            </div>
+            <div class="card" id="verificar">
+                <h2>Confirma tu correo para ver el documento</h2>
+                <p class="muted">Te enviaremos un código de 6 dígitos a <b>${esc(info.firmante_correo)}</b>.</p>
+                <div id="paso-codigo" class="hidden"><input id="codigo" class="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" aria-label="Código de 6 dígitos"></div>
+                <div class="row"><button class="primary" id="btn-codigo">Enviarme el código</button></div>
+                <div id="msg-verificar"></div>
+            </div>`);
+        const btn = document.getElementById('btn-codigo');
+        let enviado = false;
+        btn.onclick = () => conBoton(btn, async () => {
+            const msg = document.getElementById('msg-verificar');
+            try {
+                if (!enviado) {
+                    await api('codigo_firmante', { id });
+                    enviado = true;
+                    document.getElementById('paso-codigo').classList.remove('hidden');
+                    document.getElementById('codigo').focus();
+                    aviso(msg, 'Revisa tu correo (también la carpeta de spam). El código vence en 10 minutos.', 'ok');
+                    btn.dataset.next = 'Ver el documento';
+                    setTimeout(() => { btn.textContent = 'Ver el documento'; });
+                } else {
+                    const codigo = document.getElementById('codigo').value.trim();
+                    if (!/^\d{6}$/.test(codigo)) return aviso(msg, 'Escribe los 6 dígitos del código.');
+                    const v = await api('verificar_firmante', { id, codigo });
+                    btn.textContent = 'Abriendo…';
+                    const paquete = await (await fetch(v.descarga)).arrayBuffer();
+                    const bytes = await descifrar(clave, paquete);
+                    if (hex(await crypto.subtle.digest('SHA-256', bytes)) !== v.documento_hash) {
+                        throw new Error('El documento recibido no coincide con el registrado. No lo firmes y avisa a quien te lo envió.');
+                    }
+                    await mostrarDocumento(id, info, v, clave, bytes);
+                }
+            } catch (e) {
+                aviso(msg, e.name === 'OperationError' ? 'No se pudo abrir el documento: el enlace no corresponde. Pide uno nuevo.' : e.message);
+            }
+        });
+    }
+
+    async function mostrarDocumento(id, info, v, clave, bytes) {
+        pantalla(`
+            <div class="card">
+                <h1>${esc(info.documento_nombre)}</h1>
+                <p class="muted">Revisa el documento completo. Las casillas amarillas muestran dónde quedará tu firma.</p>
+            </div>
+            <div class="pages" id="pages"></div>
+            <div class="card" id="firma" style="margin-top:16px">
+                <h2>Tu firma</h2>
+                <div class="tabs" role="tablist">
+                    <button role="tab" aria-selected="true" data-tab="draw">Dibujar</button>
+                    <button role="tab" aria-selected="false" data-tab="type">Escribir</button>
+                </div>
+                <div id="t-draw" class="pad"><canvas id="pad" width="700" height="220"></canvas><button class="clear" id="limpiar" type="button">Limpiar</button></div>
+                <div id="t-type" class="hidden"><input type="text" id="escrita" placeholder="Escribe tu nombre como firma" value="${esc(info.firmante_nombre)}"><div class="typed" id="vista">${esc(info.firmante_nombre)}</div></div>
+                <p style="margin-top:14px"><label for="nombre" class="muted">Nombre completo de quien firma</label><input type="text" id="nombre" autocomplete="name" value="${esc(info.firmante_nombre)}"></p>
+                <label class="check"><input type="checkbox" id="acepto"><span>Acepto firmar electrónicamente este documento (Ley 527 de 1999 y Decreto 2364 de 2012) y autorizo el tratamiento de mis datos según el aviso de privacidad.</span></label>
+                <details><summary>Aviso de privacidad</summary>
+                    <p>Responsable: Danilo Orlando Torrado Blanco (PascalIA), Ábrego, Norte de Santander, Colombia · contacto@pascalia.lat. Para registrar tu firma guardamos tu correo, la fecha y hora de verificación y de firma, el nombre y tipo del documento, el identificador de tu firma y las huellas SHA-256 del documento recibido y firmado. Tu firma y el documento se procesan en tu dispositivo; el documento viaja cifrado y PascalIA no puede leerlo. El archivo cifrado se borra del servidor a más tardar a los 7 días. Los datos se alojan en Supabase (fuera de Colombia) y los correos se envían con Resend. Puedes conocer, actualizar, rectificar o pedir la supresión de tus datos escribiendo a contacto@pascalia.lat.</p>
+                </details>
+                <div class="row"><button class="primary" id="btn-firmar">Firmar el documento</button></div>
+                <div id="msg-firma"></div>
+            </div>`);
+
+        // páginas
+        pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+        const doc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+        const cont = document.getElementById('pages');
+        for (let n = 1; n <= doc.numPages; n++) {
+            const page = await doc.getPage(n);
+            const vp = page.getViewport({ scale: 1 });
+            const scale = Math.min(2, (cont.clientWidth * (window.devicePixelRatio || 1)) / vp.width);
+            const view = page.getViewport({ scale });
+            const box = document.createElement('div');
+            box.className = 'page';
+            const c = document.createElement('canvas');
+            c.width = Math.round(view.width);
+            c.height = Math.round(view.height);
+            box.appendChild(c);
+            await page.render({ canvasContext: c.getContext('2d'), viewport: view }).promise;
+            (info.campos || []).filter(f => f.pagina === n - 1).forEach(f => {
+                const s = document.createElement('div');
+                s.className = 'slot';
+                Object.assign(s.style, { left: f.x * 100 + '%', top: f.y * 100 + '%', width: f.w * 100 + '%', height: f.h * 100 + '%' });
+                s.textContent = 'Aquí va tu firma';
+                box.appendChild(s);
+            });
+            cont.appendChild(box);
+        }
+
+        // firma
+        let modo = 'draw', tinta = false;
+        document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
+            modo = b.dataset.tab;
+            document.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+            document.getElementById('t-draw').classList.toggle('hidden', modo !== 'draw');
+            document.getElementById('t-type').classList.toggle('hidden', modo !== 'type');
+        });
+        const escrita = document.getElementById('escrita');
+        escrita.oninput = () => { document.getElementById('vista').textContent = escrita.value; };
+        const pad = document.getElementById('pad');
+        const ctx = pad.getContext('2d');
+        ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 3.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        let dibujando = false;
+        const pos = (e) => { const r = pad.getBoundingClientRect(); const t = e.touches ? e.touches[0] : e; return [(t.clientX - r.left) * pad.width / r.width, (t.clientY - r.top) * pad.height / r.height]; };
+        const ini = (e) => { e.preventDefault(); dibujando = tinta = true; ctx.beginPath(); ctx.moveTo(...pos(e)); };
+        const mov = (e) => { if (!dibujando) return; e.preventDefault(); ctx.lineTo(...pos(e)); ctx.stroke(); };
+        const fin = () => { dibujando = false; };
+        pad.addEventListener('mousedown', ini); pad.addEventListener('mousemove', mov); window.addEventListener('mouseup', fin);
+        pad.addEventListener('touchstart', ini, { passive: false }); pad.addEventListener('touchmove', mov, { passive: false }); pad.addEventListener('touchend', fin);
+        document.getElementById('limpiar').onclick = () => { ctx.clearRect(0, 0, pad.width, pad.height); tinta = false; };
+
+        const btn = document.getElementById('btn-firmar');
+        btn.onclick = () => conBoton(btn, async () => {
+            const msg = document.getElementById('msg-firma');
+            aviso(msg, '');
+            const nombre = document.getElementById('nombre').value.trim();
+            if (!nombre) return aviso(msg, 'Escribe tu nombre completo.');
+            if (modo === 'draw' && !tinta) return aviso(msg, 'Dibuja tu firma en el recuadro.');
+            if (modo === 'type' && !escrita.value.trim()) return aviso(msg, 'Escribe tu firma.');
+            if (!document.getElementById('acepto').checked) return aviso(msg, 'Para firmar debes aceptar la declaración.');
+            try {
+                btn.textContent = 'Firmando…';
+                const firmaId = crypto.randomUUID();
+                const firma = modo === 'draw' ? { png: recortar(pad) } : { texto: escrita.value.trim() };
+                const firmado = await construirFirmado(bytes, info, v, { nombre, firmaId, ...firma });
+                const firmadoHash = hex(await crypto.subtle.digest('SHA-256', firmado));
+                const c = await api('completar', { id, sesion: v.sesion, firmado_hash: firmadoHash, firma_id: firmaId, aceptacion_version: ACEPTACION });
+                btn.textContent = 'Enviando…';
+                const up = await fetch(c.subida, { method: 'PUT', headers: { 'Content-Type': 'application/octet-stream', 'x-upsert': 'true' }, body: await cifrar(clave, firmado) });
+                if (!up.ok) throw new Error('No se pudo enviar el documento firmado. Intenta de nuevo.');
+                const r = await api('confirmar', { id, sesion: v.sesion });
+                terminado(info, firmado, r.firmado_en, firmadoHash);
+            } catch (e) {
+                console.error(e);
+                aviso(msg, e.message);
+            }
+        });
+    }
+
+    function recortar(canvas) {
+        const { width, height } = canvas;
+        const data = canvas.getContext('2d').getImageData(0, 0, width, height).data;
+        let x0 = width, y0 = height, x1 = -1, y1 = -1;
+        for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+            if (data[(y * width + x) * 4 + 3] > 10) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+        }
+        const o = document.createElement('canvas');
+        o.width = Math.max(1, x1 - x0 + 12); o.height = Math.max(1, y1 - y0 + 12);
+        o.getContext('2d').drawImage(canvas, x0 - 6, y0 - 6, o.width, o.height, 0, 0, o.width, o.height);
+        return o.toDataURL('image/png');
+    }
+
+    function toWinAnsi(t) {
+        const map = { '—': '-', '–': '-', '“': '"', '”': '"', '‘': "'", '’': "'", '…': '...', '•': '-' };
+        return String(t || '').replace(/[^\n]/g, ch => map[ch] || (((ch.charCodeAt(0) >= 32 && ch.charCodeAt(0) <= 126) || (ch.charCodeAt(0) >= 160 && ch.charCodeAt(0) <= 255)) ? ch : ''));
+    }
+
+    async function construirFirmado(bytes, info, v, f) {
+        const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
+        const doc = await PDFDocument.load(bytes);
+        const helv = await doc.embedFont(StandardFonts.Helvetica);
+        const bold = await doc.embedFont(StandardFonts.HelveticaBold);
+        const script = await doc.embedFont(StandardFonts.TimesRomanItalic);
+        const mono = await doc.embedFont(StandardFonts.Courier);
+        const img = f.png ? await doc.embedPng(f.png) : null;
+        const ahora = new Date();
+        const pages = doc.getPages();
+        const sub = toWinAnsi(`Firmado electrónicamente por ${f.nombre} · ${ahora.toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}`);
+
+        (info.campos || []).forEach(c => {
+            const page = pages[c.pagina];
+            if (!page) return;
+            const box = page.getCropBox();
+            const rot = page.getRotation().angle % 360;
+            const sw = rot === 90 || rot === 270;
+            const W = sw ? box.height : box.width, H = sw ? box.width : box.height;
+            // punto de la vista (origen arriba-izquierda) → coordenadas de la página
+            const pt = (vx, vyTop) => {
+                const x = vx, y = H - vyTop;
+                if (rot === 90) return { x: box.x + box.width - y, y: box.y + x };
+                if (rot === 180) return { x: box.x + box.width - x, y: box.y + box.height - y };
+                if (rot === 270) return { x: box.x + y, y: box.y + box.height - x };
+                return { x: box.x + x, y: box.y + y };
+            };
+            const x = c.x * W, y = c.y * H, w = c.w * W, h = c.h * H;
+            const subSize = Math.max(5, Math.min(7, h * 0.11));
+            const areaH = h - subSize * 2.2;
+            if (img) {
+                const k = Math.min(w / img.width, areaH / img.height);
+                const iw = img.width * k, ih = img.height * k;
+                const p = pt(x + (w - iw) / 2, y + (areaH - ih) / 2 + ih);
+                page.drawImage(img, { x: p.x, y: p.y, width: iw, height: ih, rotate: degrees(rot) });
+            } else {
+                const t = toWinAnsi(f.texto);
+                let size = Math.min(areaH * 0.8, 34);
+                while (size > 8 && script.widthOfTextAtSize(t, size) > w) size -= 1;
+                const p = pt(x + (w - script.widthOfTextAtSize(t, size)) / 2, y + areaH * 0.5 + size * 0.35);
+                page.drawText(t, { x: p.x, y: p.y, size, font: script, color: rgb(0.11, 0.3, 0.85), rotate: degrees(rot) });
+            }
+            let s = subSize;
+            while (s > 4 && mono.widthOfTextAtSize(sub, s) > w) s -= 0.5;
+            const ps = pt(x, y + h - subSize * 0.6);
+            page.drawText(sub, { x: ps.x, y: ps.y, size: s, font: mono, color: rgb(0.35, 0.35, 0.4), rotate: degrees(rot) });
+        });
+
+        // Hoja de evidencia (mismo formato que PascalPDF, para poder verificarla)
+        const page = doc.addPage([612, 792]);
+        const ink = rgb(0.12, 0.12, 0.12), muted = rgb(0.36, 0.36, 0.36);
+        let yy = 740;
+        const linea = (t, size, font, color, x = 56) => { page.drawText(toWinAnsi(t), { x, y: yy, size, font, color }); };
+        const parrafo = (t, size, font, color) => {
+            const words = toWinAnsi(t).split(' ');
+            let l = '';
+            words.forEach(wd => { if (font.widthOfTextAtSize(l + ' ' + wd, size) > 500 && l) { linea(l, size, font, color); yy -= size * 1.4; l = wd; } else l = l ? l + ' ' + wd : wd; });
+            if (l) { linea(l, size, font, color); yy -= size * 1.4; }
+        };
+        const fila = (k, v) => { linea(k, 9, bold, ink); page.drawText(toWinAnsi(v), { x: 200, y: yy, size: 9, font: helv, color: ink }); yy -= 16; };
+        page.drawRectangle({ x: 56, y: 762, width: 500, height: 4, color: rgb(1, 0.76, 0.03) });
+        linea('Hoja de evidencia de firma electrónica', 18, bold, ink); yy -= 22;
+        parrafo('Generada por PascalPDF de PascalIA (pascalia.lat). Firma electrónica en los términos de la Ley 527 de 1999 y el Decreto 2364 de 2012. No es firma digital certificada.', 9, helv, muted);
+        yy -= 10;
+        fila('Documento', info.documento_nombre);
+        fila('Generada el', ahora.toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'medium', timeZone: 'America/Bogota' }) + ' (hora del dispositivo, Colombia)');
+        fila('Solicitud', document.location.hash ? new URLSearchParams(location.hash.slice(1)).get('s').split('.')[0] : '');
+        fila('Pedida por', info.remitente_nombre);
+        fila('Firmante', f.nombre);
+        fila('Correo verificado', v.firmante_correo);
+        fila('Verificado el', new Date(v.verificado_en).toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'medium', timeZone: 'America/Bogota' }) + ' (hora del servidor, Colombia)');
+        fila('Método', f.png ? 'dibujada' : 'escrita');
+        page.drawText('Identificador de la firma', { x: 56, y: yy, size: 9, font: bold, color: ink }); page.drawText(f.firmaId, { x: 200, y: yy, size: 8, font: mono, color: ink }); yy -= 22;
+        linea('Archivo(s) original(es) y su huella SHA-256', 11, bold, ink); yy -= 16;
+        parrafo(info.documento_nombre + ' (documento recibido para firmar)', 9, helv, ink);
+        linea(v.documento_hash.slice(0, 32), 8, mono, muted); yy -= 11;
+        linea(v.documento_hash.slice(32), 8, mono, muted); yy -= 22;
+        parrafo('Cómo comprobar: calcula la huella SHA-256 del documento que se envió para firmar y compárala con la de esta hoja. La verificación del correo la hizo el servidor de PascalIA; la hora de firma proviene del dispositivo de quien firmó. La imagen de la firma no se guarda en ningún servidor.', 8, helv, muted);
+        doc.setTitle(info.documento_nombre);
+        doc.setProducer('PascalPDF');
+        return doc.save();
+    }
+
+    function terminado(info, firmado, firmadoEn, firmadoHash) {
+        pantalla(`<div class="card">
+            <h1>Listo, firmaste el documento</h1>
+            <p class="msg ok">Avisamos a ${esc(info.remitente_nombre)} que ya firmaste «${esc(info.documento_nombre)}».</p>
+            <dl class="meta"><dt>Firmado el</dt><dd>${fecha(firmadoEn)}</dd><dt>Huella del firmado</dt><dd class="mono">${firmadoHash}</dd></dl>
+            <div class="row"><button class="primary" id="mi-copia">Descargar mi copia</button></div>
+            <p class="muted" style="margin-top:12px">Guarda tu copia: el archivo se borra de nuestro servidor en máximo 7 días.</p></div>`);
+        document.getElementById('mi-copia').onclick = () => descargar(firmado, info.documento_nombre.replace(/\.pdf$/i, '') + '_firmado.pdf');
+    }
+
+    // ------------------------------------------------------------------ remitente (seguimiento)
+    async function iniciarSeguimiento(id, claveB64, token) {
+        let st, clave;
+        try {
+            clave = await importarClave(claveB64 || '');
+            st = await api('estado', { id, token_remitente: token });
+        } catch (e) {
+            return errorFatal(e.name === 'DataError' ? 'El enlace de seguimiento está incompleto.' : e.message);
+        }
+        pantalla(`<div class="card">
+            <h1>${esc(st.documento_nombre)}</h1>
+            <p><span class="badge b-${st.estado}">${ESTADOS[st.estado]}</span></p>
+            <dl class="meta">
+                <dt>Firmante</dt><dd>${esc(st.firmante_nombre)} · ${esc(st.firmante_correo)}</dd>
+                <dt>Creada</dt><dd>${fecha(st.creada_en)}</dd>
+                <dt>Correo verificado</dt><dd>${fecha(st.verificado_en)}</dd>
+                <dt>Firmada</dt><dd>${fecha(st.firmado_en)}</dd>
+                <dt>Se borra del servidor</dt><dd>${fecha(st.vence_en, false)}</dd>
+                ${st.firma_id ? `<dt>ID de la firma</dt><dd class="mono">${esc(st.firma_id)}</dd>` : ''}
+            </dl>
+            <div class="row">
+                ${st.descarga ? '<button class="primary" id="bajar">Descargar el documento firmado</button>' : ''}
+                <button class="ghost" id="recargar">Actualizar</button>
+                ${st.estado === 'pendiente' ? '<button class="danger" id="cancelar">Cancelar la solicitud</button>' : ''}
+                ${st.estado === 'firmada' && st.descarga ? '<button class="danger" id="borrar">Borrar del servidor ahora</button>' : ''}
+            </div>
+            ${st.estado === 'firmada' && !st.descarga ? '<p class="muted" style="margin-top:12px">El archivo firmado ya se borró de nuestro servidor.</p>' : ''}
+            <div id="msg-seg"></div></div>`);
+        const msg = document.getElementById('msg-seg');
+        document.getElementById('recargar').onclick = () => iniciarSeguimiento(id, claveB64, token);
+        const bajar = document.getElementById('bajar');
+        if (bajar) bajar.onclick = () => conBoton(bajar, async () => {
+            try {
+                const bytes = await descifrar(clave, await (await fetch(st.descarga)).arrayBuffer());
+                if (hex(await crypto.subtle.digest('SHA-256', bytes)) !== st.firmado_hash) throw new Error('El archivo descargado no coincide con el registrado.');
+                descargar(bytes, st.documento_nombre.replace(/\.pdf$/i, '') + '_firmado.pdf');
+                aviso(msg, 'Documento descargado. Puedes borrarlo del servidor cuando quieras.', 'ok');
+            } catch (e) { aviso(msg, e.message); }
+        });
+        const quitar = async (b, pregunta) => {
+            if (!confirm(pregunta)) return;
+            await conBoton(b, async () => {
+                try { await api('cancelar', { id, token_remitente: token }); iniciarSeguimiento(id, claveB64, token); } catch (e) { aviso(msg, e.message); }
+            });
+        };
+        const cancelar = document.getElementById('cancelar');
+        if (cancelar) cancelar.onclick = () => quitar(cancelar, '¿Cancelar la solicitud? El enlace dejará de funcionar.');
+        const borrar = document.getElementById('borrar');
+        if (borrar) borrar.onclick = () => quitar(borrar, '¿Borrar el documento firmado del servidor? Descárgalo antes si no lo tienes.');
+    }
+})();
+</script>
+</body>
+</html>
