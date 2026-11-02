@@ -56,12 +56,16 @@
         .page canvas { display: block; width: 100%; height: auto; }
         .slot { position: absolute; border: 2px dashed var(--yellow-hover); background: rgba(255,193,7,.16); border-radius: 8px; display: flex; align-items: center; justify-content: center; font: 600 12px Inter, sans-serif; color: #8A6100; text-align: center; }
         .slot img { max-width: 100%; max-height: 100%; }
-        .tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--cream); border-radius: 999px; padding: 4px; margin-bottom: 12px; }
+        .tabs { display: grid; grid-template-columns: 1fr 1fr 1fr; background: var(--cream); border-radius: 999px; padding: 4px; margin-bottom: 12px; }
         .tabs button { min-height: 40px; padding: 8px; background: transparent; font-size: 14px; }
         .tabs button[aria-selected=true] { background: var(--yellow); }
         .pad { position: relative; background: #fff; border-radius: 14px; box-shadow: inset 0 0 0 2px var(--yellow); }
         .pad canvas { display: block; width: 100%; height: 160px; touch-action: none; cursor: crosshair; }
         .pad .clear { position: absolute; top: 8px; right: 8px; min-height: 32px; padding: 4px 12px; font-size: 12px; background: var(--gray); }
+        .upload { display: block; border: 2px dashed var(--yellow-hover); border-radius: 14px; padding: 18px; text-align: center; cursor: pointer; background: #fff; font-size: 14px; }
+        .upload:hover { background: var(--cream); }
+        .upload input { display: none; }
+        .upload img { max-width: 100%; max-height: 120px; display: block; margin: 0 auto 8px; }
         .typed { font: 600 44px Caveat, cursive; color: #1d4ed8; text-align: center; min-height: 72px; padding: 6px; background: #fff; border-radius: 14px; box-shadow: inset 0 0 0 2px var(--yellow); margin-top: 10px; }
         label.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; margin-top: 10px; }
         label.check input { width: 20px; height: 20px; accent-color: var(--yellow-hover); margin-top: 2px; flex: none; }
@@ -231,8 +235,10 @@
                 <div class="tabs" role="tablist">
                     <button role="tab" aria-selected="true" data-tab="draw">Dibujar</button>
                     <button role="tab" aria-selected="false" data-tab="type">Escribir</button>
+                    <button role="tab" aria-selected="false" data-tab="img">Imagen</button>
                 </div>
                 <div id="t-draw" class="pad"><canvas id="pad" width="700" height="220"></canvas><button class="clear" id="limpiar" type="button">Limpiar</button></div>
+                <div id="t-img" class="hidden"><label class="upload"><img id="img-vista" alt="" class="hidden"><span id="img-texto"><b>Sube una foto o imagen de tu firma</b><br><span class="muted">PNG o JPG. Mejor sobre papel blanco: el fondo blanco se quita solo.</span></span><input type="file" id="img-firma" accept="image/png,image/jpeg,image/webp"></label></div>
                 <div id="t-type" class="hidden"><input type="text" id="escrita" placeholder="Escribe tu nombre como firma" value="${esc(info.firmante_nombre)}"><div class="typed" id="vista">${esc(info.firmante_nombre)}</div></div>
                 <p style="margin-top:14px"><label for="nombre" class="muted">Nombre completo de quien firma</label><input type="text" id="nombre" autocomplete="name" value="${esc(info.firmante_nombre)}"></p>
                 <label class="check"><input type="checkbox" id="acepto"><span>Acepto firmar electrónicamente este documento (Ley 527 de 1999 y Decreto 2364 de 2012) y autorizo el tratamiento de mis datos según el aviso de privacidad, la <a href="/PascalPDF_Studio/politica/" target="_blank" rel="noopener">política de datos</a> y los <a href="/PascalPDF_Studio/terminos/" target="_blank" rel="noopener">términos</a> de PascalPDF.</span></label>
@@ -276,7 +282,39 @@
             document.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
             document.getElementById('t-draw').classList.toggle('hidden', modo !== 'draw');
             document.getElementById('t-type').classList.toggle('hidden', modo !== 'type');
+            document.getElementById('t-img').classList.toggle('hidden', modo !== 'img');
         });
+        // Imagen: se reduce, se quita el fondo blanco y se recorta, todo en el dispositivo
+        let imagenFirma = null;
+        document.getElementById('img-firma').onchange = async (ev) => {
+            const file = ev.target.files[0];
+            const msg = document.getElementById('msg-firma');
+            imagenFirma = null;
+            if (!file) return;
+            if (/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) return aviso(msg, 'Las fotos HEIC del iPhone no se pueden usar. Toma una captura de pantalla de la foto o cámbiala a JPG.');
+            try {
+                const bmp = await createImageBitmap(file);
+                const k = Math.min(1, 1200 / Math.max(bmp.width, bmp.height));
+                const c = document.createElement('canvas');
+                c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+                const cx = c.getContext('2d');
+                cx.drawImage(bmp, 0, 0, c.width, c.height);
+                const px = cx.getImageData(0, 0, c.width, c.height);
+                for (let i = 0; i < px.data.length; i += 4) {
+                    const [r, g, b] = [px.data[i], px.data[i + 1], px.data[i + 2]];
+                    if (r > 225 && g > 225 && b > 225) px.data[i + 3] = 0;
+                }
+                cx.putImageData(px, 0, 0);
+                imagenFirma = recortar(c);
+                const v = document.getElementById('img-vista');
+                v.src = imagenFirma; v.classList.remove('hidden');
+                document.getElementById('img-texto').innerHTML = '<span class="muted">Toca para cambiar la imagen</span>';
+                aviso(msg, '');
+            } catch (e) {
+                aviso(msg, 'No se pudo leer la imagen. Prueba con una foto en PNG o JPG.');
+            }
+        };
+
         const escrita = document.getElementById('escrita');
         escrita.oninput = () => { document.getElementById('vista').textContent = escrita.value; };
         const pad = document.getElementById('pad');
@@ -299,11 +337,12 @@
             if (!nombre) return aviso(msg, 'Escribe tu nombre completo.');
             if (modo === 'draw' && !tinta) return aviso(msg, 'Dibuja tu firma en el recuadro.');
             if (modo === 'type' && !escrita.value.trim()) return aviso(msg, 'Escribe tu firma.');
+            if (modo === 'img' && !imagenFirma) return aviso(msg, 'Sube la imagen de tu firma.');
             if (!document.getElementById('acepto').checked) return aviso(msg, 'Para firmar debes aceptar la declaración.');
             try {
                 btn.textContent = 'Firmando…';
                 const firmaId = crypto.randomUUID();
-                const firma = modo === 'draw' ? { png: recortar(pad) } : { texto: escrita.value.trim() };
+                const firma = modo === 'draw' ? { png: recortar(pad), metodo: 'dibujada' } : modo === 'img' ? { png: imagenFirma, metodo: 'imagen' } : { texto: escrita.value.trim(), metodo: 'escrita' };
                 const firmado = await construirFirmado(bytes, info, v, { nombre, firmaId, ...firma });
                 const firmadoHash = hex(await crypto.subtle.digest('SHA-256', firmado));
                 const c = await api('completar', { id, sesion: v.sesion, firmado_hash: firmadoHash, firma_id: firmaId, aceptacion_version: ACEPTACION });
@@ -408,7 +447,7 @@
         fila('Firmante', f.nombre);
         fila('Correo verificado', v.firmante_correo);
         fila('Verificado el', new Date(v.verificado_en).toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'medium', timeZone: 'America/Bogota' }) + ' (hora del servidor, Colombia)');
-        fila('Método', f.png ? 'dibujada' : 'escrita');
+        fila('Método', f.metodo);
         page.drawText('Identificador de la firma', { x: 56, y: yy, size: 9, font: bold, color: ink }); page.drawText(f.firmaId, { x: 200, y: yy, size: 8, font: mono, color: ink }); yy -= 22;
         linea('Archivo(s) original(es) y su huella SHA-256', 11, bold, ink); yy -= 16;
         parrafo(info.documento_nombre + ' (documento recibido para firmar)', 9, helv, ink);
