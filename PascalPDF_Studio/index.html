@@ -284,7 +284,7 @@
                     <span class="brand-word whitespace-nowrap font-extrabold text-sm md:text-base text-white">PascalPDF<span class="hidden sm:inline font-semibold text-zinc-300"> Studio</span></span>
                     <a href="/" class="brand-word hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-400 hover:text-white" title="Ir a PascalIA"><img src="/flower.svg" width="13" height="13" alt="">de Pascal<b>IA</b></a>
                 </div>
-                <p id="doc-title-display" class="text-[11px] text-zinc-400 truncate max-w-[130px] sm:max-w-xs">Contrato_Servicios_2026.pdf (4 páginas)</p>
+                <p id="doc-title-display" class="text-[11px] text-zinc-400 truncate max-w-[130px] sm:max-w-xs">Documento nuevo</p>
             </div>
         </div>
 
@@ -296,8 +296,7 @@
             </button>
             <button id="btn-mode-full" onclick="switchAppMode('full')" class="whitespace-nowrap px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 text-zinc-400 hover:text-white">
                 <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
-                <span class="hidden md:inline">Expansión Suite Pro</span>
-                <span class="md:hidden">Suite Pro</span>
+                <span>Todas las herramientas</span>
             </button>
         </div>
 
@@ -323,9 +322,9 @@
                 <span class="hidden sm:inline">Editar texto</span>
             </button>
 
-            <button onclick="openModal('modal-all-features')" class="hidden sm:flex px-2.5 py-1.5 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 text-xs font-medium flex items-center gap-1.5 border border-zinc-700" title="Catálogo de las 65 funciones">
+            <button onclick="openModal('modal-all-features')" class="hidden sm:flex px-2.5 py-1.5 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 text-xs font-medium flex items-center gap-1.5 border border-zinc-700" title="Todas las herramientas">
                 <i class="fa-solid fa-grip text-purple-400"></i>
-                <span class="hidden lg:inline">65 Funciones</span>
+                <span class="hidden lg:inline">Herramientas</span>
             </button>
 
             <button onclick="exportAndDownloadPDF()" aria-label="Guardar PDF" title="Guardar PDF" class="hdr-btn px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-600/20 transition">
@@ -335,42 +334,9 @@
         </div>
     </header>
 
-    <!-- ==================== RIBBON DE MÓDULOS (VISIBLE EN EXPANSIÓN SUITE PRO) ==================== -->
+    <!-- ==================== CINTA DE CATEGORÍAS (MODO TODAS LAS HERRAMIENTAS) ==================== -->
     <nav id="full-suite-ribbon" class="bg-zinc-900 border-b border-zinc-800 px-2 py-1.5 hidden overflow-x-auto shrink-0 z-20">
         <div class="flex items-center gap-1 min-w-max" id="module-tabs-container">
-            <button onclick="selectCategory('sign')" data-cat="sign" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 bg-indigo-600/20 text-indigo-300 border border-indigo-500/30">
-                <i class="fa-solid fa-pen-nib"></i> 1. Firmas Digitales
-            </button>
-            <button onclick="selectCategory('edit')" data-cat="edit" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-solid fa-sliders"></i> 2. Edición Contenido
-            </button>
-            <button onclick="selectCategory('pages')" data-cat="pages" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-solid fa-copy"></i> 3. Gestión Páginas
-            </button>
-            <button onclick="selectCategory('forms')" data-cat="forms" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-brands fa-wpforms"></i> 4. Formularios
-            </button>
-            <button onclick="selectCategory('review')" data-cat="review" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-solid fa-comments"></i> 5. Comentarios y Revisión
-            </button>
-            <button onclick="selectCategory('security')" data-cat="security" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-solid fa-shield-halved"></i> 6. Seguridad y Redacción
-            </button>
-            <button onclick="selectCategory('convert')" data-cat="convert" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-solid fa-arrows-rotate"></i> 7. Conversión Formatos
-            </button>
-            <button onclick="selectCategory('ocr')" data-cat="ocr" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-solid fa-eye"></i> 8. OCR Escáner
-            </button>
-            <button onclick="selectCategory('nav')" data-cat="nav" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-solid fa-bookmark"></i> 9. Índices y Marcadores
-            </button>
-            <button onclick="selectCategory('a11y')" data-cat="a11y" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-solid fa-universal-access"></i> 10. Accesibilidad
-            </button>
-            <button onclick="selectCategory('batch')" data-cat="batch" class="cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-zinc-400 hover:bg-zinc-800">
-                <i class="fa-solid fa-gears"></i> 11. Automatización / Lotes
-            </button>
         </div>
     </nav>
 
@@ -408,22 +374,18 @@
             </div>
 
             <!-- Tabs del Panel Izquierdo -->
-            <div class="grid grid-cols-4 border-b border-zinc-800 bg-zinc-950/40 text-[11px] font-medium text-zinc-400">
+            <div class="grid grid-cols-3 border-b border-zinc-800 bg-zinc-950/40 text-[11px] font-medium text-zinc-400">
                 <button onclick="switchLeftTab('thumbs')" id="ltab-thumbs" class="py-2.5 flex flex-col items-center gap-1 border-b-2 border-indigo-500 text-indigo-400">
                     <i class="fa-solid fa-table-cells-large"></i>
                     <span>Páginas</span>
                 </button>
                 <button onclick="switchLeftTab('bookmarks')" id="ltab-bookmarks" class="py-2.5 flex flex-col items-center gap-1 border-b-2 border-transparent hover:text-zinc-200">
                     <i class="fa-solid fa-bookmark"></i>
-                    <span>Índices</span>
+                    <span>Marcadores</span>
                 </button>
                 <button onclick="switchLeftTab('layers')" id="ltab-layers" class="py-2.5 flex flex-col items-center gap-1 border-b-2 border-transparent hover:text-zinc-200">
                     <i class="fa-solid fa-layer-group"></i>
                     <span>Objetos</span>
-                </button>
-                <button onclick="switchLeftTab('a11y-tree')" id="ltab-a11y-tree" class="py-2.5 flex flex-col items-center gap-1 border-b-2 border-transparent hover:text-zinc-200">
-                    <i class="fa-solid fa-universal-access"></i>
-                    <span>Etiquetas</span>
                 </button>
             </div>
 
@@ -443,7 +405,7 @@
                 <div id="thumbnails-list" class="space-y-3"></div>
             </div>
 
-            <!-- Contenido de Marcadores, Destinos e Índice Full-Text -->
+            <!-- Contenido de Marcadores -->
             <div id="left-content-bookmarks" class="flex-1 overflow-y-auto p-3 space-y-3 hidden">
                 <div class="flex gap-1">
                     <input id="new-bookmark-input" type="text" placeholder="Nuevo marcador..." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
@@ -454,27 +416,7 @@
                 <div class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 pt-1">Marcadores del Documento</div>
                 <ul id="bookmarks-list" class="space-y-1 text-xs"></ul>
 
-                <div class="border-t border-zinc-800 pt-3 mt-3">
-                    <div class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-2">Destinos con Nombre (Cross-Ref)</div>
-                    <div id="named-destinations-list" class="space-y-1 text-xs text-zinc-400">
-                        <div class="p-1.5 rounded bg-zinc-950 flex justify-between items-center">
-                            <span>#clausula_confidencialidad</span>
-                            <span class="text-[10px] bg-zinc-800 px-1.5 py-0.5 rounded">Pág 2</span>
-                        </div>
-                        <div class="p-1.5 rounded bg-zinc-950 flex justify-between items-center">
-                            <span>#anexo_firmas_digitales</span>
-                            <span class="text-[10px] bg-zinc-800 px-1.5 py-0.5 rounded">Pág 4</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="border-t border-zinc-800 pt-3 mt-3">
-                    <div class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Índice Full-Text Catálogo</div>
-                    <p class="text-[11px] text-zinc-400 mb-2">Búsqueda instantánea en colecciones grandes (.pdx).</p>
-                    <button onclick="rebuildFullTextIndex()" class="w-full py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-indigo-300 font-medium">
-                        <i class="fa-solid fa-bolt mr-1"></i> Generar Índice Invertido
-                    </button>
-                </div>
+                <p class="text-[11px] text-zinc-500 pt-1">Los marcadores sirven para moverte por el documento mientras trabajas.</p>
             </div>
 
             <!-- Contenido de Objetos / Capas -->
@@ -483,39 +425,13 @@
                 <div id="objects-layer-list" class="space-y-1.5 text-xs"></div>
             </div>
 
-            <!-- Contenido de Accesibilidad (Etiquetas PDF/UA y Orden de lectura) -->
-            <div id="left-content-a11y-tree" class="flex-1 overflow-y-auto p-3 space-y-2 hidden">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-emerald-400"><i class="fa-solid fa-check-Double mr-1"></i> Árbol PDF/UA</span>
-                    <button onclick="runAccessibilityCheck()" class="text-[11px] bg-emerald-600/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">Auditar WCAG</button>
-                </div>
-                <p class="text-[11px] text-zinc-400">Orden de lectura para lectores de pantalla:</p>
-                <div id="reading-order-list" class="space-y-1.5 text-xs font-mono">
-                    <div class="p-2 rounded bg-zinc-950 border border-zinc-800 flex items-center justify-between">
-                        <span>1. &lt;H1&gt; Título Contrato</span>
-                        <i class="fa-solid fa-arrows-up-down text-zinc-500 cursor-pointer"></i>
-                    </div>
-                    <div class="p-2 rounded bg-zinc-950 border border-zinc-800 flex items-center justify-between">
-                        <span>2. &lt;P&gt; Cláusulas Legales</span>
-                        <i class="fa-solid fa-arrows-up-down text-zinc-500 cursor-pointer"></i>
-                    </div>
-                    <div class="p-2 rounded bg-zinc-950 border border-zinc-800 flex items-center justify-between">
-                        <span>3. &lt;Figure&gt; Logo Alt="Empresa"</span>
-                        <i class="fa-solid fa-arrows-up-down text-zinc-500 cursor-pointer"></i>
-                    </div>
-                    <div class="p-2 rounded bg-zinc-950 border border-zinc-800 flex items-center justify-between">
-                        <span>4. &lt;Form&gt; Bloque de Firma</span>
-                        <i class="fa-solid fa-arrows-up-down text-zinc-500 cursor-pointer"></i>
-                    </div>
-                </div>
-            </div>
         </aside>
 
         <!-- PANEL CENTRAL: LIENZO INTERACTIVO DEL DOCUMENTO PDF -->
         <main id="pdf-viewport" class="flex-1 bg-zinc-950 overflow-auto flex flex-col items-center p-4 sm:p-8 relative">
             <div id="busy-veil" role="status" aria-live="polite"><span class="busy-flower"><svg viewBox="-112 -112 224 224" aria-hidden="true"><defs><path id="bv-petal" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/><path id="bv-vein" d="M0,0 C17,-16 15,-44 0,-62 C-15,-44 -17,-16 0,0"/></defs><g fill="#FFC107" fill-opacity="0.82"><use href="#bv-petal"/><use href="#bv-petal" transform="rotate(60)"/><use href="#bv-petal" transform="rotate(120)"/><use href="#bv-petal" transform="rotate(180)"/><use href="#bv-petal" transform="rotate(240)"/><use href="#bv-petal" transform="rotate(300)"/></g><g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.9"><use href="#bv-vein"/><use href="#bv-vein" transform="rotate(60)"/><use href="#bv-vein" transform="rotate(120)"/><use href="#bv-vein" transform="rotate(180)"/><use href="#bv-vein" transform="rotate(240)"/><use href="#bv-vein" transform="rotate(300)"/></g><circle r="9" fill="#fff"/></svg></span><span id="busy-text">Procesando…</span></div>
 
-            <!-- Banner superior de estado (Modo Comparación / Modo Revisión Compartida / OCR Capa oculta) -->
+            <!-- Banner superior de estado -->
             <div id="viewport-status-banner" class="hidden mb-4 px-4 py-2 rounded-xl bg-indigo-950/90 border border-indigo-500/40 text-xs text-indigo-200 flex items-center gap-3 shadow-lg z-20">
                 <i class="fa-solid fa-circle-info text-indigo-400"></i>
                 <span id="viewport-status-text">Modo activo</span>
@@ -533,8 +449,8 @@
 
                 <!-- Encabezado Editable -->
                 <div id="page-header-zone" class="absolute top-0 left-0 right-0 h-12 px-10 flex items-center justify-between text-[11px] text-zinc-400 border-b border-transparent hover:border-zinc-200 z-10">
-                    <span id="header-left-text">CONFIDENCIAL — PASCALPDF STUDIO SUITE</span>
-                    <span id="header-right-text">Ref: DOC-2026-889</span>
+                    <span id="header-left-text"></span>
+                    <span id="header-right-text"></span>
                 </div>
 
                 <!-- Marca de Agua Dinámica -->
@@ -550,7 +466,7 @@
 
                 <!-- Pie de Página y Numeración Editable -->
                 <div id="page-footer-zone" class="absolute bottom-0 left-0 right-0 h-12 px-10 flex items-center justify-between text-[11px] text-zinc-500 border-t border-transparent hover:border-zinc-200 z-10">
-                    <span id="footer-left-text">Documento protegido bajo estándar ISO 32000-2 (PDF 2.0)</span>
+                    <span id="footer-left-text"></span>
                     <span id="footer-page-number" class="font-mono font-medium">Página 1 de 4</span>
                 </div>
             </div>
@@ -580,13 +496,13 @@
             </div>
         </main>
 
-        <!-- PANEL DERECHO: INSPECTOR DE PROPIEDADES, COMENTARIOS, VALIDADOR CRIPTOGRÁFICO Y FORMULARIOS -->
+        <!-- PANEL DERECHO: PROPIEDADES, COMENTARIOS Y FIRMAS -->
         <aside id="right-sidebar" class="w-80 bg-zinc-900 border-l border-zinc-800 flex flex-col shrink-0 z-10">
             <!-- Cabecera Táctil para cerrar Bottom Sheet en Modo Móvil -->
             <div class="mobile-sheet-handle items-center justify-between px-4 py-2.5 border-b border-zinc-800 bg-zinc-950/80 rounded-t-2xl">
                 <div class="flex items-center gap-2 text-xs font-semibold text-indigo-400">
                     <i class="fa-solid fa-sliders"></i>
-                    <span>Propiedades, Revisión y Certificados</span>
+                    <span>Propiedades, comentarios y firmas</span>
                 </div>
                 <button onclick="closeMobileDrawers()" class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-300 text-xs font-medium">
                     Cerrar <i class="fa-solid fa-chevron-down ml-1"></i>
@@ -602,7 +518,7 @@
                     <i class="fa-solid fa-comments mr-1"></i> Revisión (<span id="comment-count-badge">2</span>)
                 </button>
                 <button onclick="switchRightTab('certs')" id="rtab-certs" class="py-2.5 border-b-2 border-transparent hover:text-zinc-200">
-                    <i class="fa-solid fa-certificate mr-1"></i> Firmas / Seg
+                    <i class="fa-solid fa-signature mr-1"></i> Firmas
                 </button>
             </div>
 
@@ -657,7 +573,7 @@
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-[11px] text-zinc-400">Texto Alternativo (Accesibilidad WCAG)</label>
+                        <label class="text-[11px] text-zinc-400">Descripción de la imagen</label>
                         <input id="prop-alt-text" type="text" placeholder="Descripción para lector de pantalla..." oninput="updateSelectedObjectProps()" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-emerald-300">
                     </div>
 
@@ -675,7 +591,6 @@
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 space-y-2.5">
                     <div class="text-xs font-semibold text-zinc-300 flex items-center justify-between">
                         <span><i class="fa-solid fa-magnifying-glass mr-1 text-indigo-400"></i> Buscar y Reemplazar</span>
-                        <button onclick="runSpellCheck()" class="text-[11px] text-amber-400 hover:underline"><i class="fa-solid fa-spell-check mr-1"></i>Ortografía</button>
                     </div>
                     <input id="find-input" type="text" placeholder="Buscar palabra o frase..." class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
                     <input id="replace-input" type="text" placeholder="Reemplazar con..." class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
@@ -725,39 +640,34 @@
                 <div id="comments-thread-list" class="space-y-2.5"></div>
             </div>
 
-            <!-- TAB 3: FIRMAS DIGITALES CERTIFICADAS, SELLOS DE TIEMPO Y SEGURIDAD -->
-            <div id="right-content-certs" class="flex-1 overflow-y-auto p-4 space-y-3 hidden">
-                <div class="bg-emerald-950/30 border border-emerald-500/30 rounded-xl p-3 space-y-2">
-                    <div class="flex items-center gap-2 text-emerald-400 text-xs font-semibold">
-                        <i class="fa-solid fa-shield-check text-base"></i>
-                        <span>Validador Criptográfico X.509</span>
+            <!-- TAB 3: FIRMAS (guardadas en el dispositivo) Y HOJA DE EVIDENCIA -->
+            <div id="right-content-certs" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-white">Firmas en este documento</span>
+                        <button onclick="openSignatureModal()" class="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-semibold">Firmar</button>
                     </div>
-                    <p class="text-[11px] text-zinc-300">Todas las firmas digitales y sellos de tiempo (TSA RFC 3161) son válidos. El documento no ha sido modificado desde su última certificación.</p>
-                    <button onclick="validateAllSignatures()" class="w-full py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs font-medium">
-                        Verificar Integridad SHA-256
-                    </button>
+                    <div id="doc-signatures-list" class="space-y-1.5 text-xs"></div>
                 </div>
 
-                <div class="text-xs font-semibold text-zinc-400 uppercase tracking-wider pt-1">Firmas Registradas</div>
-                <div id="signatures-audit-list" class="space-y-2 text-xs">
-                    <div class="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-1">
-                        <div class="flex justify-between items-center">
-                            <span class="font-semibold text-white">Firma Certificada #1</span>
-                            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">Válida</span>
-                        </div>
-                        <div class="text-[11px] text-zinc-400">Emisor: AC Raíz Certicamara / PKI</div>
-                        <div class="text-[10px] font-mono text-zinc-500">TSA: 2026-10-28 14:10:05 UTC</div>
+                <label class="flex items-start gap-2.5 p-3 rounded-xl bg-zinc-950 border border-zinc-800 cursor-pointer">
+                    <input id="evidence-toggle" type="checkbox" checked class="mt-0.5 w-4 h-4 accent-amber-400">
+                    <span class="text-[11px] text-zinc-300 leading-relaxed"><span class="block text-xs font-semibold text-white mb-0.5">Agregar hoja de evidencia al guardar</span>Una página final con quién firmó, cuándo y la huella SHA-256 del documento original, para poder comprobar después que no cambió.</span>
+                </label>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-white">Mis firmas en este dispositivo</span>
+                        <span id="my-signatures-count" class="text-[10px] text-zinc-500"></span>
+                    </div>
+                    <p class="text-[11px] text-zinc-400 leading-relaxed">Se guardan cifradas solo en este navegador. Si lo borras o cambias de equipo se pierden: guarda una copia de respaldo.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openBackupModal('export')" class="py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-[11px] font-medium"><i class="fa-solid fa-download mr-1 text-indigo-400"></i> Copia de respaldo</button>
+                        <button onclick="openBackupModal('import')" class="py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-[11px] font-medium"><i class="fa-solid fa-upload mr-1 text-indigo-400"></i> Importar respaldo</button>
                     </div>
                 </div>
 
-                <!-- Solicitar firmas (Enlace Web) -->
-                <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 space-y-2">
-                    <div class="text-xs font-semibold text-indigo-400"><i class="fa-solid fa-paper-plane mr-1"></i> Solicitar Firmas (Flujo)</div>
-                    <input id="signer-email-input" type="email" placeholder="correo@firmante.com" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
-                    <button onclick="sendSignatureRequest()" class="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium">
-                        Enviar sobre para firma remota
-                    </button>
-                </div>
+                <p class="text-[10px] text-zinc-500 leading-relaxed border-t border-zinc-800 pt-3">PascalPDF ofrece <b class="text-zinc-300">firma electrónica</b> (Ley 527 de 1999 y Decreto 2364 de 2012). No es firma digital certificada: antes de firmar, verifica que tu trámite o entidad la acepte.</p>
             </div>
         </aside>
     </div>
@@ -768,7 +678,7 @@
             <i class="fa-solid fa-copy text-base text-cyan-400"></i>
             <span class="text-[10px] font-medium">Páginas</span>
         </button>
-        <button onclick="openModal('modal-signature')" class="flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl text-zinc-400 hover:text-white active:scale-95 transition">
+        <button onclick="openSignatureModal()" class="flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl text-zinc-400 hover:text-white active:scale-95 transition">
             <i class="fa-solid fa-signature text-base text-indigo-400"></i>
             <span class="text-[10px] font-medium">Firmar</span>
         </button>
@@ -787,254 +697,115 @@
 
     <!-- ==================== MODALES INTERACTIVOS DE LA SUITE ==================== -->
 
-    <!-- 1. MODAL DE FIRMA ELECTRÓNICA Y CERTIFICADA (TRAZO, IMAGEN, TEXTO, CERTIFICADO + SELLO DE TIEMPO) -->
+    <!-- 1. MODAL DE FIRMA ELECTRÓNICA: FIRMAS GUARDADAS + NUEVA FIRMA (TRAZO, TEXTO, IMAGEN) -->
     <div id="modal-signature" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto shadow-2xl">
             <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-signature text-indigo-400 text-lg"></i>
-                    <h3 class="font-bold text-white text-sm">Crear Firma Electrónica o Digital Certificada</h3>
+                    <i class="fa-solid fa-signature text-indigo-400"></i>
+                    <h3 class="font-bold text-white text-sm">Firmar el documento</h3>
                 </div>
-                <button onclick="closeModal('modal-signature')" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeModal('modal-signature')" class="text-zinc-400 hover:text-white" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <div class="p-5 space-y-4">
-                <!-- Pestañas de método de firma -->
+                <!-- Firmas guardadas en este dispositivo -->
+                <div id="saved-signatures-block" class="space-y-2">
+                    <div class="text-xs font-semibold text-zinc-300">Tus firmas en este dispositivo</div>
+                    <div id="saved-signatures-grid" class="grid grid-cols-2 gap-2"></div>
+                </div>
+
+                <div class="text-xs font-semibold text-zinc-300 pt-1">Nueva firma</div>
                 <div class="grid grid-cols-3 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs">
-                    <button onclick="switchSigTab('draw')" id="sigtab-draw" class="py-1.5 rounded-lg bg-indigo-600 text-white font-medium">Dibujar Trazo</button>
-                    <button onclick="switchSigTab('type')" id="sigtab-type" class="py-1.5 rounded-lg text-zinc-400 hover:text-white font-medium">Tipografiada</button>
-                    <button onclick="switchSigTab('upload')" id="sigtab-upload" class="py-1.5 rounded-lg text-zinc-400 hover:text-white font-medium">Imagen / Token</button>
+                    <button onclick="switchSigTab('draw')" id="sigtab-draw" class="py-1.5 rounded-lg bg-indigo-600 text-white font-medium">Dibujar</button>
+                    <button onclick="switchSigTab('type')" id="sigtab-type" class="py-1.5 rounded-lg text-zinc-400 hover:text-white font-medium">Escribir</button>
+                    <button onclick="switchSigTab('upload')" id="sigtab-upload" class="py-1.5 rounded-lg text-zinc-400 hover:text-white font-medium">Imagen</button>
                 </div>
 
                 <!-- Panel Dibujar -->
                 <div id="sig-panel-draw" class="space-y-2">
                     <div class="bg-white rounded-xl overflow-hidden border-2 border-indigo-500/40 relative">
-                        <canvas id="signature-pad-canvas" width="440" height="150" class="w-full h-[150px] cursor-crosshair"></canvas>
+                        <canvas id="signature-pad-canvas" width="440" height="150" class="w-full h-[150px] cursor-crosshair" style="touch-action: none;"></canvas>
                         <button onclick="clearSignaturePad()" class="absolute top-2 right-2 px-2 py-1 bg-zinc-200 hover:bg-zinc-300 text-zinc-800 rounded text-[11px] font-medium">Limpiar</button>
                     </div>
-                    <p class="text-[11px] text-zinc-400 text-center">Dibuja tu firma con el mouse, lápiz óptico o pantalla táctil.</p>
+                    <p class="text-[11px] text-zinc-400 text-center">Dibuja tu firma con el mouse, un lápiz o el dedo.</p>
                 </div>
 
-                <!-- Panel Tipografiado -->
+                <!-- Panel Escribir -->
                 <div id="sig-panel-type" class="space-y-3 hidden">
-                    <input id="sig-type-input" type="text" value="Alejandro Martínez" oninput="updateTypedSignaturePreview()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white">
-                    <div id="sig-type-preview" class="bg-white text-zinc-900 rounded-xl p-6 text-center font-signature1 text-4xl border border-zinc-700">
-                        Alejandro Martínez
-                    </div>
+                    <input id="sig-type-input" type="text" value="" placeholder="Escribe tu firma" oninput="updateTypedSignaturePreview()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white">
+                    <div id="sig-type-preview" class="bg-white text-zinc-900 rounded-xl p-6 text-center font-signature1 text-4xl border border-zinc-700 min-h-[96px]"></div>
                 </div>
 
-                <!-- Panel Imagen / Certificado PKCS#12 -->
+                <!-- Panel Imagen -->
                 <div id="sig-panel-upload" class="space-y-3 hidden">
                     <label class="block border-2 border-dashed border-zinc-700 hover:border-indigo-500 rounded-xl p-6 text-center cursor-pointer">
                         <i class="fa-solid fa-cloud-arrow-up text-2xl text-indigo-400 mb-2"></i>
-                        <div class="text-xs text-zinc-200 font-medium">Subir imagen PNG de firma o archivo .P12 / .PFX</div>
-                        <input type="file" accept="image/*" class="hidden" onchange="handleSignatureImageUpload(event)">
+                        <div class="text-xs text-zinc-200 font-medium">Sube una imagen PNG o JPG de tu firma</div>
+                        <div class="text-[11px] text-zinc-500 mt-1">Mejor con fondo blanco o transparente</div>
+                        <input type="file" accept="image/png,image/jpeg" class="hidden" onchange="handleSignatureImageUpload(event)">
                     </label>
                 </div>
 
-                <!-- Opciones Criptográficas y Sello de Tiempo -->
+                <div class="space-y-1.5">
+                    <label for="sig-signer-name" class="text-[11px] text-zinc-400">Nombre de quien firma</label>
+                    <input id="sig-signer-name" type="text" autocomplete="name" placeholder="Nombre completo" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white">
+                </div>
+
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 space-y-2 text-xs">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input id="chk-cert-sign" type="checkbox" checked class="rounded text-indigo-600">
-                        <span class="text-zinc-200 font-medium">Incluir Certificado Digital X.509 (Firma Criptográfica)</span>
+                        <input id="chk-save-signature" type="checkbox" checked class="w-4 h-4 accent-amber-400">
+                        <span class="text-zinc-200">Guardar esta firma en este dispositivo (cifrada)</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input id="chk-timestamp-sign" type="checkbox" checked class="rounded text-indigo-600">
-                        <span class="text-zinc-200 font-medium">Añadir Sello de Tiempo Certificado (TSA RFC 3161)</span>
+                        <input id="chk-sign-date" type="checkbox" checked class="w-4 h-4 accent-amber-400">
+                        <span class="text-zinc-200">Mostrar fecha y hora debajo de la firma</span>
                     </label>
                 </div>
 
-                <div class="flex justify-end gap-2 pt-2">
+                <div class="flex justify-end gap-2 pt-1">
                     <button onclick="closeModal('modal-signature')" class="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-xs font-medium">Cancelar</button>
-                    <button onclick="insertSignatureIntoPDF()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30">
-                        Estampar Firma en el PDF
-                    </button>
+                    <button onclick="insertSignatureIntoPDF()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold">Firmar el documento</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 2. MODAL DE SEGURIDAD, CIFRADO AES-256, SANITIZACIÓN Y CERTIFICADOS -->
-    <div id="modal-security" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
+    <!-- 2. MODAL DE COPIA DE RESPALDO DE FIRMAS -->
+    <div id="modal-backup" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full shadow-2xl">
             <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-lock text-amber-400"></i>
-                    <h3 class="font-bold text-white text-sm">Seguridad, Permisos y Cifrado AES</h3>
-                </div>
-                <button onclick="closeModal('modal-security')" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                <h3 id="backup-title" class="font-bold text-white text-sm">Copia de respaldo de tus firmas</h3>
+                <button onclick="closeModal('modal-backup')" class="text-zinc-400 hover:text-white" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-5 space-y-4 text-xs">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-zinc-400 block mb-1">Contraseña de Apertura</label>
-                        <input id="sec-open-pass" type="password" placeholder="••••••••" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-white">
-                    </div>
-                    <div>
-                        <label class="text-zinc-400 block mb-1">Contraseña de Permisos</label>
-                        <input id="sec-perm-pass" type="password" placeholder="••••••••" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-white">
-                    </div>
+            <div class="p-5 space-y-3 text-xs">
+                <p id="backup-help" class="text-zinc-300 leading-relaxed"></p>
+                <label id="backup-file-row" class="hidden block border-2 border-dashed border-zinc-700 hover:border-indigo-500 rounded-xl p-4 text-center cursor-pointer">
+                    <span id="backup-file-name" class="text-zinc-200">Elegir archivo .pascalfirma</span>
+                    <input id="backup-file" type="file" accept=".pascalfirma,application/json" class="hidden" onchange="document.getElementById('backup-file-name').textContent = this.files[0] ? this.files[0].name : 'Elegir archivo .pascalfirma'">
+                </label>
+                <div class="space-y-1.5">
+                    <label for="backup-pass" class="text-[11px] text-zinc-400">Frase de protección</label>
+                    <input id="backup-pass" type="password" autocomplete="new-password" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white" placeholder="Mínimo 8 caracteres">
                 </div>
-
-                <div>
-                    <label class="text-zinc-400 block mb-1">Algoritmo de Cifrado</label>
-                    <select id="sec-cipher-algo" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-white">
-                        <option value="AES-256">AES de 256 bits (Acrobat X / ISO 32000-2)</option>
-                        <option value="AES-128">AES de 128 bits (Estándar corporativo)</option>
-                    </select>
-                </div>
-
-                <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 space-y-2">
-                    <div class="font-semibold text-zinc-300">Políticas de Permisos y Restricciones</div>
-                    <label class="flex items-center gap-2"><input type="checkbox" checked> Restringir impresión en alta resolución</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" checked> Bloquear copia y extracción de texto e imágenes</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" checked> Impedir modificación de páginas y formularios</label>
-                </div>
-
-                <div class="flex items-center justify-between bg-rose-950/30 border border-rose-500/30 rounded-xl p-3">
-                    <div>
-                        <div class="font-semibold text-rose-300">Sanitizar Documento</div>
-                        <div class="text-[11px] text-zinc-400">Elimina metadatos XMP, scripts JS, capas ocultas e historial.</div>
-                    </div>
-                    <button onclick="sanitizeDocument()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-medium shrink-0">Sanitizar Ahora</button>
-                </div>
-
-                <div class="flex justify-end gap-2 pt-2">
-                    <button onclick="closeModal('modal-security')" class="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300">Cancelar</button>
-                    <button onclick="applySecuritySettings()" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold">Aplicar Cifrado</button>
+                <div class="flex justify-end gap-2 pt-1">
+                    <button onclick="closeModal('modal-backup')" class="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 font-medium">Cancelar</button>
+                    <button id="backup-action" onclick="runBackupAction()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold">Descargar copia</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. MODAL DE CONVERSIÓN DE FORMATOS E ISO (WORD, EXCEL, PPT, IMAGEN, HTML, PDF/A, PDF/X, PDF/E) -->
-    <div id="modal-convert" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl">
-            <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-arrows-rotate text-emerald-400"></i>
-                    <h3 class="font-bold text-white text-sm">Centro de Conversión Bidireccional & Estándares ISO</h3>
-                </div>
-                <button onclick="closeModal('modal-convert')" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="p-5 space-y-4 text-xs">
-                <div class="font-semibold text-zinc-400 uppercase tracking-wider">Exportar PDF Actual Hacia:</div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                    <button onclick="runConversion('Word (.docx)')" class="p-3 rounded-xl bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 flex items-center gap-2.5 text-left">
-                        <i class="fa-solid fa-file-word text-blue-400 text-xl"></i>
-                        <div><div class="font-semibold text-white">Word (.docx)</div><div class="text-[10px] text-zinc-500">Flujo de texto</div></div>
-                    </button>
-                    <button onclick="runConversion('Excel (.xlsx)')" class="p-3 rounded-xl bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 flex items-center gap-2.5 text-left">
-                        <i class="fa-solid fa-file-excel text-emerald-400 text-xl"></i>
-                        <div><div class="font-semibold text-white">Excel (.xlsx)</div><div class="text-[10px] text-zinc-500">Tablas detectadas</div></div>
-                    </button>
-                    <button onclick="runConversion('PowerPoint (.pptx)')" class="p-3 rounded-xl bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 flex items-center gap-2.5 text-left">
-                        <i class="fa-solid fa-file-powerpoint text-orange-400 text-xl"></i>
-                        <div><div class="font-semibold text-white">PowerPoint</div><div class="text-[10px] text-zinc-500">Diapositivas</div></div>
-                    </button>
-                    <button onclick="runConversion('Imagen (PNG / JPEG / TIFF / BMP)')" class="p-3 rounded-xl bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 flex items-center gap-2.5 text-left">
-                        <i class="fa-solid fa-file-image text-pink-400 text-xl"></i>
-                        <div><div class="font-semibold text-white">JPEG/PNG/TIFF</div><div class="text-[10px] text-zinc-500">300 DPI Raster</div></div>
-                    </button>
-                    <button onclick="runConversion('HTML5 Web & Texto (.txt)')" class="p-3 rounded-xl bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 flex items-center gap-2.5 text-left">
-                        <i class="fa-solid fa-code text-cyan-400 text-xl"></i>
-                        <div><div class="font-semibold text-white">HTML5 / TXT</div><div class="text-[10px] text-zinc-500">Semántico</div></div>
-                    </button>
-                    <button onclick="runConversion('Escáner Directo / Web a PDF')" class="p-3 rounded-xl bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 flex items-center gap-2.5 text-left">
-                        <i class="fa-solid fa-print text-purple-400 text-xl"></i>
-                        <div><div class="font-semibold text-white">Desde Escáner</div><div class="text-[10px] text-zinc-500">TWAIN / URL Web</div></div>
-                    </button>
-                </div>
-
-                <div class="font-semibold text-zinc-400 uppercase tracking-wider pt-2">Perfiles de Cumplimiento Normativo ISO:</div>
-                <div class="grid grid-cols-3 gap-2.5">
-                    <button onclick="runConversion('PDF/A-2b (Archivo ISO 19005)')" class="p-3 rounded-xl bg-indigo-950/30 hover:bg-indigo-950/60 border border-indigo-500/30 text-left">
-                        <div class="font-bold text-indigo-300">PDF/A (ISO 19005)</div>
-                        <div class="text-[10px] text-zinc-400">Archivo a largo plazo con fuentes incrustadas.</div>
-                    </button>
-                    <button onclick="runConversion('PDF/X-4 (Impresión ISO 15930)')" class="p-3 rounded-xl bg-amber-950/30 hover:bg-amber-950/60 border border-amber-500/30 text-left">
-                        <div class="font-bold text-amber-300">PDF/X (Prensa CMYK)</div>
-                        <div class="text-[10px] text-zinc-400">Impresión profesional con sangrado y perfiles ICC.</div>
-                    </button>
-                    <button onclick="runConversion('PDF/E (Ingeniería ISO 24517)')" class="p-3 rounded-xl bg-emerald-950/30 hover:bg-emerald-950/60 border border-emerald-500/30 text-left">
-                        <div class="font-bold text-emerald-300">PDF/E (Ingeniería)</div>
-                        <div class="text-[10px] text-zinc-400">Planos CAD, capas técnicas y objetos 3D.</div>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. MODAL DE AUTOMATIZACIÓN, ACTION WIZARD, JAVASCRIPT Y PREFLIGHT -->
-    <div id="modal-batch" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl">
-            <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-robot text-indigo-400"></i>
-                    <h3 class="font-bold text-white text-sm">Action Wizard, Procesamiento por Lotes, JS & Preflight</h3>
-                </div>
-                <button onclick="closeModal('modal-batch')" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="p-5 space-y-4 text-xs">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Action Wizard -->
-                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 space-y-2.5">
-                        <div class="font-semibold text-indigo-400"><i class="fa-solid fa-wand-sparkles mr-1"></i> Asistente de Acciones (Lotes)</div>
-                        <p class="text-[11px] text-zinc-400">Secuencia automatizada para carpetas de múltiples PDFs:</p>
-                        <div class="space-y-1.5 text-[11px]">
-                            <div class="p-2 rounded bg-zinc-900 border border-zinc-800 flex items-center gap-2">
-                                <span class="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">1</span>
-                                <span>Reconocimiento OCR + Enderezar escaneo</span>
-                            </div>
-                            <div class="p-2 rounded bg-zinc-900 border border-zinc-800 flex items-center gap-2">
-                                <span class="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">2</span>
-                                <span>Estampar Marca de Agua y Numerar páginas</span>
-                            </div>
-                            <div class="p-2 rounded bg-zinc-900 border border-zinc-800 flex items-center gap-2">
-                                <span class="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">3</span>
-                                <span>Sanitizar + Cifrar AES-256 + Guardar en PDF/A</span>
-                            </div>
-                        </div>
-                        <button onclick="runBatchActionWizard()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold">
-                            Ejecutar Secuencia por Lotes
-                        </button>
-                    </div>
-
-                    <!-- Consola JavaScript para PDF & Preflight -->
-                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 space-y-2.5 flex flex-col justify-between">
-                        <div class="space-y-2">
-                            <div class="font-semibold text-amber-400"><i class="fa-brands fa-js mr-1"></i> JavaScript Interno de Documento</div>
-                            <textarea id="pdf-js-script" rows="4" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2 font-mono text-[11px] text-emerald-300">app.alert("Documento verificado");
-this.flattenPages();
-this.addWatermarkFromText("APROBADO");</textarea>
-                            <button onclick="executePDFJavaScript()" class="w-full py-1.5 bg-zinc-800 hover:bg-zinc-700 text-amber-300 rounded-lg font-medium">
-                                Ejecutar Script en Documento
-                            </button>
-                        </div>
-
-                        <div class="border-t border-zinc-800 pt-2.5 flex items-center justify-between">
-                            <div>
-                                <div class="font-semibold text-emerald-400">Inspección Preflight</div>
-                                <div class="text-[10px] text-zinc-400">Verifica fuentes, tintas CMYK y sintaxis PDF</div>
-                            </div>
-                            <button onclick="runPreflightCheck()" class="px-3 py-1.5 bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 rounded-lg">Auditar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 5. MODAL CATÁLOGO INTERACTIVO DE LAS 65 FUNCIONES COMPLETAS -->
+    <!-- 5. MODAL CATÁLOGO DE HERRAMIENTAS -->
     <div id="modal-all-features" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-5xl w-full max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
             <div class="px-6 py-4 border-b border-zinc-800 flex items-center justify-between shrink-0">
                 <div>
                     <h3 class="font-bold text-white text-base flex items-center gap-2">
                         <i class="fa-solid fa-layer-group text-indigo-400"></i>
-                        Catálogo Directo de las 65 Funciones de la Suite
+                        Todas las herramientas
                     </h3>
-                    <p class="text-xs text-zinc-400">Haz clic en cualquier función para activarla inmediatamente sobre el documento actual.</p>
+                    <p class="text-xs text-zinc-400">Elige una herramienta para usarla sobre el documento abierto.</p>
                 </div>
                 <button onclick="closeModal('modal-all-features')" class="text-zinc-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -1057,7 +828,7 @@ this.addWatermarkFromText("APROBADO");</textarea>
             const manifest = {
                 name: "PascalPDF de PascalIA",
                 short_name: "PascalPDF",
-                description: "Suite PWA completa para firmar y editar documentos PDF con 11 módulos profesionales.",
+                description: "Abre, edita y firma tus PDF con firma electrónica, desde el navegador. Una herramienta de PascalIA.",
                 start_url: new URL("/PascalPDF_Studio/", location.href).href,
                 display: "standalone",
                 background_color: "#09090b",
@@ -1268,281 +1039,138 @@ this.addWatermarkFromText("APROBADO");</textarea>
                     {
                         id: 'obj-title',
                         type: 'text',
-                        x: 50, y: 70,
-                        text: 'CONTRATO MARCO DE SERVICIOS TECNOLÓGICOS Y FIRMA DIGITAL',
-                        fontSize: 18,
+                        x: 50, y: 80,
+                        text: 'Bienvenido a PascalPDF',
+                        fontSize: 24,
                         fontFamily: 'Inter, sans-serif',
-                        color: '#1e1b4b',
-                        align: 'left',
-                        bold: true,
-                        alt: 'Título principal del contrato'
+                        color: '#1F1F1F',
+                        bold: true
                     },
                     {
                         id: 'obj-body-1',
                         type: 'text',
-                        x: 50, y: 130,
-                        text: 'Conste por el presente documento el acuerdo celebrado entre LAS PARTES bajo cumplimiento del estándar ISO 32000-2 (PDF 2.0), cifrado criptográfico AES-256 y validez jurídica de firma electrónica certificada.\n\n1. OBJETO DEL CONTRATO: El proveedor entregará acceso completo a los módulos de edición, gestión de páginas, OCR multilingüe, accesibilidad WCAG y automatización por lotes.',
-                        fontSize: 13,
+                        x: 50, y: 140,
+                        text: '1. Abre tu PDF con el botón «Abrir PDF» o arrástralo a esta zona.\n\n2. Pulsa «Firmar» para dibujar, escribir o subir tu firma. Se guarda cifrada solo en este dispositivo.\n\n3. Usa «Editar texto» para corregir el texto del PDF, o agrega textos, fechas, sellos y notas.\n\n4. Pulsa «Guardar PDF». Si el documento tiene firmas, se agrega al final una hoja de evidencia.\n\nPascalPDF ofrece firma electrónica (Ley 527 de 1999 y Decreto 2364 de 2012). No es firma digital certificada: verifica que tu trámite la acepte.',
+                        fontSize: 14,
                         fontFamily: 'Inter, sans-serif',
-                        color: '#27272a',
-                        align: 'left',
+                        color: '#3E3B36',
                         width: 580
-                    },
-                    {
-                        id: 'obj-form-name',
-                        type: 'form-text',
-                        x: 50, y: 265,
-                        text: 'Razón Social / Cliente: Corporación Andina S.A.S.',
-                        fontSize: 12,
-                        fontFamily: 'Inter, sans-serif',
-                        color: '#1e40af'
-                    },
-                    {
-                        id: 'obj-form-check',
-                        type: 'form-checkbox',
-                        x: 50, y: 315,
-                        checked: true,
-                        text: 'Acepto las políticas de seguridad y cláusulas de confidencialidad'
-                    },
-                    {
-                        id: 'obj-stamp-1',
-                        type: 'stamp',
-                        x: 430, y: 255,
-                        text: 'APROBADO POR LEGAL',
-                        color: '#059669'
-                    },
-                    {
-                        id: 'obj-sig-1',
-                        type: 'signature',
-                        x: 50, y: 700,
-                        text: 'Alejandro Martínez',
-                        subtext: 'Firmado digitalmente con Certificado X.509 • Sello TSA: 2026-10-28',
-                        fontFamily: "'Caveat', cursive",
-                        fontSize: 30,
-                        color: '#1d4ed8'
-                    }
-                ]
-            },
-            {
-                id: 'page-2',
-                rotation: 0,
-                background: '#ffffff',
-                cropped: false,
-                objects: [
-                    {
-                        id: 'obj-p2-title',
-                        type: 'text',
-                        x: 50, y: 70,
-                        text: 'ANEXO TÉCNICO: REPORTE DE FORMULARIOS Y REVISIÓN',
-                        fontSize: 16,
-                        fontFamily: 'Inter, sans-serif',
-                        color: '#18181b',
-                        bold: true
-                    },
-                    {
-                        id: 'obj-p2-body',
-                        type: 'text',
-                        x: 50, y: 120,
-                        text: 'Esta página contiene campos interactivos exportables a FDF, XFDF y CSV, además de áreas listas para Redacción permanente de datos sensibles.',
-                        fontSize: 13,
-                        fontFamily: 'Inter, sans-serif',
-                        color: '#3f3f46',
-                        width: 560
-                    }
-                ]
-            },
-            {
-                id: 'page-3',
-                rotation: 0,
-                background: '#ffffff',
-                cropped: false,
-                objects: [
-                    {
-                        id: 'obj-p3-title',
-                        type: 'text',
-                        x: 50, y: 70,
-                        text: 'DOCUMENTO ESCANEADO — CAPA OCR MULTILINGÜE',
-                        fontSize: 16,
-                        fontFamily: 'Inter, sans-serif',
-                        color: '#18181b',
-                        bold: true
-                    },
-                    {
-                        id: 'obj-p3-ocr',
-                        type: 'text',
-                        x: 50, y: 125,
-                        text: 'Texto reconocido ópticamente (OCR Español / Inglés / Portugués). Puedes seleccionar cualquier bloque para corregir caracteres reconocidos incorrectamente o activar la capa oculta.',
-                        fontSize: 13,
-                        fontFamily: 'Georgia, serif',
-                        color: '#27272a',
-                        width: 560
-                    }
-                ]
-            },
-            {
-                id: 'page-4',
-                rotation: 0,
-                background: '#ffffff',
-                cropped: false,
-                objects: [
-                    {
-                        id: 'obj-p4-title',
-                        type: 'text',
-                        x: 50, y: 70,
-                        text: 'HOJA DE CERTIFICACIONES Y FIRMAS ELECTRÓNICAS',
-                        fontSize: 16,
-                        fontFamily: 'Inter, sans-serif',
-                        color: '#18181b',
-                        bold: true
                     }
                 ]
             }
         ];
 
-        // Marcadores y Comentarios iniciales
-        let bookmarks = [
-            { title: '1. Portada y Objeto del Contrato', page: 0 },
-            { title: '2. Anexo de Formularios Interactivos', page: 1 },
-            { title: '3. Capa de Reconocimiento OCR', page: 2 },
-            { title: '4. Hoja de Firmas Digitales', page: 3 }
-        ];
-
-        let commentsList = [
-            { id: 'c1', author: 'Ana López (Legal)', time: 'Hace 10 min', text: 'Verificar que el cifrado sea AES-256 antes de distribuir.', resolved: false, page: 0 },
-            { id: 'c2', author: 'Marco Ruiz (Auditoría)', time: 'Hace 4 min', text: 'Sello de tiempo TSA validado correctamente.', resolved: true, page: 0 }
-        ];
+        let bookmarks = [];
+        let commentsList = [];
 
         // ============================================================================
-        // 3. DEFINICIÓN COMPLETA DE LAS 11 CATEGORÍAS Y SUS 65 HERRAMIENTAS
+        // 3. CATÁLOGO DE HERRAMIENTAS
         // ============================================================================
         const SUITE_CATEGORIES = {
             sign: {
-                title: "Firmas Digitales y Electrónicas",
+                title: "Firmar",
+                icon: "fa-pen-nib",
                 tools: [
-                    { label: "Firmar (Trazo/Texto/Img)", icon: "fa-signature", action: () => openModal('modal-signature') },
-                    { label: "Editar Texto del PDF", icon: "fa-i-cursor", action: () => toggleTextEditMode() },
-                    { label: "Agregar Texto", icon: "fa-font", action: () => addTextBlock() },
-                    { label: "Firma Digital Certificada", icon: "fa-certificate", action: () => openModal('modal-signature') },
-                    { label: "Solicitar Firmas", icon: "fa-paper-plane", action: () => { switchRightTab('certs'); document.getElementById('signer-email-input').focus(); } },
-                    { label: "Validar Firmas", icon: "fa-shield-check", action: () => validateAllSignatures() },
-                    { label: "Añadir Sello de Tiempo TSA", icon: "fa-clock", action: () => addTimestampStamp() }
+                    { label: "Firmar (dibujo, texto o imagen)", icon: "fa-signature", action: () => openSignatureModal() },
+                    { label: "Editar texto del PDF", icon: "fa-i-cursor", action: () => toggleTextEditMode() },
+                    { label: "Agregar texto", icon: "fa-font", action: () => addTextBlock() },
+                    { label: "Fecha y hora", icon: "fa-clock", action: () => addTimestampStamp() },
+                    { label: "Mis firmas y evidencia", icon: "fa-folder-open", action: () => { switchRightTab('certs'); if (isMobileTouchMode) openMobileDrawer('right'); } }
                 ]
             },
             edit: {
-                title: "Edición de Contenido",
+                title: "Editar contenido",
+                icon: "fa-sliders",
                 tools: [
-                    { label: "Agregar Texto", icon: "fa-font", action: () => addTextBlock() },
-                    { label: "Insertar Imagen", icon: "fa-image", action: () => addImageBlock() },
-                    { label: "Editar Texto del PDF", icon: "fa-i-cursor", action: () => toggleTextEditMode() },
-                    { label: "Mover / Editar Objetos", icon: "fa-up-down-left-right", action: () => showToast("Arrastra cualquier bloque para moverlo. Doble clic sobre un texto para editarlo.", "indigo") },
-                    { label: "Buscar y Reemplazar", icon: "fa-magnifying-glass", action: () => { switchRightTab('props'); document.getElementById('find-input').focus(); } },
-                    { label: "Corregir Ortografía", icon: "fa-spell-check", action: () => runSpellCheck() },
-                    { label: "Encabezado y Pie", icon: "fa-heading", action: () => editHeaderFooterPrompt() },
-                    { label: "Marca de Agua", icon: "fa-stamp", action: () => { switchRightTab('props'); document.getElementById('watermark-input').focus(); } },
-                    { label: "Color de Fondo", icon: "fa-fill-drip", action: () => setPageBackground('#fefce8') }
+                    { label: "Editar texto del PDF", icon: "fa-i-cursor", action: () => toggleTextEditMode() },
+                    { label: "Agregar texto", icon: "fa-font", action: () => addTextBlock() },
+                    { label: "Insertar imagen", icon: "fa-image", action: () => addImageBlock() },
+                    { label: "Mover elementos", icon: "fa-up-down-left-right", action: () => showToast("Arrastra cualquier elemento para moverlo. Doble clic sobre un texto para editarlo.", "indigo") },
+                    { label: "Buscar y reemplazar", icon: "fa-magnifying-glass", action: () => { switchRightTab('props'); document.getElementById('find-input').focus(); } },
+                    { label: "Encabezado y pie", icon: "fa-heading", action: () => editHeaderFooterPrompt() },
+                    { label: "Marca de agua", icon: "fa-stamp", action: () => { switchRightTab('props'); document.getElementById('watermark-input').focus(); } },
+                    { label: "Color de fondo", icon: "fa-fill-drip", action: () => setPageBackground('#fefce8') }
                 ]
             },
             pages: {
-                title: "Gestión de Páginas",
+                title: "Páginas",
+                icon: "fa-copy",
                 tools: [
-                    { label: "Rotar Página 90°", icon: "fa-rotate-right", action: () => rotateCurrentPage(90) },
-                    { label: "Insertar Página", icon: "fa-file-circle-plus", action: () => insertBlankPage() },
-                    { label: "Duplicar Página", icon: "fa-clone", action: () => duplicateCurrentPage() },
-                    { label: "Extraer Página", icon: "fa-file-export", action: () => extractCurrentPage() },
+                    { label: "Rotar 90°", icon: "fa-rotate-right", action: () => rotateCurrentPage(90) },
+                    { label: "Insertar página en blanco", icon: "fa-file-circle-plus", action: () => insertBlankPage() },
+                    { label: "Duplicar página", icon: "fa-clone", action: () => duplicateCurrentPage() },
+                    { label: "Eliminar página", icon: "fa-trash-can", action: () => deleteCurrentPage() },
+                    { label: "Extraer página", icon: "fa-file-export", action: () => extractCurrentPage() },
                     { label: "Dividir PDF", icon: "fa-scissors", action: () => splitPDFDocument() },
-                    { label: "Combinar Archivos", icon: "fa-object-group", action: () => combineMultipleFiles() },
-                    { label: "Recortar (CropBox)", icon: "fa-crop-simple", action: () => toggleCropPage() },
-                    { label: "Numerar Páginas", icon: "fa-list-ol", action: () => togglePageNumbers() }
+                    { label: "Unir otros PDF", icon: "fa-object-group", action: () => combineMultipleFiles() },
+                    { label: "Numerar páginas", icon: "fa-list-ol", action: () => togglePageNumbers() }
                 ]
             },
             forms: {
-                title: "Formularios Interactivos",
+                title: "Formularios",
+                icon: "fa-square-check",
                 tools: [
-                    { label: "Campo de Texto", icon: "fa-i-cursor", action: () => addFormField('form-text') },
-                    { label: "Casilla Verificación", icon: "fa-square-check", action: () => addFormField('form-checkbox') },
-                    { label: "Botón de Opción", icon: "fa-circle-dot", action: () => addFormField('form-radio') },
-                    { label: "Lista Desplegable", icon: "fa-caret-down", action: () => addFormField('form-select') },
-                    { label: "Reconocimiento Auto Campos (OCR)", icon: "fa-wand-magic-sparkles", action: () => autoDetectFormFields() },
-                    { label: "Distribuir Formulario", icon: "fa-share-nodes", action: () => distributeFormLink() },
-                    { label: "Exportar FDF / XFDF / CSV", icon: "fa-file-csv", action: () => exportFormDataCSV() }
+                    { label: "Campo de texto", icon: "fa-i-cursor", action: () => addFormField('form-text') },
+                    { label: "Casilla de verificación", icon: "fa-square-check", action: () => addFormField('form-checkbox') },
+                    { label: "Opción única", icon: "fa-circle-dot", action: () => addFormField('form-radio') },
+                    { label: "Lista desplegable", icon: "fa-caret-down", action: () => addFormField('form-select') },
+                    { label: "Exportar respuestas (CSV)", icon: "fa-file-csv", action: () => exportFormDataCSV() }
                 ]
             },
             review: {
-                title: "Comentarios y Revisión",
+                title: "Revisar",
+                icon: "fa-comments",
                 tools: [
-                    { label: "Resaltar Texto", icon: "fa-highlighter", action: () => addAnnotationMarkup('highlight') },
-                    { label: "Subrayar / Tachar", icon: "fa-strikethrough", action: () => addAnnotationMarkup('strike') },
-                    { label: "Nota Adhesiva", icon: "fa-note-sticky", action: () => addStickyNote() },
-                    { label: "Sellos (Aprobado/Confidencial)", icon: "fa-stamp", action: () => addPredefinedStamp() },
-                    { label: "Dibujo Libre / Flechas", icon: "fa-pen-fancy", action: () => toggleFreehandDrawing() },
-                    { label: "Cuadro Superpuesto", icon: "fa-square-plus", action: () => addCalloutBox() },
-                    { label: "Revisión Compartida", icon: "fa-users", action: () => switchRightTab('comments') },
-                    { label: "Comparar 2 Versiones PDF", icon: "fa-code-compare", action: () => compareTwoDocuments() }
+                    { label: "Resaltar", icon: "fa-highlighter", action: () => addAnnotationMarkup('highlight') },
+                    { label: "Tachar", icon: "fa-strikethrough", action: () => addAnnotationMarkup('strike') },
+                    { label: "Nota adhesiva", icon: "fa-note-sticky", action: () => addStickyNote() },
+                    { label: "Sello", icon: "fa-stamp", action: () => addPredefinedStamp() },
+                    { label: "Dibujo libre", icon: "fa-pen-fancy", action: () => toggleFreehandDrawing() },
+                    { label: "Cuadro de texto destacado", icon: "fa-square-plus", action: () => addCalloutBox() },
+                    { label: "Comentarios", icon: "fa-comment-dots", action: () => switchRightTab('comments') }
                 ]
             },
-            security: {
-                title: "Seguridad y Permisos",
+            protect: {
+                title: "Tapar información",
+                icon: "fa-eraser",
                 tools: [
-                    { label: "Proteger con Contraseña", icon: "fa-key", action: () => openModal('modal-security') },
-                    { label: "Cifrado AES 128/256 bits", icon: "fa-lock", action: () => openModal('modal-security') },
-                    { label: "Redacción (Eliminar Sensible)", icon: "fa-eraser", action: () => addRedactionBlock() },
-                    { label: "Aplicar Redacciones", icon: "fa-fire", action: () => commitPermanentRedactions() },
-                    { label: "Sanitizar Metadatos y Scripts", icon: "fa-broom", action: () => sanitizeDocument() },
-                    { label: "Certificados y Políticas", icon: "fa-file-shield", action: () => openModal('modal-security') }
+                    { label: "Marcar área para tapar", icon: "fa-eraser", action: () => addRedactionBlock() },
+                    { label: "Aplicar tapado", icon: "fa-square", action: () => commitPermanentRedactions() }
                 ]
             },
-            convert: {
-                title: "Conversión de Formatos",
+            export: {
+                title: "Exportar",
+                icon: "fa-file-arrow-down",
                 tools: [
-                    { label: "PDF a Word (.docx)", icon: "fa-file-word", action: () => runConversion('Word (.docx)') },
-                    { label: "PDF a Excel (.xlsx)", icon: "fa-file-excel", action: () => runConversion('Excel (.xlsx)') },
-                    { label: "PDF a PowerPoint (.pptx)", icon: "fa-file-powerpoint", action: () => runConversion('PowerPoint (.pptx)') },
-                    { label: "PDF a Imagen (PNG/JPG/TIFF)", icon: "fa-file-image", action: () => exportPageAsPNG() },
-                    { label: "PDF a HTML / TXT", icon: "fa-file-code", action: () => runConversion('HTML5 / Texto plano') },
-                    { label: "Office / Imágenes / Web → PDF", icon: "fa-file-import", action: () => openModal('modal-convert') },
-                    { label: "Estándares PDF/A, PDF/X, PDF/E", icon: "fa-building-columns", action: () => openModal('modal-convert') }
-                ]
-            },
-            ocr: {
-                title: "OCR (Reconocimiento Óptico)",
-                tools: [
-                    { label: "Hacer PDF Buscable (OCR)", icon: "fa-eye", action: () => runOCREngine() },
-                    { label: "Corregir Texto OCR", icon: "fa-pen-to-square", action: () => correctOCRTextMode() },
-                    { label: "Idioma: ES / EN / FR / PT / DE", icon: "fa-language", action: () => changeOCRLanguage() },
-                    { label: "Ver Capa de Texto Oculta", icon: "fa-layer-group", action: () => toggleHiddenOCRLayer() }
+                    { label: "Guardar PDF", icon: "fa-file-pdf", action: () => exportAndDownloadPDF() },
+                    { label: "Página como imagen (PNG)", icon: "fa-file-image", action: () => exportPageAsPNG() }
                 ]
             },
             nav: {
-                title: "Índices, Marcadores y Navegación",
+                title: "Marcadores y enlaces",
+                icon: "fa-bookmark",
                 tools: [
-                    { label: "Nuevo Marcador (Bookmark)", icon: "fa-bookmark", action: () => { switchLeftTab('bookmarks'); document.getElementById('new-bookmark-input').focus(); } },
-                    { label: "Crear Vínculo / URL", icon: "fa-link", action: () => addHyperlinkToSelected() },
-                    { label: "Destinos con Nombre", icon: "fa-anchor", action: () => switchLeftTab('bookmarks') },
-                    { label: "Índice Full-Text", icon: "fa-magnifying-glass-chart", action: () => rebuildFullTextIndex() }
-                ]
-            },
-            a11y: {
-                title: "Accesibilidad PDF/UA & WCAG",
-                tools: [
-                    { label: "Verificar Accesibilidad (WCAG 2.2)", icon: "fa-universal-access", action: () => runAccessibilityCheck() },
-                    { label: "Editar Etiquetas (Tags)", icon: "fa-tags", action: () => switchLeftTab('a11y-tree') },
-                    { label: "Orden de Lectura", icon: "fa-arrow-down-1-9", action: () => showReadingOrderBadges() },
-                    { label: "Texto Alternativo Imágenes", icon: "fa-closed-captioning", action: () => { switchRightTab('props'); document.getElementById('prop-alt-text').focus(); } }
-                ]
-            },
-            batch: {
-                title: "Automatización y Lotes",
-                tools: [
-                    { label: "Action Wizard (Secuencias)", icon: "fa-wand-magic-sparkles", action: () => openModal('modal-batch') },
-                    { label: "Consola JavaScript PDF", icon: "fa-code", action: () => openModal('modal-batch') },
-                    { label: "Procesamiento por Lotes", icon: "fa-folder-tree", action: () => openModal('modal-batch') },
-                    { label: "Preflight (Calidad Impresión)", icon: "fa-check-double", action: () => runPreflightCheck() }
+                    { label: "Nuevo marcador", icon: "fa-bookmark", action: () => { switchLeftTab('bookmarks'); document.getElementById('new-bookmark-input').focus(); } },
+                    { label: "Enlace en un texto", icon: "fa-link", action: () => addHyperlinkToSelected() }
                 ]
             }
         };
 
+        function renderCategoryTabs() {
+            const box = document.getElementById('module-tabs-container');
+            box.innerHTML = '';
+            Object.entries(SUITE_CATEGORIES).forEach(([key, cat]) => {
+                const b = document.createElement('button');
+                b.dataset.cat = key;
+                b.className = 'cat-tab';
+                b.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ${cat.title}`;
+                b.onclick = () => selectCategory(key);
+                box.appendChild(b);
+            });
+        }
+
         // ============================================================================
-        // 4. CAMBIO DE MODO: FIRMA RÁPIDA vs EXPANSIÓN SUITE PRO
+        // 4. CAMBIO DE MODO: FIRMA RÁPIDA vs TODAS LAS HERRAMIENTAS
         // ============================================================================
         function switchAppMode(mode) {
             appMode = mode;
@@ -1561,12 +1189,13 @@ this.addWatermarkFromText("APROBADO");</textarea>
                 btnSign.className = "whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 text-zinc-400 hover:text-white";
                 ribbon.classList.remove('hidden');
                 selectCategory(activeCategory);
-                showToast("Expansión Suite Pro activada: 11 módulos y 65 funciones desbloqueadas.", "purple");
+                showToast("Todas las herramientas a la vista.", "indigo");
             }
         }
 
         function selectCategory(catKey) {
             activeCategory = catKey;
+            if (!document.querySelector('.cat-tab')) renderCategoryTabs();
             document.querySelectorAll('.cat-tab').forEach(btn => {
                 if (btn.dataset.cat === catKey) {
                     btn.className = "cat-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 bg-indigo-600/20 text-indigo-300 border border-indigo-500/30";
@@ -1775,6 +1404,7 @@ this.addWatermarkFromText("APROBADO");</textarea>
 
             renderThumbnails();
             renderObjectsLayerList();
+            renderDocSignatures();
         }
 
         // Lógica Drag & Drop de Objetos en la página
@@ -1846,6 +1476,25 @@ this.addWatermarkFromText("APROBADO");</textarea>
             } else {
                 showToast("Doble clic sobre cualquier texto de la página para editarlo.", "amber");
             }
+        }
+
+        // Reemplaza una línea de texto original del PDF por un bloque editable (tapando el original)
+        function replaceTextItem(page, ti, newText) {
+            ti.used = true;
+            const obj = {
+                id: 'ptx-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+                type: 'text',
+                tight: true,
+                x: ti.x, y: ti.y - (ti.size * 0.15) / 2,
+                text: newText,
+                fontSize: Math.round(ti.size * 10) / 10,
+                fontFamily: ti.family,
+                bold: ti.bold,
+                color: '#000000',
+                cover: { x: ti.x - 1, y: ti.y - 1, w: ti.w + 2, h: ti.h + 2 }
+            };
+            page.objects.push(obj);
+            return obj;
         }
 
         // Convierte una línea de texto original del PDF en un bloque editable que la reemplaza
@@ -2096,11 +1745,6 @@ this.addWatermarkFromText("APROBADO");</textarea>
             }
         }
 
-        function toggleCropPage() {
-            pdfPages[currentPageIndex].cropped = !pdfPages[currentPageIndex].cropped;
-            renderCurrentPage();
-            showToast(pdfPages[currentPageIndex].cropped ? "Área de recorte (CropBox) ajustada." : "Tamaño de página restaurado.", "indigo");
-        }
 
         function togglePageNumbers() {
             showPageNumbering = !showPageNumbering;
@@ -2109,7 +1753,7 @@ this.addWatermarkFromText("APROBADO");</textarea>
         }
 
         // ============================================================================
-        // 7. FUNCIONES DE EDICIÓN, FORMULARIOS, COMENTARIOS, OCR Y SEGURIDAD
+        // 7. FUNCIONES DE EDICIÓN, FORMULARIOS, COMENTARIOS Y TAPADO
         // ============================================================================
         function addTextBlock() {
             const newObj = {
@@ -2162,18 +1806,29 @@ this.addWatermarkFromText("APROBADO");</textarea>
                     }
                 });
             });
+            // También en el texto original de los PDF abiertos: la línea se reemplaza por un texto editable
+            pdfPages.forEach(p => {
+                (p.textItems || []).forEach(ti => {
+                    if (ti.used || !ti.text.includes(findStr)) return;
+                    count += ti.text.split(findStr).length - 1;
+                    replaceTextItem(p, ti, ti.text.split(findStr).join(repStr));
+                });
+            });
             renderCurrentPage();
-            showToast(`Se reemplazaron ${count} coincidencias en todo el PDF.`, "emerald");
+            showToast(count ? `Se reemplazaron ${count} ${count === 1 ? 'coincidencia' : 'coincidencias'} en el documento.` : "No se encontró ese texto.", count ? "emerald" : "amber");
         }
 
-        function runSpellCheck() {
-            showToast("Revisión ortográfica completada: 0 errores ortográficos detectados (Diccionario ES/EN).", "emerald");
-        }
 
         function editHeaderFooterPrompt() {
-            document.getElementById('header-left-text').textContent = "ENCABEZADO CORPORATIVO ACTUALIZADO — ISO 32000";
-            document.getElementById('footer-left-text').textContent = "Pie de página verificado con firma digital";
-            showToast("Encabezado y pie de página actualizados en todas las páginas.", "indigo");
+            const h = document.getElementById('header-left-text');
+            const f = document.getElementById('footer-left-text');
+            const header = prompt('Texto del encabezado (en páginas nuevas; déjalo vacío para quitarlo):', h.textContent);
+            if (header === null) return;
+            const footer = prompt('Texto del pie de página:', f.textContent);
+            if (footer === null) return;
+            h.textContent = header.trim();
+            f.textContent = footer.trim();
+            showToast("Encabezado y pie actualizados en las páginas creadas en PascalPDF.", "indigo");
         }
 
         function applyWatermark() {
@@ -2210,15 +1865,7 @@ this.addWatermarkFromText("APROBADO");</textarea>
             showToast("Campo de formulario interactivo añadido.", "indigo");
         }
 
-        function autoDetectFormFields() {
-            addFormField('form-text');
-            addFormField('form-checkbox');
-            showToast("OCR de formularios: 2 campos interactivos detectados y generados automáticamente.", "emerald");
-        }
 
-        function distributeFormLink() {
-            showToast("Enlace web de distribución generado y copiado para recopilar respuestas.", "emerald");
-        }
 
         function exportFormDataCSV() {
             const q = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
@@ -2262,7 +1909,7 @@ this.addWatermarkFromText("APROBADO");</textarea>
                 { text: 'APROBADO', color: '#059669' },
                 { text: 'CONFIDENCIAL', color: '#dc2626' },
                 { text: 'BORRADOR', color: '#d97706' },
-                { text: 'FIRMADO DIGITALMENTE', color: '#4f46e5' }
+                { text: 'RECIBIDO', color: '#4f46e5' }
             ];
             const pick = stamps[Math.floor(Math.random() * stamps.length)];
             pdfPages[currentPageIndex].objects.push({
@@ -2289,10 +1936,6 @@ this.addWatermarkFromText("APROBADO");</textarea>
             renderCurrentPage();
         }
 
-        function compareTwoDocuments() {
-            showStatusBanner("Modo Comparación de Versiones activo: 2 diferencias detectadas entre v1.0 y v2.0 (Resaltadas).");
-            showToast("Comparación entre dos versiones del PDF completada.", "indigo");
-        }
 
         // Dibujo a mano alzada en el canvas superpuesto
         let isDrawingCanvas = false;
@@ -2367,7 +2010,7 @@ this.addWatermarkFromText("APROBADO");</textarea>
                 applied: false
             });
             renderCurrentPage();
-            showToast("Área de Redacción marcada. Pulsa 'Aplicar Redacciones' para eliminar permanentemente.", "rose");
+            showToast("Área marcada. Ubícala sobre lo que quieres tapar y pulsa «Aplicar tapado».", "rose");
         }
 
         function commitPermanentRedactions() {
@@ -2381,49 +2024,15 @@ this.addWatermarkFromText("APROBADO");</textarea>
                 });
             });
             renderCurrentPage();
-            showToast(`${count} áreas sensibles eliminadas permanentemente (Redacción irreversible).`, "rose");
+            showToast(`${count} área(s) tapadas en negro. Ojo: en un PDF abierto, el texto que queda debajo puede seguir dentro del archivo.`, "amber");
         }
 
-        function sanitizeDocument() {
-            closeModal('modal-security');
-            showToast("Documento sanitizado: Metadatos XMP, scripts ocultos y capas residuales eliminados.", "emerald");
-        }
 
-        function applySecuritySettings() {
-            const algo = document.getElementById('sec-cipher-algo').value;
-            closeModal('modal-security');
-            showToast(`Configuración ${algo} guardada. Nota: el cifrado con contraseña no está disponible en la versión de navegador; el PDF se exporta sin contraseña.`, "amber");
-        }
 
-        // OCR, Accesibilidad y Automatización
-        function runOCREngine() {
-            const wrapper = document.getElementById('pdf-page-wrapper');
-            wrapper.classList.add('ocr-scanning');
-            showStatusBanner("Ejecutando motor OCR multilingüe y generando capa de texto seleccionable...");
-            setTimeout(() => {
-                wrapper.classList.remove('ocr-scanning');
-                showStatusBanner("OCR Completado: 100% del documento ahora es texto buscable e indexado.");
-                showToast("Reconocimiento Óptico de Caracteres (OCR) finalizado con éxito.", "emerald");
-            }, 1200);
-        }
+        // Marcadores y enlaces
 
-        function correctOCRTextMode() {
-            if (pdfPages[currentPageIndex].objects[0]) {
-                selectObject(pdfPages[currentPageIndex].objects[0].id);
-                switchRightTab('props');
-                document.getElementById('prop-text-content').focus();
-                showToast("Selecciona cualquier bloque OCR para corregir palabras en el inspector.", "indigo");
-            }
-        }
 
-        function changeOCRLanguage() {
-            showToast("Idiomas de diccionario OCR activos: Español, Inglés, Portugués, Francés y Alemán.", "indigo");
-        }
 
-        function toggleHiddenOCRLayer() {
-            showStatusBanner("Visualizando Capa de Texto Oculta OCR debajo del raster escaneado.");
-            showToast("Capa de texto transparente OCR resaltada.", "purple");
-        }
 
         function addBookmark() {
             const input = document.getElementById('new-bookmark-input');
@@ -2455,45 +2064,249 @@ this.addWatermarkFromText("APROBADO");</textarea>
             showToast("Ingresa la URL externa o destino #ancla en el panel derecho.", "indigo");
         }
 
-        function rebuildFullTextIndex() {
-            showToast("Índice de texto completo (.PDX) generado en 42 ms para búsqueda instantánea.", "emerald");
-        }
 
-        function runAccessibilityCheck() {
-            showStatusBanner("Informe Accesibilidad PDF/UA & WCAG 2.2 AA: 100% Cumplimiento (Etiquetas, contraste, orden de lectura y Alt-Text verificados).");
-            showToast("Auditoría de Accesibilidad PDF/UA aprobada sin errores.", "emerald");
-        }
 
-        function showReadingOrderBadges() {
-            pdfPages[currentPageIndex].objects.forEach(o => o.showOrderBadge = !o.showOrderBadge);
-            renderCurrentPage();
-            showToast("Orden de lectura visual para lectores de pantalla conmutado.", "emerald");
-        }
 
-        function runBatchActionWizard() {
-            closeModal('modal-batch');
-            applyWatermark();
-            showToast("Action Wizard completado: 4 pasos automatizados aplicados al lote.", "emerald");
-        }
 
-        function executePDFJavaScript() {
-            closeModal('modal-batch');
-            showToast("Script JavaScript interno del PDF ejecutado correctamente.", "amber");
-        }
 
-        function runPreflightCheck() {
-            closeModal('modal-batch');
-            showStatusBanner("Preflight ISO 15930 (PDF/X-4): Fuentes 100% incrustadas, sin transparencias conflictivas, resolución óptima.");
-            showToast("Inspección Preflight superada sin advertencias.", "emerald");
-        }
 
         // ============================================================================
-        // 8. SISTEMA DE FIRMA ELECTRÓNICA Y CRIPTOGRÁFICA (PAD DE DIBUJO + TIPOGRAFÍA)
+        // 8. FIRMA ELECTRÓNICA (TRAZO, TEXTO, IMAGEN) GUARDADA EN EL DISPOSITIVO
         // ============================================================================
         let currentSigTab = 'draw';
         let sigPadDrawing = false;
         let sigPadHasInk = false;
         let uploadedSignature = null; // { src, w, h }
+        let mySignatures = [];        // firmas descifradas en memoria: { id, signer, kind, src, w, h, text, createdAt }
+
+        // ---------- Almacén de firmas: IndexedDB + AES-GCM con clave no exportable ----------
+        const SigStore = (() => {
+            let dbPromise = null;
+            const open = () => dbPromise || (dbPromise = new Promise((resolve, reject) => {
+                const r = indexedDB.open('pascalpdf', 1);
+                r.onupgradeneeded = () => {
+                    r.result.createObjectStore('signatures', { keyPath: 'id' });
+                    r.result.createObjectStore('keys');
+                };
+                r.onsuccess = () => resolve(r.result);
+                r.onerror = () => reject(r.error);
+            }));
+            const req = (store, mode, op) => open().then(db => new Promise((resolve, reject) => {
+                const rq = op(db.transaction(store, mode).objectStore(store));
+                rq.onsuccess = () => resolve(rq.result);
+                rq.onerror = () => reject(rq.error);
+            }));
+            const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+            const unb64 = (str) => Uint8Array.from(atob(str), c => c.charCodeAt(0));
+
+            async function deviceKey() {
+                let key = await req('keys', 'readonly', st => st.get('main'));
+                if (!key) {
+                    key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+                    await req('keys', 'readwrite', st => st.put(key, 'main'));
+                }
+                return key;
+            }
+            async function seal(key, data) {
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(data)));
+                return { iv: b64(iv), ct: b64(ct) };
+            }
+            async function unseal(key, rec) {
+                const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(rec.iv) }, key, unb64(rec.ct));
+                return JSON.parse(new TextDecoder().decode(pt));
+            }
+            async function passKey(pass, salt) {
+                const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+                return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 310000, hash: 'SHA-256' }, base,
+                    { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+            }
+            return {
+                async list() {
+                    const key = await deviceKey();
+                    const rows = await req('signatures', 'readonly', st => st.getAll());
+                    const out = [];
+                    for (const r of rows) {
+                        try { out.push(await unseal(key, r)); } catch (e) { console.warn('Firma ilegible', r.id); }
+                    }
+                    return out.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+                },
+                async save(sig) {
+                    const key = await deviceKey();
+                    const sealed = await seal(key, sig);
+                    await req('signatures', 'readwrite', st => st.put({ id: sig.id, ...sealed }));
+                },
+                async remove(id) { await req('signatures', 'readwrite', st => st.delete(id)); },
+                async exportBackup(sigs, pass) {
+                    const salt = crypto.getRandomValues(new Uint8Array(16));
+                    const sealed = await seal(await passKey(pass, salt), { signatures: sigs });
+                    return JSON.stringify({ format: 'pascalfirma', version: 1, kdf: 'PBKDF2-SHA256-310000', salt: b64(salt), ...sealed });
+                },
+                async readBackup(text, pass) {
+                    const data = JSON.parse(text);
+                    if (data.format !== 'pascalfirma') throw new Error('formato');
+                    const plain = await unseal(await passKey(pass, unb64(data.salt)), data);
+                    return plain.signatures || [];
+                }
+            };
+        })();
+
+        async function loadMySignatures() {
+            try {
+                mySignatures = await SigStore.list();
+            } catch (e) {
+                console.warn(e);
+                mySignatures = mySignatures.filter(s => s.sessionOnly);
+            }
+            renderSignaturePanels();
+        }
+
+        function signaturePreviewHTML(sig) {
+            return sig.kind === 'text'
+                ? `<span style="font-family:'Caveat',cursive;font-size:26px;color:#1d4ed8;line-height:1">${escapeHtml(sig.text)}</span>`
+                : `<img src="${sig.src}" alt="" style="max-height:44px;max-width:100%;object-fit:contain">`;
+        }
+
+        function renderSignaturePanels() {
+            const grid = document.getElementById('saved-signatures-grid');
+            const block = document.getElementById('saved-signatures-block');
+            if (grid) {
+                grid.innerHTML = '';
+                block.classList.toggle('hidden', mySignatures.length === 0);
+                mySignatures.forEach(sig => {
+                    const card = document.createElement('div');
+                    card.className = 'relative group';
+                    card.innerHTML = `
+                        <button class="w-full h-[84px] rounded-xl bg-white border-2 border-transparent hover:border-amber-400 flex flex-col items-center justify-center gap-1 px-2" title="Firmar con esta firma">
+                            ${signaturePreviewHTML(sig)}
+                            <span class="text-[10px] text-zinc-500 truncate max-w-full">${escapeHtml(sig.signer)}${sig.sessionOnly ? ' · solo esta sesión' : ''}</span>
+                        </button>
+                        <button class="absolute top-1 right-1 w-6 h-6 rounded-full bg-zinc-900/80 text-zinc-200 text-[11px] opacity-80 hover:opacity-100" title="Borrar esta firma del dispositivo" aria-label="Borrar firma"><i class="fa-solid fa-xmark"></i></button>`;
+                    const [useBtn, delBtn] = card.querySelectorAll('button');
+                    useBtn.onclick = () => {
+                        stampSignature(sig, document.getElementById('chk-sign-date').checked);
+                        closeModal('modal-signature');
+                    };
+                    delBtn.onclick = async () => {
+                        if (!confirm(`¿Borrar la firma de ${sig.signer} de este dispositivo? No se puede deshacer si no tienes copia de respaldo.`)) return;
+                        try { await SigStore.remove(sig.id); } catch (e) { /* firma solo de sesión */ }
+                        mySignatures = mySignatures.filter(x => x.id !== sig.id);
+                        renderSignaturePanels();
+                        showToast("Firma borrada de este dispositivo.", "rose");
+                    };
+                    grid.appendChild(card);
+                });
+            }
+            const count = document.getElementById('my-signatures-count');
+            if (count) count.textContent = mySignatures.length === 1 ? '1 firma' : `${mySignatures.length} firmas`;
+            renderDocSignatures();
+        }
+
+        // Firmas puestas en el documento (todas las páginas)
+        function documentSignatures() {
+            const out = [];
+            pdfPages.forEach((p, i) => p.objects.forEach(o => { if (o.type === 'signature') out.push({ obj: o, page: i }); }));
+            return out;
+        }
+
+        function renderDocSignatures() {
+            const list = document.getElementById('doc-signatures-list');
+            if (!list) return;
+            const sigs = documentSignatures();
+            list.innerHTML = sigs.length ? '' : '<p class="text-[11px] text-zinc-500">Aún no hay firmas en este documento.</p>';
+            sigs.forEach(({ obj, page }) => {
+                const row = document.createElement('button');
+                row.className = 'w-full text-left p-2 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-zinc-600 flex items-center justify-between gap-2';
+                row.innerHTML = `<span class="truncate"><span class="text-white font-medium">${escapeHtml(obj.signer || 'Firma')}</span><span class="block text-[10px] text-zinc-500 font-mono">ID ${escapeHtml((obj.signatureId || '').slice(0, 8))}</span></span><span class="text-[10px] bg-zinc-800 px-1.5 py-0.5 rounded shrink-0">Pág ${page + 1}</span>`;
+                row.onclick = () => { goToPage(page); selectObject(obj.id); };
+                list.appendChild(row);
+            });
+        }
+
+        function openSignatureModal() {
+            const nameInput = document.getElementById('sig-signer-name');
+            if (!nameInput.value) {
+                try { nameInput.value = localStorage.getItem('pascalpdf-signer') || ''; } catch (e) { /* sin almacenamiento */ }
+            }
+            renderSignaturePanels();
+            openModal('modal-signature');
+        }
+
+        // Estampa una firma (guardada o recién creada) en la página actual
+        function stampSignature(sig, showDate) {
+            const page = pdfPages[currentPageIndex];
+            const when = new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
+            const obj = {
+                id: 'sig-' + Date.now(),
+                type: 'signature',
+                signatureId: sig.id,
+                signer: sig.signer,
+                method: sig.kind === 'text' ? 'escrita' : (sig.kind === 'drawn' ? 'dibujada' : 'imagen'),
+                x: 340, y: Math.max(40, pageHeight(page) - 170),
+                text: sig.kind === 'text' ? sig.text : sig.signer,
+                subtext: showDate ? `Firmado electrónicamente por ${sig.signer} · ${when}` : `Firmado electrónicamente por ${sig.signer}`,
+                fontFamily: "'Caveat', cursive",
+                fontSize: 30,
+                color: '#1d4ed8',
+                signedAt: new Date().toISOString()
+            };
+            if (sig.kind !== 'text') {
+                const k = Math.min(220 / sig.w, 80 / sig.h, 1);
+                obj.src = sig.src;
+                obj.w = Math.round(sig.w * k);
+                obj.h = Math.round(sig.h * k);
+            }
+            page.objects.push(obj);
+            selectObject(obj.id);
+            renderDocSignatures();
+            showToast("Firma agregada. Arrástrala a donde la necesites.", "emerald");
+        }
+
+        // ---------- Copia de respaldo ----------
+        let backupMode = 'export';
+        function openBackupModal(mode) {
+            backupMode = mode;
+            document.getElementById('backup-pass').value = '';
+            document.getElementById('backup-file').value = '';
+            document.getElementById('backup-file-name').textContent = 'Elegir archivo .pascalfirma';
+            document.getElementById('backup-file-row').classList.toggle('hidden', mode !== 'import');
+            document.getElementById('backup-title').textContent = mode === 'import' ? 'Importar firmas desde una copia' : 'Copia de respaldo de tus firmas';
+            document.getElementById('backup-help').textContent = mode === 'import'
+                ? 'Elige el archivo .pascalfirma y escribe la frase con la que lo protegiste.'
+                : 'Descarga un archivo con tus firmas, cifrado con una frase que solo tú conoces. Guárdalo en un lugar seguro: con ese archivo y la frase puedes recuperar tus firmas en otro dispositivo. PascalIA no conoce la frase y no puede recuperarla.';
+            document.getElementById('backup-action').textContent = mode === 'import' ? 'Importar firmas' : 'Descargar copia';
+            openModal('modal-backup');
+        }
+
+        async function runBackupAction() {
+            const pass = document.getElementById('backup-pass').value;
+            if (pass.length < 8) return showToast("La frase debe tener al menos 8 caracteres.", "amber");
+            try {
+                if (backupMode === 'export') {
+                    const sigs = mySignatures.filter(s => !s.sessionOnly).map(({ sessionOnly, ...rest }) => rest);
+                    if (!sigs.length) return showToast("No tienes firmas guardadas en este dispositivo.", "amber");
+                    const text = await SigStore.exportBackup(sigs, pass);
+                    downloadBlob(new Blob([text], { type: 'application/json' }), `mis-firmas-${new Date().toISOString().slice(0, 10)}.pascalfirma`);
+                    showToast(`Copia descargada con ${sigs.length} firma(s).`, "emerald");
+                } else {
+                    const file = document.getElementById('backup-file').files[0];
+                    if (!file) return showToast("Elige el archivo de la copia.", "amber");
+                    let sigs;
+                    try {
+                        sigs = await SigStore.readBackup(await file.text(), pass);
+                    } catch (e) {
+                        return showToast("No se pudo abrir la copia: la frase no coincide o el archivo no es válido.", "rose");
+                    }
+                    for (const sig of sigs) await SigStore.save(sig);
+                    await loadMySignatures();
+                    showToast(`${sigs.length} firma(s) importadas a este dispositivo.`, "emerald");
+                }
+                closeModal('modal-backup');
+            } catch (e) {
+                console.error(e);
+                showToast("Este navegador no permite guardar firmas (¿modo privado?).", "rose");
+            }
+        }
 
         (function initSignaturePad() {
             const canvas = document.getElementById('signature-pad-canvas');
@@ -2607,78 +2420,59 @@ this.addWatermarkFromText("APROBADO");</textarea>
             });
         }
 
-        function insertSignatureIntoPDF() {
-            const certChecked = document.getElementById('chk-cert-sign').checked;
-            const tsaChecked = document.getElementById('chk-timestamp-sign').checked;
-            const nowISO = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
-            const sigName = document.getElementById('sig-type-input').value || 'Firma Electrónica';
-
-            let subtext = '';
-            if (certChecked) subtext += 'Certificado X.509 SHA-256 ';
-            if (tsaChecked) subtext += `• TSA: ${nowISO}`;
-
-            const page = pdfPages[currentPageIndex];
-            const newSig = {
-                id: 'sig-' + Date.now(),
-                type: 'signature',
-                x: 340, y: Math.max(40, pageHeight(page) - 160),
-                text: sigName,
-                subtext: subtext || 'Firma Electrónica Simple',
-                fontFamily: "'Caveat', cursive",
-                fontSize: 30,
-                color: '#1d4ed8'
-            };
-
-            let img = null;
+        async function insertSignatureIntoPDF() {
+            const signer = document.getElementById('sig-signer-name').value.trim();
+            if (!signer) {
+                document.getElementById('sig-signer-name').focus();
+                return showToast("Escribe el nombre de quien firma.", "amber");
+            }
+            let sig = { id: crypto.randomUUID(), signer, createdAt: new Date().toISOString() };
             if (currentSigTab === 'draw') {
-                img = sigPadHasInk ? getTrimmedSignaturePad() : null;
-                if (!img) return showToast("Dibuja tu firma en el recuadro antes de estamparla.", "amber");
+                const img = sigPadHasInk ? getTrimmedSignaturePad() : null;
+                if (!img) return showToast("Dibuja tu firma en el recuadro.", "amber");
+                Object.assign(sig, { kind: 'drawn', ...img });
             } else if (currentSigTab === 'upload') {
-                img = uploadedSignature;
-                if (!img) return showToast("Sube primero una imagen PNG o JPG de tu firma.", "amber");
+                if (!uploadedSignature) return showToast("Sube primero una imagen PNG o JPG de tu firma.", "amber");
+                Object.assign(sig, { kind: 'image', ...uploadedSignature });
+            } else {
+                const text = document.getElementById('sig-type-input').value.trim();
+                if (!text) return showToast("Escribe tu firma.", "amber");
+                Object.assign(sig, { kind: 'text', text });
             }
-            if (img) {
-                const maxW = 220, maxH = 80;
-                const k = Math.min(maxW / img.w, maxH / img.h, 1);
-                newSig.src = img.src;
-                newSig.w = Math.round(img.w * k);
-                newSig.h = Math.round(img.h * k);
-                newSig.text = currentSigTab === 'draw' ? 'Firma manuscrita' : 'Firma (imagen)';
-            }
+            try { localStorage.setItem('pascalpdf-signer', signer); } catch (e) { /* sin almacenamiento */ }
 
-            pdfPages[currentPageIndex].objects.push(newSig);
-            selectObject(newSig.id);
+            if (document.getElementById('chk-save-signature').checked) {
+                try {
+                    await SigStore.save(sig);
+                } catch (e) {
+                    console.warn(e);
+                    sig.sessionOnly = true;
+                    showToast("No se pudo guardar en este navegador; la firma queda solo para esta sesión.", "amber");
+                }
+            } else {
+                sig.sessionOnly = true;
+            }
+            mySignatures.unshift(sig);
+            stampSignature(sig, document.getElementById('chk-sign-date').checked);
+            clearSignaturePad();
+            uploadedSignature = null;
             closeModal('modal-signature');
-            showToast("Firma estampada y vinculada criptográficamente al documento.", "emerald");
         }
 
-        function validateAllSignatures() {
-            switchRightTab('certs');
-            showToast("Validación criptográfica exitosa: Integridad de firmas y sellos de tiempo verificada.", "emerald");
-        }
 
         function addTimestampStamp() {
-            const nowISO = new Date().toISOString().replace('T', ' ').substring(0, 19);
+            const now = new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
             pdfPages[currentPageIndex].objects.push({
-                id: 'tsa-' + Date.now(),
+                id: 'date-' + Date.now(),
                 type: 'stamp',
-                x: 360, y: 640,
-                text: `SELLO DE TIEMPO TSA: ${nowISO}`,
-                color: '#4f46e5'
+                x: 360, y: Math.max(60, pageHeight(pdfPages[currentPageIndex]) - 240),
+                text: `FECHA: ${now}`,
+                color: '#1F1F1F'
             });
             renderCurrentPage();
-            showToast("Sello de tiempo certificado añadido a la página.", "indigo");
+            showToast("Fecha y hora agregadas (hora de este dispositivo). Arrástrala a donde la necesites.", "indigo");
         }
 
-        function sendSignatureRequest() {
-            const email = document.getElementById('signer-email-input').value.trim();
-            if (!email) {
-                showToast("Introduce el correo del destinatario para enviar la solicitud de firma.", "amber");
-                return;
-            }
-            document.getElementById('signer-email-input').value = '';
-            showToast(`Solicitud de firma enviada a ${email} con seguimiento de auditoría.`, "emerald");
-        }
 
         // ============================================================================
         // 9. CARGA DE ARCHIVOS PDF REALES (PDF.JS) Y EXPORTACIÓN REAL (PDF-LIB)
@@ -2705,7 +2499,8 @@ this.addWatermarkFromText("APROBADO");</textarea>
                 // PDF.js puede transferir el buffer al worker; se le pasa una copia
                 const pdfDoc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
                 const srcId = 'src-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
-                pdfSources.push({ id: srcId, name: file.name, bytes });
+                const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(b => b.toString(16).padStart(2, '0')).join('');
+                pdfSources.push({ id: srcId, name: file.name, bytes, hash });
 
                 const newPages = [];
                 for (let n = 1; n <= pdfDoc.numPages; n++) {
@@ -3050,9 +2845,81 @@ this.addWatermarkFromText("APROBADO");</textarea>
                 if (pData.rotation) page.setRotation(degrees((origRot + pData.rotation) % 360));
             }
 
+            if (!indices && evidenceEnabled()) await appendEvidencePage(pdfDoc, fonts);
             pdfDoc.setTitle(document.getElementById('doc-title-display').textContent || 'Documento');
             pdfDoc.setProducer('PascalPDF Studio & Sign');
             return pdfDoc.save();
+        }
+
+        function evidenceEnabled() {
+            const t = document.getElementById('evidence-toggle');
+            return (!t || t.checked) && documentSignatures().length > 0;
+        }
+
+        // Página final con la evidencia de las firmas electrónicas
+        async function appendEvidencePage(pdfDoc, fonts) {
+            const { rgb } = PDFLib;
+            const page = pdfDoc.addPage([612, 792]);
+            const ink = rgb(0.12, 0.12, 0.12), muted = rgb(0.36, 0.36, 0.36), line = rgb(0.85, 0.85, 0.85);
+            let y = 740;
+            const write = (txt, size, font, color, x = 56) => { page.drawText(toWinAnsi(txt), { x, y, size, font, color }); };
+            const para = (txt, size, font, color, width = 500, lh = 1.4) => {
+                wrapText(txt, font, size, width).forEach(l => { write(l, size, font, color); y -= size * lh; });
+            };
+            page.drawRectangle({ x: 56, y: 762, width: 500, height: 4, color: rgb(1, 0.76, 0.03) });
+            write('Hoja de evidencia de firma electrónica', 18, fonts.bold, ink); y -= 22;
+            para('Generada por PascalPDF de PascalIA (pascalia.lat). Firma electrónica en los términos de la Ley 527 de 1999 y el Decreto 2364 de 2012. No es firma digital certificada.', 9, fonts.regular, muted);
+            y -= 10;
+
+            const now = new Date();
+            const tz = -now.getTimezoneOffset() / 60;
+            const rows = [
+                ['Documento', document.getElementById('doc-title-display').textContent || 'Documento'],
+                ['Páginas del documento', String(pdfPages.length)],
+                ['Generada el', `${now.toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'medium' })} (UTC${tz >= 0 ? '+' : ''}${tz})`]
+            ];
+            rows.forEach(([k, v]) => {
+                write(k, 9, fonts.bold, ink);
+                wrapText(v, fonts.regular, 9, 360).forEach((l, i) => { page.drawText(toWinAnsi(l), { x: 180, y: y - i * 12, size: 9, font: fonts.regular, color: ink }); y -= i ? 12 : 0; });
+                y -= 16;
+            });
+
+            y -= 4;
+            write('Archivo(s) original(es) y su huella SHA-256', 11, fonts.bold, ink); y -= 16;
+            const usedSources = pdfSources.filter(src => pdfPages.some(p => p.srcId === src.id));
+            if (!usedSources.length) {
+                para('El documento se creó en PascalPDF; no hay un archivo original.', 9, fonts.regular, muted);
+            }
+            usedSources.forEach(src => {
+                para(src.name, 9, fonts.regular, ink);
+                write(src.hash.slice(0, 32), 8, fonts.mono, muted); y -= 11;
+                write(src.hash.slice(32), 8, fonts.mono, muted); y -= 16;
+            });
+
+            y -= 6;
+            write('Firmas', 11, fonts.bold, ink); y -= 16;
+            const cols = [56, 216, 272, 340];
+            ['Firmante', 'Página', 'Método', 'Identificador de la firma'].forEach((h, i) => page.drawText(h, { x: cols[i], y, size: 8, font: fonts.bold, color: muted }));
+            y -= 6;
+            page.drawLine({ start: { x: 56, y }, end: { x: 556, y }, thickness: 0.6, color: line });
+            y -= 13;
+            documentSignatures().forEach(({ obj, page: pi }) => {
+                if (y < 140) return;
+                page.drawText(toWinAnsi((obj.signer || 'Firma').slice(0, 30)), { x: cols[0], y, size: 9, font: fonts.regular, color: ink });
+                page.drawText(String(pi + 1), { x: cols[1], y, size: 9, font: fonts.regular, color: ink });
+                page.drawText(toWinAnsi(obj.method || '-'), { x: cols[2], y, size: 9, font: fonts.regular, color: ink });
+                page.drawText(obj.signatureId || '-', { x: cols[3], y, size: 7.5, font: fonts.mono, color: ink });
+                y -= 11;
+                if (obj.signedAt) {
+                    page.drawText(toWinAnsi('Firmó el ' + new Date(obj.signedAt).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'medium' })), { x: cols[0], y, size: 7.5, font: fonts.regular, color: muted });
+                    y -= 14;
+                }
+            });
+
+            y = Math.min(y, 150);
+            page.drawLine({ start: { x: 56, y: y + 8 }, end: { x: 556, y: y + 8 }, thickness: 0.6, color: line });
+            y -= 8;
+            para('Cómo comprobar: calcula la huella SHA-256 del archivo original y compárala con la de esta hoja. Si coinciden, el original es el mismo que se firmó. Las fechas y horas provienen del dispositivo de quien firmó. Las imágenes de las firmas se guardan solo en ese dispositivo; PascalIA no las conserva.', 8, fonts.regular, muted);
         }
 
         async function exportAndDownloadPDF(indices, filename) {
@@ -3074,10 +2941,6 @@ this.addWatermarkFromText("APROBADO");</textarea>
             }
         }
 
-        function runConversion(targetFormat) {
-            closeModal('modal-convert');
-            showToast(`Convirtiendo documento a ${targetFormat}... ¡Descarga lista!`, "emerald");
-        }
 
         async function exportPageAsPNG() {
             if (!window.PDFLib || !window.pdfjsLib) {
@@ -3107,7 +2970,7 @@ this.addWatermarkFromText("APROBADO");</textarea>
         // 10. UI HELPERS: TABS LATERALES, COMENTARIOS, MODALES, ZOOM Y CATÁLOGO 65
         // ============================================================================
         function switchLeftTab(tab) {
-            ['thumbs', 'bookmarks', 'layers', 'a11y-tree'].forEach(t => {
+            ['thumbs', 'bookmarks', 'layers'].forEach(t => {
                 document.getElementById(`left-content-${t}`).classList.toggle('hidden', t !== tab);
                 document.getElementById(`ltab-${t}`).className = t === tab
                     ? "py-2.5 flex flex-col items-center gap-1 border-b-2 border-indigo-500 text-indigo-400"
@@ -3221,7 +3084,7 @@ this.addWatermarkFromText("APROBADO");</textarea>
             }, 3200);
         }
 
-        // Poblar el modal Catálogo de las 65 funciones
+        // Poblar el modal con todas las herramientas
         function buildAllFeaturesCatalog() {
             const grid = document.getElementById('all-features-grid');
             grid.innerHTML = '';
@@ -3261,7 +3124,7 @@ this.addWatermarkFromText("APROBADO");</textarea>
             renderBookmarks();
             renderCommentsThread();
             buildAllFeaturesCatalog();
-            selectObject('obj-sig-1');
+            loadMySignatures();
             window.__appReady = true;
 
             // Auto-detectar pantallas móviles (Android / iOS) o pantallas pequeñas al iniciar

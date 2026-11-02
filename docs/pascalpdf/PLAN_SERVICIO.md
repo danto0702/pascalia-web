@@ -8,6 +8,7 @@ Decisiones tomadas por el dueño:
 - Cobro: **planes mensuales y anuales + paquetes prepago**, con códigos promocionales, pagos por **Wompi**.
 - Clientes: personas (contratistas e independientes), empresas y entidades, firmantes externos y firma por lotes.
 - Inicio de sesión: **correo con código de un solo uso + Google**.
+- Respuestas del 2 de noviembre de 2026: **no responsable de IVA** (precios sin IVA) y factura electrónica con la aplicación gratuita de la DIAN; **sí** se guarda la huella SHA-256 del documento; base de datos en el **proyecto Supabase de CuentaFacil** (tablas con prefijo `pascalpdf_` y RLS) hasta que el servicio sea rentable; opera **Danilo Orlando Torrado Blanco como persona natural**, con intención de constituir una S.A.S. más adelante.
 - Las firmas (trazo o imagen) **se guardan solo en el dispositivo**. En la base de datos solo queda el registro de uso: fecha, hora, tipo de documento, nombre del documento e identificador de la firma. La persona puede descargar ese registro en un archivo plano.
 
 ---
@@ -50,7 +51,7 @@ Pendiente de definir contigo (preguntas al final): si los precios incluyen IVA y
 ### 3.1 Cuenta e inicio de sesión
 - **Supabase Auth**: código de un solo uso por correo (sin contraseña) e inicio con Google.
 - Para usar la app con un plan de pago hay que iniciar sesión. Sin sesión, la app sigue funcionando como hoy, en modo gratis con su límite.
-- **Proyecto Supabase propio para PascalPDF.** Hoy los formularios de pascalia.lat usan temporalmente el proyecto SI-APS del hospital. Mezclar ahí cuentas y pagos de un producto comercial no es aceptable. Crear el proyecto tiene costo y requiere tu aprobación.
+- **Base de datos (decidido):** el proyecto Supabase de **CuentaFacil**, con tablas `pascalpdf_*` aisladas por RLS, hasta que PascalPDF sea rentable. Una sola cuenta puede servir para ambos servicios. Para migrar después a un proyecto propio se exportan las tablas `pascalpdf_*`.
 
 ### 3.2 Firmas en el dispositivo
 - La imagen de cada firma se guarda en **IndexedDB** del navegador, cifrada con una clave **no exportable** de WebCrypto (AES-GCM), ligada a ese navegador y dispositivo.
@@ -113,7 +114,7 @@ Organización con dueño y miembros invitados por correo. El dueño ve el regist
 
 | Fase | Contenido | Condición para avanzar |
 |---|---|---|
-| **0. Limpieza honesta** | Quitar o marcar "Próximamente" todo lo simulado; renombrar "Firma Digital Certificada" a "Firma electrónica"; hoja de evidencia; firmas en IndexedDB cifrado; copia de respaldo. | Revisión tuya. Se puede publicar sin cobrar. |
+| **0. Limpieza honesta** (hecha el 2 de noviembre de 2026) | Quitar o marcar "Próximamente" todo lo simulado; renombrar "Firma Digital Certificada" a "Firma electrónica"; hoja de evidencia; firmas en IndexedDB cifrado; copia de respaldo. | Revisión tuya. Se puede publicar sin cobrar. |
 | **1. Cuentas y registro** | Proyecto Supabase propio, inicio con correo y Google, tabla de eventos, descarga CSV/TXT, verificación pública, política y términos publicados con aceptación registrada. | Aprobar el costo de Supabase y los textos legales. |
 | **2. Pagos** | Wompi (sandbox, luego producción), planes, paquetes, códigos promocionales, facturación electrónica, correos de recibo y de vencimiento. | Cuenta Wompi de producción y emisión de factura electrónica resuelta. |
 | **3. Suite completa** | Firma por lotes y firmantes externos cifrados. | Fase 2 estable. |

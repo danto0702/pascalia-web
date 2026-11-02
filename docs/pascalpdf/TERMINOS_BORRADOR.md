@@ -5,7 +5,7 @@ Versión 0.1 · Los textos entre [corchetes] dependen de las preguntas del plan 
 
 ## 1. Quiénes somos y qué aceptas
 
-PascalPDF es un servicio de [Danilo Orlando Torrado Blanco, persona natural que opera la marca PascalIA] ("PascalIA"), con domicilio en Ábrego, Norte de Santander, Colombia, y correo contacto@pascalia.lat. Al crear una cuenta o pagar un plan aceptas estos términos y la Política de tratamiento de datos de PascalPDF. Si no estás de acuerdo, no uses el servicio.
+PascalPDF es un servicio de Danilo Orlando Torrado Blanco, persona natural que opera la marca PascalIA ("PascalIA"), con domicilio en Ábrego, Norte de Santander, Colombia, y correo contacto@pascalia.lat. Al crear una cuenta o pagar un plan aceptas estos términos y la Política de tratamiento de datos de PascalPDF. Si no estás de acuerdo, no uses el servicio.
 
 ## 2. Qué es PascalPDF
 
@@ -13,7 +13,7 @@ Una herramienta web para abrir, editar y firmar documentos PDF desde el navegado
 
 ## 3. Tipo de firma y validez
 
-- PascalPDF ofrece **firma electrónica** en los términos de la Ley 527 de 1999 y el Decreto 2364 de 2012: una firma (dibujada, escrita o en imagen) asociada a tu cuenta con correo verificado, con un registro de fecha y hora [y huella del documento] que permite verificar después si el documento cambió.
+- PascalPDF ofrece **firma electrónica** en los términos de la Ley 527 de 1999 y el Decreto 2364 de 2012: una firma (dibujada, escrita o en imagen) asociada a tu cuenta con correo verificado, con un registro de fecha y hora y huella SHA-256 del documento que permite verificar después si el documento cambió.
 - **PascalPDF no es una entidad de certificación digital** acreditada ante el ONAC y **no emite firma digital certificada** ni certificados digitales.
 - Antes de firmar, **eres tú quien verifica** si el trámite, la entidad o la contraparte aceptan firma electrónica. Algunos trámites exigen firma digital certificada, firma manuscrita o autenticación notarial.
 - PascalIA no garantiza que un tercero acepte el documento firmado.
@@ -41,7 +41,7 @@ Cuando envías un documento a otra persona para que lo firme, declaras que tiene
 
 ## 8. Planes, precios y pagos
 
-- Planes vigentes: Gratis, Firma Rápida, Suite y Empresas, con los precios, límites y condiciones publicados en la página de planes al momento de pagar. [Los precios incluyen IVA.] / [PascalIA no es responsable de IVA.]
+- Planes vigentes: Gratis, Firma Rápida, Suite y Empresas, con los precios, límites y condiciones publicados en la página de planes al momento de pagar. PascalIA no es responsable de IVA, por lo que los precios no lo incluyen.
 - Los pagos se procesan con **Wompi**. PascalIA no recibe ni guarda los datos de tu tarjeta ni de tu cuenta bancaria.
 - El plan se activa cuando Wompi confirma el pago aprobado. Recibirás la factura electrónica en tu correo.
 - **Vigencia y renovación:** [los planes mensuales y anuales no se renuevan solos; te avisamos por correo antes del vencimiento para que pagues el siguiente periodo.] / [si activas la renovación automática, autorizas el cobro al inicio de cada periodo; puedes cancelarla en cualquier momento desde "Mi plan", y la cancelación aplica al periodo siguiente.]

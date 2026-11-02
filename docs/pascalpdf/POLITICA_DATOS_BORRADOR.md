@@ -7,7 +7,7 @@ Marco normativo: Ley 1581 de 2012, Decreto 1377 de 2013 (compilado en el Decreto
 
 ## 1. Responsable del tratamiento
 
-- Responsable: [Danilo Orlando Torrado Blanco, persona natural que opera la marca PascalIA] [o la sociedad que se constituya]
+- Responsable: Danilo Orlando Torrado Blanco, persona natural que opera la marca PascalIA
 - Domicilio: Calle 11 # 13-55, barrio Santa Bárbara, Ábrego, Norte de Santander, Colombia
 - Correo para ejercer derechos: contacto@pascalia.lat
 - WhatsApp de atención: +57 312 388 5012
@@ -17,7 +17,7 @@ Marco normativo: Ley 1581 de 2012, Decreto 1377 de 2013 (compilado en el Decreto
 
 - **Tus documentos no salen de tu dispositivo.** PascalPDF abre, edita y firma los PDF dentro de tu navegador. No los subimos a nuestros servidores. La única excepción es el envío a firmantes externos (sección 6), donde el archivo viaja cifrado y no podemos leerlo.
 - **Tus firmas se guardan solo en tu dispositivo**, cifradas por tu navegador. PascalIA no recibe ni guarda la imagen de tu firma.
-- **Guardamos un registro de cada firma**: fecha y hora, tipo de documento, nombre del documento, identificador de la firma usada [y la huella digital del documento]. Puedes descargarlo cuando quieras en un archivo plano (CSV o TXT).
+- **Guardamos un registro de cada firma**: fecha y hora, tipo de documento, nombre del documento, identificador de la firma usada y la huella digital (SHA-256) del documento. Puedes descargarlo cuando quieras en un archivo plano (CSV o TXT).
 - También guardamos lo necesario para tu cuenta y tus pagos (sección 3).
 
 ## 3. Datos que tratamos y para qué
@@ -25,7 +25,7 @@ Marco normativo: Ley 1581 de 2012, Decreto 1377 de 2013 (compilado en el Decreto
 | Datos | Finalidad |
 |---|---|
 | Correo electrónico, nombre y, si entras con Google, el identificador de tu cuenta de Google y tu foto de perfil | Crear y proteger tu cuenta, enviarte códigos de acceso, recibos, avisos del servicio y respuestas de soporte |
-| Registro de firmas: fecha y hora del servidor, tipo de documento, nombre del documento, identificador de la firma, [huella SHA-256 del documento], número de páginas y método de firma | Darte la evidencia de cada firma, permitirte descargarla, verificar documentos firmados y controlar los límites de tu plan |
+| Registro de firmas: fecha y hora del servidor, tipo de documento, nombre del documento, identificador de la firma, huella SHA-256 del documento, número de páginas y método de firma | Darte la evidencia de cada firma, permitirte descargarla, verificar documentos firmados y controlar los límites de tu plan |
 | Plan, vigencia, referencia y estado de las transacciones de Wompi, valor pagado, códigos promocionales usados, datos de facturación (nombre o razón social, documento, dirección, correo) | Cobrar, activar tu plan, emitir la factura electrónica y cumplir obligaciones contables y tributarias |
 | Organización, rol y correo de los miembros (planes Empresas) | Administrar los puestos y entregar a la organización el registro consolidado de firmas de sus miembros |
 | Correo del firmante externo y el registro de su firma | Enviarle el documento, verificar que controla su correo y dejar evidencia de su firma (sección 6) |
@@ -53,7 +53,7 @@ Para prestar el servicio usamos los siguientes proveedores, que actúan como enc
 | Google LLC | Inicio de sesión con Google (solo si lo eliges) | Estados Unidos |
 | Resend | Envío de códigos de acceso, recibos y avisos por correo | Estados Unidos |
 | Wompi (Bancolombia S.A.) | Procesamiento de pagos | Colombia |
-| [Proveedor de facturación electrónica] | Emisión de facturas | Colombia |
+| DIAN (sistema gratuito de facturación electrónica) | Emisión de facturas | Colombia |
 | GitHub Inc. | Publicación del sitio web (no recibe datos personales de la cuenta) | Estados Unidos |
 
 Al aceptar esta política autorizas de manera previa, expresa e informada la transmisión y transferencia internacional de tus datos a estos proveedores y países, para las finalidades descritas.
@@ -65,7 +65,7 @@ Cuando envías un documento para que otra persona lo firme:
 - Tu navegador cifra el documento antes de enviarlo. La clave viaja solo en el enlace que recibe el firmante, y PascalIA no puede leer el documento.
 - El archivo cifrado se guarda hasta que la firma se complete o por 7 días, lo que ocurra primero, y luego se elimina.
 - El firmante verifica su correo con un código y acepta esta política antes de firmar. Su firma también se crea en su propio dispositivo.
-- Del firmante guardamos: correo, fecha y hora, tipo y nombre del documento, identificador de su firma [y huella del documento]. El usuario que envió el documento puede ver ese registro.
+- Del firmante guardamos: correo, fecha y hora, tipo y nombre del documento, identificador de su firma y huella del documento. El usuario que envió el documento puede ver ese registro.
 - Quien envía el documento declara que tiene una razón legítima para pedir la firma y para compartir el correo del firmante.
 
 ## 7. Planes Empresas
