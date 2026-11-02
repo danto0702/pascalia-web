@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Pascal Sign · Firma tus PDF desde el celular</title>
+    <meta name="description" content="Pascal Sign de PascalIA: abre un PDF, pon tu firma con el dedo y compártelo. Tus documentos y firmas no salen de tu celular.">
+    <meta name="theme-color" content="#FFC107">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Pascal Sign">
+    <meta property="og:title" content="Pascal Sign · firma tus PDF desde el celular">
+    <meta property="og:description" content="Abre un PDF, firma con el dedo y compártelo. Una herramienta de PascalIA.">
+    <meta property="og:image" content="https://pascalia.lat/PascalSign/icon-512.png">
+    <link rel="canonical" href="https://pascalia.lat/PascalSign/">
+    <link rel="manifest" href="/PascalSign/manifest.webmanifest">
+    <link rel="icon" href="/PascalSign/favicon-64.png" type="image/png">
+    <link rel="apple-touch-icon" href="/PascalSign/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <style>
+        :root {
+            --yellow: #FFC107; --yellow-hover: #FFB300; --yellow-soft: #FFD54F; --gold-ink: #8A6100;
+            --graphite: #1F1F1F; --muted: #5C5C5C; --gray: #E9E9E9; --cream: #FFF8E1; --cream-line: #F3E7BE;
+            --stage: #F2EBD6; --white: #FFFFFF; --bad: #991B1B; --ok: #166534;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --safe-b: env(safe-area-inset-bottom, 0px);
+            --safe-t: env(safe-area-inset-top, 0px);
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { margin: 0; height: 100%; }
+        body { background: var(--cream); color: var(--graphite); font: 16px/1.55 Inter, system-ui, sans-serif; overscroll-behavior: none; }
+        ::selection { background: var(--yellow-soft); }
+        :focus-visible { outline: 2px solid var(--graphite); outline-offset: 2px; }
+        button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+        .hidden { display: none !important; }
+        h1, h2, h3 { font-family: Montserrat, Inter, sans-serif; letter-spacing: -0.01em; margin: 0; }
+
+        /* Botones (pills) */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 14px 26px; border-radius: 999px; font: 700 16px Montserrat, sans-serif; transition: background-color .16s, transform .16s var(--ease); }
+        .btn:active { transform: scale(.97); }
+        .btn-primary { background: var(--yellow); color: var(--graphite); }
+        .btn-primary:hover { background: var(--yellow-hover); }
+        .btn-dark { background: var(--graphite); color: #fff; }
+        .btn-ghost { background: #fff; box-shadow: inset 0 0 0 1px var(--gray); }
+        .btn-block { width: 100%; }
+        .btn:disabled { opacity: .5; }
+        .ico { width: 22px; height: 22px; flex: none; }
+
+        /* ---------- Inicio ---------- */
+        #inicio { min-height: 100%; display: flex; flex-direction: column; padding: calc(24px + var(--safe-t)) 20px calc(24px + var(--safe-b)); max-width: 520px; margin: 0 auto; }
+        .marca { display: flex; align-items: center; gap: 12px; }
+        .marca img { width: 44px; height: 44px; border-radius: 12px; }
+        .marca b { font: 800 20px Montserrat, sans-serif; display: block; line-height: 1.1; }
+        .marca small { color: var(--muted); font-size: 12px; }
+        .hero { margin: 44px 0 28px; }
+        .hero h1 { font-size: clamp(2rem, 9vw, 2.6rem); line-height: 1.08; font-weight: 800; }
+        .hero h1 mark { background: linear-gradient(transparent 62%, var(--yellow-soft) 62%); color: inherit; padding: 0 2px; }
+        .hero p { color: var(--muted); margin: 14px 0 0; font-size: 17px; }
+        .pasos { list-style: none; padding: 0; margin: 28px 0; display: grid; gap: 12px; }
+        .pasos li { display: flex; gap: 14px; align-items: center; background: #fff; border-radius: 18px; padding: 14px 16px; box-shadow: inset 0 0 0 1px var(--gray); font-size: 15px; }
+        .pasos span { width: 34px; height: 34px; border-radius: 999px; background: var(--cream); display: grid; place-items: center; font: 700 15px Montserrat, sans-serif; flex: none; }
+        .acciones { margin-top: auto; display: grid; gap: 12px; }
+        .pie { text-align: center; font-size: 13px; color: var(--muted); margin-top: 18px; }
+        .pie a { color: var(--gold-ink); }
+        .instalar { display: flex; gap: 12px; align-items: center; background: var(--graphite); color: #fff; border-radius: 18px; padding: 14px 16px; font-size: 14px; margin-bottom: 14px; }
+        .instalar button { margin-left: auto; background: var(--yellow); color: var(--graphite); border-radius: 999px; padding: 8px 16px; font: 700 14px Montserrat, sans-serif; white-space: nowrap; }
+
+        /* ---------- Documento ---------- */
+        #doc { position: fixed; inset: 0; display: flex; flex-direction: column; background: var(--stage); }
+        .barra { display: flex; align-items: center; gap: 8px; padding: calc(10px + var(--safe-t)) 12px 10px; background: var(--cream); box-shadow: 0 1px 0 var(--cream-line); z-index: 5; }
+        .barra .titulo { flex: 1; min-width: 0; }
+        .barra .titulo b { display: block; font: 700 15px Montserrat, sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .barra .titulo small { color: var(--muted); font-size: 12px; }
+        .icon-btn { width: 44px; height: 44px; border-radius: 999px; display: grid; place-items: center; flex: none; }
+        .icon-btn:active { background: var(--cream-line); }
+        #paginas { flex: 1; overflow: auto; padding: 16px 12px 140px; display: grid; gap: 14px; justify-items: center; -webkit-overflow-scrolling: touch; }
+        .pagina { position: relative; width: 100%; max-width: 820px; background: #fff; border-radius: 3px; box-shadow: 0 16px 36px -22px rgba(74,58,18,.5), inset 0 0 0 1px rgba(31,31,31,.05); }
+        .pagina canvas { display: block; width: 100%; height: auto; border-radius: 3px; }
+        .pagina .num { position: absolute; bottom: -2px; right: 6px; transform: translateY(100%); font-size: 11px; color: var(--muted); }
+        .colocada { position: absolute; touch-action: none; user-select: none; -webkit-user-select: none; outline: 2px dashed transparent; border-radius: 8px; }
+        .colocada.activa { outline-color: var(--yellow-hover); background: rgba(255,193,7,.10); }
+        .colocada img { width: 100%; height: calc(100% - 13px); object-fit: contain; display: block; pointer-events: none; }
+        .colocada .sub { font: 9px/13px ui-monospace, Menlo, monospace; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .colocada .asa { position: absolute; right: -14px; bottom: -14px; width: 30px; height: 30px; border-radius: 999px; background: var(--yellow); box-shadow: 0 2px 6px rgba(0,0,0,.25); display: none; }
+        .colocada .quitar { position: absolute; left: -14px; top: -14px; width: 30px; height: 30px; border-radius: 999px; background: var(--graphite); color: #fff; display: none; font-size: 16px; line-height: 30px; text-align: center; }
+        .colocada.activa .asa, .colocada.activa .quitar { display: block; }
+        .dock { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + var(--safe-b)); display: flex; gap: 10px; background: linear-gradient(transparent, rgba(242,235,214,.95) 30%); z-index: 6; }
+        .dock .btn { flex: 1; }
+        .ayuda { position: fixed; left: 50%; bottom: calc(92px + var(--safe-b)); transform: translateX(-50%); background: var(--graphite); color: #fff; font-size: 13px; padding: 8px 14px; border-radius: 999px; z-index: 6; width: max-content; max-width: calc(100% - 32px); text-align: center; animation: subir .3s var(--ease) both; }
+
+        /* ---------- Hoja inferior ---------- */
+        .velo { position: fixed; inset: 0; background: rgba(31,31,31,.45); z-index: 20; animation: aparecer .2s ease-out both; }
+        .hoja { position: fixed; left: 0; right: 0; bottom: 0; max-height: 92vh; overflow: auto; background: #fff; border-radius: 24px 24px 0 0; z-index: 21; padding: 10px 20px calc(20px + var(--safe-b)); animation: subir .32s var(--ease) both; max-width: 640px; margin: 0 auto; }
+        .hoja .tirador { width: 44px; height: 5px; border-radius: 999px; background: var(--gray); margin: 0 auto 14px; }
+        .hoja h2 { font-size: 20px; margin-bottom: 4px; }
+        .hoja p.muted { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+        .firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+        .firma-card { position: relative; height: 96px; border-radius: 16px; box-shadow: inset 0 0 0 1px var(--gray); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; gap: 4px; background: #fff; }
+        .firma-card:active { box-shadow: inset 0 0 0 2px var(--yellow-hover); }
+        .firma-card img { max-width: 100%; max-height: 54px; }
+        .firma-card .escrita { font: 600 30px Caveat, cursive; color: #1d4ed8; line-height: 1; }
+        .firma-card small { font-size: 11px; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .firma-card .borrar { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; border-radius: 999px; color: var(--muted); }
+        .tabs { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--cream); border-radius: 999px; padding: 4px; margin: 4px 0 12px; }
+        .tabs button { min-height: 42px; border-radius: 999px; font: 600 14px Montserrat, sans-serif; }
+        .tabs button[aria-selected=true] { background: var(--yellow); }
+        .pad { position: relative; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--yellow); background: #fff; }
+        .pad canvas { display: block; width: 100%; height: 190px; touch-action: none; }
+        .pad .linea { position: absolute; left: 24px; right: 24px; bottom: 44px; border-bottom: 1px dashed var(--gray); pointer-events: none; }
+        .pad .limpiar { position: absolute; top: 8px; right: 8px; background: var(--cream); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; }
+        .campo { width: 100%; font: 16px Inter, sans-serif; padding: 13px 15px; border-radius: 14px; border: 1px solid var(--gray); background: #fff; color: var(--graphite); caret-color: var(--yellow-hover); }
+        .campo:focus { outline: 2px solid var(--yellow); border-color: transparent; }
+        .vista-escrita { font: 600 46px Caveat, cursive; color: #1d4ed8; text-align: center; min-height: 80px; margin-top: 10px; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--yellow); padding: 8px; overflow: hidden; }
+        .subir { display: block; border: 2px dashed var(--yellow-hover); border-radius: 16px; padding: 22px 16px; text-align: center; font-size: 15px; }
+        .subir input { display: none; }
+        .subir img { max-width: 100%; max-height: 110px; display: block; margin: 0 auto 8px; }
+        .check { display: flex; gap: 10px; align-items: center; font-size: 14px; margin: 12px 0 0; }
+        .check input { width: 22px; height: 22px; accent-color: var(--yellow-hover); flex: none; }
+        label.lbl { display: block; font-size: 13px; color: var(--muted); margin: 14px 0 6px; }
+        .fila-botones { display: flex; gap: 10px; margin-top: 18px; }
+        .fila-botones .btn { flex: 1; }
+        .aviso-legal { font-size: 12px; color: var(--muted); margin-top: 14px; }
+
+        /* ---------- Avisos y estado ---------- */
+        .toast { position: fixed; left: 16px; right: 16px; top: calc(12px + var(--safe-t)); margin: 0 auto; max-width: 480px; background: var(--graphite); color: #fff; padding: 12px 16px; border-radius: 16px; font-size: 14px; z-index: 40; animation: bajar .3s var(--ease) both; }
+        .toast.error { background: var(--bad); }
+        .ocupado { position: fixed; inset: 0; background: rgba(255,248,225,.85); backdrop-filter: blur(2px); z-index: 30; display: grid; place-content: center; justify-items: center; gap: 14px; font: 600 15px Montserrat, sans-serif; }
+        .ocupado svg { width: 60px; height: 60px; animation: girar 1.6s linear infinite; }
+        @keyframes subir { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes bajar { from { transform: translateY(-16px); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes girar { to { transform: rotate(360deg); } }
+        @keyframes colocar { 0% { transform: scale(.85); opacity: 0; } 100% { transform: none; opacity: 1; } }
+        .colocada.nueva { animation: colocar .35s var(--ease) both; }
+        .ayuda.nueva { animation: subir .3s var(--ease) both; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+        @media (min-width: 760px) { #paginas { padding-left: 24px; padding-right: 24px; } .dock { max-width: 640px; margin: 0 auto; } }
+    </style>
+</head>
+<body>
+
+<!-- ==================== INICIO ==================== -->
+<section id="inicio">
+    <div class="marca">
+        <img src="/PascalSign/icon-192.png" alt="" width="44" height="44">
+        <div><b>Pascal Sign</b><small>de PascalIA</small></div>
+    </div>
+    <div class="hero">
+        <h1>Firma tus PDF <mark>desde el celular</mark></h1>
+        <p>Abre el documento, pon tu firma con el dedo y compártelo. Tus documentos y tus firmas no salen de tu celular.</p>
+    </div>
+    <ol class="pasos">
+        <li><span>1</span>Abre el PDF desde tus archivos, el correo o WhatsApp.</li>
+        <li><span>2</span>Toca «Firmar» y arrastra tu firma a su lugar.</li>
+        <li><span>3</span>Comparte o guarda el PDF firmado.</li>
+    </ol>
+    <div class="acciones">
+        <div id="instalar" class="instalar hidden"><span id="instalar-texto">Instala Pascal Sign para abrirla como una app.</span><button id="btn-instalar">Instalar</button></div>
+        <label class="btn btn-primary btn-block" for="archivo">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M12 18v-6M9 15l3-3 3 3"/></svg>
+            Abrir PDF para firmar
+        </label>
+        <input id="archivo" type="file" accept="application/pdf,.pdf" class="hidden">
+        <button class="btn btn-ghost btn-block" id="btn-mis-firmas">Mis firmas</button>
+        <p class="pie">Firma electrónica (Ley 527 de 1999 y Decreto 2364 de 2012). No es firma digital certificada.<br>
+            <a href="/PascalPDF_Studio/terminos/">Términos</a> · <a href="/PascalPDF_Studio/politica/">Datos</a> · <a href="/PascalPDF_Studio/">¿Necesitas editar? PascalPDF</a></p>
+    </div>
+</section>
+
+<!-- ==================== DOCUMENTO ==================== -->
+<section id="doc" class="hidden">
+    <div class="barra">
+        <button class="icon-btn" id="btn-cerrar" aria-label="Cerrar el documento">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <div class="titulo"><b id="doc-nombre">Documento</b><small id="doc-info"></small></div>
+    </div>
+    <div id="paginas"></div>
+    <div class="dock">
+        <button class="btn btn-primary" id="btn-firmar">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17c3-5 5-8 6-7s-2 7 0 7 3-6 5-6-1 5 1 5 3-3 6-3"/><path d="M3 21h18"/></svg>
+            Firmar
+        </button>
+        <button class="btn btn-dark" id="btn-listo" disabled>Listo</button>
+    </div>
+</section>
+
+<div id="capa-hoja"></div>
+
+<script>
+(function () {
+    'use strict';
+    const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const $ = (s) => document.querySelector(s);
+    const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const hex = (buf) => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+
+    // ------------------------------------------------------------------ avisos y estado
+    function toast(msg, error) {
+        document.querySelectorAll('.toast').forEach(t => t.remove());
+        const t = document.createElement('div');
+        t.className = 'toast' + (error ? ' error' : '');
+        t.setAttribute('role', 'status');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3800);
+    }
+    function ocupado(msg) {
+        document.querySelectorAll('.ocupado').forEach(o => o.remove());
+        if (!msg) return;
+        const o = document.createElement('div');
+        o.className = 'ocupado';
+        o.innerHTML = `<svg viewBox="-112 -112 224 224" aria-hidden="true"><g fill="#FFC107" fill-opacity=".82"><path id="op" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/><use href="#op" transform="rotate(60)"/><use href="#op" transform="rotate(120)"/><use href="#op" transform="rotate(180)"/><use href="#op" transform="rotate(240)"/><use href="#op" transform="rotate(300)"/></g></svg><span>${esc(msg)}</span>`;
+        document.body.appendChild(o);
+    }
+
+    // ------------------------------------------------------------------ firmas en el dispositivo
+    // Mismo almacén que PascalPDF (IndexedDB "pascalpdf" + AES-GCM con clave no exportable):
+    // las firmas guardadas en una app aparecen en la otra.
+    const Firmas = (() => {
+        let dbp = null;
+        const abrir = () => dbp || (dbp = new Promise((res, rej) => {
+            const r = indexedDB.open('pascalpdf', 1);
+            r.onupgradeneeded = () => { r.result.createObjectStore('signatures', { keyPath: 'id' }); r.result.createObjectStore('keys'); };
+            r.onsuccess = () => res(r.result);
+            r.onerror = () => rej(r.error);
+        }));
+        const req = (st, modo, op) => abrir().then(db => new Promise((res, rej) => {
+            const q = op(db.transaction(st, modo).objectStore(st));
+            q.onsuccess = () => res(q.result);
+            q.onerror = () => rej(q.error);
+        }));
+        const b64 = (b) => btoa(String.fromCharCode(...new Uint8Array(b)));
+        const unb64 = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+        async function clave() {
+            let k = await req('keys', 'readonly', s => s.get('main'));
+            if (!k) {
+                k = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+                await req('keys', 'readwrite', s => s.put(k, 'main'));
+            }
+            return k;
+        }
+        return {
+            async lista() {
+                const k = await clave();
+                const filas = await req('signatures', 'readonly', s => s.getAll());
+                const out = [];
+                for (const f of filas) {
+                    try {
+                        const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(f.iv) }, k, unb64(f.ct));
+                        out.push(JSON.parse(new TextDecoder().decode(pt)));
+                    } catch (e) { /* ilegible */ }
+                }
+                return out.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+            },
+            async guardar(sig) {
+                const k = await clave();
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, k, new TextEncoder().encode(JSON.stringify(sig)));
+                const fila = { id: sig.id, iv: b64(iv), ct: b64(ct) };
+                await req('signatures', 'readwrite', s => s.put(fila));
+            },
+            borrar: (id) => req('signatures', 'readwrite', s => s.delete(id))
+        };
+    })();
+    let misFirmas = [];
+    async function cargarFirmas() {
+        try { misFirmas = await Firmas.lista(); } catch (e) { misFirmas = misFirmas.filter(f => f.soloSesion); }
+    }
+
+    // ------------------------------------------------------------------ estado del documento
+    let doc = null;        // { nombre, bytes, hash, paginas: [{ w, h }] }
+    let colocadas = [];    // { id, pagina, x, y, w, h (fracciones), firma, fecha }
+    let activa = null;
+
+    async function abrirPDF(file, nombre) {
+        if (!window.pdfjsLib || !window.PDFLib) return toast('No se pudieron cargar los componentes. Revisa tu conexión y vuelve a abrir la app.', true);
+        ocupado('Abriendo el documento…');
+        try {
+            const bytes = new Uint8Array(await file.arrayBuffer());
+            pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+            let pdf;
+            try {
+                pdf = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+            } catch (e) {
+                if (e && e.name === 'PasswordException') throw new Error('Este PDF está protegido con contraseña. Ábrelo en PascalPDF para quitarle la protección y luego fírmalo aquí.');
+                throw new Error('No se pudo abrir el archivo. Verifica que sea un PDF.');
+            }
+            doc = { nombre: nombre || file.name || 'Documento.pdf', bytes, hash: hex(await crypto.subtle.digest('SHA-256', bytes)), pdf, paginas: [] };
+            colocadas = [];
+            activa = null;
+            $('#doc-nombre').textContent = doc.nombre;
+            $('#doc-info').textContent = `${pdf.numPages} ${pdf.numPages === 1 ? 'página' : 'páginas'}`;
+            $('#inicio').classList.add('hidden');
+            $('#doc').classList.remove('hidden');
+            await pintarPaginas();
+            actualizarListo();
+            mostrarAyuda('Toca «Firmar» para poner tu firma.');
+            history.pushState({ doc: true }, '');
+        } catch (e) {
+            toast(e.message, true);
+        } finally {
+            ocupado(null);
+        }
+    }
+
+    async function pintarPaginas() {
+        const cont = $('#paginas');
+        cont.innerHTML = '';
+        const ancho = Math.min(820, cont.clientWidth - 24);
+        const dpr = Math.min(3, window.devicePixelRatio || 1);
+        const obs = new IntersectionObserver((entradas) => {
+            entradas.forEach(en => { if (en.isIntersecting) { obs.unobserve(en.target); render(en.target); } });
+        }, { root: cont, rootMargin: '600px 0px' });
+        async function render(box) {
+            const n = Number(box.dataset.n);
+            const page = await doc.pdf.getPage(n + 1);
+            const vp = page.getViewport({ scale: (ancho * dpr) / doc.paginas[n].w });
+            const c = box.querySelector('canvas');
+            c.width = Math.round(vp.width);
+            c.height = Math.round(vp.height);
+            await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+        }
+        for (let n = 0; n < doc.pdf.numPages; n++) {
+            const page = await doc.pdf.getPage(n + 1);
+            const vp = page.getViewport({ scale: 1 });
+            doc.paginas[n] = { w: vp.width, h: vp.height };
+            const box = document.createElement('div');
+            box.className = 'pagina';
+            box.dataset.n = n;
+            box.style.aspectRatio = `${vp.width} / ${vp.height}`;
+            box.innerHTML = `<canvas></canvas><span class="num">${n + 1} / ${doc.pdf.numPages}</span>`;
+            box.addEventListener('pointerdown', (e) => { if (e.target === box || e.target.tagName === 'CANVAS') activar(null); });
+            cont.appendChild(box);
+            obs.observe(box);
+        }
+    }
+
+    // Página más visible en pantalla
+    function paginaActual() {
+        const cont = $('#paginas');
+        const centro = cont.getBoundingClientRect().top + cont.clientHeight * 0.4;
+        let mejor = 0, dist = Infinity;
+        cont.querySelectorAll('.pagina').forEach(p => {
+            const r = p.getBoundingClientRect();
+            const d = r.top <= centro && r.bottom >= centro ? 0 : Math.min(Math.abs(r.top - centro), Math.abs(r.bottom - centro));
+            if (d < dist) { dist = d; mejor = Number(p.dataset.n); }
+        });
+        return mejor;
+    }
+
+    // ------------------------------------------------------------------ firmas colocadas (arrastrar y cambiar tamaño)
+    function colocar(firma, conFecha) {
+        const n = paginaActual();
+        const pg = doc.paginas[n];
+        const aspecto = firma.kind === 'text' ? 0.32 : firma.h / firma.w;
+        const w = 0.42;
+        const hFrac = Math.min(0.2, (w * pg.w * aspecto) / pg.h) + 14 / (pg.h * 1.2);
+        const box = document.querySelector(`.pagina[data-n="${n}"]`);
+        const r = box.getBoundingClientRect();
+        const contR = $('#paginas').getBoundingClientRect();
+        const visibleTop = Math.max(0, (contR.top - r.top) / r.height);
+        const visibleBottom = Math.min(1, (contR.bottom - 120 - r.top) / r.height);
+        const y = Math.max(0, Math.min(1 - hFrac, (visibleTop + visibleBottom) / 2 - hFrac / 2));
+        const c = { id: crypto.randomUUID(), pagina: n, x: (1 - w) / 2, y, w, h: hFrac, firma, fecha: conFecha ? new Date() : null };
+        colocadas.push(c);
+        dibujarColocada(c, true);
+        activar(c.id);
+        actualizarListo();
+        mostrarAyuda('Arrastra la firma. Usa el círculo amarillo para cambiar el tamaño.');
+        if (navigator.vibrate) navigator.vibrate(12);
+    }
+
+    function textoSub(c) {
+        return c.fecha ? `Firmado electrónicamente por ${c.firma.signer} · ${c.fecha.toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}` : `Firmado electrónicamente por ${c.firma.signer}`;
+    }
+
+    function dibujarColocada(c, nueva) {
+        const box = document.querySelector(`.pagina[data-n="${c.pagina}"]`);
+        let el = box.querySelector(`[data-id="${c.id}"]`);
+        if (!el) {
+            el = document.createElement('div');
+            el.className = 'colocada' + (nueva ? ' nueva' : '');
+            el.dataset.id = c.id;
+            const contenido = c.firma.kind === 'text'
+                ? `<div style="height:calc(100% - 13px);display:flex;align-items:center;justify-content:center;font:600 ${Math.round(box.clientHeight * c.h * 0.5)}px Caveat,cursive;color:#1d4ed8;white-space:nowrap;overflow:hidden">${esc(c.firma.text)}</div>`
+                : `<img src="${c.firma.src}" alt="">`;
+            el.innerHTML = `${contenido}<div class="sub">${esc(textoSub(c))}</div><button class="quitar" aria-label="Quitar firma">×</button><span class="asa" aria-hidden="true"></span>`;
+            box.appendChild(el);
+            gestos(el, c, box);
+        }
+        Object.assign(el.style, { left: c.x * 100 + '%', top: c.y * 100 + '%', width: c.w * 100 + '%', height: c.h * 100 + '%' });
+    }
+
+    function gestos(el, c, box) {
+        let modo = null, ini = null;
+        el.addEventListener('pointerdown', (e) => {
+            e.stopPropagation();
+            if (e.target.classList.contains('quitar')) return;
+            activar(c.id);
+            modo = e.target.classList.contains('asa') ? 'tam' : 'mover';
+            ini = { x: e.clientX, y: e.clientY, c: { ...c }, W: box.clientWidth, H: box.clientHeight };
+            el.setPointerCapture(e.pointerId);
+        });
+        el.addEventListener('pointermove', (e) => {
+            if (!modo) return;
+            e.preventDefault();
+            const dx = (e.clientX - ini.x) / ini.W, dy = (e.clientY - ini.y) / ini.H;
+            if (modo === 'mover') {
+                c.x = Math.max(0, Math.min(1 - c.w, ini.c.x + dx));
+                c.y = Math.max(0, Math.min(1 - c.h, ini.c.y + dy));
+            } else {
+                const nw = Math.max(0.12, Math.min(1 - c.x, ini.c.w + dx));
+                const k = nw / ini.c.w;
+                c.w = nw;
+                c.h = Math.min(1 - c.y, ini.c.h * k);
+                const txt = el.querySelector('div[style*="Caveat"]');
+                if (txt) txt.style.fontSize = Math.round(ini.H * c.h * 0.5) + 'px';
+            }
+            dibujarColocada(c);
+        });
+        const fin = () => { modo = null; };
+        el.addEventListener('pointerup', fin);
+        el.addEventListener('pointercancel', fin);
+        el.querySelector('.quitar').addEventListener('click', (e) => {
+            e.stopPropagation();
+            colocadas = colocadas.filter(x => x.id !== c.id);
+            el.remove();
+            activa = null;
+            actualizarListo();
+        });
+    }
+
+    function activar(id) {
+        activa = id;
+        document.querySelectorAll('.colocada').forEach(el => el.classList.toggle('activa', el.dataset.id === id));
+    }
+
+    function actualizarListo() { $('#btn-listo').disabled = colocadas.length === 0; }
+
+    let ayudaTimer = null;
+    function mostrarAyuda(t) {
+        document.querySelectorAll('.ayuda').forEach(a => a.remove());
+        const a = document.createElement('div');
+        a.className = 'ayuda';
+        a.textContent = t;
+        document.body.appendChild(a);
+        clearTimeout(ayudaTimer);
+        ayudaTimer = setTimeout(() => a.remove(), 3500);
+    }
+
+    // ------------------------------------------------------------------ hojas inferiores
+    function hoja(html) {
+        const capa = $('#capa-hoja');
+        capa.innerHTML = `<div class="velo"></div><div class="hoja" role="dialog" aria-modal="true"><div class="tirador"></div>${html}</div>`;
+        capa.querySelector('.velo').onclick = cerrarHoja;
+        return capa.querySelector('.hoja');
+    }
+    function cerrarHoja() { $('#capa-hoja').innerHTML = ''; }
+
+    function vistaFirma(f) {
+        return f.kind === 'text' ? `<span class="escrita">${esc(f.text)}</span>` : `<img src="${f.src}" alt="">`;
+    }
+
+    // Elegir firma (o crear una)
+    async function hojaElegir(soloGestionar) {
+        await cargarFirmas();
+        if (!misFirmas.length && !soloGestionar) return hojaNueva();
+        const h = hoja(`
+            <h2>${soloGestionar ? 'Mis firmas' : 'Elige tu firma'}</h2>
+            <p class="muted">${soloGestionar ? 'Guardadas cifradas solo en este celular.' : 'Toca una firma para ponerla en la página.'}</p>
+            <div class="firmas">${misFirmas.map(f => `<div class="firma-card" data-id="${f.id}" role="button" tabindex="0">${vistaFirma(f)}<small>${esc(f.signer)}</small><button class="borrar" data-borrar="${f.id}" aria-label="Borrar esta firma">×</button></div>`).join('') || '<p class="muted">Aún no tienes firmas guardadas.</p>'}</div>
+            ${soloGestionar ? '' : '<label class="check"><input type="checkbox" id="con-fecha" checked> Mostrar fecha y hora debajo de la firma</label>'}
+            <div class="fila-botones"><button class="btn btn-ghost" id="nueva">Nueva firma</button>${soloGestionar ? '<button class="btn btn-dark" id="cerrar">Cerrar</button>' : ''}</div>`);
+        h.querySelector('#nueva').onclick = () => hojaNueva(soloGestionar);
+        const cerrar = h.querySelector('#cerrar');
+        if (cerrar) cerrar.onclick = cerrarHoja;
+        h.querySelectorAll('[data-borrar]').forEach(b => b.onclick = async (e) => {
+            e.stopPropagation();
+            const f = misFirmas.find(x => x.id === b.dataset.borrar);
+            if (!confirm(`¿Borrar la firma de ${f.signer} de este celular?`)) return;
+            try { await Firmas.borrar(f.id); } catch (err) { /* solo sesión */ }
+            misFirmas = misFirmas.filter(x => x.id !== f.id);
+            hojaElegir(soloGestionar);
+        });
+        if (!soloGestionar) h.querySelectorAll('.firma-card').forEach(card => card.onclick = () => {
+            const f = misFirmas.find(x => x.id === card.dataset.id);
+            const fecha = h.querySelector('#con-fecha').checked;
+            cerrarHoja();
+            colocar(f, fecha);
+        });
+    }
+
+    // Crear firma: dibujar, escribir o subir imagen
+    function hojaNueva(soloGestionar) {
+        let nombre = '';
+        try { nombre = localStorage.getItem('pascalpdf-signer') || ''; } catch (e) { /* nada */ }
+        const h = hoja(`
+            <h2>Nueva firma</h2>
+            <div class="tabs" role="tablist">
+                <button role="tab" aria-selected="true" data-tab="dibujar">Dibujar</button>
+                <button role="tab" aria-selected="false" data-tab="escribir">Escribir</button>
+                <button role="tab" aria-selected="false" data-tab="imagen">Imagen</button>
+            </div>
+            <div data-panel="dibujar"><div class="pad"><canvas id="pad"></canvas><div class="linea"></div><button class="limpiar" id="limpiar">Limpiar</button></div>
+                <p class="muted" style="margin-top:8px">Firma con el dedo sobre el recuadro. Si es pequeño, gira el celular.</p></div>
+            <div data-panel="escribir" class="hidden"><input class="campo" id="escrita" placeholder="Escribe tu firma"><div class="vista-escrita" id="vista"></div></div>
+            <div data-panel="imagen" class="hidden"><label class="subir"><img id="img-vista" class="hidden" alt=""><span id="img-texto"><b>Sube una foto de tu firma</b><br><span class="muted">PNG o JPG. Sobre papel blanco: el fondo se quita solo.</span></span><input type="file" id="img" accept="image/png,image/jpeg,image/webp"></label></div>
+            <label class="lbl" for="nombre">Nombre de quien firma</label>
+            <input class="campo" id="nombre" autocomplete="name" placeholder="Nombre completo" value="${esc(nombre)}">
+            <label class="check"><input type="checkbox" id="guardar" checked> Guardar en este celular (cifrada)</label>
+            ${soloGestionar ? '' : '<label class="check"><input type="checkbox" id="con-fecha" checked> Mostrar fecha y hora debajo de la firma</label>'}
+            <div class="fila-botones"><button class="btn btn-ghost" id="cancelar">Cancelar</button><button class="btn btn-primary" id="usar">${soloGestionar ? 'Guardar firma' : 'Usar firma'}</button></div>`);
+        let modo = 'dibujar', tinta = false, imagen = null;
+        h.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
+            modo = b.dataset.tab;
+            h.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+            h.querySelectorAll('[data-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== modo));
+        });
+        // lienzo con la resolución real de la pantalla
+        const pad = h.querySelector('#pad');
+        const dpr = Math.min(3, window.devicePixelRatio || 1);
+        const ajustar = () => { const r = pad.getBoundingClientRect(); pad.width = Math.round(r.width * dpr); pad.height = Math.round(r.height * dpr); const cx = pad.getContext('2d'); cx.lineCap = 'round'; cx.lineJoin = 'round'; cx.strokeStyle = '#1e3a8a'; cx.lineWidth = 3.2 * dpr; tinta = false; };
+        requestAnimationFrame(ajustar);
+        const ctx = () => pad.getContext('2d');
+        let dibujando = false, ultimo = null;
+        const pos = (e) => { const r = pad.getBoundingClientRect(); return [(e.clientX - r.left) * dpr, (e.clientY - r.top) * dpr]; };
+        pad.addEventListener('pointerdown', (e) => { e.preventDefault(); pad.setPointerCapture(e.pointerId); dibujando = true; tinta = true; ultimo = pos(e); ctx().beginPath(); ctx().moveTo(...ultimo); });
+        pad.addEventListener('pointermove', (e) => {
+            if (!dibujando) return;
+            const p = pos(e);
+            const m = [(ultimo[0] + p[0]) / 2, (ultimo[1] + p[1]) / 2];
+            ctx().quadraticCurveTo(ultimo[0], ultimo[1], m[0], m[1]);
+            ctx().stroke();
+            ctx().beginPath();
+            ctx().moveTo(...m);
+            ultimo = p;
+        });
+        const fin = () => { dibujando = false; };
+        pad.addEventListener('pointerup', fin);
+        pad.addEventListener('pointercancel', fin);
+        h.querySelector('#limpiar').onclick = () => { ctx().clearRect(0, 0, pad.width, pad.height); tinta = false; };
+        const escrita = h.querySelector('#escrita');
+        escrita.oninput = () => { h.querySelector('#vista').textContent = escrita.value; };
+        h.querySelector('#nombre').addEventListener('input', (e) => { if (!escrita.value || escrita.dataset.auto) { escrita.value = e.target.value; escrita.dataset.auto = '1'; escrita.oninput(); } });
+        if (nombre) { escrita.value = nombre; escrita.dataset.auto = '1'; escrita.oninput(); }
+        h.querySelector('#img').onchange = async (ev) => {
+            const file = ev.target.files[0];
+            if (!file) return;
+            if (/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) return toast('Las fotos HEIC no se pueden usar. Toma una captura de pantalla de la foto y súbela.', true);
+            try {
+                const bmp = await createImageBitmap(file);
+                const k = Math.min(1, 1200 / Math.max(bmp.width, bmp.height));
+                const c = document.createElement('canvas');
+                c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+                const cx = c.getContext('2d');
+                cx.drawImage(bmp, 0, 0, c.width, c.height);
+                const px = cx.getImageData(0, 0, c.width, c.height);
+                for (let i = 0; i < px.data.length; i += 4) if (px.data[i] > 225 && px.data[i + 1] > 225 && px.data[i + 2] > 225) px.data[i + 3] = 0;
+                cx.putImageData(px, 0, 0);
+                imagen = recortar(c);
+                if (!imagen) return toast('No se encontró una firma en la imagen. Prueba con otra foto.', true);
+                const v = h.querySelector('#img-vista');
+                v.src = imagen.src; v.classList.remove('hidden');
+                h.querySelector('#img-texto').innerHTML = '<span class="muted">Toca para cambiar la imagen</span>';
+            } catch (e) { toast('No se pudo leer la imagen.', true); }
+        };
+        h.querySelector('#cancelar').onclick = () => (soloGestionar || misFirmas.length) ? hojaElegir(soloGestionar) : cerrarHoja();
+        h.querySelector('#usar').onclick = async () => {
+            const signer = h.querySelector('#nombre').value.trim();
+            if (!signer) { h.querySelector('#nombre').focus(); return toast('Escribe el nombre de quien firma.', true); }
+            const firma = { id: crypto.randomUUID(), signer, createdAt: new Date().toISOString() };
+            if (modo === 'dibujar') {
+                const r = tinta ? recortar(pad) : null;
+                if (!r) return toast('Dibuja tu firma en el recuadro.', true);
+                Object.assign(firma, { kind: 'drawn', ...r });
+            } else if (modo === 'imagen') {
+                if (!imagen) return toast('Sube la imagen de tu firma.', true);
+                Object.assign(firma, { kind: 'image', ...imagen });
+            } else {
+                if (!escrita.value.trim()) return toast('Escribe tu firma.', true);
+                Object.assign(firma, { kind: 'text', text: escrita.value.trim() });
+            }
+            try { localStorage.setItem('pascalpdf-signer', signer); } catch (e) { /* nada */ }
+            if (h.querySelector('#guardar').checked) {
+                try { await Firmas.guardar(firma); } catch (e) { firma.soloSesion = true; toast('No se pudo guardar en este navegador; la firma queda solo por ahora.', true); }
+            } else firma.soloSesion = true;
+            misFirmas.unshift(firma);
+            if (soloGestionar) { toast('Firma guardada en este celular.'); return hojaElegir(true); }
+            const fecha = h.querySelector('#con-fecha').checked;
+            cerrarHoja();
+            colocar(firma, fecha);
+        };
+    }
+
+    function recortar(canvas) {
+        const { width, height } = canvas;
+        const d = canvas.getContext('2d').getImageData(0, 0, width, height).data;
+        let x0 = width, y0 = height, x1 = -1, y1 = -1;
+        for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+            if (d[(y * width + x) * 4 + 3] > 10) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+        }
+        if (x1 < 0) return null;
+        const p = 6;
+        x0 = Math.max(0, x0 - p); y0 = Math.max(0, y0 - p); x1 = Math.min(width - 1, x1 + p); y1 = Math.min(height - 1, y1 + p);
+        const o = document.createElement('canvas');
+        o.width = x1 - x0 + 1; o.height = y1 - y0 + 1;
+        o.getContext('2d').drawImage(canvas, x0, y0, o.width, o.height, 0, 0, o.width, o.height);
+        return { src: o.toDataURL('image/png'), w: o.width, h: o.height };
+    }
+
+    // ------------------------------------------------------------------ terminar: generar, compartir o guardar
+    function hojaListo() {
+        const h = hoja(`
+            <h2>Tu documento firmado</h2>
+            <p class="muted">${colocadas.length} ${colocadas.length === 1 ? 'firma' : 'firmas'} en «${esc(doc.nombre)}».</p>
+            <label class="check"><input type="checkbox" id="evidencia" checked> Agregar hoja de evidencia (quién firmó, cuándo y la huella del documento)</label>
+            <div class="fila-botones" style="flex-direction:column">
+                <button class="btn btn-primary btn-block" id="compartir">Compartir PDF firmado</button>
+                <button class="btn btn-ghost btn-block" id="descargar">Guardar en el celular</button>
+            </div>
+            <p class="aviso-legal">Firma electrónica (Ley 527 de 1999 y Decreto 2364 de 2012). Verifica que tu trámite la acepte. Tú respondes por lo que firmas.</p>`);
+        h.querySelector('#compartir').onclick = () => terminar(true, h.querySelector('#evidencia').checked);
+        h.querySelector('#descargar').onclick = () => terminar(false, h.querySelector('#evidencia').checked);
+    }
+
+    async function terminar(compartir, evidencia) {
+        ocupado('Firmando el documento…');
+        let bytes;
+        try {
+            bytes = await construir(evidencia);
+        } catch (e) {
+            console.error(e);
+            ocupado(null);
+            return toast('No se pudo generar el PDF: ' + e.message, true);
+        }
+        ocupado(null);
+        const nombre = doc.nombre.replace(/\.pdf$/i, '') + '_firmado.pdf';
+        const file = new File([bytes], nombre, { type: 'application/pdf' });
+        if (compartir && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({ files: [file], title: nombre });
+                cerrarHoja();
+                return toast('Documento firmado y compartido.');
+            } catch (e) {
+                if (e.name === 'AbortError') return;
+            }
+        }
+        const url = URL.createObjectURL(file);
+        const a = Object.assign(document.createElement('a'), { href: url, download: nombre });
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        cerrarHoja();
+        toast(compartir ? 'Tu navegador no permite compartir archivos: el PDF se descargó.' : 'PDF firmado guardado en Descargas.');
+    }
+
+    function toWinAnsi(t) {
+        const map = { '—': '-', '–': '-', '“': '"', '”': '"', '‘': "'", '’': "'", '…': '...', '•': '-' };
+        return String(t || '').replace(/[^\n]/g, ch => map[ch] || (((ch.charCodeAt(0) >= 32 && ch.charCodeAt(0) <= 126) || (ch.charCodeAt(0) >= 160 && ch.charCodeAt(0) <= 255)) ? ch : ''));
+    }
+
+    async function construir(evidencia) {
+        const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
+        const pdf = await PDFDocument.load(doc.bytes, { ignoreEncryption: true });
+        const fuentes = {
+            helv: await pdf.embedFont(StandardFonts.Helvetica), bold: await pdf.embedFont(StandardFonts.HelveticaBold),
+            script: await pdf.embedFont(StandardFonts.TimesRomanItalic), mono: await pdf.embedFont(StandardFonts.Courier)
+        };
+        const imgs = {};
+        const pages = pdf.getPages();
+        for (const c of colocadas) {
+            const page = pages[c.pagina];
+            const box = page.getCropBox();
+            const rot = page.getRotation().angle % 360;
+            const sw = rot === 90 || rot === 270;
+            const W = sw ? box.height : box.width, H = sw ? box.width : box.height;
+            const pt = (vx, vyTop) => {
+                const x = vx, y = H - vyTop;
+                if (rot === 90) return { x: box.x + box.width - y, y: box.y + x };
+                if (rot === 180) return { x: box.x + box.width - x, y: box.y + box.height - y };
+                if (rot === 270) return { x: box.x + y, y: box.y + box.height - x };
+                return { x: box.x + x, y: box.y + y };
+            };
+            const x = c.x * W, y = c.y * H, w = c.w * W, h = c.h * H;
+            const subH = Math.min(9, h * 0.22);
+            const areaH = h - subH * 1.4;
+            if (c.firma.kind === 'text') {
+                const t = toWinAnsi(c.firma.text);
+                let size = Math.min(areaH * 0.85, 40);
+                while (size > 8 && fuentes.script.widthOfTextAtSize(t, size) > w) size -= 1;
+                const p = pt(x + (w - fuentes.script.widthOfTextAtSize(t, size)) / 2, y + areaH * 0.55 + size * 0.3);
+                page.drawText(t, { x: p.x, y: p.y, size, font: fuentes.script, color: rgb(0.11, 0.3, 0.85), rotate: degrees(rot) });
+            } else {
+                const img = imgs[c.firma.id] || (imgs[c.firma.id] = await pdf.embedPng(c.firma.src));
+                const k = Math.min(w / img.width, areaH / img.height);
+                const iw = img.width * k, ih = img.height * k;
+                const p = pt(x + (w - iw) / 2, y + (areaH - ih) / 2 + ih);
+                page.drawImage(img, { x: p.x, y: p.y, width: iw, height: ih, rotate: degrees(rot) });
+            }
+            const sub = toWinAnsi(textoSub(c));
+            let s = Math.max(4, subH * 0.8);
+            while (s > 3.5 && fuentes.mono.widthOfTextAtSize(sub, s) > w) s -= 0.25;
+            const ps = pt(x, y + h - subH * 0.25);
+            page.drawText(sub, { x: ps.x, y: ps.y, size: s, font: fuentes.mono, color: rgb(0.35, 0.35, 0.4), rotate: degrees(rot) });
+        }
+        if (evidencia) hojaEvidencia(pdf, fuentes, rgb);
+        pdf.setProducer('Pascal Sign de PascalIA');
+        return pdf.save();
+    }
+
+    // Mismo formato que la hoja de PascalPDF, para que su verificador la reconozca
+    function hojaEvidencia(pdf, f, rgb) {
+        const page = pdf.addPage([612, 792]);
+        const ink = rgb(0.12, 0.12, 0.12), muted = rgb(0.36, 0.36, 0.36), line = rgb(0.85, 0.85, 0.85);
+        let y = 740;
+        const t = (s, size, font, color, x = 56) => page.drawText(toWinAnsi(s), { x, y, size, font, color });
+        const par = (s, size, font, color) => {
+            let l = '';
+            toWinAnsi(s).split(' ').forEach(wd => { if (font.widthOfTextAtSize(l + ' ' + wd, size) > 500 && l) { t(l, size, font, color); y -= size * 1.4; l = wd; } else l = l ? l + ' ' + wd : wd; });
+            if (l) { t(l, size, font, color); y -= size * 1.4; }
+        };
+        page.drawRectangle({ x: 56, y: 762, width: 500, height: 4, color: rgb(1, 0.76, 0.03) });
+        t('Hoja de evidencia de firma electrónica', 18, f.bold, ink); y -= 22;
+        par('Generada por Pascal Sign de PascalIA (pascalia.lat). Firma electrónica en los términos de la Ley 527 de 1999 y el Decreto 2364 de 2012. No es firma digital certificada.', 9, f.helv, muted);
+        y -= 10;
+        const ahora = new Date();
+        const tz = -ahora.getTimezoneOffset() / 60;
+        [['Documento', doc.nombre], ['Páginas del documento', String(doc.pdf.numPages)], ['Generada el', `${ahora.toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'medium' })} (UTC${tz >= 0 ? '+' : ''}${tz})`]]
+            .forEach(([k, v]) => { t(k, 9, f.bold, ink); page.drawText(toWinAnsi(v), { x: 180, y, size: 9, font: f.helv, color: ink }); y -= 16; });
+        y -= 4;
+        t('Archivo(s) original(es) y su huella SHA-256', 11, f.bold, ink); y -= 16;
+        par(doc.nombre, 9, f.helv, ink);
+        t(doc.hash.slice(0, 32), 8, f.mono, muted); y -= 11;
+        t(doc.hash.slice(32), 8, f.mono, muted); y -= 22;
+        t('Firmas', 11, f.bold, ink); y -= 16;
+        const cols = [56, 216, 272, 340];
+        ['Firmante', 'Página', 'Método', 'Identificador de la firma'].forEach((hd, i) => page.drawText(hd, { x: cols[i], y, size: 8, font: f.bold, color: muted }));
+        y -= 6;
+        page.drawLine({ start: { x: 56, y }, end: { x: 556, y }, thickness: 0.6, color: line });
+        y -= 13;
+        colocadas.forEach(c => {
+            if (y < 140) return;
+            const metodo = c.firma.kind === 'text' ? 'escrita' : c.firma.kind === 'drawn' ? 'dibujada' : 'imagen';
+            page.drawText(toWinAnsi(c.firma.signer.slice(0, 30)), { x: cols[0], y, size: 9, font: f.helv, color: ink });
+            page.drawText(String(c.pagina + 1), { x: cols[1], y, size: 9, font: f.helv, color: ink });
+            page.drawText(metodo, { x: cols[2], y, size: 9, font: f.helv, color: ink });
+            page.drawText(c.firma.id, { x: cols[3], y, size: 7.5, font: f.mono, color: ink });
+            y -= 20;
+        });
+        y = Math.min(y, 150);
+        page.drawLine({ start: { x: 56, y: y + 8 }, end: { x: 556, y: y + 8 }, thickness: 0.6, color: line });
+        y -= 8;
+        par('Cómo comprobar: calcula la huella SHA-256 del archivo original y compárala con la de esta hoja (en PascalPDF: Herramientas > Verificar un documento firmado). Las fechas y horas provienen del dispositivo de quien firmó. Las imágenes de las firmas se guardan solo en ese dispositivo; PascalIA no las conserva.', 8, f.helv, muted);
+    }
+
+    // ------------------------------------------------------------------ navegación y arranque
+    function cerrarDocumento() {
+        if (colocadas.length && !confirm('¿Cerrar sin guardar el documento firmado?')) return false;
+        doc = null; colocadas = [];
+        $('#paginas').innerHTML = '';
+        $('#doc').classList.add('hidden');
+        $('#inicio').classList.remove('hidden');
+        cerrarHoja();
+        return true;
+    }
+    $('#archivo').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) abrirPDF(f); };
+    $('#btn-mis-firmas').onclick = () => hojaElegir(true);
+    $('#btn-firmar').onclick = () => hojaElegir(false);
+    $('#btn-listo').onclick = hojaListo;
+    $('#btn-cerrar').onclick = () => { if (cerrarDocumento()) history.back(); };
+    window.addEventListener('popstate', () => {
+        if ($('#capa-hoja').innerHTML) { cerrarHoja(); history.pushState({ doc: true }, ''); return; }
+        if (doc && !cerrarDocumento()) history.pushState({ doc: true }, '');
+    });
+
+    // Instalación (Android: aviso del navegador; iPhone: instrucciones)
+    let promptInstalar = null;
+    const instalada = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); promptInstalar = e; if (!instalada) $('#instalar').classList.remove('hidden'); });
+    if (!instalada && /iphone|ipad|ipod/i.test(navigator.userAgent)) {
+        $('#instalar').classList.remove('hidden');
+        $('#instalar-texto').textContent = 'Para instalarla: toca Compartir y luego «Agregar a inicio».';
+        $('#btn-instalar').classList.add('hidden');
+    }
+    $('#btn-instalar').onclick = async () => {
+        if (!promptInstalar) return;
+        promptInstalar.prompt();
+        await promptInstalar.userChoice;
+        promptInstalar = null;
+        $('#instalar').classList.add('hidden');
+    };
+
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/PascalSign/sw.js', { scope: '/PascalSign/' }).catch(() => { /* sin modo sin conexión */ });
+
+    // PDF recibido desde otra app (Android: menú Compartir; escritorio: abrir con)
+    (async () => {
+        if (new URLSearchParams(location.search).get('compartido')) {
+            history.replaceState(null, '', '/PascalSign/');
+            try {
+                const c = await caches.open('pascalsign-compartido');
+                const r = await c.match('/PascalSign/_compartido');
+                if (r) {
+                    const nombre = decodeURIComponent(r.headers.get('X-Nombre') || 'Documento.pdf');
+                    await c.delete('/PascalSign/_compartido');
+                    abrirPDF(await r.blob(), nombre);
+                }
+            } catch (e) { toast('No se pudo abrir el documento compartido.', true); }
+        }
+        if ('launchQueue' in window) {
+            window.launchQueue.setConsumer(async (params) => {
+                if (params.files && params.files[0]) abrirPDF(await params.files[0].getFile());
+            });
+        }
+    })();
+    cargarFirmas();
+})();
+</script>
+</body>
+</html>
