@@ -416,7 +416,7 @@
                 <div class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 pt-1">Marcadores del Documento</div>
                 <ul id="bookmarks-list" class="space-y-1 text-xs"></ul>
 
-                <p class="text-[11px] text-zinc-500 pt-1">Los marcadores sirven para moverte por el documento mientras trabajas.</p>
+                <p class="text-[11px] text-zinc-500 pt-1">Los marcadores te sirven para moverte mientras trabajas y quedan como índice dentro del PDF guardado.</p>
             </div>
 
             <!-- Contenido de Objetos / Capas -->
@@ -1103,13 +1103,16 @@
                     { label: "Extraer página", icon: "fa-file-export", action: () => extractCurrentPage() },
                     { label: "Dividir PDF", icon: "fa-scissors", action: () => splitPDFDocument() },
                     { label: "Unir otros PDF", icon: "fa-object-group", action: () => combineMultipleFiles() },
-                    { label: "Numerar páginas", icon: "fa-list-ol", action: () => togglePageNumbers() }
+                    { label: "Numerar páginas", icon: "fa-list-ol", action: () => togglePageNumbers() },
+                    { label: "Recortar página", icon: "fa-crop-simple", action: () => PascalTools.startCrop() },
+                    { label: "Quitar recorte", icon: "fa-expand", action: () => PascalTools.removeCrop() }
                 ]
             },
             forms: {
                 title: "Formularios",
                 icon: "fa-square-check",
                 tools: [
+                    { label: "Rellenar el formulario del PDF", icon: "fa-pen-to-square", action: () => PascalTools.showFormInfo() },
                     { label: "Campo de texto", icon: "fa-i-cursor", action: () => addFormField('form-text') },
                     { label: "Casilla de verificación", icon: "fa-square-check", action: () => addFormField('form-checkbox') },
                     { label: "Opción única", icon: "fa-circle-dot", action: () => addFormField('form-radio') },
@@ -1131,26 +1134,45 @@
                 ]
             },
             protect: {
-                title: "Tapar información",
-                icon: "fa-eraser",
+                title: "Proteger y tapar",
+                icon: "fa-shield-halved",
                 tools: [
                     { label: "Marcar área para tapar", icon: "fa-eraser", action: () => addRedactionBlock() },
-                    { label: "Aplicar tapado", icon: "fa-square", action: () => commitPermanentRedactions() }
+                    { label: "Aplicar tapado (elimina lo de debajo)", icon: "fa-square", action: () => PascalTools.applyRealRedaction() },
+                    { label: "Proteger con contraseña", icon: "fa-lock", action: () => PascalTools.passwordDialog() },
+                    { label: "Quitar metadatos y scripts al guardar", icon: "fa-broom", action: () => PascalTools.toggleClean() }
                 ]
             },
             export: {
-                title: "Exportar",
+                title: "Convertir y exportar",
                 icon: "fa-file-arrow-down",
                 tools: [
                     { label: "Guardar PDF", icon: "fa-file-pdf", action: () => exportAndDownloadPDF() },
-                    { label: "Página como imagen (PNG)", icon: "fa-file-image", action: () => exportPageAsPNG() }
+                    { label: "Comprimir y guardar", icon: "fa-file-zipper", action: () => PascalTools.compressAndSave() },
+                    { label: "Página actual como PNG", icon: "fa-file-image", action: () => exportPageAsPNG() },
+                    { label: "Todas las páginas a PNG (ZIP)", icon: "fa-images", action: () => PascalTools.exportImagesZip('image/png') },
+                    { label: "Todas las páginas a JPG (ZIP)", icon: "fa-images", action: () => PascalTools.exportImagesZip('image/jpeg') },
+                    { label: "Texto del PDF (TXT)", icon: "fa-file-lines", action: () => PascalTools.exportText() },
+                    { label: "Imágenes a PDF", icon: "fa-file-image", action: () => PascalTools.imagesToPdf() }
+                ]
+            },
+            tools: {
+                title: "Herramientas",
+                icon: "fa-toolbox",
+                tools: [
+                    { label: "Buscar en el documento", icon: "fa-magnifying-glass", action: () => PascalTools.searchDialog() },
+                    { label: "Reconocer texto (OCR)", icon: "fa-eye", action: () => PascalTools.runOCR() },
+                    { label: "Comparar dos versiones", icon: "fa-code-compare", action: () => PascalTools.compareDialog() },
+                    { label: "Procesar varios PDF", icon: "fa-layer-group", action: () => PascalTools.batchDialog() },
+                    { label: "Ver firmas digitales de un PDF", icon: "fa-certificate", action: () => PascalTools.viewSignaturesDialog() },
+                    { label: "Verificar un documento firmado", icon: "fa-shield-halved", action: () => PascalTools.verifyDialog() }
                 ]
             },
             nav: {
                 title: "Marcadores y enlaces",
                 icon: "fa-bookmark",
                 tools: [
-                    { label: "Nuevo marcador", icon: "fa-bookmark", action: () => { switchLeftTab('bookmarks'); document.getElementById('new-bookmark-input').focus(); } },
+                    { label: "Nuevo marcador (queda en el PDF)", icon: "fa-bookmark", action: () => { switchLeftTab('bookmarks'); document.getElementById('new-bookmark-input').focus(); } },
                     { label: "Enlace en un texto", icon: "fa-link", action: () => addHyperlinkToSelected() }
                 ]
             }
@@ -1363,6 +1385,10 @@
                 } else if (obj.type === 'redact') {
                     el.className += obj.applied ? " redaction-applied w-56 h-8" : " redaction-box w-56 h-8 flex items-center justify-center text-[10px] text-red-300 font-mono";
                     el.textContent = obj.applied ? "" : "ÁREA MARCADA PARA REDACCIÓN";
+                } else if (obj.type === 'sig-request') {
+                    el.className += " rounded-lg flex flex-col items-center justify-center text-center";
+                    Object.assign(el.style, { width: (obj.w || 230) + 'px', height: (obj.h || 80) + 'px', border: '2px dashed #FFB300', background: 'rgba(255,193,7,0.12)', color: '#8A6100' });
+                    el.innerHTML = `<span style="font:600 12px Inter,sans-serif"><i class="fa-solid fa-signature mr-1"></i>${escapeHtml(obj.text)}</span><span style="font:10px Inter,sans-serif;opacity:.8">Aquí firmará la otra persona</span>`;
                 } else if (obj.type === 'image') {
                     el.innerHTML = `<img src="${obj.src}" alt="${escapeHtml(obj.alt || 'Imagen insertada')}" draggable="false" style="width:${obj.w || 144}px;height:${obj.h || 96}px;object-fit:contain;" class="rounded border border-zinc-300">`;
                 }
@@ -1401,6 +1427,8 @@
                     wrapper.classList.add('page-enter');
                 }
             }
+
+            if (window.PascalTools) PascalTools.decoratePage(page, layer);
 
             renderThumbnails();
             renderObjectsLayerList();
@@ -2013,19 +2041,6 @@
             showToast("Área marcada. Ubícala sobre lo que quieres tapar y pulsa «Aplicar tapado».", "rose");
         }
 
-        function commitPermanentRedactions() {
-            let count = 0;
-            pdfPages.forEach(p => {
-                p.objects.forEach(o => {
-                    if (o.type === 'redact') {
-                        o.applied = true;
-                        count++;
-                    }
-                });
-            });
-            renderCurrentPage();
-            showToast(`${count} área(s) tapadas en negro. Ojo: en un PDF abierto, el texto que queda debajo puede seguir dentro del archivo.`, "amber");
-        }
 
 
 
@@ -2494,10 +2509,17 @@
             }
             setBusy(`Abriendo "${file.name}"…`);
             try {
-                const bytes = new Uint8Array(await file.arrayBuffer());
+                let bytes = new Uint8Array(await file.arrayBuffer());
                 pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
                 // PDF.js puede transferir el buffer al worker; se le pasa una copia
-                const pdfDoc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+                let pdfDoc;
+                try {
+                    pdfDoc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+                } catch (e) {
+                    if (!(e && e.name === 'PasswordException' && window.PascalTools)) throw e;
+                    bytes = await PascalTools.unlockPDF(bytes);
+                    pdfDoc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+                }
                 const srcId = 'src-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
                 const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(b => b.toString(16).padStart(2, '0')).join('');
                 pdfSources.push({ id: srcId, name: file.name, bytes, hash });
@@ -2524,6 +2546,7 @@
                         background: '#ffffff',
                         cropped: false,
                         h: Math.round(PAGE_W * base.height / base.width),
+                        pdfW: base.width, pdfH: base.height,
                         bgImage: canvas.toDataURL('image/jpeg', 0.85),
                         thumb: thumb.toDataURL('image/jpeg', 0.7),
                         srcId,
@@ -2531,6 +2554,9 @@
                         objects: []
                     });
                 }
+
+                if (window.PascalTools) await PascalTools.afterImport(newPages, srcId, bytes);
+                if (window.PascalTools) PascalTools.clearSearch();
 
                 if (append) {
                     pdfPages.push(...newPages);
@@ -2553,8 +2579,7 @@
                 showToast(`"${file.name}" cargado (${pdfDoc.numPages} páginas). Ya puedes firmar y editar encima.`, "emerald");
             } catch (err) {
                 console.error(err);
-                const msg = err && err.name === 'PasswordException'
-                    ? "El PDF está protegido con contraseña y no se puede abrir."
+                const msg = err && err.userMessage ? err.userMessage
                     : "No se pudo leer el archivo. Verifica que sea un PDF válido.";
                 showToast(msg, "rose");
             } finally {
@@ -2663,7 +2688,7 @@
         }
 
         // Construye el PDF final. indices = páginas a incluir (por defecto todas)
-        async function buildPDFBytes(indices) {
+        async function buildPDFBytes(indices, opts = {}) {
             const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
             const pdfDoc = await PDFDocument.create();
             const fonts = {
@@ -2686,9 +2711,16 @@
                 const pData = pdfPages[i];
                 const logicalH = pageHeight(pData);
                 let page;
-                if (pData.srcId) {
+                if (pData.raster) {
+                    // Página convertida en imagen (tapado real o imagen importada)
+                    page = pdfDoc.addPage([pData.pdfW, pData.pdfH]);
+                    page.drawImage(await embedDataImage(pdfDoc, imgCache, pData.bgImage), { x: 0, y: 0, width: pData.pdfW, height: pData.pdfH });
+                } else if (pData.srcId) {
                     const source = pdfSources.find(s => s.id === pData.srcId);
-                    if (!srcDocs[pData.srcId]) srcDocs[pData.srcId] = await PDFDocument.load(source.bytes, { ignoreEncryption: true });
+                    if (!srcDocs[pData.srcId]) {
+                        srcDocs[pData.srcId] = await PDFDocument.load(source.bytes, { ignoreEncryption: true });
+                        if (window.PascalTools) srcDocs[pData.srcId] = await PascalTools.prepareSourceDoc(srcDocs[pData.srcId], pData.srcId);
+                    }
                     const [copied] = await pdfDoc.copyPages(srcDocs[pData.srcId], [pData.srcIndex]);
                     page = pdfDoc.addPage(copied);
                 } else {
@@ -2725,7 +2757,7 @@
                     page.drawImage(img, { x: p.x, y: p.y, width: w * k, height: h * k, rotate: rot });
                 };
 
-                if (!pData.srcId) {
+                if (!pData.srcId && !pData.raster) {
                     if (pData.background && pData.background.toLowerCase() !== '#ffffff') {
                         rect(0, 0, PAGE_W, logicalH, { color: hexToRgb(pData.background) });
                     }
@@ -2735,7 +2767,7 @@
                     text(footerText, 40, logicalH - 28, 8, fonts.regular, rgb(0.45, 0.45, 0.5));
                 }
 
-                if (watermark) {
+                if (watermark && !opts.noWatermark) {
                     const size = 64;
                     const w = fonts.bold.widthOfTextAtSize(toWinAnsi(watermark), size * k);
                     const c = pt(PAGE_W / 2, logicalH / 2);
@@ -2751,11 +2783,15 @@
                     image(img, 0, 0, PAGE_W, logicalH);
                 }
 
+                if (window.PascalTools) PascalTools.drawOcrLayer(page, pData, { pt, k, rot, fonts });
+
                 for (const obj of pData.objects) {
                     if (obj.cover) rect(obj.cover.x, obj.cover.y, obj.cover.w, obj.cover.h, { color: rgb(1, 1, 1) });
                 }
 
                 for (const obj of pData.objects) {
+                    if (opts.skip && opts.skip(obj)) continue;
+                    if (obj.type === 'sig-request') continue; // casilla para firmante externo: no se imprime
                     // Los objetos en pantalla tienen padding de 8 px (clase p-2), salvo el texto original editado
                     const pad = obj.tight ? 0 : 8;
                     const x = obj.x + pad, y = obj.y + pad;
@@ -2836,18 +2872,20 @@
                     }
                 }
 
-                if (showPageNumbering) {
+                if (showPageNumbering && !opts.noPageNumbers) {
                     const label = `Página ${i + 1} de ${pdfPages.length}`;
                     const w = fonts.regular.widthOfTextAtSize(toWinAnsi(label), 9);
                     text(label, PAGE_W - 40 - w, logicalH - 28, 9, fonts.regular, rgb(0.4, 0.4, 0.4));
                 }
 
+                if (window.PascalTools) PascalTools.applyCrop(page, pData, pt);
                 if (pData.rotation) page.setRotation(degrees((origRot + pData.rotation) % 360));
             }
 
             if (!indices && evidenceEnabled()) await appendEvidencePage(pdfDoc, fonts);
             pdfDoc.setTitle(document.getElementById('doc-title-display').textContent || 'Documento');
-            pdfDoc.setProducer('PascalPDF Studio & Sign');
+            pdfDoc.setProducer('PascalPDF');
+            if (window.PascalTools) PascalTools.finishDocument(pdfDoc, list, !indices || indices.length === pdfPages.length);
             return pdfDoc.save();
         }
 
@@ -3149,5 +3187,8 @@
             });
         };
     </script>
+    <script src="herramientas.js"></script>
+    <script src="config.js"></script>
+    <script src="firmas-terceros.js"></script>
 </body>
 </html>

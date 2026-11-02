@@ -62,10 +62,11 @@ Al aceptar esta política autorizas de manera previa, expresa e informada la tra
 
 Cuando envías un documento para que otra persona lo firme:
 
-- Tu navegador cifra el documento antes de enviarlo. La clave viaja solo en el enlace que recibe el firmante, y PascalIA no puede leer el documento.
+- Tu navegador cifra el documento antes de enviarlo. La clave viaja solo en el enlace que tú compartes con el firmante (por WhatsApp, correo u otro medio que elijas); PascalIA no envía ese enlace y no puede leer el documento.
+- Para confirmar tu correo y el del firmante enviamos códigos de un solo uso; de los códigos solo guardamos su huella y vencen en 10 minutos.
 - El archivo cifrado se guarda hasta que la firma se complete o por 7 días, lo que ocurra primero, y luego se elimina.
 - El firmante verifica su correo con un código y acepta esta política antes de firmar. Su firma también se crea en su propio dispositivo.
-- Del firmante guardamos: correo, fecha y hora, tipo y nombre del documento, identificador de su firma y huella del documento. El usuario que envió el documento puede ver ese registro.
+- De la solicitud guardamos: nombre y correo de quien pide y de quien firma, el mensaje opcional, el nombre y tipo del documento, las huellas SHA-256 del documento enviado y del firmado, las fechas de creación, verificación del correo y firma, y el identificador de la firma. El remitente puede ver ese registro. Al firmar avisamos al remitente por correo, sin adjuntar el documento.
 - Quien envía el documento declara que tiene una razón legítima para pedir la firma y para compartir el correo del firmante.
 
 ## 7. Planes Empresas

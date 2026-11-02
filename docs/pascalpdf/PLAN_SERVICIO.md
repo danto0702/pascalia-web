@@ -84,15 +84,15 @@ Al final del PDF firmado se agrega una página con: nombre de quien firma, corre
 ### 3.5 Firma por lotes
 Cargar varios PDF, elegir firma y posición (misma página y coordenadas, o "última página"), firmar todo en el navegador y descargar un ZIP. Se crea un evento por documento.
 
-### 3.6 Firmantes externos
-Es el único caso en que el documento tiene que salir del dispositivo, porque otra persona lo debe abrir. Propuesta que conserva la promesa de privacidad:
+### 3.6 Firmantes externos (construido el 2 de noviembre de 2026; falta desplegar)
+Es el único caso en que el documento sale del dispositivo, porque otra persona lo debe abrir:
 
-1. El navegador cifra el PDF con una clave aleatoria y sube **solo el archivo cifrado** a Storage privado.
-2. El enlace que se envía al firmante lleva la clave después de `#`, una parte que el navegador nunca envía al servidor. PascalIA no puede leer el documento.
-3. El firmante verifica su correo con un código, firma en su navegador y el resultado vuelve cifrado.
-4. El archivo cifrado se **borra** al completarse o a los 7 días, lo que ocurra primero. Del firmante externo queda en la base de datos: correo, fecha y hora, tipo y nombre del documento, identificador y huella.
+1. El remitente marca las casillas de firma, confirma su correo con un código y el navegador cifra el PDF (AES-256-GCM) con una clave aleatoria. Al servidor sube **solo el archivo cifrado**.
+2. La clave va en el enlace, después de `#` (el navegador nunca la envía al servidor). **El remitente comparte el enlace** por WhatsApp o correo desde su propio teléfono; PascalIA no lo envía, así la clave nunca pasa por nuestros sistemas.
+3. El firmante confirma su correo con un código (enviado por PascalIA), revisa el documento, firma en su navegador, acepta el aviso de privacidad y el resultado vuelve cifrado. Se agrega una hoja de evidencia con la **hora del servidor** en que se verificó el correo.
+4. El remitente recibe un aviso por correo (sin el documento) y descarga el firmado desde su enlace de seguimiento. El original cifrado se borra al firmarse; el firmado, a los 7 días o cuando el remitente lo borre.
 
-Esto se debe decir explícitamente en la política (pregunta 4).
+Código: `PascalPDF_Studio/firmas-terceros.js`, `PascalPDF_Studio/firmar/`, `supabase/pascalpdf/` (instrucciones de despliegue en su README).
 
 ### 3.7 Pagos con Wompi
 - **Web Checkout** de Wompi, con la **firma de integridad** (SHA-256 de referencia + monto + moneda + secreto) calculada en una Edge Function, nunca en el navegador.
@@ -117,7 +117,7 @@ Organización con dueño y miembros invitados por correo. El dueño ve el regist
 | **0. Limpieza honesta** (hecha el 2 de noviembre de 2026) | Quitar o marcar "Próximamente" todo lo simulado; renombrar "Firma Digital Certificada" a "Firma electrónica"; hoja de evidencia; firmas en IndexedDB cifrado; copia de respaldo. | Revisión tuya. Se puede publicar sin cobrar. |
 | **1. Cuentas y registro** | Proyecto Supabase propio, inicio con correo y Google, tabla de eventos, descarga CSV/TXT, verificación pública, política y términos publicados con aceptación registrada. | Aprobar el costo de Supabase y los textos legales. |
 | **2. Pagos** | Wompi (sandbox, luego producción), planes, paquetes, códigos promocionales, facturación electrónica, correos de recibo y de vencimiento. | Cuenta Wompi de producción y emisión de factura electrónica resuelta. |
-| **3. Suite completa** | Firma por lotes y firmantes externos cifrados. | Fase 2 estable. |
+| **3. Suite completa** | Firma por lotes ✓ y firmantes externos cifrados ✓ (construidos el 2 de noviembre de 2026; los externos esperan el despliegue en Supabase). Herramientas del navegador ✓: rellenar formularios, tapado real, quitar metadatos, recortar, buscar, PDF a imágenes, imágenes a PDF, PDF a texto, marcadores en el PDF, comparar versiones, OCR, contraseña, comprimir, ver firmas digitales, verificar hoja de evidencia. | Decidir qué entra en cada plan. |
 | **4. Empresas** | Organizaciones, puestos y panel consolidado. | Demanda real. |
 
 ## 5. Evaluación legal (Colombia)

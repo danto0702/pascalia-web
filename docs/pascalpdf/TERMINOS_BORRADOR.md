@@ -37,7 +37,7 @@ Está prohibido: firmar en nombre de otra persona sin autorización; falsificar 
 
 ## 7. Firmantes externos
 
-Cuando envías un documento a otra persona para que lo firme, declaras que tienes una razón legítima para hacerlo y para compartir su correo. El documento viaja cifrado, se elimina al completarse la firma o a los 7 días, y el firmante debe aceptar la política de datos antes de firmar.
+Cuando pides a otra persona que firme, declaras que tienes una razón legítima para hacerlo y para compartir su correo. Tú le envías el enlace; quien lo tenga puede ver el documento después de confirmar el correo del firmante, así que compártelo solo con esa persona. El documento viaja cifrado, el original se elimina al firmarse y el firmado a los 7 días o cuando lo borres. El firmante confirma su correo con un código y acepta el aviso de privacidad antes de firmar. Hay límites de uso (20 solicitudes al día) para evitar abusos.
 
 ## 8. Planes, precios y pagos
 
