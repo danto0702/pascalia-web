@@ -28,7 +28,7 @@ function revisar<T>(r: { data: T; error: unknown }) {
 
 const deps: Deps = {
   now: () => new Date(),
-  secreto: Deno.env.get("PASCALPDF_SECRETO")!,
+  get secreto() { return Deno.env.get("PASCALPDF_SECRETO")!; },
   sitio: "https://pascalia.lat",
   db: {
     async insertSolicitud(s) {
@@ -106,6 +106,11 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors(origin) });
   if (req.method !== "POST") return new Response(JSON.stringify({ ok: false, error: "Método no permitido" }), { status: 405, headers: h });
   if (origin && !ORIGENES.has(origin)) return new Response(JSON.stringify({ ok: false, error: "Origen no permitido" }), { status: 403, headers: h });
+  const secreto = Deno.env.get("PASCALPDF_SECRETO") ?? "";
+  if (secreto.length < 32 || !Deno.env.get("RESEND_API_KEY")) {
+    console.error("pascalpdf-firma sin configurar: faltan PASCALPDF_SECRETO (32+ caracteres) o RESEND_API_KEY");
+    return new Response(JSON.stringify({ ok: false, error: "El servicio de firmas no está disponible todavía." }), { status: 503, headers: h });
+  }
   const raw = await req.text();
   if (raw.length > 20_000) return new Response(JSON.stringify({ ok: false, error: "Solicitud demasiado grande" }), { status: 413, headers: h });
   try {
