@@ -1,0 +1,28 @@
+{
+  "name": "Pascal Sign",
+  "short_name": "Pascal Sign",
+  "description": "Firma tus PDF desde el celular. Una herramienta de PascalIA.",
+  "lang": "es-CO",
+  "id": "/PascalSign/",
+  "start_url": "/PascalSign/",
+  "scope": "/PascalSign/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF8E1",
+  "theme_color": "#FFC107",
+  "categories": ["productivity", "business"],
+  "icons": [
+    { "src": "/PascalSign/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/PascalSign/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/PascalSign/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "share_target": {
+    "action": "/PascalSign/compartir",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": { "files": [{ "name": "pdf", "accept": ["application/pdf", ".pdf"] }] }
+  },
+  "file_handlers": [
+    { "action": "/PascalSign/", "accept": { "application/pdf": [".pdf"] } }
+  ]
+}
