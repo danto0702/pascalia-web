@@ -49,7 +49,7 @@ Para prestar el servicio usamos los siguientes proveedores, que actúan como enc
 
 | Proveedor | Uso | País |
 |---|---|---|
-| Supabase Inc. | Cuentas, registro de firmas, archivos cifrados de firmantes externos | [Estados Unidos / Canadá] |
+| Supabase Inc. | Cuentas, registro de firmas, archivos cifrados de firmantes externos | Canadá (región ca-central-1) |
 | Google LLC | Inicio de sesión con Google (solo si lo eliges) | Estados Unidos |
 | Resend | Envío de códigos de acceso, recibos y avisos por correo | Estados Unidos |
 | Wompi (Bancolombia S.A.) | Procesamiento de pagos | Colombia |

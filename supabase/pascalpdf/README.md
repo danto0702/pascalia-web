@@ -1,6 +1,6 @@
 # PascalPDF · servidor de firmas a otras personas
 
-Va en el **proyecto Supabase de CuentaFacil** (no en el de SI-APS que usa el formulario de contacto). Tablas aisladas con el prefijo `pascalpdf_`, sin políticas RLS: solo la función, con la llave de servicio, lee y escribe.
+Va en el **proyecto Supabase de CuentaFacil** (`dfzoqenxvpqkzkuakmli`, Canadá) (no en el de SI-APS que usa el formulario de contacto). Tablas aisladas con el prefijo `pascalpdf_`, sin políticas RLS: solo la función, con la llave de servicio, lee y escribe.
 
 ## Qué guarda
 - `pascalpdf_solicitudes`: quién pide, quién firma (nombres y correos), nombre y tipo del documento, huellas SHA-256 del documento enviado y del firmado, fechas de creación, verificación del correo y firma, identificador de la firma.
