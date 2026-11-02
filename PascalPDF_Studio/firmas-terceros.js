@@ -75,7 +75,7 @@
                         <input data-fc class="${field}" type="email" placeholder="Correo de quien debe firmar">
                         <select data-tipo class="${field}">${TIPOS.map(t => `<option>${t}</option>`).join('')}</select>
                         <textarea data-msg class="${field}" rows="2" maxlength="500" placeholder="Mensaje para quien firma (opcional)"></textarea>
-                        <label class="flex items-start gap-2"><input data-decl type="checkbox" class="mt-0.5 w-4 h-4 accent-amber-400"><span>Declaro que tengo una razón legítima para pedir esta firma y para compartir el correo de esa persona.</span></label>
+                        <label class="flex items-start gap-2"><input data-decl type="checkbox" class="mt-0.5 w-4 h-4 accent-amber-400"><span>Declaro que tengo una razón legítima para pedir esta firma y para compartir el correo de esa persona, y acepto los <a href="/PascalPDF_Studio/terminos/" target="_blank" rel="noopener" class="underline">términos</a> y la <a href="/PascalPDF_Studio/politica/" target="_blank" rel="noopener" class="underline">política de datos</a> de PascalPDF.</span></label>
                     </div>
                     <div data-paso2 class="space-y-3 hidden">
                         <p>Te enviamos un código a <b data-rcm class="text-white"></b>.</p>

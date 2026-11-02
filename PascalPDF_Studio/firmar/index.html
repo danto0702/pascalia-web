@@ -98,7 +98,7 @@
     const API = window.PASCALPDF_API;
     const app = document.getElementById('app');
     const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    const ACEPTACION = 'firma-terceros-1';
+    const ACEPTACION = 'politica-1.0';
 
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const hex = (buf) => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
@@ -235,7 +235,7 @@
                 <div id="t-draw" class="pad"><canvas id="pad" width="700" height="220"></canvas><button class="clear" id="limpiar" type="button">Limpiar</button></div>
                 <div id="t-type" class="hidden"><input type="text" id="escrita" placeholder="Escribe tu nombre como firma" value="${esc(info.firmante_nombre)}"><div class="typed" id="vista">${esc(info.firmante_nombre)}</div></div>
                 <p style="margin-top:14px"><label for="nombre" class="muted">Nombre completo de quien firma</label><input type="text" id="nombre" autocomplete="name" value="${esc(info.firmante_nombre)}"></p>
-                <label class="check"><input type="checkbox" id="acepto"><span>Acepto firmar electrónicamente este documento (Ley 527 de 1999 y Decreto 2364 de 2012) y autorizo el tratamiento de mis datos según el aviso de privacidad.</span></label>
+                <label class="check"><input type="checkbox" id="acepto"><span>Acepto firmar electrónicamente este documento (Ley 527 de 1999 y Decreto 2364 de 2012) y autorizo el tratamiento de mis datos según el aviso de privacidad, la <a href="/PascalPDF_Studio/politica/" target="_blank" rel="noopener">política de datos</a> y los <a href="/PascalPDF_Studio/terminos/" target="_blank" rel="noopener">términos</a> de PascalPDF.</span></label>
                 <details><summary>Aviso de privacidad</summary>
                     <p>Responsable: Danilo Orlando Torrado Blanco (PascalIA), Ábrego, Norte de Santander, Colombia · contacto@pascalia.lat. Para registrar tu firma guardamos tu correo, la fecha y hora de verificación y de firma, el nombre y tipo del documento, el identificador de tu firma y las huellas SHA-256 del documento recibido y firmado. Tu firma y el documento se procesan en tu dispositivo; el documento viaja cifrado y PascalIA no puede leerlo. El archivo cifrado se borra del servidor a más tardar a los 7 días. Los datos se alojan en Supabase (fuera de Colombia) y los correos se envían con Resend. Puedes conocer, actualizar, rectificar o pedir la supresión de tus datos escribiendo a contacto@pascalia.lat.</p>
                 </details>
