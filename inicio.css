@@ -95,6 +95,12 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 .nav-links { margin-left: auto; display: flex; align-items: center; gap: 4px; }
 .nav-links a:not(.btn) { padding: 10px 12px; border-radius: 10px; text-decoration: none; color: var(--ink-2); font-weight: 500; font-size: .97rem; transition: color .2s, background-color .2s; }
 .nav-links a:not(.btn):hover { color: var(--ink); background: var(--cream); }
+.nav-links a:not(.btn) { white-space: nowrap; }
+/* Menú largo de la portada: más compacto en pantallas medianas */
+@media (min-width: 1241px) and (max-width: 1440px) {
+  .nav-links { gap: 0; }
+  .nav-links a:not(.btn) { padding: 10px 8px; font-size: .92rem; }
+}
 .nav-cta { margin-left: 10px; }
 .menu-btn { display: none; margin-left: auto; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--ink-3); background: transparent; font: 600 .95rem var(--text); color: var(--ink); cursor: pointer; }
 
@@ -344,6 +350,17 @@ a.item:hover .item-arrow { color: var(--ink); transform: translateX(4px); }
   .hero-grid { grid-template-columns: 1fr; gap: 24px; }
   .bloom { margin: 0 auto; max-width: 480px; }
   .frag-cf { left: 0; } .frag-salud { right: 0; }
+}
+/* La portada tiene muchas secciones en el menú: se pliega antes que el resto del diseño */
+@media (max-width: 1240px) {
+  .menu-btn { display: inline-flex; }
+  .nav-links {
+    position: absolute; top: var(--nav-h); left: 0; right: 0; display: none; flex-direction: column; align-items: stretch; gap: 0;
+    padding: 8px 20px 20px; background: var(--bg); border-bottom: 1px solid var(--line-2); box-shadow: 0 20px 30px -24px rgba(31, 31, 31, .5);
+  }
+  .nav-links.is-open { display: flex; }
+  .nav-links a:not(.btn) { padding: 14px 8px; border-bottom: 1px solid var(--line); border-radius: 0; font-size: 1.05rem; }
+  .nav-cta { margin: 14px 0 0; }
 }
 @media (max-width: 960px) {
   .menu-btn { display: inline-flex; }

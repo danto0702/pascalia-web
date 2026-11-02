@@ -99,6 +99,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .nav-links { margin-left: auto; display: flex; align-items: center; gap: 4px; }
 .nav-links a:not(.btn) { padding: 10px 12px; border-radius: 10px; text-decoration: none; color: var(--ink-2); font-weight: 500; font-size: .97rem; transition: color .2s, background-color .2s; }
 .nav-links a:not(.btn):hover { color: var(--ink); background: var(--cream); }
+.nav-links a { white-space: nowrap; }
+@media (min-width: 961px) and (max-width: 1240px) { .nav-links { gap: 0; } .nav-links a:not(.btn) { padding: 10px 8px; font-size: .92rem; } }
+@media (min-width: 961px) and (max-width: 1080px) { .nav-links a:not(.btn) { padding: 10px 6px; font-size: .87rem; } .nav-links .btn { padding-left: 14px; padding-right: 14px; } }
 .nav-cta { margin-left: 10px; }
 .menu-btn { display: none; margin-left: auto; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--ink-3); background: transparent; font: 600 .95rem var(--text); color: var(--ink); cursor: pointer; }
 
