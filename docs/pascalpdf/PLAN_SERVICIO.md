@@ -136,7 +136,7 @@ Organización con dueño y miembros invitados por correo. El dueño ve el regist
 - **Firmantes externos:** son titulares distintos del usuario. Se necesita aviso de privacidad para ellos en la página de firma y aceptación antes de firmar.
 - **Transferencia internacional:** Supabase (EE. UU./Canadá), Google (inicio de sesión), Resend (correo) y Wompi (Colombia). Se requiere autorización expresa, como ya hace la política de CuentaFacil.
 - **Registro Nacional de Bases de Datos (RNBD):** hoy es obligatorio solo para personas jurídicas o naturales con activos superiores a 100.000 UVT. Como persona natural probablemente no aplica, pero **verifícalo**.
-- **Retención del registro:** el registro es la evidencia del usuario. Propuesta: se conserva mientras la cuenta esté activa y **5 años** después de la última firma, salvo que el titular pida borrarlo; antes de borrar, la app le ofrece descargarlo (pregunta 5).
+- **Retención del registro:** 24 meses desde su creación (decidido el 2 de noviembre de 2026); tarea diaria `pascalpdf-retencion-24-meses` en CuentaFacil.
 - **Seguridad:** RLS en todas las tablas, cifrado en tránsito y reposo, sin datos personales en los registros técnicos, registro de accesos administrativos.
 - **Empresas:** frente a los datos de sus empleados, la empresa es responsable y PascalIA es encargado. Hace falta una cláusula de encargo (transmisión) en los términos para empresas.
 
