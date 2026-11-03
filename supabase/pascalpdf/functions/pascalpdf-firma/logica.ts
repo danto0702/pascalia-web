@@ -29,6 +29,7 @@ export type Solicitud = {
   firmado_hash: string | null;
   aceptacion_version: string | null;
   archivos_borrados: boolean;
+  usuario_id?: string | null;
 };
 
 export type Codigo = { correo: string; codigo_hash: string; vence_en: string; intentos: number; creado_en: string };
@@ -55,6 +56,8 @@ export type Deps = {
     borrar(rutas: string[]): Promise<void>;
   };
   correo(para: string, asunto: string, html: string): Promise<boolean>;
+  // Cuenta de quien pide la firma: valida su plan, descuenta el cupo y devuelve su id y correo
+  cuenta?: (token: unknown) => Promise<{ id: string; correo: string }>;
 };
 
 const DIAS_VIGENCIA = 7;
@@ -162,12 +165,21 @@ export async function manejar(d: Record<string, unknown>, deps: Deps): Promise<R
 
   // 2. El remitente crea la solicitud (con su código) y recibe la URL para subir el documento cifrado
   if (accion === "crear") {
-    const correo = texto(d.correo, 254).toLowerCase();
-    const c = await deps.db.ultimoCodigo(correo);
-    if (!c || new Date(c.vence_en) < ahora || c.intentos >= MAX_INTENTOS) throw new ErrorCliente("El código venció. Pide uno nuevo.", 403);
-    if ((await sha256(deps.secreto + "|c|" + correo + "|" + texto(d.codigo, 12))) !== c.codigo_hash) {
-      await deps.db.actualizarCodigo(correo, c.creado_en, { intentos: c.intentos + 1 });
-      throw new ErrorCliente("El código no es correcto.", 403);
+    // Con cuentas activas, pedir firmas exige iniciar sesión (y cupo del plan); sin ellas, código al correo
+    let correo: string, usuario_id: string | null = null, c: Codigo | null = null;
+    if (deps.cuenta) {
+      if (!d.token) throw new ErrorCliente("Inicia sesión para pedir firmas.", 401);
+      const u = await deps.cuenta(d.token);
+      correo = u.correo;
+      usuario_id = u.id;
+    } else {
+      correo = texto(d.correo, 254).toLowerCase();
+      c = await deps.db.ultimoCodigo(correo);
+      if (!c || new Date(c.vence_en) < ahora || c.intentos >= MAX_INTENTOS) throw new ErrorCliente("El código venció. Pide uno nuevo.", 403);
+      if ((await sha256(deps.secreto + "|c|" + correo + "|" + texto(d.codigo, 12))) !== c.codigo_hash) {
+        await deps.db.actualizarCodigo(correo, c.creado_en, { intentos: c.intentos + 1 });
+        throw new ErrorCliente("El código no es correcto.", 403);
+      }
     }
     if ((await deps.db.contarSolicitudesDesde(correo, new Date(ahora.getTime() - 86_400_000))) >= MAX_SOLICITUDES_DIA) {
       throw new ErrorCliente("Llegaste al límite de solicitudes por hoy.", 429);
@@ -194,8 +206,9 @@ export async function manejar(d: Record<string, unknown>, deps: Deps): Promise<R
       mensaje: texto(d.mensaje, 500) || null, documento_nombre, documento_tipo,
       documento_hash: d.documento_hash as string, campos,
       token_remitente_hash: await sha256(deps.secreto + "|r|" + token),
+      ...(usuario_id ? { usuario_id } : {}),
     });
-    await deps.db.actualizarCodigo(correo, c.creado_en, { intentos: MAX_INTENTOS }); // el código no se reutiliza
+    if (c) await deps.db.actualizarCodigo(correo, c.creado_en, { intentos: MAX_INTENTOS }); // el código no se reutiliza
     await limpiar(deps);
     return { ok: true, id: s.id, token_remitente: token, vence_en: s.vence_en, subida: await deps.storage.urlSubida(`${s.id}/original.bin`) };
   }
