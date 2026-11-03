@@ -763,10 +763,7 @@
                 </div>
 
                 <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 space-y-2.5 text-xs">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input id="chk-sello" type="checkbox" checked class="w-4 h-4 accent-amber-400" onchange="document.getElementById('sello-campos').classList.toggle('hidden', !this.checked)">
-                        <span class="text-zinc-200">Agregar recuadro de firma (nombre, fecha, objeto y radicado)</span>
-                    </label>
+                    <p class="text-zinc-300">Datos de la firma: nombre, fecha y un consecutivo automático (iniciales-número-año). Agrega el objeto y, si lo tiene, el radicado.</p>
                     <div id="sello-campos" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <input id="sello-objeto" type="text" maxlength="120" placeholder="Objeto (ej. Certificado de cumplimiento)" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs text-white">
                         <input id="sello-radicado" type="text" maxlength="60" placeholder="Radicado (opcional)" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs text-white">
@@ -894,7 +891,7 @@
         let isMobileTouchMode = false; // Interruptor de modo móvil optimizado (Android / iOS)
         const PAGE_W = 680;   // ancho lógico de la página en el editor
         const PAGE_H = 920;   // alto lógico por defecto
-        const SELLO_W = 280;  // ancho del recuadro de firma en el editor
+        const SELLO_W = 260;  // ancho del bloque de datos de la firma en el editor
         let pdfSources = [];  // PDFs reales cargados: [{ id, name, bytes }]
         let lastDrawnPageId = null;
         let textEditMode = false;
@@ -1373,7 +1370,7 @@
                         ? `<img src="${obj.src}" alt="Firma" draggable="false" style="width:${obj.w}px;height:${obj.h}px;object-fit:contain;">`
                         : `<div style="font-family: ${obj.fontFamily}; font-size: ${obj.fontSize}px; color: ${obj.color}; line-height: 1.1;">${escapeHtml(obj.text)}</div>`;
                     el.innerHTML = obj.sello && window.PascalSello
-                        ? `<div style="width:${SELLO_W}px">${sigMain}<div style="margin-top:6px">${PascalSello.html(obj.sello)}</div></div>`
+                        ? `<div style="width:${SELLO_W}px">${sigMain}<div style="margin-top:4px">${PascalSello.html(obj.sello)}</div></div>`
                         : `
                         ${sigMain}
                         <div class="text-[9px] font-mono text-zinc-600 mt-1 flex items-center gap-1">
@@ -2290,10 +2287,11 @@
                 color: '#1d4ed8',
                 signedAt: new Date().toISOString()
             };
-            if (document.getElementById('chk-sello').checked) {
+            {
                 obj.sello = {
                     nombre: sig.signer,
                     fecha: PascalSello.fechaISO(new Date()),
+                    consecutivo: null,
                     objeto: document.getElementById('sello-objeto').value.trim(),
                     radicado: document.getElementById('sello-radicado').value.trim()
                 };
@@ -2955,7 +2953,7 @@
                             PascalSello.pdf({
                                 texto: (t, x, y, size, font, color) => text(t, x, y, size, font, color),
                                 rect: (x, y, w, hh, o) => rect(x, y, w, hh, { ...o, borderWidth: o.borderWidth * k })
-                            }, fonts, sx, sy + h + 6, SELLO_W, obj.sello, toWinAnsi);
+                            }, fonts, sx, sy + h + 4, SELLO_W, obj.sello, toWinAnsi);
                         } else {
                             text(obj.subtext || 'Firma Electrónica', sx, sy + h + 4, 7, fonts.mono, rgb(0.35, 0.35, 0.4));
                         }
@@ -3067,8 +3065,8 @@
                     page.drawText(toWinAnsi('Firmó el ' + new Date(obj.signedAt).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'medium' })), { x: cols[0], y, size: 7.5, font: fonts.regular, color: muted });
                     y -= 11;
                 }
-                if (obj.sello && (obj.sello.objeto || obj.sello.radicado)) {
-                    page.drawText(toWinAnsi([obj.sello.objeto && 'Objeto: ' + obj.sello.objeto, obj.sello.radicado && 'Radicado: ' + obj.sello.radicado].filter(Boolean).join(' · ').slice(0, 110)), { x: cols[0], y, size: 7.5, font: fonts.regular, color: muted });
+                if (obj.sello) {
+                    page.drawText(toWinAnsi([obj.sello.consecutivo && 'Consecutivo: ' + obj.sello.consecutivo, obj.sello.objeto && 'Objeto: ' + obj.sello.objeto, obj.sello.radicado && 'Radicado: ' + obj.sello.radicado].filter(Boolean).join(' · ').slice(0, 110)), { x: cols[0], y, size: 7.5, font: fonts.regular, color: muted });
                     y -= 11;
                 }
                 if (obj.registroId) {

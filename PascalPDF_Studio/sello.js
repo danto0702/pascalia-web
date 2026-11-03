@@ -1,65 +1,81 @@
-// Recuadro de firma electrónica (nombre, fecha, objeto y radicado), común a PascalPDF, Pascal Sign
-// y la página de firma de otras personas. Se dibuja igual en pantalla (HTML) y en el PDF (pdf-lib).
+// Datos de la firma (nombre, fecha, objeto, radicado y consecutivo), comunes a PascalPDF y Pascal Sign.
+// Van como líneas de texto debajo de la firma, igual que el pie de firma de siempre (sin recuadro).
+// Se dibujan igual en pantalla (HTML) y en el PDF (pdf-lib).
 (function () {
     'use strict';
-    const TITULO = 'FIRMA ELECTRÓNICA — VÁLIDA SIN FÍSICA';
-    const AZUL = '#245582';      // borde
-    const TINTA = '#7F95AE';     // texto
+    const TINTA = '#595966';
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const dos = (n) => String(n).padStart(2, '0');
 
-    // Fecha local en formato AAAA-MM-DD
+    // Fecha y hora local en formato AAAA-MM-DD HH:MM
     function fechaISO(d) {
         const f = d instanceof Date ? d : new Date(d || Date.now());
-        return `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, '0')}-${String(f.getDate()).padStart(2, '0')}`;
+        return `${f.getFullYear()}-${dos(f.getMonth() + 1)}-${dos(f.getDate())} ${dos(f.getHours())}:${dos(f.getMinutes())}`;
+    }
+
+    // Iniciales: primer nombre, primer apellido y segundo apellido (DANILO TORRADO BLANCO → DTB).
+    // Con cuatro o más palabras se toman la primera y las dos últimas.
+    function iniciales(nombre) {
+        const p = String(nombre || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase()
+            .split(/[^A-ZÑ]+/).filter(w => w && !['DE', 'DEL', 'LA', 'LAS', 'LOS', 'Y'].includes(w));
+        const sel = p.length >= 4 ? [p[0], p[p.length - 2], p[p.length - 1]] : p;
+        return sel.map(w => w[0]).join('') || 'X';
+    }
+
+    // Formato del consecutivo: iniciales-número-año (DTB-0001-2026)
+    function formato(nombre, numero, anio) {
+        return `${iniciales(nombre)}-${String(numero).padStart(4, '0')}-${anio}`;
+    }
+
+    // Respaldo sin conexión: contador del dispositivo, por año. El normal lo asigna el servidor al guardar.
+    function consecutivoLocal(nombre) {
+        const anio = new Date().getFullYear(), k = 'pascalpdf-consecutivo-' + anio;
+        let n = 1;
+        try { n = (parseInt(localStorage.getItem(k), 10) || 0) + 1; localStorage.setItem(k, String(n)); } catch (e) { n = Date.now() % 10000; }
+        return formato(nombre, n, anio);
     }
 
     function lineas(datos) {
         const out = [
-            { t: TITULO, rol: 'titulo' },
-            { t: String(datos.nombre || '').toUpperCase(), rol: 'nombre' },
-            { t: 'Fecha: ' + (datos.fecha || fechaISO()), rol: 'dato' }
+            'Firmado electrónicamente por ' + String(datos.nombre || '').toUpperCase(),
+            'Fecha: ' + (datos.fecha || fechaISO())
         ];
-        if (datos.objeto) out.push({ t: 'Objeto: ' + datos.objeto, rol: 'dato' });
-        if (datos.radicado) out.push({ t: 'Radicado: ' + datos.radicado, rol: 'dato' });
+        if (datos.objeto) out.push('Objeto: ' + datos.objeto);
+        if (datos.radicado) out.push('Radicado: ' + datos.radicado);
+        out.push('Consecutivo: ' + (datos.consecutivo || `${iniciales(datos.nombre)}-____-${new Date().getFullYear()} (se asigna al guardar)`));
         return out;
     }
 
-    // Proporciones relativas al ancho del recuadro
-    const P = { pad: 0.045, titulo: 0.04, nombre: 0.05, dato: 0.046, lh: 1.32, radio: 0.03, borde: 0.006 };
+    // Proporciones relativas al ancho del bloque
+    const P = { tam: 0.03, lh: 1.35 };
 
-    // Alto del recuadro (en las mismas unidades del ancho)
+    // Alto del bloque (en las mismas unidades del ancho)
     function alto(w, datos) {
-        const ls = lineas(datos);
-        return w * P.pad * 2 + ls.reduce((a, l) => a + w * P[l.rol] * P.lh, 0);
+        return lineas(datos).length * w * P.tam * P.lh;
     }
 
     // HTML para la vista en pantalla: ocupa el 100 % del ancho de su contenedor
     function html(datos) {
-        return `<div style="container-type:inline-size;width:100%"><div class="sello-firma" style="border:max(1.5px,0.6cqw) solid ${AZUL};border-radius:3cqw;padding:4.5cqw 5cqw;color:${TINTA};font-family:Inter,Roboto,Arial,sans-serif;line-height:1.32;background:#fff;text-align:left">`
-            + lineas(datos).map(l => `<div style="font-size:${(P[l.rol] * 100).toFixed(2)}cqw;${l.rol === 'titulo' ? 'font-weight:500' : ''};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.t)}</div>`).join('')
+        return `<div style="container-type:inline-size;width:100%"><div class="sello-firma" style="color:${TINTA};font-family:Inter,Roboto,Arial,sans-serif;line-height:${P.lh};text-align:left">`
+            + lineas(datos).map(t => `<div style="font-size:${(P.tam * 100).toFixed(2)}cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div>`).join('')
             + '</div></div>';
     }
 
-    // Dibuja el recuadro en el PDF. "dibujo" traduce coordenadas de la vista (origen arriba a la izquierda):
-    //   texto(str, x, yArriba, tamaño, fuente, color) y rect(x, yArriba, w, h, opciones)
+    // Dibuja las líneas en el PDF. "dibujo.texto(str, x, yArriba, tamaño, fuente, color)" usa coordenadas de la vista.
     function pdf(dibujo, fuentes, x, y, w, datos, toWinAnsi) {
         const { rgb } = PDFLib;
-        const hex = (h) => rgb(parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255);
-        const h = alto(w, datos);
-        dibujo.rect(x, y, w, h, { color: rgb(1, 1, 1), borderColor: hex(AZUL), borderWidth: Math.max(0.8, w * P.borde), radio: w * P.radio });
-        let yy = y + w * P.pad;
-        const maxW = w * (1 - P.pad * 2.2);
+        const color = rgb(0x59 / 255, 0x59 / 255, 0x66 / 255);
+        const lh = w * P.tam * P.lh;
+        let yy = y;
         lineas(datos).forEach(l => {
-            const font = l.rol === 'titulo' ? fuentes.medio || fuentes.regular : fuentes.regular;
-            let size = w * P[l.rol];
-            const t = toWinAnsi(l.t);
-            while (size > 3 && font.widthOfTextAtSize(t, size) > maxW) size -= 0.2;
-            const lh = w * P[l.rol] * P.lh;
-            dibujo.texto(t, x + w * P.pad * 1.1, yy + (lh - size) / 2 + size * 0.05, size, font, hex(TINTA));
+            const t = toWinAnsi(l);
+            let size = w * P.tam;
+            while (size > 3 && fuentes.regular.widthOfTextAtSize(t, size) > w) size -= 0.2;
+            dibujo.texto(t, x, yy + (lh - size) / 2, size, fuentes.regular, color);
             yy += lh;
         });
-        return h;
+        return alto(w, datos);
     }
 
-    window.PascalSello = { html, pdf, alto, fechaISO, TITULO };
+    window.PascalSello = { html, pdf, alto, fechaISO, iniciales, formato, consecutivoLocal };
 })();

@@ -149,10 +149,15 @@ const depsCuenta: DepsCuenta = {
       revisar(await db.from("pascalpdf_sesiones").delete().eq("token_hash", token_hash));
     },
     async insertarEventos(usuario_id, eventos) {
-      return revisar(await db.from("pascalpdf_eventos").insert(eventos.map((e) => ({ ...e, usuario_id }))).select("id, firmado_en")) as { id: string; firmado_en: string }[];
+      return revisar(await db.from("pascalpdf_eventos").insert(eventos.map((e) => ({ ...e, usuario_id }))).select("id, firmado_en, consecutivo")) as { id: string; firmado_en: string; consecutivo: string | null }[];
+    },
+    async ultimoNumero(usuario_id, anio) {
+      const r = revisar(await db.from("pascalpdf_eventos").select("numero").eq("usuario_id", usuario_id).eq("anio", anio)
+        .order("numero", { ascending: false, nullsFirst: false }).limit(1)) as { numero: number | null }[];
+      return r[0]?.numero ?? 0;
     },
     async eventos(usuario_id, limite) {
-      return revisar(await db.from("pascalpdf_eventos").select("id, firmado_en, app, documento_tipo, documento_nombre, documento_hash, firmante, objeto, radicado, firma_id, metodo, paginas")
+      return revisar(await db.from("pascalpdf_eventos").select("id, firmado_en, app, documento_tipo, documento_nombre, documento_hash, firmante, objeto, radicado, consecutivo, firma_id, metodo, paginas")
         .eq("usuario_id", usuario_id).order("firmado_en", { ascending: false }).limit(limite)) as never;
     },
     async contarEventosDesde(usuario_id, desde) {

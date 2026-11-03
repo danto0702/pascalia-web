@@ -281,20 +281,17 @@
     let ultimoSello = { activo: true, objeto: '', radicado: '' };
 
     function camposSello() {
-        return `<label class="check"><input type="checkbox" id="sello-activo" ${ultimoSello.activo ? 'checked' : ''}> Agregar recuadro de firma (nombre, fecha, objeto y radicado)</label>
-            <div id="sello-campos" ${ultimoSello.activo ? '' : 'class="hidden"'}><input class="campo" id="sello-objeto" maxlength="120" placeholder="Objeto (ej. Certificado de cumplimiento)" value="${esc(ultimoSello.objeto)}" style="margin-top:10px">
+        return `<p class="muted">Debajo de la firma van tu nombre, la fecha y un consecutivo automático (iniciales-número-año).</p>
+            <div id="sello-campos"><input class="campo" id="sello-objeto" maxlength="120" placeholder="Objeto (ej. Certificado de cumplimiento)" value="${esc(ultimoSello.objeto)}" style="margin-top:10px">
             <input class="campo" id="sello-radicado" maxlength="60" placeholder="Radicado (opcional)" value="${esc(ultimoSello.radicado)}" style="margin-top:8px"></div>`;
     }
     function leerSello(h) {
-        const a = h.querySelector('#sello-activo');
-        if (!a) return null;
-        ultimoSello = { activo: a.checked, objeto: h.querySelector('#sello-objeto').value.trim(), radicado: h.querySelector('#sello-radicado').value.trim() };
-        return ultimoSello.activo ? { objeto: ultimoSello.objeto, radicado: ultimoSello.radicado } : null;
+        const o = h.querySelector('#sello-objeto');
+        if (!o) return null;
+        ultimoSello = { activo: true, objeto: o.value.trim(), radicado: h.querySelector('#sello-radicado').value.trim() };
+        return { objeto: ultimoSello.objeto, radicado: ultimoSello.radicado };
     }
-    function enlazarSello(h) {
-        const a = h.querySelector('#sello-activo');
-        if (a) a.onchange = () => h.querySelector('#sello-campos').classList.toggle('hidden', !a.checked);
-    }
+    function enlazarSello() {}
     let activa = null;
 
     async function abrirPDF(file, nombre) {
@@ -676,8 +673,13 @@
                     paginas: doc.pdf.numPages, firmante: c.firma.signer,
                     objeto: c.sello ? c.sello.objeto : null, radicado: c.sello ? c.sello.radicado : null
                 })));
-                if (regs) regs.forEach((r, i) => { nuevas[i].registroId = r.id; nuevas[i].registradoEn = r.firmado_en; });
+                if (regs) regs.forEach((r, i) => {
+                    nuevas[i].registroId = r.id; nuevas[i].registradoEn = r.firmado_en;
+                    if (nuevas[i].sello && r.consecutivo) nuevas[i].sello.consecutivo = r.consecutivo;
+                });
             }
+            // Toda firma lleva consecutivo; si no se pudo registrar, se usa el contador del dispositivo
+            colocadas.forEach(c => { if (c.sello && !c.sello.consecutivo) c.sello.consecutivo = PascalSello.consecutivoLocal(c.firma.signer); });
             bytes = await construir(evidencia);
         } catch (e) {
             console.error(e);
@@ -815,7 +817,7 @@
             page.drawText(metodo, { x: cols[2], y, size: 9, font: f.helv, color: ink });
             page.drawText(c.firma.id, { x: cols[3], y, size: 7.5, font: f.mono, color: ink });
             y -= 11;
-            const extra = [c.sello && c.sello.objeto && 'Objeto: ' + c.sello.objeto, c.sello && c.sello.radicado && 'Radicado: ' + c.sello.radicado,
+            const extra = [c.sello && c.sello.consecutivo && 'Consecutivo: ' + c.sello.consecutivo, c.sello && c.sello.objeto && 'Objeto: ' + c.sello.objeto, c.sello && c.sello.radicado && 'Radicado: ' + c.sello.radicado,
                 c.registroId && `Registrada el ${new Date(c.registradoEn).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'medium', timeZone: 'America/Bogota' })} (hora del servidor, Colombia) · registro ${c.registroId}`].filter(Boolean).join(' · ');
             if (extra) { page.drawText(toWinAnsi(extra).slice(0, 150), { x: cols[0], y, size: 7, font: f.helv, color: muted }); y -= 11; }
             y -= 6;

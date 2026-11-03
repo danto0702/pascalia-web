@@ -47,8 +47,15 @@
                 objeto: obj.sello ? obj.sello.objeto : null,
                 radicado: obj.sello ? obj.sello.radicado : null
             })));
-            if (registros) registros.forEach((r, i) => { nuevas[i].obj.registroId = r.id; nuevas[i].obj.registradoEn = r.firmado_en; });
+            if (registros) registros.forEach((r, i) => {
+                const o = nuevas[i].obj;
+                o.registroId = r.id; o.registradoEn = r.firmado_en;
+                if (o.sello && r.consecutivo) o.sello.consecutivo = r.consecutivo;
+            });
         }
+        // Toda firma lleva consecutivo; si no se pudo registrar, se usa el contador del dispositivo
+        documentSignatures().forEach(({ obj }) => { if (obj.sello && !obj.sello.consecutivo) obj.sello.consecutivo = PascalSello.consecutivoLocal(obj.signer); });
+        if (window.renderCurrentPage) renderCurrentPage();
         return exportarOriginal(indices, filename);
     };
 
