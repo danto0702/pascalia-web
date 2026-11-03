@@ -22,6 +22,7 @@
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="/PascalPDF_Studio/config.js"></script>
     <script src="/PascalPDF_Studio/sello.js"></script>
+    <script src="/PascalPDF_Studio/limpiafirma.js"></script>
     <script src="/PascalPDF_Studio/cuenta.js"></script>
     <style>
         :root {
@@ -540,7 +541,8 @@
             <div data-panel="dibujar"><div class="pad"><canvas id="pad"></canvas><div class="linea"></div><button class="limpiar" id="limpiar">Limpiar</button></div>
                 <p class="muted" style="margin-top:8px">Firma con el dedo sobre el recuadro. Si es pequeño, gira el celular.</p></div>
             <div data-panel="escribir" class="hidden"><input class="campo" id="escrita" placeholder="Escribe tu firma"><div class="vista-escrita" id="vista"></div></div>
-            <div data-panel="imagen" class="hidden"><label class="subir"><img id="img-vista" class="hidden" alt=""><span id="img-texto"><b>Sube una foto de tu firma</b><br><span class="muted">PNG o JPG. Sobre papel blanco: el fondo se quita solo.</span></span><input type="file" id="img" accept="image/png,image/jpeg,image/webp"></label></div>
+            <div data-panel="imagen" class="hidden"><label class="subir"><img id="img-vista" class="hidden" alt=""><span id="img-texto"><b>Sube una foto de tu firma</b><br><span class="muted">PNG o JPG. El fondo y las sombras se quitan solos.</span></span><input type="file" id="img" accept="image/png,image/jpeg,image/webp"></label>
+                <button type="button" class="btn btn-primary btn-block" id="camara" style="margin-top:10px">Tomar foto con la cámara</button></div>
             <label class="lbl" for="nombre">Nombre de quien firma</label>
             <input class="campo" id="nombre" autocomplete="name" placeholder="Nombre completo" value="${esc(nombre)}">
             <label class="check"><input type="checkbox" id="guardar" checked> Guardar en este celular (cifrada)</label>
@@ -579,26 +581,22 @@
         escrita.oninput = () => { h.querySelector('#vista').textContent = escrita.value; };
         h.querySelector('#nombre').addEventListener('input', (e) => { if (!escrita.value || escrita.dataset.auto) { escrita.value = e.target.value; escrita.dataset.auto = '1'; escrita.oninput(); } });
         if (nombre) { escrita.value = nombre; escrita.dataset.auto = '1'; escrita.oninput(); }
+        // Foto o imagen de la firma: se corrige la luz, se quita el papel y se oscurece el trazo
+        const usarFoto = (fuente) => {
+            imagen = PascalLimpiaFirma.limpiar(fuente);
+            if (!imagen) return toast('No se encontró una firma en la imagen. Prueba con otra foto, con más luz.', true);
+            const v = h.querySelector('#img-vista');
+            v.src = imagen.src; v.classList.remove('hidden');
+            h.querySelector('#img-texto').innerHTML = '<span class="muted">Toca para cambiar la imagen</span>';
+        };
         h.querySelector('#img').onchange = async (ev) => {
             const file = ev.target.files[0];
             if (!file) return;
-            if (/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) return toast('Las fotos HEIC no se pueden usar. Toma una captura de pantalla de la foto y súbela.', true);
-            try {
-                const bmp = await createImageBitmap(file);
-                const k = Math.min(1, 1200 / Math.max(bmp.width, bmp.height));
-                const c = document.createElement('canvas');
-                c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
-                const cx = c.getContext('2d');
-                cx.drawImage(bmp, 0, 0, c.width, c.height);
-                const px = cx.getImageData(0, 0, c.width, c.height);
-                for (let i = 0; i < px.data.length; i += 4) if (px.data[i] > 225 && px.data[i + 1] > 225 && px.data[i + 2] > 225) px.data[i + 3] = 0;
-                cx.putImageData(px, 0, 0);
-                imagen = recortar(c);
-                if (!imagen) return toast('No se encontró una firma en la imagen. Prueba con otra foto.', true);
-                const v = h.querySelector('#img-vista');
-                v.src = imagen.src; v.classList.remove('hidden');
-                h.querySelector('#img-texto').innerHTML = '<span class="muted">Toca para cambiar la imagen</span>';
-            } catch (e) { toast('No se pudo leer la imagen.', true); }
+            try { usarFoto(await PascalLimpiaFirma.leer(file)); } catch (e) { toast(e.message, true); }
+        };
+        h.querySelector('#camara').onclick = async () => {
+            const foto = await PascalLimpiaFirma.camara();
+            if (foto) usarFoto(foto);
         };
         h.querySelector('#cancelar').onclick = () => (soloGestionar || misFirmas.length) ? hojaElegir(soloGestionar) : cerrarHoja();
         h.querySelector('#usar').onclick = async () => {

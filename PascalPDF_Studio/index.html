@@ -749,11 +749,12 @@
                         <div id="sig-img-empty">
                             <i class="fa-solid fa-cloud-arrow-up text-2xl text-indigo-400 mb-2"></i>
                             <div class="text-xs text-zinc-200 font-medium">Sube una foto o imagen de tu firma</div>
-                            <div class="text-[11px] text-zinc-500 mt-1">PNG, JPG o WebP. Mejor sobre papel blanco: el fondo blanco se quita solo.</div>
+                            <div class="text-[11px] text-zinc-500 mt-1">PNG, JPG o WebP. El fondo, las sombras y el papel gris se quitan solos.</div>
                         </div>
                         <div id="sig-img-change" class="hidden text-[11px] text-zinc-400">Toca para cambiar la imagen</div>
                         <input id="sig-img-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="handleSignatureImageUpload(event)">
                     </label>
+                    <button type="button" onclick="takeSignaturePhoto()" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 text-sm font-semibold"><i class="fa-solid fa-camera"></i> Tomar foto con la cámara</button>
                     <label class="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer"><input id="sig-img-keepbg" type="checkbox" class="w-4 h-4 accent-amber-400" onchange="reprocessSignatureImage()"> Conservar el fondo original (no quitar el blanco)</label>
                 </div>
 
@@ -2456,37 +2457,39 @@
         async function handleSignatureImageUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
-            if (/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) {
-                e.target.value = '';
-                return showToast("Las fotos HEIC del iPhone no se pueden usar. Toma una captura de pantalla de la foto o cámbiala a JPG.", "amber");
-            }
             try {
-                signatureImageBitmap = await createImageBitmap(file);
+                signatureImageBitmap = await PascalLimpiaFirma.leer(file);
             } catch (err) {
                 e.target.value = '';
-                return showToast("No se pudo leer la imagen. Usa una foto PNG, JPG o WebP de tu firma.", "amber");
+                return showToast(err.message, "amber");
             }
+            reprocessSignatureImage();
+        }
+        // Foto con la cámara del dispositivo
+        async function takeSignaturePhoto() {
+            const foto = await PascalLimpiaFirma.camara();
+            if (!foto) return;
+            signatureImageBitmap = foto;
+            document.getElementById('sig-img-keepbg').checked = false;
             reprocessSignatureImage();
         }
 
         function reprocessSignatureImage() {
             const bmp = signatureImageBitmap;
             if (!bmp) return;
-            const k = Math.min(1, 1200 / Math.max(bmp.width, bmp.height));
-            const c = document.createElement('canvas');
-            c.width = Math.round(bmp.width * k);
-            c.height = Math.round(bmp.height * k);
-            const cx = c.getContext('2d');
-            cx.drawImage(bmp, 0, 0, c.width, c.height);
             const keepBg = document.getElementById('sig-img-keepbg').checked;
-            if (!keepBg) {
-                const px = cx.getImageData(0, 0, c.width, c.height);
-                for (let i = 0; i < px.data.length; i += 4) {
-                    if (px.data[i] > 225 && px.data[i + 1] > 225 && px.data[i + 2] > 225) px.data[i + 3] = 0;
-                }
-                cx.putImageData(px, 0, 0);
+            let trimmed;
+            if (keepBg) {
+                const k = Math.min(1, 1200 / Math.max(bmp.width, bmp.height));
+                const c = document.createElement('canvas');
+                c.width = Math.round(bmp.width * k);
+                c.height = Math.round(bmp.height * k);
+                c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+                trimmed = { src: c.toDataURL('image/png'), w: c.width, h: c.height };
+            } else {
+                // Corrige la luz, quita el papel y oscurece el trazo
+                trimmed = PascalLimpiaFirma.limpiar(bmp);
             }
-            const trimmed = keepBg ? { src: c.toDataURL('image/png'), w: c.width, h: c.height } : trimCanvas(c);
             if (!trimmed) {
                 uploadedSignature = null;
                 return showToast("No se encontró una firma en la imagen. Prueba con otra foto o marca «Conservar el fondo original».", "amber");
@@ -3310,6 +3313,7 @@
         };
     </script>
     <script src="sello.js"></script>
+    <script src="limpiafirma.js"></script>
     <script src="herramientas.js"></script>
     <script src="config.js"></script>
     <script src="cuenta.js"></script>
