@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="../config.js"></script>
+    <script src="../cuenta.js"></script>
     <style>
         :root {
             --yellow: #FFC107; --yellow-hover: #FFB300; --graphite: #1F1F1F; --muted: #5C5C5C;
@@ -111,7 +112,7 @@
     const ESTADOS = { pendiente: 'Pendiente de firma', firmada: 'Firmada', vencida: 'Vencida', cancelada: 'Cancelada' };
 
     async function api(accion, datos) {
-        const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion, ...datos }) });
+        const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion, token: (() => { try { return localStorage.getItem('pascalpdf-sesion'); } catch (e) { return null; } })(), ...datos }) });
         let j = {};
         try { j = await r.json(); } catch (e) { /* vacío */ }
         if (!r.ok || !j.ok) throw new Error(j.error || 'No se pudo conectar con el servicio. Revisa tu conexión.');
