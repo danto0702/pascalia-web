@@ -13,7 +13,7 @@
     const hex = (buf) => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 
     async function api(accion, datos) {
-        const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion, ...datos }) });
+        const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion, token: localStorage.getItem('pascalpdf-sesion'), ...datos }) });
         let j = {};
         try { j = await r.json(); } catch (e) { /* respuesta vacía */ }
         if (!r.ok || !j.ok) throw Object.assign(new Error(j.error || 'No se pudo conectar con el servicio.'), { userMessage: j.error || 'No se pudo conectar con el servicio. Revisa tu conexión.' });
@@ -49,7 +49,11 @@
     }
 
     // ---------- diálogo de solicitud
-    function abrir() {
+    async function abrir() {
+        // Con cuentas activas, pedir firmas exige iniciar sesión y un plan (el servidor descuenta el cupo)
+        const conCuenta = !!(window.PascalCuenta && PascalCuenta.activa);
+        if (conCuenta && !(await PascalCuenta.requiere(1, 'Pedir firmas a otras personas'))) return;
+        const miCuenta = conCuenta ? PascalCuenta.cuenta : null;
         let campos = camposDelDocumento();
         if (!campos.length) {
             agregarCasilla();
@@ -70,7 +74,8 @@
                         <p class="text-zinc-400">El documento se cifra en tu dispositivo. Recibirás un enlace para enviárselo a la persona por WhatsApp o correo; ella confirma su correo con un código antes de ver el documento. PascalIA no puede leerlo.</p>
                         <p class="text-zinc-400">Casillas de firma marcadas: <b class="text-white">${campos.length}</b> (puedes moverlas en la página antes de continuar).</p>
                         <input data-rn class="${field}" placeholder="Tu nombre" value="${escapeHtml(nombreRemitente)}">
-                        <input data-rc class="${field}" type="email" autocomplete="email" placeholder="Tu correo (te enviamos un código)">
+                        <input data-rc class="${field}" type="email" autocomplete="email" placeholder="Tu correo (te enviamos un código)" ${miCuenta ? `value="${escapeHtml(miCuenta.correo)}" readonly hidden` : ''}>
+                        ${miCuenta ? `<p class="text-zinc-400">Solicitudes de firma este mes: <b class="text-white">${miCuenta.solicitudes.usadas} de ${miCuenta.solicitudes.cupo}</b>${miCuenta.solicitudes.extra ? ` · ${miCuenta.solicitudes.extra} adicionales` : ''}.</p>` : ''}
                         <input data-fn class="${field}" placeholder="Nombre de quien debe firmar">
                         <input data-fc class="${field}" type="email" placeholder="Correo de quien debe firmar">
                         <select data-tipo class="${field}">${TIPOS.map(t => `<option>${t}</option>`).join('')}</select>
@@ -91,6 +96,7 @@
         document.body.appendChild(wrap);
         const q = (s) => wrap.querySelector(s);
         const close = () => wrap.remove();
+        if (miCuenta) q('[data-next]').textContent = 'Crear el enlace';
         q('[data-close]').onclick = close;
         q('[data-cancel]').onclick = close;
         let paso = 1;
@@ -106,6 +112,19 @@
                 if (paso === 1) {
                     if (!datos.remitente_nombre || !datos.correo || !datos.firmante_nombre || !datos.firmante_correo) return showToast('Completa todos los datos.', 'amber');
                     if (!q('[data-decl]').checked) return showToast('Marca la declaración para continuar.', 'amber');
+                    if (miCuenta) {
+                        // Con sesión no hace falta el código al correo
+                        const s = await crear(datos, null);
+                        if (!s) return;
+                        q('[data-paso1]').classList.add('hidden');
+                        mostrarEnlaces(q('[data-paso3]'), s);
+                        q('[data-paso3]').classList.remove('hidden');
+                        q('[data-cancel]').classList.add('hidden');
+                        btn.textContent = 'Listo';
+                        paso = 3;
+                        if (window.PascalCuenta) PascalCuenta.cargar();
+                        return;
+                    }
                     await api('codigo_remitente', { correo: datos.correo });
                     q('[data-paso1]').classList.add('hidden');
                     q('[data-paso2]').classList.remove('hidden');
