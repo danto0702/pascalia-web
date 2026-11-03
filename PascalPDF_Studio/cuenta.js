@@ -150,7 +150,7 @@
     function planes(nivelMin, motivo) {
         const P = (cuenta && cuenta.productos) || {};
         const lista = [
-            ['pro_mes', 'Pascal Sign Pro', 'Firmar sin límite, recuadro de firma, 15 solicitudes de firma al mes, historial exportable.', 'mes'],
+            ['pro_mes', 'Pascal Sign Pro', 'Firmar sin límite con datos y consecutivo, 15 solicitudes de firma al mes, historial exportable.', 'mes'],
             ['pro_anual', 'Pascal Sign Pro · anual', 'Lo mismo, 2 meses gratis.', 'año'],
             ['suite_mes', 'PascalPDF Suite', 'Todo Pro, editar texto, OCR, comparar, contraseñas, comprimir, convertir, lotes y 50 solicitudes al mes.', 'mes'],
             ['suite_anual', 'PascalPDF Suite · anual', 'Lo mismo, 2 meses gratis.', 'año'],
@@ -234,7 +234,7 @@
             </dl>
             <div class="pc-fila"><button class="pc-btn" data-planes>${c.activo ? 'Renovar o cambiar de plan' : 'Elegir un plan'}</button></div>
             <div class="pc-sec-t">Historial de documentos firmados</div>
-            <p class="pc-muted">Fecha y hora (del servidor), documento, objeto, radicado, firmante y huella de cada firma.</p>
+            <p class="pc-muted">Fecha y hora (del servidor), documento, objeto, radicado, consecutivo, firmante y huella de cada firma.</p>
             <div class="pc-fila"><button class="pc-btn pc-sec" data-exp="pdf">PDF</button><button class="pc-btn pc-sec" data-exp="csv">CSV (Excel)</button><button class="pc-btn pc-sec" data-exp="txt">TXT</button></div>
             <div data-msg></div>
             <div class="pc-fila" style="margin-top:22px"><button class="pc-btn pc-sec" data-salir>Salir</button><button class="pc-btn pc-peligro" data-borrar>Borrar mi cuenta</button></div>`);
@@ -252,7 +252,7 @@
     }
 
     // ------------------------------------------------------------------ historial exportable
-    const COLS = [['firmado_en', 'Fecha y hora (Colombia)'], ['documento_nombre', 'Documento'], ['objeto', 'Objeto'], ['radicado', 'Radicado'], ['firmante', 'Firmante'], ['documento_tipo', 'Tipo'], ['metodo', 'Método'], ['paginas', 'Páginas'], ['app', 'Aplicación'], ['firma_id', 'ID de la firma'], ['id', 'ID del registro'], ['documento_hash', 'Huella SHA-256 del documento']];
+    const COLS = [['firmado_en', 'Fecha y hora (Colombia)'], ['documento_nombre', 'Documento'], ['objeto', 'Objeto'], ['radicado', 'Radicado'], ['consecutivo', 'Consecutivo'], ['firmante', 'Firmante'], ['documento_tipo', 'Tipo'], ['metodo', 'Método'], ['paginas', 'Páginas'], ['app', 'Aplicación'], ['firma_id', 'ID de la firma'], ['id', 'ID del registro'], ['documento_hash', 'Huella SHA-256 del documento']];
     const valor = (e, k) => k === 'firmado_en' ? new Date(e[k]).toLocaleString('es-CO', { timeZone: 'America/Bogota', dateStyle: 'short', timeStyle: 'medium' }) : k === 'app' ? (e[k] === 'pascalsign' ? 'Pascal Sign' : 'PascalPDF') : (e[k] ?? '');
 
     async function exportar(formato) {
@@ -280,7 +280,7 @@
         const doc = await PDFDocument.create();
         const f = await doc.embedFont(StandardFonts.Helvetica), fb = await doc.embedFont(StandardFonts.HelveticaBold), fm = await doc.embedFont(StandardFonts.Courier);
         const W = 792, H = 612, M = 36;
-        const cols = [['Fecha y hora', 92], ['Documento', 150], ['Objeto', 130], ['Radicado', 100], ['Firmante', 110], ['Método', 52], ['Huella SHA-256 (inicio)', 86]];
+        const cols = [['Fecha y hora', 92], ['Documento', 130], ['Objeto', 110], ['Radicado', 90], ['Consecutivo', 80], ['Firmante', 100], ['Método', 52], ['Huella (inicio)', 66]];
         let page, y, n = 0;
         const recortar = (t, font, size, w) => { t = winAnsi(t); while (t && font.widthOfTextAtSize(t, size) > w - 4) t = t.slice(0, -2) + '…'.replace('…', '.'); return t; };
         const nueva = () => {
@@ -301,10 +301,10 @@
         eventos.forEach((e, i) => {
             if (y < 40) nueva();
             if (i % 2 === 1) page.drawRectangle({ x: M, y: y - 4, width: W - 2 * M, height: 15, color: rgb(1, 0.973, 0.882) });
-            const vals = [valor(e, 'firmado_en'), e.documento_nombre, e.objeto, e.radicado, e.firmante, e.metodo, e.documento_hash ? e.documento_hash.slice(0, 16) : ''];
+            const vals = [valor(e, 'firmado_en'), e.documento_nombre, e.objeto, e.radicado, e.consecutivo, e.firmante, e.metodo, e.documento_hash ? e.documento_hash.slice(0, 12) : ''];
             let x = M;
             vals.forEach((v, j) => {
-                const font = j === 6 ? fm : f;
+                const font = j === 7 ? fm : f;
                 page.drawText(recortar(v || '—', font, 8, cols[j][1]), { x, y, size: 8, font, color: rgb(0.12, 0.12, 0.12) });
                 x += cols[j][1];
             });

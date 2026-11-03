@@ -15,6 +15,7 @@ export type Evento = {
   app: string; documento_tipo: string; documento_nombre: string; documento_hash: string | null;
   objeto: string | null; radicado: string | null; firmante: string | null;
   firma_id: string; metodo: string | null; paginas: number | null;
+  anio?: number; numero?: number; consecutivo?: string;
 };
 export type TransaccionWompi = { id: string; reference: string; status: string; amount_in_cents: number; currency: string };
 
@@ -37,7 +38,8 @@ export type DepsCuenta = {
     crearSesion(s: { token_hash: string; usuario_id: string; vence_en: string }): Promise<void>;
     usuarioPorSesion(token_hash: string, ahora: Date): Promise<Usuario | null>;
     borrarSesion(token_hash: string): Promise<void>;
-    insertarEventos(usuario_id: string, eventos: Evento[]): Promise<{ id: string; firmado_en: string }[]>;
+    insertarEventos(usuario_id: string, eventos: Evento[]): Promise<{ id: string; firmado_en: string; consecutivo: string | null }[]>;
+    ultimoNumero(usuario_id: string, anio: number): Promise<number>;
     eventos(usuario_id: string, limite: number): Promise<(Evento & { id: string; firmado_en: string })[]>;
     contarEventosDesde(usuario_id: string, desde: Date): Promise<number>;
     contarSolicitudesDesde(usuario_id: string, desde: Date): Promise<number>;
@@ -79,6 +81,18 @@ function aleatorio(bytes = 32) {
 function codigoSeisDigitos() {
   return String(crypto.getRandomValues(new Uint32Array(1))[0] % 1_000_000).padStart(6, "0");
 }
+// Iniciales: primer nombre, primer apellido y segundo apellido (DANILO TORRADO BLANCO → DTB).
+// Con cuatro o más palabras se toman la primera y las dos últimas. Igual que sello.js.
+export function iniciales(nombre: string | null) {
+  const p = String(nombre || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase()
+    .split(/[^A-ZÑ]+/).filter((w) => w && !["DE", "DEL", "LA", "LAS", "LOS", "Y"].includes(w));
+  const sel = p.length >= 4 ? [p[0], p[p.length - 2], p[p.length - 1]] : p;
+  return sel.map((w) => w[0]).join("") || "X";
+}
+export function consecutivo(nombre: string | null, numero: number, anio: number) {
+  return `${iniciales(nombre)}-${String(numero).padStart(4, "0")}-${anio}`;
+}
+
 // Inicio del mes calendario en Colombia (UTC-5, sin horario de verano)
 export function inicioMes(ahora: Date) {
   const col = new Date(ahora.getTime() - 5 * 3600_000);
@@ -214,7 +228,18 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
           objeto: texto(o.objeto, 120) || null, radicado: texto(o.radicado, 60) || null, firmante: texto(o.firmante, 120) || null,
         };
       });
-      return { ok: true, registros: await deps.db.insertarEventos(u.id, eventos) };
+      // Consecutivo por cuenta y año (hora de Colombia): iniciales-número-año, p. ej. DTB-0001-2026
+      const anio = new Date(ahora.getTime() - 5 * 3600_000).getUTCFullYear();
+      for (let intento = 0; ; intento++) {
+        let n = await deps.db.ultimoNumero(u.id, anio);
+        for (const e of eventos) { n++; e.anio = anio; e.numero = n; e.consecutivo = consecutivo(e.firmante, n, anio); }
+        try {
+          return { ok: true, registros: await deps.db.insertarEventos(u.id, eventos) };
+        } catch (err) {
+          // Dos guardados al mismo tiempo pueden tomar el mismo número: se reintenta
+          if ((err as { code?: string }).code !== "23505" || intento >= 4) throw err;
+        }
+      }
     }
 
     case "historial": {
