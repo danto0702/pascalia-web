@@ -6,7 +6,9 @@ import { ErrorCliente } from "./logica.ts";
 export type Usuario = {
   id: string; correo: string; nombre: string | null; creado_en: string;
   plan: "prueba" | "pro" | "suite"; vence_en: string; solicitudes_extra: number;
+  clave_hash?: string | null; clave_fallos?: number; clave_bloqueo?: string | null; google_sub?: string | null;
 };
+export type DatosGoogle = { sub: string; email: string; email_verified: boolean; name?: string };
 export type Promo = {
   codigo: string; tipo: "porcentaje" | "valor"; valor: number; productos: string[];
   vence_en: string | null; max_usos: number | null; usos: number; activo: boolean;
@@ -26,13 +28,14 @@ export type DepsCuenta = {
   wompi: { publica: string; integridad: string } | null;
   correo(para: string, asunto: string, html: string): Promise<boolean>;
   consultarTransaccion(id: string): Promise<TransaccionWompi | null>;
+  google: { clienteId: string; verificar(credencial: string): Promise<DatosGoogle | null> } | null;
   db: {
     insertCodigo(c: { correo: string; codigo_hash: string; vence_en: string; intentos: number; creado_en: string }): Promise<void>;
     ultimoCodigo(correo: string): Promise<{ correo: string; codigo_hash: string; vence_en: string; intentos: number; creado_en: string } | null>;
     contarCodigosDesde(correo: string, desde: Date): Promise<number>;
     actualizarCodigo(correo: string, creado_en: string, cambios: { intentos: number }): Promise<void>;
     usuarioPorCorreo(correo: string): Promise<Usuario | null>;
-    crearUsuario(u: { correo: string; nombre: string | null; plan: string; vence_en: string }): Promise<Usuario>;
+    crearUsuario(u: { correo: string; nombre: string | null; plan: string; vence_en: string; clave_hash?: string; google_sub?: string }): Promise<Usuario>;
     actualizarUsuario(id: string, cambios: Partial<Usuario>): Promise<void>;
     borrarUsuario(id: string): Promise<void>;
     crearSesion(s: { token_hash: string; usuario_id: string; vence_en: string }): Promise<void>;
@@ -81,6 +84,34 @@ function aleatorio(bytes = 32) {
 function codigoSeisDigitos() {
   return String(crypto.getRandomValues(new Uint32Array(1))[0] % 1_000_000).padStart(6, "0");
 }
+// ---------------------------------------------------------------- contraseñas (PBKDF2-SHA256)
+const ITERACIONES = 120_000;
+const b64 = (a: Uint8Array) => btoa(String.fromCharCode(...a));
+const deB64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+async function derivar(clave: string, sal: Uint8Array, iter: number) {
+  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(clave), "PBKDF2", false, ["deriveBits"]);
+  return new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: sal, iterations: iter }, k, 256));
+}
+export async function hashClave(clave: string) {
+  const sal = crypto.getRandomValues(new Uint8Array(16));
+  return `pbkdf2$${ITERACIONES}$${b64(sal)}$${b64(await derivar(clave, sal, ITERACIONES))}`;
+}
+export async function claveCorrecta(clave: string, guardada: string) {
+  const [alg, iter, sal, h] = guardada.split("$");
+  if (alg !== "pbkdf2") return false;
+  const a = await derivar(clave, deB64(sal), Number(iter)), b = deB64(h);
+  if (a.length !== b.length) return false;
+  let dif = 0;
+  for (let i = 0; i < a.length; i++) dif |= a[i] ^ b[i];
+  return dif === 0;
+}
+function validarClave(v: unknown) {
+  const c = typeof v === "string" ? v : "";
+  if (c.length < 8 || c.length > 128) throw new ErrorCliente("La contraseña debe tener entre 8 y 128 caracteres.");
+  if (!/[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(c) || !/\d/.test(c)) throw new ErrorCliente("La contraseña debe tener letras y números.");
+  return c;
+}
+
 // Iniciales: primer nombre, primer apellido y segundo apellido (DANILO TORRADO BLANCO → DTB).
 // Con cuatro o más palabras se toman la primera y las dos últimas. Igual que sello.js.
 export function iniciales(nombre: string | null) {
@@ -115,7 +146,7 @@ async function resumen(deps: DepsCuenta, u: Usuario) {
   const desde = inicioMes(ahora);
   const activo = planActivo(u, ahora);
   return {
-    correo: u.correo, nombre: u.nombre, plan: u.plan, vence_en: u.vence_en, activo,
+    correo: u.correo, nombre: u.nombre, con_clave: !!u.clave_hash, con_google: !!u.google_sub, plan: u.plan, vence_en: u.vence_en, activo,
     nivel: activo ? (u.plan === "pro" ? 1 : 2) : 0, // la prueba da acceso a todo
     prueba: u.plan === "prueba",
     solicitudes: { usadas: await deps.db.contarSolicitudesDesde(u.id, desde), cupo: CUPO_SOLICITUDES[u.plan], extra: u.solicitudes_extra },
@@ -155,6 +186,28 @@ async function calcularPrecio(deps: DepsCuenta, u: Usuario, producto: string, co
   return { precio: p.precio, descuento: p.precio - monto, monto, codigo };
 }
 
+async function nuevaSesion(deps: DepsCuenta, u: Usuario, nuevo: boolean) {
+  const token = aleatorio();
+  await deps.db.crearSesion({
+    token_hash: await sha256(deps.secreto + "|t|" + token), usuario_id: u.id,
+    vence_en: new Date(deps.now().getTime() + DIAS_SESION * 86_400_000).toISOString(),
+  });
+  return { ok: true, token, nuevo, cuenta: await resumen(deps, u) };
+}
+
+// Comprueba el código de 6 dígitos enviado al correo y lo inutiliza
+async function verificarCodigo(deps: DepsCuenta, correo: string, codigo: unknown) {
+  const c = await deps.db.ultimoCodigo(correo);
+  if (!c || new Date(c.vence_en) < deps.now() || c.intentos >= 5) throw new ErrorCliente("El código venció. Pide uno nuevo.", 403);
+  if ((await sha256(deps.secreto + "|c|" + correo + "|" + texto(codigo, 12))) !== c.codigo_hash) {
+    await deps.db.actualizarCodigo(correo, c.creado_en, { intentos: c.intentos + 1 });
+    throw new ErrorCliente("El código no es correcto.", 403);
+  }
+  await deps.db.actualizarCodigo(correo, c.creado_en, { intentos: 5 });
+}
+
+const vencePrueba = (ahora: Date) => new Date(ahora.getTime() + DIAS_PRUEBA * 86_400_000).toISOString();
+
 export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta): Promise<Record<string, unknown> | null> {
   const ahora = deps.now();
   switch (d.accion) {
@@ -175,29 +228,79 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
       return { ok: true };
     }
 
+    case "config": {
+      return { ok: true, google_cliente: deps.google ? deps.google.clienteId : null };
+    }
+
+    // Entrar con un código al correo (también crea la cuenta si no existe)
     case "entrar": {
       const correo = texto(d.correo, 254).toLowerCase();
-      const c = await deps.db.ultimoCodigo(correo);
-      if (!c || new Date(c.vence_en) < ahora || c.intentos >= 5) throw new ErrorCliente("El código venció. Pide uno nuevo.", 403);
-      if ((await sha256(deps.secreto + "|c|" + correo + "|" + texto(d.codigo, 12))) !== c.codigo_hash) {
-        await deps.db.actualizarCodigo(correo, c.creado_en, { intentos: c.intentos + 1 });
-        throw new ErrorCliente("El código no es correcto.", 403);
-      }
-      await deps.db.actualizarCodigo(correo, c.creado_en, { intentos: 5 });
+      await verificarCodigo(deps, correo, d.codigo);
       let u = await deps.db.usuarioPorCorreo(correo);
       const nuevo = !u;
-      if (!u) {
-        u = await deps.db.crearUsuario({
-          correo, nombre: texto(d.nombre, 120) || null, plan: "prueba",
-          vence_en: new Date(ahora.getTime() + DIAS_PRUEBA * 86_400_000).toISOString(),
-        });
+      if (!u) u = await deps.db.crearUsuario({ correo, nombre: texto(d.nombre, 120) || null, plan: "prueba", vence_en: vencePrueba(ahora) });
+      return nuevaSesion(deps, u, nuevo);
+    }
+
+    // Crear la cuenta con contraseña: el código confirma que el correo es tuyo
+    case "crear_cuenta": {
+      const correo = texto(d.correo, 254).toLowerCase();
+      if (!correoValido(correo)) throw new ErrorCliente("Revisa tu correo.");
+      const nombre = texto(d.nombre, 120);
+      if (nombre.length < 3) throw new ErrorCliente("Escribe tu nombre completo.");
+      const clave = validarClave(d.clave);
+      await verificarCodigo(deps, correo, d.codigo);
+      let u = await deps.db.usuarioPorCorreo(correo);
+      if (u?.clave_hash) throw new ErrorCliente("Ya existe una cuenta con ese correo. Entra o recupera tu contraseña.", 409);
+      const clave_hash = await hashClave(clave);
+      const nuevo = !u;
+      if (u) await deps.db.actualizarUsuario(u.id, { clave_hash, nombre: u.nombre || nombre });
+      else u = await deps.db.crearUsuario({ correo, nombre, plan: "prueba", vence_en: vencePrueba(ahora), clave_hash });
+      return nuevaSesion(deps, u, nuevo);
+    }
+
+    // Entrar con correo y contraseña (5 intentos fallidos bloquean 15 minutos)
+    case "entrar_clave": {
+      const correo = texto(d.correo, 254).toLowerCase();
+      const clave = typeof d.clave === "string" ? d.clave.slice(0, 128) : "";
+      const u = await deps.db.usuarioPorCorreo(correo);
+      if (u?.clave_bloqueo && new Date(u.clave_bloqueo) > ahora) throw new ErrorCliente("Demasiados intentos. Espera 15 minutos o entra con un código al correo.", 429);
+      if (!u || !u.clave_hash || !(await claveCorrecta(clave, u.clave_hash))) {
+        if (u?.clave_hash) {
+          const fallos = (u.clave_fallos ?? 0) + 1;
+          await deps.db.actualizarUsuario(u.id, fallos >= 5
+            ? { clave_fallos: 0, clave_bloqueo: new Date(ahora.getTime() + 15 * 60_000).toISOString() }
+            : { clave_fallos: fallos });
+        }
+        throw new ErrorCliente(u && !u.clave_hash ? "Esta cuenta no tiene contraseña. Entra con Google o con un código al correo, o crea una con «Olvidé mi contraseña»." : "Correo o contraseña incorrectos.", 403);
       }
-      const token = aleatorio();
-      await deps.db.crearSesion({
-        token_hash: await sha256(deps.secreto + "|t|" + token), usuario_id: u.id,
-        vence_en: new Date(ahora.getTime() + DIAS_SESION * 86_400_000).toISOString(),
-      });
-      return { ok: true, token, nuevo, cuenta: await resumen(deps, u) };
+      if (u.clave_fallos) await deps.db.actualizarUsuario(u.id, { clave_fallos: 0, clave_bloqueo: null });
+      return nuevaSesion(deps, u, false);
+    }
+
+    // Recuperar (o crear) la contraseña con el código al correo
+    case "recuperar_clave": {
+      const correo = texto(d.correo, 254).toLowerCase();
+      const clave = validarClave(d.clave);
+      await verificarCodigo(deps, correo, d.codigo);
+      const u = await deps.db.usuarioPorCorreo(correo);
+      if (!u) throw new ErrorCliente("No hay una cuenta con ese correo. Crea una.", 404);
+      await deps.db.actualizarUsuario(u.id, { clave_hash: await hashClave(clave), clave_fallos: 0, clave_bloqueo: null });
+      return nuevaSesion(deps, u, false);
+    }
+
+    // Entrar o crear la cuenta con Google (token de Google Identity Services)
+    case "entrar_google": {
+      if (!deps.google) throw new ErrorCliente("El acceso con Google todavía no está habilitado.", 503);
+      const g = await deps.google.verificar(texto(d.credencial, 4000));
+      if (!g || !g.email_verified) throw new ErrorCliente("Google no confirmó tu cuenta. Intenta de nuevo.", 403);
+      const correo = g.email.toLowerCase();
+      let u = await deps.db.usuarioPorCorreo(correo);
+      const nuevo = !u;
+      if (!u) u = await deps.db.crearUsuario({ correo, nombre: texto(g.name, 120) || null, plan: "prueba", vence_en: vencePrueba(ahora), google_sub: g.sub });
+      else if (!u.google_sub) await deps.db.actualizarUsuario(u.id, { google_sub: g.sub });
+      else if (u.google_sub !== g.sub) throw new ErrorCliente("Ese correo está vinculado a otra cuenta de Google.", 403);
+      return nuevaSesion(deps, u, nuevo);
     }
 
     case "cuenta": {

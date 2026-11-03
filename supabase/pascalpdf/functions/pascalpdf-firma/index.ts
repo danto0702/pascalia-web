@@ -2,7 +2,7 @@
 // Conecta la lógica (logica.ts) con Postgres, Storage y Resend. El documento siempre llega cifrado.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { type Codigo, type Deps, ErrorCliente, manejar, type Solicitud } from "./logica.ts";
-import { consumirSolicitud, type DepsCuenta, manejarCuenta, type Promo, type Usuario } from "./cuenta.ts";
+import { consumirSolicitud, type DepsCuenta, manejarCuenta, type Promo, type Usuario, usuarioDeToken } from "./cuenta.ts";
 
 const ORIGENES = new Set(["https://pascalia.lat", "https://www.pascalia.lat", "http://localhost:8000"]);
 const TABLA = "pascalpdf_solicitudes";
@@ -107,6 +107,8 @@ const wompiPublica = Deno.env.get("WOMPI_PUBLIC_KEY") ?? "";
 const wompiIntegridad = Deno.env.get("WOMPI_INTEGRITY_SECRET") ?? "";
 const wompiApi = wompiPublica.startsWith("pub_prod_") ? "https://production.wompi.co/v1" : "https://sandbox.wompi.co/v1";
 
+const googleCliente = Deno.env.get("GOOGLE_CLIENT_ID") ?? "";
+
 const depsCuenta: DepsCuenta = {
   now: () => new Date(),
   get secreto() { return Deno.env.get("PASCALPDF_SECRETO")!; },
@@ -119,6 +121,18 @@ const depsCuenta: DepsCuenta = {
     const j = await r.json();
     return j.data ?? null;
   },
+  // Verifica el token de Google con el servicio oficial y que sea para nuestro cliente
+  google: googleCliente ? {
+    clienteId: googleCliente,
+    async verificar(credencial) {
+      const r = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credencial)}`);
+      if (!r.ok) return null;
+      const t = await r.json();
+      if (t.aud !== googleCliente || !["accounts.google.com", "https://accounts.google.com"].includes(t.iss)) return null;
+      if (Number(t.exp) * 1000 < Date.now() || typeof t.email !== "string" || typeof t.sub !== "string") return null;
+      return { sub: t.sub, email: t.email, email_verified: t.email_verified === true || t.email_verified === "true", name: t.name };
+    },
+  } : null,
   db: {
     insertCodigo: (c) => deps.db.insertCodigo(c),
     ultimoCodigo: (c) => deps.db.ultimoCodigo(c),
@@ -197,6 +211,7 @@ const depsCuenta: DepsCuenta = {
   },
 };
 deps.cuenta = (token) => consumirSolicitud(depsCuenta, token);
+deps.usuario = (token) => usuarioDeToken(depsCuenta, token);
 
 Deno.serve(async (req) => {
   const origin = req.headers.get("origin");

@@ -2,7 +2,7 @@
 // y registro de cada firma en el historial de la cuenta (con la hora del servidor) antes de guardar.
 (function () {
     'use strict';
-    if (!window.PascalCuenta || !PascalCuenta.activa) return;
+    if (!window.PascalCuenta) return;
 
     // Herramientas incluidas en Pascal Sign Pro; todo lo demás del catálogo es PascalPDF Suite
     const PRO = new Set([
@@ -58,6 +58,19 @@
         if (window.renderCurrentPage) renderCurrentPage();
         return exportarOriginal(indices, filename);
     };
+
+    // Toda descarga (páginas, imágenes, ZIP, comprimidos, protegidos, TXT, CSV…) exige cuenta con plan activo.
+    // La copia de respaldo de tus firmas (.pascalfirma) solo exige haber entrado.
+    const descargarOriginal = window.downloadBlob;
+    window.downloadBlob = async function (blob, filename) {
+        const respaldo = /\.pascalfirma$/i.test(filename || '');
+        if (!(await PascalCuenta.requiere(respaldo ? 0 : 1, 'Descargar archivos'))) return;
+        return descargarOriginal(blob, filename);
+    };
+
+    // Imprimir también exige plan activo
+    const imprimirOriginal = window.print.bind(window);
+    window.print = async function () { if (await PascalCuenta.requiere(1, 'Imprimir el documento')) imprimirOriginal(); };
 
     // Botón de cuenta en la barra superior
     function montar() {

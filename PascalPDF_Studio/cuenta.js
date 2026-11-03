@@ -1,6 +1,6 @@
 // Cuenta de PascalPDF y Pascal Sign: entrar con código al correo, plan y prueba, pagos con Wompi,
 // códigos promocionales e historial de documentos firmados (exportable en PDF, CSV y TXT).
-// Usa la función pascalpdf-firma (window.PASCALPDF_API, en config.js). Sin esa dirección no restringe nada.
+// Usa la función pascalpdf-firma (window.PASCALPDF_API, en config.js). Sin cuenta ni conexión, las apps quedan cerradas.
 (function () {
     'use strict';
     const API = window.PASCALPDF_API;
@@ -11,7 +11,7 @@
     const pesos = (n) => '$' + Number(n).toLocaleString('es-CO');
     const fecha = (iso, hora) => iso ? new Date(iso).toLocaleString('es-CO', hora ? { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Bogota' } : { dateStyle: 'long', timeZone: 'America/Bogota' }) : '—';
 
-    let cuenta = null;
+    let cuenta = null, sinConexion = false;
     const leer = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
     const guardar = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } };
     const token = () => leer(LLAVE);
@@ -20,7 +20,7 @@
         const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion, token: token(), ...datos }) });
         let j = {};
         try { j = await r.json(); } catch (e) { /* vacío */ }
-        if (r.status === 401) { guardar(LLAVE, null); guardar('pascalpdf-cuenta', null); cuenta = null; pintarBoton(); }
+        if (r.status === 401) { guardar(LLAVE, null); cuenta = null; pintarBoton(); }
         if (!r.ok || !j.ok) throw Object.assign(new Error(j.error || 'No se pudo conectar con el servicio. Revisa tu conexión.'), { status: r.status });
         return j;
     }
@@ -53,6 +53,13 @@
     .pc-msg{padding:10px 14px;border-radius:14px;font-size:14px;margin-top:10px}.pc-msg.pc-err{background:#FEE2E2;color:#991B1B}.pc-msg.pc-ok{background:#DCFCE7;color:#166534}
     .pc-sec-t{font:700 14px Montserrat,sans-serif;margin:18px 0 6px}
     .pc-cerrar{float:right;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:#5C5C5C;margin:-6px -6px 0 0;padding:6px}
+    .pc-bloqueo{background:rgba(31,31,31,.86);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+    .pc-tabs{display:grid;grid-template-columns:1fr 1fr;background:#F5F5F5;border-radius:999px;padding:4px;margin:12px 0 6px}
+    .pc-tabs button{border:0;background:none;border-radius:999px;padding:9px;font:700 14px Montserrat,Inter,sans-serif;color:#5C5C5C;cursor:pointer}
+    .pc-tabs button[aria-selected=true]{background:#fff;color:#1F1F1F;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+    .pc-sep{display:flex;align-items:center;gap:10px;color:#8A8A8A;font-size:13px;margin:10px 0 2px}.pc-sep:before,.pc-sep:after{content:"";flex:1;height:1px;background:#E9E9E9}
+    .pc-enlaces{text-align:center;font-size:14px;margin:12px 0 0;color:#8A8A8A}
+    .pc-link{border:0;background:none;padding:4px;font:600 14px Inter,sans-serif;color:#8A6100;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
     .pc-boton-cuenta{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
     @keyframes pc-a{from{opacity:0}}@keyframes pc-s{from{transform:translateY(20px);opacity:0}}
     @media(prefers-reduced-motion:reduce){.pc-velo,.pc-hoja{animation:none}}`;
@@ -60,13 +67,16 @@
     st.textContent = css;
     document.head.appendChild(st);
 
-    function hoja(html) {
+    // bloqueante: sin botón de cerrar (la app no se puede usar sin cuenta)
+    function hoja(html, bloqueante) {
         cerrar();
         const v = document.createElement('div');
-        v.className = 'pc-velo';
-        v.innerHTML = `<div class="pc-hoja" role="dialog" aria-modal="true"><button class="pc-cerrar" aria-label="Cerrar">×</button>${html}</div>`;
-        v.addEventListener('mousedown', (e) => { if (e.target === v) cerrar(); });
-        v.querySelector('.pc-cerrar').onclick = cerrar;
+        v.className = 'pc-velo' + (bloqueante ? ' pc-bloqueo' : '');
+        v.innerHTML = `<div class="pc-hoja" role="dialog" aria-modal="true">${bloqueante ? '<img src="/PascalPDF_Studio/img/apple-touch-icon.png" alt="" width="44" height="44" style="border-radius:12px;display:block;margin-bottom:10px" onerror="this.remove()">' : '<button class="pc-cerrar" aria-label="Cerrar">×</button>'}${html}</div>`;
+        if (!bloqueante) {
+            v.addEventListener('mousedown', (e) => { if (e.target === v) cerrar(); });
+            v.querySelector('.pc-cerrar').onclick = cerrar;
+        }
         document.body.appendChild(v);
         return v.querySelector('.pc-hoja');
     }
@@ -74,71 +84,185 @@
     function aviso(el, msg, ok) { el.innerHTML = msg ? `<div class="pc-msg ${ok ? 'pc-ok' : 'pc-err'}">${esc(msg)}</div>` : ''; }
     async function conBoton(b, fn) { const t = b.textContent; b.disabled = true; try { return await fn(); } finally { b.disabled = false; b.textContent = t; } }
 
-    // ------------------------------------------------------------------ entrar
-    function entrar(motivo) {
+    // ------------------------------------------------------------------ entrar o crear la cuenta
+    // Google, correo y contraseña; el código al correo sirve para entrar sin contraseña o recuperarla.
+    let config = null;
+    async function cargarConfig() {
+        if (config) return config;
+        try { config = await api('config'); } catch (e) { config = { google_cliente: null }; }
+        return config;
+    }
+    let gsi = null;
+    function cargarGoogle() {
+        if (window.google && google.accounts && google.accounts.id) return Promise.resolve();
+        if (gsi) return gsi;
+        gsi = new Promise((ok, mal) => {
+            const s = document.createElement('script');
+            s.src = 'https://accounts.google.com/gsi/client';
+            s.async = true;
+            s.onload = ok; s.onerror = mal;
+            document.head.appendChild(s);
+        });
+        return gsi;
+    }
+
+    function entrar(motivo, bloqueante) {
         return new Promise((resolve) => {
             const h = hoja(`
-                <h2>Entra a tu cuenta</h2>
-                <p class="pc-muted">${esc(motivo || 'Te enviamos un código a tu correo. Si es tu primera vez, empiezas con 7 días gratis de todas las herramientas.')}</p>
-                <div data-p1><input class="pc-campo" type="email" autocomplete="email" placeholder="Tu correo" data-correo>
-                    <input class="pc-campo" type="text" autocomplete="name" placeholder="Tu nombre (opcional)" data-nombre></div>
-                <div data-p2 hidden><p>Escribe el código que enviamos a <b data-c></b>.</p>
+                <h2 data-titulo>Entra a tu cuenta</h2>
+                <p class="pc-muted" data-motivo>${esc(motivo || 'Para usar PascalPDF y Pascal Sign necesitas una cuenta. Si es nueva, tienes 7 días gratis de todas las herramientas.')}</p>
+                <div data-google-caja hidden><div data-google style="display:flex;justify-content:center;min-height:44px;margin:10px 0 4px"></div>
+                    <div class="pc-sep"><span>o con tu correo</span></div></div>
+                <div class="pc-tabs" role="tablist"><button role="tab" data-modo="entrar" aria-selected="true">Entrar</button><button role="tab" data-modo="crear" aria-selected="false">Crear cuenta</button></div>
+                <div data-f="nombre" hidden><input class="pc-campo" type="text" autocomplete="name" placeholder="Nombre completo" data-nombre></div>
+                <div data-f="correo"><input class="pc-campo" type="email" autocomplete="email" placeholder="Correo" data-correo></div>
+                <div data-f="clave"><input class="pc-campo" type="password" autocomplete="current-password" placeholder="Contraseña" data-clave></div>
+                <div data-f="codigo" hidden><p data-codigo-txt class="pc-muted" style="margin:8px 0 0"></p>
                     <input class="pc-campo pc-codigo" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" data-codigo></div>
-                <div class="pc-fila"><button class="pc-btn" data-ir>Enviarme el código</button></div>
+                <div class="pc-fila"><button class="pc-btn" data-ir>Entrar</button></div>
                 <div data-msg></div>
-                <p class="pc-muted" style="margin-top:14px;font-size:12px">Al entrar aceptas los <a href="/PascalPDF_Studio/terminos/" target="_blank" rel="noopener">términos</a> y la <a href="/PascalPDF_Studio/politica/" target="_blank" rel="noopener">política de datos</a> de PascalPDF.</p>`);
+                <p class="pc-enlaces" data-enlaces><button class="pc-link" data-modo="codigo">Entrar con un código al correo</button> · <button class="pc-link" data-modo="recuperar">Olvidé mi contraseña</button></p>
+                <p class="pc-enlaces" data-volver hidden><button class="pc-link" data-modo="entrar">Volver a entrar con contraseña</button></p>
+                <p class="pc-muted" style="margin-top:14px;font-size:12px">Al continuar aceptas los <a href="/PascalPDF_Studio/terminos/" target="_blank" rel="noopener">términos</a> y la <a href="/PascalPDF_Studio/politica/" target="_blank" rel="noopener">política de datos</a> de PascalPDF.</p>`, bloqueante);
             const q = (s) => h.querySelector(s);
-            let paso = 1;
-            h.parentElement.querySelector('.pc-cerrar').addEventListener('click', () => resolve(null));
-            q('[data-correo]').value = leer('pascalpdf-correo') || '';
+            const msg = (t, ok) => aviso(q('[data-msg]'), t, ok);
             const ir = q('[data-ir]');
+            let modo = 'entrar', codigoEnviado = false;
+            if (!bloqueante) h.parentElement.querySelector('.pc-cerrar').addEventListener('click', () => resolve(null));
+            q('[data-correo]').value = leer('pascalpdf-correo') || '';
+
+            const listo = (r) => {
+                guardar(LLAVE, r.token);
+                guardar('pascalpdf-correo', r.cuenta.correo);
+                cuenta = r.cuenta;
+                pintarBoton();
+                cerrar();
+                toast(r.nuevo ? '¡Bienvenido! Tienes 7 días gratis de todas las herramientas.' : 'Entraste a tu cuenta.');
+                resolve(cuenta);
+            };
+
+            // Modos: entrar (contraseña), crear (nombre + contraseña + código), codigo (solo código), recuperar (código + contraseña nueva)
+            const textos = {
+                entrar: ['Entra a tu cuenta', 'Entrar'],
+                crear: ['Crea tu cuenta', 'Enviarme el código de confirmación'],
+                codigo: ['Entrar con un código', 'Enviarme el código'],
+                recuperar: ['Recupera tu contraseña', 'Enviarme el código']
+            };
+            function poner(m) {
+                modo = m; codigoEnviado = false;
+                q('[data-titulo]').textContent = textos[m][0];
+                ir.textContent = textos[m][1];
+                q('[data-f="nombre"]').hidden = m !== 'crear';
+                q('[data-f="clave"]').hidden = m === 'codigo' || m === 'recuperar';
+                q('[data-f="codigo"]').hidden = true;
+                q('[data-clave]').placeholder = m === 'crear' ? 'Contraseña (mínimo 8, con letras y números)' : 'Contraseña';
+                q('[data-clave]').autocomplete = m === 'crear' ? 'new-password' : 'current-password';
+                q('[data-clave]').value = '';
+                h.querySelector('.pc-tabs').hidden = m === 'codigo' || m === 'recuperar';
+                h.querySelectorAll('.pc-tabs [data-modo]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.modo === m)));
+                q('[data-enlaces]').hidden = m !== 'entrar';
+                q('[data-volver]').hidden = m === 'entrar' || m === 'crear';
+                msg('');
+            }
+            h.querySelectorAll('[data-modo]').forEach(b => b.onclick = () => poner(b.dataset.modo));
+
+            async function pedirCodigo(correo) {
+                await api('entrar_codigo', { correo });
+                guardar('pascalpdf-correo', correo);
+                codigoEnviado = true;
+                q('[data-f="codigo"]').hidden = false;
+                q('[data-codigo-txt]').innerHTML = `Escribe el código que enviamos a <b>${esc(correo)}</b> (revisa también el spam).`;
+                if (modo === 'recuperar') {
+                    q('[data-f="clave"]').hidden = false;
+                    q('[data-clave]').placeholder = 'Contraseña nueva (mínimo 8, con letras y números)';
+                    q('[data-clave]').autocomplete = 'new-password';
+                }
+                ir.textContent = modo === 'crear' ? 'Crear mi cuenta' : modo === 'recuperar' ? 'Guardar contraseña y entrar' : 'Entrar';
+                setTimeout(() => q('[data-codigo]').focus());
+            }
+
             ir.onclick = () => conBoton(ir, async () => {
-                const correo = q('[data-correo]').value.trim();
+                const correo = q('[data-correo]').value.trim().toLowerCase();
+                const clave = q('[data-clave]').value;
+                const codigo = q('[data-codigo]').value.trim();
+                msg('');
+                if (!/^\S+@\S+\.\S+$/.test(correo)) return msg('Revisa tu correo.');
                 try {
-                    if (paso === 1) {
-                        if (!/^\S+@\S+\.\S+$/.test(correo)) return aviso(q('[data-msg]'), 'Revisa tu correo.');
-                        await api('entrar_codigo', { correo });
-                        guardar('pascalpdf-correo', correo);
-                        q('[data-p1]').hidden = true; q('[data-p2]').hidden = false; q('[data-c]').textContent = correo;
-                        paso = 2;
-                        aviso(q('[data-msg]'), 'Revisa tu correo (también la carpeta de spam).', true);
-                        setTimeout(() => { ir.textContent = 'Entrar'; q('[data-codigo]').focus(); });
-                    } else {
-                        const codigo = q('[data-codigo]').value.trim();
-                        if (!/^\d{6}$/.test(codigo)) return aviso(q('[data-msg]'), 'Escribe los 6 dígitos.');
-                        const r = await api('entrar', { correo, codigo, nombre: q('[data-nombre]').value.trim() });
-                        guardar(LLAVE, r.token);
-                        cuenta = r.cuenta;
-                        pintarBoton();
-                        cerrar();
-                        toast(r.nuevo ? '¡Bienvenido! Tienes 7 días gratis de todas las herramientas.' : 'Entraste a tu cuenta.');
-                        resolve(cuenta);
+                    if (modo === 'entrar') {
+                        if (!clave) return msg('Escribe tu contraseña.');
+                        return listo(await api('entrar_clave', { correo, clave }));
                     }
-                } catch (e) { aviso(q('[data-msg]'), e.message); }
+                    if (modo === 'crear' && !codigoEnviado) {
+                        if (q('[data-nombre]').value.trim().length < 3) return msg('Escribe tu nombre completo.');
+                        if (clave.length < 8 || !/\d/.test(clave) || !/[a-zA-ZñÑ]/.test(clave)) return msg('La contraseña debe tener mínimo 8 caracteres, con letras y números.');
+                    }
+                    if (!codigoEnviado) return await pedirCodigo(correo);
+                    if (!/^\d{6}$/.test(codigo)) return msg('Escribe los 6 dígitos del código.');
+                    if (modo === 'crear') return listo(await api('crear_cuenta', { correo, clave, codigo, nombre: q('[data-nombre]').value.trim() }));
+                    if (modo === 'recuperar') {
+                        if (clave.length < 8 || !/\d/.test(clave) || !/[a-zA-ZñÑ]/.test(clave)) return msg('La contraseña debe tener mínimo 8 caracteres, con letras y números.');
+                        return listo(await api('recuperar_clave', { correo, clave, codigo }));
+                    }
+                    return listo(await api('entrar', { correo, codigo }));
+                } catch (e) { msg(e.message); }
+            });
+            h.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches('input')) ir.click(); });
+
+            // Botón de Google (si está configurado)
+            cargarConfig().then(async (c) => {
+                if (!c.google_cliente) return;
+                try {
+                    await cargarGoogle();
+                    google.accounts.id.initialize({
+                        client_id: c.google_cliente,
+                        callback: async (r) => {
+                            try { listo(await api('entrar_google', { credencial: r.credential })); } catch (e) { msg(e.message); }
+                        }
+                    });
+                    const caja = q('[data-google]');
+                    if (!caja) return;
+                    google.accounts.id.renderButton(caja, { theme: 'outline', size: 'large', shape: 'pill', text: 'continue_with', locale: 'es', width: Math.min(360, caja.clientWidth || 320) });
+                    q('[data-google-caja]').hidden = false;
+                } catch (e) { /* sin Google, quedan correo y contraseña */ }
             });
         });
     }
 
     async function cargar() {
+        sinConexion = false;
         if (!API || !token()) return (cuenta = null);
         try {
             cuenta = (await api('cuenta')).cuenta;
-            guardar('pascalpdf-cuenta', JSON.stringify(cuenta));
         } catch (e) {
-            // Sin conexión: se usa el último estado conocido mientras el plan esté vigente
-            if (e.status === undefined || e.status === 0) {
-                try { const c = JSON.parse(leer('pascalpdf-cuenta')); if (c && new Date(c.vence_en) > new Date()) cuenta = c; } catch (err) { /* nada */ }
-            }
+            cuenta = null;
+            if (e.status !== 401) sinConexion = true;
         }
         pintarBoton();
         return cuenta;
     }
 
+    // Al abrir la app: sin cuenta no se puede usar. Sin conexión con el servidor, todo queda cerrado.
+    async function exigir() {
+        if (!API) { for (;;) { await bloqueo('El servicio de cuentas no está disponible en este momento.'); location.reload(); } }
+        for (;;) {
+            if (!cuenta) await cargar();
+            if (cuenta) return cuenta;
+            if (sinConexion) { await bloqueo('No hay conexión con PascalPDF. Revisa tu internet e intenta de nuevo.'); continue; }
+            if (await entrar(null, true)) return cuenta;
+        }
+    }
+    function bloqueo(texto) {
+        return new Promise((resolve) => {
+            const h = hoja(`<h2>Sin conexión</h2><p class="pc-muted">${esc(texto)}</p><div class="pc-fila"><button class="pc-btn" data-reintentar>Intentar de nuevo</button></div>`, true);
+            h.querySelector('[data-reintentar]').onclick = () => { cerrar(); resolve(); };
+        });
+    }
+
     // ------------------------------------------------------------------ permisos: nivel 1 = Pro, 2 = Suite
     async function requiere(nivel, motivo) {
-        if (!API) return true;
+        if (!API) { toast('El servicio de cuentas no está disponible en este momento.', true); return false; }
         if (!cuenta) await cargar();
-        if (!cuenta) { if (!(await entrar(motivo))) return false; }
+        if (!cuenta) { if (sinConexion) { toast('No hay conexión con PascalPDF. Revisa tu internet.', true); return false; } if (!(await entrar(motivo))) return false; }
         if (cuenta.nivel >= nivel) return true;
         planes(nivel, cuenta.activo
             ? `${motivo || 'Esta herramienta'} hace parte de PascalPDF Suite.`
@@ -348,9 +472,9 @@
         setTimeout(() => t.remove(), 4200);
     }
 
-    window.PascalCuenta = { api, entrar, abrir, requiere, planes, cargar, registrarFirmas, exportar, get cuenta() { return cuenta; }, activa: !!API };
+    window.PascalCuenta = { api, entrar, exigir, abrir, requiere, planes, cargar, registrarFirmas, exportar, get cuenta() { return cuenta; }, activa: !!API };
     if (API) {
-        const iniciar = () => { pintarBoton(); cargar().then(revisarRetornoPago); };
+        const iniciar = () => { pintarBoton(); if (!document.documentElement.hasAttribute('data-sin-exigir')) exigir().then(revisarRetornoPago); };
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
     }
 })();

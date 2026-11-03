@@ -58,7 +58,14 @@ export type Deps = {
   correo(para: string, asunto: string, html: string): Promise<boolean>;
   // Cuenta de quien pide la firma: valida su plan, descuenta el cupo y devuelve su id y correo
   cuenta?: (token: unknown) => Promise<{ id: string; correo: string }>;
+  // Cuenta de quien firma (cualquier plan): firmar a pedido de otra persona también exige iniciar sesión
+  usuario?: (token: unknown) => Promise<{ id: string; correo: string } | null>;
 };
+
+async function exigirCuentaFirmante(deps: Deps, token: unknown) {
+  if (!deps.usuario) return;
+  if (!(await deps.usuario(token))) throw new ErrorCliente("Inicia sesión o crea tu cuenta para firmar.", 401);
+}
 
 const DIAS_VIGENCIA = 7;
 const MAX_SOLICITUDES_DIA = 20;
@@ -225,6 +232,7 @@ export async function manejar(d: Record<string, unknown>, deps: Deps): Promise<R
 
   // 4. El firmante pide su código
   if (accion === "codigo_firmante") {
+    await exigirCuentaFirmante(deps, d.token);
     const s = await cargar(deps, d.id);
     if (s.estado !== "pendiente") throw new ErrorCliente("Esta solicitud ya no está disponible.", 409);
     if (s.otp_enviados >= MAX_ENVIOS_FIRMANTE) throw new ErrorCliente("Se enviaron demasiados códigos para esta solicitud.", 429);
@@ -242,6 +250,7 @@ export async function manejar(d: Record<string, unknown>, deps: Deps): Promise<R
 
   // 5. El firmante confirma el código: recibe el documento cifrado y una sesión para completar
   if (accion === "verificar_firmante") {
+    await exigirCuentaFirmante(deps, d.token);
     const s = await cargar(deps, d.id);
     if (s.estado !== "pendiente") throw new ErrorCliente("Esta solicitud ya no está disponible.", 409);
     if (!s.otp_hash || !s.otp_vence || new Date(s.otp_vence) < ahora || s.otp_intentos >= MAX_INTENTOS) {
@@ -266,6 +275,7 @@ export async function manejar(d: Record<string, unknown>, deps: Deps): Promise<R
 
   // 6. El firmante sube el documento firmado (cifrado)
   if (accion === "completar" || accion === "confirmar") {
+    await exigirCuentaFirmante(deps, d.token);
     const s = await cargar(deps, d.id);
     if (s.estado !== "pendiente") throw new ErrorCliente("Esta solicitud ya no está disponible.", 409);
     if (!s.sesion_hash || !s.sesion_vence || new Date(s.sesion_vence) < ahora
