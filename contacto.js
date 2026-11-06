@@ -93,7 +93,7 @@
         '<div class="pf-field full"><label class="pf-check" for="' + id("acepta") + '">' +
           '<input type="checkbox" id="' + id("acepta") + '" name="acepta_datos" required>' +
           '<span>Autorizo a PascalIA a tratar mis datos para responder esta solicitud y hacerle seguimiento, según la ' +
-          '<a href="/politica-de-datos/" target="_blank" rel="noopener">Política de tratamiento de datos</a>.</span></label>' +
+          '<a href="/politica-de-datos/" target="_blank" rel="noopener">Política de tratamiento de datos</a>. Declaro que soy mayor de 18 años.</span></label>' +
           '<span class="pf-err" id="' + id("acepta-e") + '"></span></div>' +
       "</div>" +
       '<div class="pf-actions"><button type="submit" class="pf-submit">' + boton + '</button>' +
@@ -123,7 +123,7 @@
         '<div class="pf-field full"><label class="pf-check" for="' + id("acepta") + '">' +
           '<input type="checkbox" id="' + id("acepta") + '" name="acepta_datos" required>' +
           '<span>Autorizo a PascalIA a tratar mis datos para responder esta solicitud y hacerle seguimiento, según la ' +
-          '<a href="/politica-de-datos/" target="_blank" rel="noopener">Política de tratamiento de datos</a>.</span></label>' +
+          '<a href="/politica-de-datos/" target="_blank" rel="noopener">Política de tratamiento de datos</a>. Declaro que soy mayor de 18 años.</span></label>' +
           '<span class="pf-err" id="' + id("acepta-e") + '"></span></div>' +
       "</div>" +
       '<div class="pf-actions"><button type="submit" class="pf-submit">Enviar solicitud</button>' +
