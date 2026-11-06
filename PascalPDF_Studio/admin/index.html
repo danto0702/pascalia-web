@@ -78,8 +78,9 @@
                 <h2 id="form-titulo">Crear un código</h2>
                 <form class="grid" id="form-codigo">
                     <div><label for="c-codigo">Código</label><input id="c-codigo" required maxlength="30" pattern="[A-Za-z0-9_\-]{3,30}" style="text-transform:uppercase" placeholder="LANZAMIENTO"></div>
-                    <div><label for="c-tipo">Tipo</label><select id="c-tipo"><option value="porcentaje">Porcentaje (%)</option><option value="valor">Valor en pesos</option></select></div>
-                    <div><label for="c-valor">Descuento</label><input id="c-valor" type="number" min="1" required placeholder="30"></div>
+                    <div><label for="c-tipo">Tipo</label><select id="c-tipo"><option value="porcentaje">Porcentaje (%)</option><option value="valor">Valor en pesos</option><option value="dias">Días gratis (sin pago)</option></select></div>
+                    <div id="c-plan-caja" hidden><label for="c-plan">Plan que regala</label><select id="c-plan"><option value="suite">PascalPDF Suite (todos los servicios)</option><option value="pro">Pascal Sign Pro</option></select></div>
+                    <div><label for="c-valor" id="c-valor-lbl">Descuento</label><input id="c-valor" type="number" min="1" required placeholder="30"></div>
                     <div><label for="c-vence">Vence (opcional)</label><input id="c-vence" type="datetime-local"></div>
                     <div><label for="c-max">Máximo de usos (opcional)</label><input id="c-max" type="number" min="1" placeholder="Sin límite"></div>
                     <div><label for="c-activo">Estado</label><select id="c-activo"><option value="1">Activo</option><option value="0">Apagado</option></select></div>
@@ -161,7 +162,7 @@
         $('#t-codigos').innerHTML = promos.length ? promos.map((p, i) => {
             const vencido = p.vence_en && new Date(p.vence_en).getTime() < ahora, agotado = p.max_usos !== null && p.usos >= p.max_usos;
             const estado = !p.activo ? ['Apagado', 'no'] : vencido ? ['Vencido', 'no'] : agotado ? ['Agotado', 'no'] : ['Activo', 'si'];
-            return `<tr><td><b>${esc(p.codigo)}</b></td><td>${p.tipo === 'porcentaje' ? p.valor + ' %' : pesos(p.valor)}</td><td>${p.productos.length ? p.productos.map(x => PRODUCTOS[x] || x).join(', ') : 'Todos'}</td>
+            return `<tr><td><b>${esc(p.codigo)}</b></td><td>${p.tipo === 'porcentaje' ? p.valor + ' %' : p.tipo === 'dias' ? p.valor + ' días gratis' : pesos(p.valor)}</td><td>${p.tipo === 'dias' ? (p.plan === 'pro' ? 'Pascal Sign Pro' : 'Suite (todo)') : p.productos.length ? p.productos.map(x => PRODUCTOS[x] || x).join(', ') : 'Todos'}</td>
                 <td>${fecha(p.vence_en, true)}</td><td class="num">${p.usos}${p.max_usos !== null ? ' / ' + p.max_usos : ''}</td><td><span class="chip ${estado[1]}">${estado[0]}</span></td><td>${esc(p.nota || '')}</td>
                 <td><button class="btn sec peq" data-editar="${i}">Editar</button> <button class="btn sec peq" data-alternar="${i}">${p.activo ? 'Apagar' : 'Encender'}</button></td></tr>`;
         }).join('') : '<tr><td colspan="8">Todavía no hay códigos.</td></tr>';
@@ -181,17 +182,28 @@
         $('#c-activo').value = !p || p.activo ? '1' : '0';
         $('#c-nota').value = p ? p.nota || '' : '';
         document.querySelectorAll('.productos input').forEach(x => x.checked = !!p && p.productos.includes(x.value));
+        $('#c-plan').value = p && p.plan ? p.plan : 'suite';
+        ajustarTipo();
         msg($('#c-msg'), '');
         $('#c-codigo').focus();
     }
     $('#c-limpiar').onclick = () => editar(null);
+    // Días gratis: se elige el plan y el valor son días; no aplica a productos de pago
+    const ajustarTipo = () => {
+        const dias = $('#c-tipo').value === 'dias';
+        $('#c-plan-caja').hidden = !dias;
+        document.querySelector('.productos').hidden = dias;
+        $('#c-valor-lbl').textContent = dias ? 'Días gratis' : $('#c-tipo').value === 'valor' ? 'Descuento (pesos)' : 'Descuento (%)';
+    };
+    $('#c-tipo').onchange = ajustarTipo;
     $('#form-codigo').onsubmit = async (e) => {
         e.preventDefault();
         const promo = {
             codigo: $('#c-codigo').value.trim().toUpperCase(), tipo: $('#c-tipo').value, valor: +$('#c-valor').value,
             vence_en: $('#c-vence').value ? new Date($('#c-vence').value).toISOString() : null,
             max_usos: $('#c-max').value ? +$('#c-max').value : null, activo: $('#c-activo').value === '1', nota: $('#c-nota').value.trim(),
-            productos: [...document.querySelectorAll('.productos input:checked')].map(x => x.value)
+            productos: $('#c-tipo').value === 'dias' ? [] : [...document.querySelectorAll('.productos input:checked')].map(x => x.value),
+            plan: $('#c-plan').value
         };
         try { await api('admin_promo_guardar', { promo }); msg($('#c-msg'), `Código ${promo.codigo} guardado.`, true); editar(null); codigos(); }
         catch (err) { msg($('#c-msg'), err.message); }

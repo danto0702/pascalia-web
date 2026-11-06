@@ -10,8 +10,8 @@ export type Usuario = {
 };
 export type DatosGoogle = { sub: string; email: string; email_verified: boolean; name?: string };
 export type Promo = {
-  codigo: string; tipo: "porcentaje" | "valor"; valor: number; productos: string[];
-  vence_en: string | null; max_usos: number | null; usos: number; activo: boolean;
+  codigo: string; tipo: "porcentaje" | "valor" | "dias"; valor: number; productos: string[];
+  vence_en: string | null; max_usos: number | null; usos: number; activo: boolean; plan?: "pro" | "suite" | null;
 };
 export type Evento = {
   app: string; documento_tipo: string; documento_nombre: string; documento_hash: string | null;
@@ -46,6 +46,8 @@ export type DepsCuenta = {
     adminResumen(): Promise<Record<string, unknown>>;
     adminPromos(): Promise<Promo[]>;
     adminGuardarPromo(p: Promo & { nota: string | null }): Promise<void>;
+    // Canje atómico de un código de días gratis; lanza un error con mensaje codigo_invalido, codigo_vencido o ya_usado
+    canjearDias(codigo: string, usuario_id: string): Promise<{ plan: string; vence_en: string; dias: number }>;
     adminUsuarios(buscar: string): Promise<Usuario[]>;
     adminPagos(): Promise<Record<string, unknown>[]>;
     insertCodigo(c: { correo: string; codigo_hash: string; vence_en: string; intentos: number; creado_en: string }): Promise<void>;
@@ -197,6 +199,7 @@ async function calcularPrecio(deps: DepsCuenta, u: Usuario, producto: string, co
   const ahora = deps.now();
   if (!promo || !promo.activo || (promo.vence_en && new Date(promo.vence_en) < ahora)
     || (promo.max_usos !== null && promo.usos >= promo.max_usos)) throw new ErrorCliente("El código no es válido o ya venció.");
+  if (promo.tipo === "dias") throw new ErrorCliente("Ese código es de días gratis: no necesitas pagar. Canjéalo en «Mi cuenta → Tengo un código».");
   if (promo.productos.length && !promo.productos.includes(producto)) throw new ErrorCliente("El código no aplica para este plan.");
   if (await deps.db.promoUsada(codigo, u.id)) throw new ErrorCliente("Ya usaste este código.");
   const descuento = Math.min(p.precio, promo.tipo === "porcentaje" ? Math.round(p.precio * Math.min(100, promo.valor) / 100) : promo.valor);
@@ -509,9 +512,10 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
       const p = (d.promo || {}) as Record<string, unknown>;
       const codigo = texto(p.codigo, 30).toUpperCase();
       if (!/^[A-Z0-9_-]{3,30}$/.test(codigo)) throw new ErrorCliente("El código debe tener de 3 a 30 letras, números, guion o guion bajo.");
-      const tipo = p.tipo === "valor" ? "valor" : "porcentaje";
+      const tipo = p.tipo === "valor" ? "valor" : p.tipo === "dias" ? "dias" : "porcentaje";
       const valor = Math.round(Number(p.valor));
-      if (!(valor > 0) || (tipo === "porcentaje" && valor > 100)) throw new ErrorCliente("Revisa el valor del descuento.");
+      if (!(valor > 0) || (tipo === "porcentaje" && valor > 100) || (tipo === "dias" && valor > 366)) throw new ErrorCliente(tipo === "dias" ? "Los días deben estar entre 1 y 366." : "Revisa el valor del descuento.");
+      const plan = tipo === "dias" ? (p.plan === "pro" ? "pro" : "suite") : null;
       const productos = Array.isArray(p.productos) ? p.productos.map(String).filter((x) => x in PRODUCTOS) : [];
       const vence_en = p.vence_en ? new Date(String(p.vence_en)) : null;
       if (vence_en && isNaN(vence_en.getTime())) throw new ErrorCliente("Revisa la fecha de vencimiento.");
@@ -519,7 +523,7 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
       if (max_usos !== null && !(max_usos > 0)) throw new ErrorCliente("El máximo de usos debe ser mayor que cero o quedar vacío.");
       await deps.db.adminGuardarPromo({
         codigo, tipo, valor, productos, vence_en: vence_en ? vence_en.toISOString() : null, max_usos,
-        usos: 0, activo: p.activo !== false, nota: texto(p.nota, 200) || null,
+        usos: 0, activo: p.activo !== false, nota: texto(p.nota, 200) || null, plan,
       });
       return { ok: true };
     }
@@ -544,6 +548,25 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
     case "admin_pagos": {
       await requerirAdmin(deps, d.token);
       return { ok: true, pagos: await deps.db.adminPagos() };
+    }
+
+    // Código de días gratis: suma días de un plan sin pagar
+    case "canjear_codigo": {
+      const u = await requerirUsuario(deps, d.token);
+      const codigo = texto(d.codigo, 30).toUpperCase().replace(/[^A-Z0-9_-]/g, "");
+      if (!codigo) throw new ErrorCliente("Escribe el código.");
+      const promo = await deps.db.promo(codigo);
+      if (promo && promo.tipo !== "dias") throw new ErrorCliente("Ese código es un descuento: úsalo al elegir un plan, en «Código promocional».");
+      try {
+        const r = await deps.db.canjearDias(codigo, u.id);
+        return { ok: true, ...r, cuenta: await resumen(deps, (await deps.db.usuarioPorId(u.id))!) };
+      } catch (err) {
+        const m = String((err as { message?: string }).message || "");
+        if (m.includes("ya_usado")) throw new ErrorCliente("Ya usaste este código.", 409);
+        if (m.includes("codigo_vencido")) throw new ErrorCliente("El código ya venció o se agotó.", 410);
+        if (m.includes("codigo_invalido")) throw new ErrorCliente("El código no es válido.", 404);
+        throw err;
+      }
     }
 
     case "historial": {
