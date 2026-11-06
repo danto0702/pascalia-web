@@ -1,4 +1,4 @@
-// Delegación de firma en PascalPDF: el titular autoriza a otra cuenta a usar una de sus firmas
+// Delegación de firma (PascalPDF y Pascal Sign): el titular autoriza a otra cuenta a usar una de sus firmas
 // durante un periodo, abierta o solo para ciertos objetos, y puede suspenderla o revocarla cuando quiera.
 // Cada uso queda en el historial del titular, con su consecutivo y el nombre de quien la usó.
 (function () {
@@ -40,7 +40,7 @@
     // ------------------------------------------------------------------ titular: crear y administrar
     async function gestionar() {
         if (!(await PascalCuenta.requiere(1, 'Delegar tu firma'))) return;
-        const firmas = typeof mySignatures !== 'undefined' ? mySignatures : [];
+        const firmas = await ganchos.firmas();
         const h = hoja(`
             <h2>Delegar mi firma</h2>
             <p class="pc-muted">La persona usará tu firma desde su propia cuenta de PascalPDF. Cada documento queda en tu historial con su consecutivo y el nombre de quien la usó. Puedes suspender o revocar el permiso en cualquier momento.</p>
@@ -142,18 +142,29 @@
         }).join('');
         h.querySelectorAll('[data-usar]').forEach(b => b.onclick = () => conBoton(b, async () => {
             const d = r.recibidas[+b.dataset.usar];
-            if (typeof pdfPages === 'undefined' || !pdfPages.length) return aviso(q('[data-msg]'), 'Primero abre el PDF que vas a firmar.');
+            if (!ganchos.hayDocumento()) return aviso(q('[data-msg]'), 'Primero abre el PDF que vas a firmar.');
             const sel = h.querySelector(`[data-obj="${b.dataset.usar}"]`);
             try {
                 const x = await obtener(d, sel ? sel.value : null);
                 cerrar();
-                estampar(x);
+                const c = PascalCuenta.cuenta;
+                x.delegado = c ? (c.nombre || c.correo) : 'delegado';
+                ganchos.estampar(x);
             } catch (e) { aviso(q('[data-msg]'), e.message); }
         }));
     }
 
+    // Ganchos de cada aplicación: firmas guardadas, si hay documento abierto y cómo poner la firma.
+    // Por defecto, los de PascalPDF; Pascal Sign los reemplaza con PascalDelegar.configurar().
+    const ganchos = {
+        firmas: async () => (typeof mySignatures !== 'undefined' ? mySignatures : []),
+        hayDocumento: () => typeof pdfPages !== 'undefined' && pdfPages.length > 0,
+        estampar: (x) => estamparPascalPDF(x)
+    };
+    function configurar(g) { Object.assign(ganchos, g); }
+
     // Pone la firma delegada en la página actual de PascalPDF
-    function estampar(x) {
+    function estamparPascalPDF(x) {
         const campo = document.getElementById('sello-objeto');
         const previo = campo ? campo.value : '';
         if (campo && x.objeto) campo.value = x.objeto;
@@ -165,14 +176,13 @@
         obj.method = 'imagen';
         if (obj.sello) {
             if (x.objeto) obj.sello.objeto = x.objeto;
-            const c = PascalCuenta.cuenta;
-            obj.sello.delegado = c ? (c.nombre || c.correo) : 'delegado';
+            obj.sello.delegado = x.delegado;
         }
         if (window.renderCurrentPage) renderCurrentPage();
         toast(`Firma de ${x.sig.signer} agregada por delegación. Arrástrala a donde la necesites.`);
     }
 
-    window.PascalDelegar = { gestionar, recibidas, vigentes, obtener, firmaPNG };
+    window.PascalDelegar = { gestionar, recibidas, vigentes, obtener, firmaPNG, configurar };
 
     // Herramientas en el catálogo (antes de que acceso.js asigne los planes)
     if (typeof SUITE_CATEGORIES !== 'undefined' && SUITE_CATEGORIES.sign) {
