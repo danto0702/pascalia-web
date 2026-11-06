@@ -18,6 +18,12 @@ export type Evento = {
   objeto: string | null; radicado: string | null; firmante: string | null;
   firma_id: string; metodo: string | null; paginas: number | null;
   anio?: number; numero?: number; consecutivo?: string;
+  delegacion_id?: string | null; delegado_id?: string | null; delegado_nombre?: string | null;
+};
+export type Delegacion = {
+  id: string; titular_id: string; delegado_correo: string; firma_id: string; firma_nombre: string; firma_cifrada: string;
+  objetos: string[]; desde: string; hasta: string; estado: "activa" | "suspendida" | "revocada"; usos: number;
+  creada_en: string; actualizada_en: string;
 };
 export type TransaccionWompi = { id: string; reference: string; status: string; amount_in_cents: number; currency: string };
 
@@ -29,7 +35,19 @@ export type DepsCuenta = {
   correo(para: string, asunto: string, html: string): Promise<boolean>;
   consultarTransaccion(id: string): Promise<TransaccionWompi | null>;
   google: { clienteId: string; verificar(credencial: string): Promise<DatosGoogle | null> } | null;
+  admins: string[]; // correos con acceso a la página de administración
   db: {
+    usuarioPorId(id: string): Promise<Usuario | null>;
+    crearDelegacion(d: Omit<Delegacion, "id" | "usos" | "creada_en" | "actualizada_en" | "estado">): Promise<Delegacion>;
+    delegacion(id: string): Promise<Delegacion | null>;
+    delegacionesDe(titular_id: string): Promise<Delegacion[]>;
+    delegacionesPara(correo: string): Promise<(Delegacion & { titular_correo: string; titular_nombre: string | null })[]>;
+    actualizarDelegacion(id: string, cambios: Partial<Delegacion>): Promise<void>;
+    adminResumen(): Promise<Record<string, unknown>>;
+    adminPromos(): Promise<Promo[]>;
+    adminGuardarPromo(p: Promo & { nota: string | null }): Promise<void>;
+    adminUsuarios(buscar: string): Promise<Usuario[]>;
+    adminPagos(): Promise<Record<string, unknown>[]>;
     insertCodigo(c: { correo: string; codigo_hash: string; vence_en: string; intentos: number; creado_en: string }): Promise<void>;
     ultimoCodigo(correo: string): Promise<{ correo: string; codigo_hash: string; vence_en: string; intentos: number; creado_en: string } | null>;
     contarCodigosDesde(correo: string, desde: Date): Promise<number>;
@@ -71,6 +89,7 @@ const MINUTOS_CODIGO = 10;
 
 const texto = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, max) : "");
 const correoValido = (c: string) => /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i.test(c);
+const escHtml = (t: string) => t.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 const uuidValido = (v: unknown) => typeof v === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v);
 
 async function sha256(s: string) {
@@ -152,6 +171,7 @@ async function resumen(deps: DepsCuenta, u: Usuario) {
     solicitudes: { usadas: await deps.db.contarSolicitudesDesde(u.id, desde), cupo: CUPO_SOLICITUDES[u.plan], extra: u.solicitudes_extra },
     firmas_mes: await deps.db.contarEventosDesde(u.id, desde),
     pagos_activos: !!deps.wompi,
+    admin: deps.admins.includes(u.correo.toLowerCase()),
     productos: PRODUCTOS,
   };
 }
@@ -204,6 +224,38 @@ async function verificarCodigo(deps: DepsCuenta, correo: string, codigo: unknown
     throw new ErrorCliente("El código no es correcto.", 403);
   }
   await deps.db.actualizarCodigo(correo, c.creado_en, { intentos: 5 });
+}
+
+// ---------------------------------------------------------------- cifrado de la firma delegada
+async function llaveFirmas(deps: DepsCuenta) {
+  const k = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(deps.secreto + "|delegacion"));
+  return crypto.subtle.importKey("raw", k, "AES-GCM", false, ["encrypt", "decrypt"]);
+}
+async function cifrarFirma(deps: DepsCuenta, png: string) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await llaveFirmas(deps), new TextEncoder().encode(png)));
+  return b64(iv) + "." + b64ct(ct);
+}
+async function descifrarFirma(deps: DepsCuenta, txt: string) {
+  const [iv, ct] = txt.split(".");
+  return new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: deB64(iv) }, await llaveFirmas(deps), deB64(ct)));
+}
+// btoa con trozos (la firma puede pesar cientos de KB)
+function b64ct(a: Uint8Array) {
+  let s = "";
+  for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode(...a.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+const vigente = (d: Delegacion, ahora: Date) => d.estado === "activa" && new Date(d.desde) <= ahora && new Date(d.hasta) > ahora;
+const normal = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+function publicaDelegacion(d: Delegacion, ahora: Date) {
+  const { firma_cifrada: _f, ...resto } = d;
+  return { ...resto, vigente: vigente(d, ahora) };
+}
+async function requerirAdmin(deps: DepsCuenta, token: unknown) {
+  const u = await requerirUsuario(deps, token);
+  if (!deps.admins.includes(u.correo.toLowerCase())) throw new ErrorCliente("No tienes acceso a la administración.", 403);
+  return u;
 }
 
 const vencePrueba = (ahora: Date) => new Date(ahora.getTime() + DIAS_PRUEBA * 86_400_000).toISOString();
@@ -317,32 +369,181 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
       const u = await requerirUsuario(deps, d.token);
       if (!planActivo(u, ahora)) throw new ErrorCliente("Tu plan venció. Renuévalo para seguir firmando.", 402);
       if (!Array.isArray(d.eventos) || !d.eventos.length || d.eventos.length > 50) throw new ErrorCliente("Datos de firma no válidos.");
-      const eventos: Evento[] = d.eventos.map((e) => {
-        const o = e as Record<string, unknown>;
+      // Cada evento pertenece al titular de la firma: quien firma, o el titular si es una firma delegada
+      const eventos: { e: Evento; duenio: string }[] = [];
+      const delegaciones = new Map<string, Delegacion>();
+      for (const raw of d.eventos) {
+        const o = raw as Record<string, unknown>;
         if (!uuidValido(o.firma_id)) throw new ErrorCliente("Identificador de firma no válido.");
         const hash = typeof o.documento_hash === "string" && /^[0-9a-f]{64}$/.test(o.documento_hash) ? o.documento_hash : null;
         const metodo = ["dibujada", "escrita", "imagen"].includes(o.metodo as string) ? o.metodo as string : null;
         const paginas = Number.isInteger(o.paginas) && (o.paginas as number) > 0 ? Math.min(10000, o.paginas as number) : null;
-        return {
+        const e: Evento = {
           app: o.app === "pascalsign" ? "pascalsign" : "pascalpdf",
           documento_tipo: texto(o.documento_tipo, 40) || "Otro",
           documento_nombre: texto(o.documento_nombre, 160) || "Documento.pdf",
           documento_hash: hash, firma_id: o.firma_id as string, metodo, paginas,
           objeto: texto(o.objeto, 120) || null, radicado: texto(o.radicado, 60) || null, firmante: texto(o.firmante, 120) || null,
         };
-      });
-      // Consecutivo por cuenta y año (hora de Colombia): iniciales-número-año, p. ej. DTB-0001-2026
+        let duenio = u.id;
+        if (o.delegacion_id) {
+          if (!uuidValido(o.delegacion_id)) throw new ErrorCliente("Delegación no válida.");
+          let del = delegaciones.get(o.delegacion_id as string);
+          if (!del) {
+            const x = await deps.db.delegacion(o.delegacion_id as string);
+            if (!x || x.delegado_correo !== u.correo) throw new ErrorCliente("Esa firma no te fue delegada.", 403);
+            if (!vigente(x, ahora)) throw new ErrorCliente("La delegación de esa firma no está vigente (suspendida, revocada o fuera de las fechas).", 403);
+            const titular = await deps.db.usuarioPorId(x.titular_id);
+            if (!titular || !planActivo(titular, ahora)) throw new ErrorCliente("El plan del titular de la firma no está activo.", 402);
+            del = x;
+            delegaciones.set(x.id, x);
+          }
+          if (del.objetos.length && !del.objetos.some((ob) => normal(ob) === normal(e.objeto || ""))) {
+            throw new ErrorCliente(`Esta delegación solo permite firmar: ${del.objetos.join(", ")}.`, 403);
+          }
+          e.firmante = del.firma_nombre;
+          e.firma_id = del.firma_id;
+          e.metodo = "imagen";
+          e.delegacion_id = del.id;
+          e.delegado_id = u.id;
+          e.delegado_nombre = texto(`${u.nombre || u.correo} (${u.correo})`, 160);
+          duenio = del.titular_id;
+        }
+        eventos.push({ e, duenio });
+      }
+      // Consecutivo por titular y año (hora de Colombia): iniciales-número-año, p. ej. DTB-0001-2026
       const anio = new Date(ahora.getTime() - 5 * 3600_000).getUTCFullYear();
-      for (let intento = 0; ; intento++) {
-        let n = await deps.db.ultimoNumero(u.id, anio);
-        for (const e of eventos) { n++; e.anio = anio; e.numero = n; e.consecutivo = consecutivo(e.firmante, n, anio); }
-        try {
-          return { ok: true, registros: await deps.db.insertarEventos(u.id, eventos) };
-        } catch (err) {
-          // Dos guardados al mismo tiempo pueden tomar el mismo número: se reintenta
-          if ((err as { code?: string }).code !== "23505" || intento >= 4) throw err;
+      const registros: unknown[] = new Array(eventos.length);
+      for (const duenio of new Set(eventos.map((x) => x.duenio))) {
+        const idx = eventos.map((x, i) => (x.duenio === duenio ? i : -1)).filter((i) => i >= 0);
+        for (let intento = 0; ; intento++) {
+          let n = await deps.db.ultimoNumero(duenio, anio);
+          for (const i of idx) { const e = eventos[i].e; n++; e.anio = anio; e.numero = n; e.consecutivo = consecutivo(e.firmante, n, anio); }
+          try {
+            const r = await deps.db.insertarEventos(duenio, idx.map((i) => eventos[i].e));
+            r.forEach((x, j) => (registros[idx[j]] = x));
+            break;
+          } catch (err) {
+            // Dos guardados al mismo tiempo pueden tomar el mismo número: se reintenta
+            if ((err as { code?: string }).code !== "23505" || intento >= 4) throw err;
+          }
         }
       }
+      for (const del of delegaciones.values()) {
+        await deps.db.actualizarDelegacion(del.id, { usos: del.usos + eventos.filter((x) => x.e.delegacion_id === del.id).length });
+      }
+      return { ok: true, registros };
+    }
+
+    // ------------------------------------------------------------ delegación de firma
+    case "delegar_crear": {
+      const u = await requerirUsuario(deps, d.token);
+      if (!planActivo(u, ahora)) throw new ErrorCliente("Tu plan venció. Renuévalo para delegar tu firma.", 402);
+      const delegado_correo = texto(d.delegado_correo, 254).toLowerCase();
+      if (!correoValido(delegado_correo)) throw new ErrorCliente("Revisa el correo de la persona a quien delegas.");
+      if (delegado_correo === u.correo) throw new ErrorCliente("No puedes delegarte la firma a ti mismo.");
+      const f = (d.firma || {}) as Record<string, unknown>;
+      if (!uuidValido(f.id)) throw new ErrorCliente("Elige una de tus firmas guardadas.");
+      const firma_nombre = texto(f.nombre, 120);
+      if (firma_nombre.length < 3) throw new ErrorCliente("La firma debe tener el nombre de su titular.");
+      const png = typeof f.png === "string" ? f.png : "";
+      if (!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(png) || png.length > 600_000) throw new ErrorCliente("La imagen de la firma no es válida o es muy grande.");
+      const objetos = Array.isArray(d.objetos) ? [...new Set(d.objetos.map((x) => texto(x, 120)).filter(Boolean))].slice(0, 20) : [];
+      const desde = d.desde ? new Date(String(d.desde)) : ahora;
+      const hasta = new Date(String(d.hasta || ""));
+      if (isNaN(desde.getTime()) || isNaN(hasta.getTime()) || hasta <= desde) throw new ErrorCliente("Revisa las fechas: la delegación debe terminar después de empezar.");
+      if (hasta.getTime() - desde.getTime() > 366 * 86_400_000) throw new ErrorCliente("Una delegación puede durar como máximo un año.");
+      if (hasta <= ahora) throw new ErrorCliente("La fecha final ya pasó.");
+      const del = await deps.db.crearDelegacion({
+        titular_id: u.id, delegado_correo, firma_id: f.id as string, firma_nombre,
+        firma_cifrada: await cifrarFirma(deps, png), objetos, desde: desde.toISOString(), hasta: hasta.toISOString(),
+      });
+      const fmt = (x: Date) => x.toLocaleString("es-CO", { dateStyle: "long", timeStyle: "short", timeZone: "America/Bogota" });
+      await deps.correo(delegado_correo, `${u.nombre || u.correo} te delegó su firma en PascalPDF`,
+        `<div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:auto;color:#1F1F1F"><div style="height:4px;background:#FFC107;border-radius:4px"></div><h2 style="font-size:18px;margin:20px 0 8px">Te delegaron una firma</h2><p><b>${escHtml(u.nombre || u.correo)}</b> te autorizó a usar la firma de <b>${escHtml(firma_nombre)}</b> en PascalPDF del ${fmt(desde)} al ${fmt(hasta)}.</p><p>${objetos.length ? "Solo para: " + objetos.map(escHtml).join(", ") + "." : "Para cualquier documento."}</p><p>Entra a PascalPDF con este correo (${escHtml(delegado_correo)}) y la verás en «Firmar» → «Firmas que te delegaron». Cada uso queda registrado en el historial del titular.</p><p style="color:#5C5C5C;font-size:12px;margin-top:28px">PascalIA · pascalia.lat<br>Si no esperabas este correo, ignóralo.</p></div>`);
+      return { ok: true, delegacion: publicaDelegacion(del, ahora) };
+    }
+
+    case "delegar_listar": {
+      const u = await requerirUsuario(deps, d.token);
+      const otorgadas = (await deps.db.delegacionesDe(u.id)).map((x) => publicaDelegacion(x, ahora));
+      const recibidas = (await deps.db.delegacionesPara(u.correo)).filter((x) => x.estado !== "revocada").map((x) => publicaDelegacion(x, ahora));
+      return { ok: true, otorgadas, recibidas };
+    }
+
+    case "delegar_estado": {
+      const u = await requerirUsuario(deps, d.token);
+      if (!uuidValido(d.id)) throw new ErrorCliente("Delegación no válida.");
+      const del = await deps.db.delegacion(d.id as string);
+      if (!del || del.titular_id !== u.id) throw new ErrorCliente("Esa delegación no es tuya.", 403);
+      const estado = String(d.estado);
+      if (!["activa", "suspendida", "revocada"].includes(estado)) throw new ErrorCliente("Estado no válido.");
+      if (del.estado === "revocada") throw new ErrorCliente("Una delegación revocada no se puede reactivar. Crea una nueva.", 409);
+      const cambios: Partial<Delegacion> = { estado: estado as Delegacion["estado"], actualizada_en: ahora.toISOString() };
+      if (estado === "revocada") cambios.firma_cifrada = "revocada"; // se borra la imagen de la firma
+      await deps.db.actualizarDelegacion(del.id, cambios);
+      return { ok: true };
+    }
+
+    case "delegar_firma": {
+      const u = await requerirUsuario(deps, d.token);
+      if (!planActivo(u, ahora)) throw new ErrorCliente("Tu plan venció. Renuévalo para firmar.", 402);
+      if (!uuidValido(d.id)) throw new ErrorCliente("Delegación no válida.");
+      const del = await deps.db.delegacion(d.id as string);
+      if (!del || del.delegado_correo !== u.correo) throw new ErrorCliente("Esa firma no te fue delegada.", 403);
+      if (!vigente(del, ahora)) throw new ErrorCliente("La delegación de esa firma no está vigente.", 403);
+      return { ok: true, firma: { id: del.firma_id, nombre: del.firma_nombre, png: await descifrarFirma(deps, del.firma_cifrada) }, objetos: del.objetos, hasta: del.hasta };
+    }
+
+    // ------------------------------------------------------------ administración (solo correos autorizados)
+    case "admin_resumen": {
+      await requerirAdmin(deps, d.token);
+      return { ok: true, resumen: await deps.db.adminResumen() };
+    }
+    case "admin_promos": {
+      await requerirAdmin(deps, d.token);
+      return { ok: true, promos: await deps.db.adminPromos() };
+    }
+    case "admin_promo_guardar": {
+      await requerirAdmin(deps, d.token);
+      const p = (d.promo || {}) as Record<string, unknown>;
+      const codigo = texto(p.codigo, 30).toUpperCase();
+      if (!/^[A-Z0-9_-]{3,30}$/.test(codigo)) throw new ErrorCliente("El código debe tener de 3 a 30 letras, números, guion o guion bajo.");
+      const tipo = p.tipo === "valor" ? "valor" : "porcentaje";
+      const valor = Math.round(Number(p.valor));
+      if (!(valor > 0) || (tipo === "porcentaje" && valor > 100)) throw new ErrorCliente("Revisa el valor del descuento.");
+      const productos = Array.isArray(p.productos) ? p.productos.map(String).filter((x) => x in PRODUCTOS) : [];
+      const vence_en = p.vence_en ? new Date(String(p.vence_en)) : null;
+      if (vence_en && isNaN(vence_en.getTime())) throw new ErrorCliente("Revisa la fecha de vencimiento.");
+      const max_usos = p.max_usos === null || p.max_usos === "" || p.max_usos === undefined ? null : Math.round(Number(p.max_usos));
+      if (max_usos !== null && !(max_usos > 0)) throw new ErrorCliente("El máximo de usos debe ser mayor que cero o quedar vacío.");
+      await deps.db.adminGuardarPromo({
+        codigo, tipo, valor, productos, vence_en: vence_en ? vence_en.toISOString() : null, max_usos,
+        usos: 0, activo: p.activo !== false, nota: texto(p.nota, 200) || null,
+      });
+      return { ok: true };
+    }
+    case "admin_usuarios": {
+      await requerirAdmin(deps, d.token);
+      const us = await deps.db.adminUsuarios(texto(d.buscar, 100).toLowerCase());
+      return { ok: true, usuarios: us.map((x) => ({ correo: x.correo, nombre: x.nombre, plan: x.plan, vence_en: x.vence_en, creado_en: x.creado_en, activo: planActivo(x, ahora), google: !!x.google_sub, clave: !!x.clave_hash })) };
+    }
+    case "admin_plan": {
+      await requerirAdmin(deps, d.token);
+      const x = await deps.db.usuarioPorCorreo(texto(d.correo, 254).toLowerCase());
+      if (!x) throw new ErrorCliente("No existe una cuenta con ese correo.", 404);
+      const plan = String(d.plan);
+      if (!["prueba", "pro", "suite"].includes(plan)) throw new ErrorCliente("Plan no válido.");
+      const dias = Math.round(Number(d.dias));
+      if (!(dias >= -3650 && dias <= 3650)) throw new ErrorCliente("Revisa los días.");
+      const base = new Date(Math.max(ahora.getTime(), new Date(x.vence_en).getTime()));
+      const vence = dias === 0 ? ahora : new Date(base.getTime() + dias * 86_400_000);
+      await deps.db.actualizarUsuario(x.id, { plan: plan as Usuario["plan"], vence_en: vence.toISOString() });
+      return { ok: true, vence_en: vence.toISOString() };
+    }
+    case "admin_pagos": {
+      await requerirAdmin(deps, d.token);
+      return { ok: true, pagos: await deps.db.adminPagos() };
     }
 
     case "historial": {

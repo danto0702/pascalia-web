@@ -2,7 +2,7 @@
 // Conecta la lógica (logica.ts) con Postgres, Storage y Resend. El documento siempre llega cifrado.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { type Codigo, type Deps, ErrorCliente, manejar, type Solicitud } from "./logica.ts";
-import { consumirSolicitud, type DepsCuenta, manejarCuenta, type Promo, type Usuario, usuarioDeToken } from "./cuenta.ts";
+import { consumirSolicitud, type Delegacion, type DepsCuenta, manejarCuenta, type Promo, type Usuario, usuarioDeToken } from "./cuenta.ts";
 
 const ORIGENES = new Set(["https://pascalia.lat", "https://www.pascalia.lat", "http://localhost:8000"]);
 const TABLA = "pascalpdf_solicitudes";
@@ -108,6 +108,9 @@ const wompiIntegridad = Deno.env.get("WOMPI_INTEGRITY_SECRET") ?? "";
 const wompiApi = wompiPublica.startsWith("pub_prod_") ? "https://production.wompi.co/v1" : "https://sandbox.wompi.co/v1";
 
 const googleCliente = Deno.env.get("GOOGLE_CLIENT_ID") ?? "";
+// Correos con acceso a la página de administración (separados por coma)
+const admins = (Deno.env.get("PASCALPDF_ADMINS") ?? "danto0702@gmail.com").split(",").map((c) => c.trim().toLowerCase()).filter(Boolean);
+const DELEG = "pascalpdf_delegaciones";
 
 const depsCuenta: DepsCuenta = {
   now: () => new Date(),
@@ -133,7 +136,49 @@ const depsCuenta: DepsCuenta = {
       return { sub: t.sub, email: t.email, email_verified: t.email_verified === true || t.email_verified === "true", name: t.name };
     },
   } : null,
+  admins,
   db: {
+    async usuarioPorId(id) {
+      return revisar(await db.from(USUARIOS).select("*").eq("id", id).maybeSingle()) as Usuario | null;
+    },
+    async crearDelegacion(x) {
+      return revisar(await db.from(DELEG).insert(x).select().single()) as Delegacion;
+    },
+    async delegacion(id) {
+      return revisar(await db.from(DELEG).select("*").eq("id", id).maybeSingle()) as Delegacion | null;
+    },
+    async delegacionesDe(titular_id) {
+      return revisar(await db.from(DELEG).select("*").eq("titular_id", titular_id).order("creada_en", { ascending: false }).limit(100)) as Delegacion[];
+    },
+    async delegacionesPara(correo) {
+      const r = revisar(await db.from(DELEG).select("*, titular:pascalpdf_usuarios!titular_id(correo, nombre)").eq("delegado_correo", correo)
+        .order("creada_en", { ascending: false }).limit(100)) as (Delegacion & { titular: { correo: string; nombre: string | null } | null })[];
+      return r.map(({ titular, ...x }) => ({ ...x, titular_correo: titular?.correo ?? "", titular_nombre: titular?.nombre ?? null }));
+    },
+    async actualizarDelegacion(id, cambios) {
+      revisar(await db.from(DELEG).update(cambios).eq("id", id));
+    },
+    async adminResumen() {
+      return revisar(await db.rpc("pascalpdf_admin_resumen")) as Record<string, unknown>;
+    },
+    async adminPromos() {
+      return revisar(await db.from("pascalpdf_promos").select("*").order("codigo")) as Promo[];
+    },
+    async adminGuardarPromo(p) {
+      const { usos: _u, ...resto } = p;
+      const existe = revisar(await db.from("pascalpdf_promos").select("codigo").eq("codigo", p.codigo).maybeSingle());
+      if (existe) revisar(await db.from("pascalpdf_promos").update(resto).eq("codigo", p.codigo));
+      else revisar(await db.from("pascalpdf_promos").insert(resto));
+    },
+    async adminUsuarios(buscar) {
+      let q = db.from(USUARIOS).select("*").order("creado_en", { ascending: false }).limit(50);
+      if (buscar) q = q.ilike("correo", `%${buscar.replace(/[%_,()]/g, "")}%`);
+      return revisar(await q) as Usuario[];
+    },
+    async adminPagos() {
+      return revisar(await db.from("pascalpdf_pagos").select("referencia, correo, producto, precio, descuento, monto, codigo, estado, creado_en, aprobado_en")
+        .order("creado_en", { ascending: false }).limit(100)) as Record<string, unknown>[];
+    },
     insertCodigo: (c) => deps.db.insertCodigo(c),
     ultimoCodigo: (c) => deps.db.ultimoCodigo(c),
     contarCodigosDesde: (c, d) => deps.db.contarCodigosDesde(c, d),
@@ -171,8 +216,8 @@ const depsCuenta: DepsCuenta = {
       return r[0]?.numero ?? 0;
     },
     async eventos(usuario_id, limite) {
-      return revisar(await db.from("pascalpdf_eventos").select("id, firmado_en, app, documento_tipo, documento_nombre, documento_hash, firmante, objeto, radicado, consecutivo, firma_id, metodo, paginas")
-        .eq("usuario_id", usuario_id).order("firmado_en", { ascending: false }).limit(limite)) as never;
+      return revisar(await db.from("pascalpdf_eventos").select("id, firmado_en, app, documento_tipo, documento_nombre, documento_hash, firmante, objeto, radicado, consecutivo, firma_id, metodo, paginas, delegado_nombre")
+        .or(`usuario_id.eq.${usuario_id},delegado_id.eq.${usuario_id}`).order("firmado_en", { ascending: false }).limit(limite)) as never;
     },
     async contarEventosDesde(usuario_id, desde) {
       const r = await db.from("pascalpdf_eventos").select("id", { count: "exact", head: true }).eq("usuario_id", usuario_id).gte("firmado_en", desde.toISOString());
@@ -225,7 +270,10 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ ok: false, error: "El servicio de firmas no está disponible todavía." }), { status: 503, headers: h });
   }
   const raw = await req.text();
-  if (raw.length > 20_000) return new Response(JSON.stringify({ ok: false, error: "Solicitud demasiado grande" }), { status: 413, headers: h });
+  // Solo delegar una firma (que lleva la imagen) puede enviar más de 20 KB
+  if (raw.length > 700_000 || (raw.length > 20_000 && !raw.includes('"accion":"delegar_crear"'))) {
+    return new Response(JSON.stringify({ ok: false, error: "Solicitud demasiado grande" }), { status: 413, headers: h });
+  }
   try {
     const d = JSON.parse(raw);
     const out = (await manejarCuenta(d, depsCuenta)) ?? (await manejar(d, deps));
