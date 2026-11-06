@@ -357,6 +357,10 @@
                 <dt>Solicitudes de firma</dt><dd>${s.usadas} de ${s.cupo} este mes${s.extra ? ` · ${s.extra} adicionales` : ''}</dd>
             </dl>
             <div class="pc-fila"><button class="pc-btn" data-planes>${c.activo ? 'Renovar o cambiar de plan' : 'Elegir un plan'}</button></div>
+            <div class="pc-sec-t">Tengo un código</div>
+            <p class="pc-muted">Si te regalaron días gratis, escribe aquí el código.</p>
+            <div style="display:flex;gap:8px"><input class="pc-campo" data-regalo placeholder="Código" style="text-transform:uppercase;margin:0" aria-label="Código de regalo"><button class="pc-btn pc-sec" data-canjear style="flex:0 0 auto">Canjear</button></div>
+            <div data-regalo-msg></div>
             ${window.PascalDelegar ? '<div class="pc-sec-t">Delegación de firma</div><p class="pc-muted">Autoriza a otra persona a usar tu firma por un tiempo, y suspéndelo cuando quieras.</p><div class="pc-fila"><button class="pc-btn pc-sec" data-delegar>Delegar mi firma</button><button class="pc-btn pc-sec" data-recibidas>Firmas que me delegaron</button></div>' : ''}
             ${c.admin ? '<div class="pc-fila"><a class="pc-btn pc-sec" href="/PascalPDF_Studio/admin/" style="text-decoration:none">Administración</a></div>' : ''}
             <div class="pc-sec-t">Historial de documentos firmados</div>
@@ -366,6 +370,17 @@
             <div class="pc-fila" style="margin-top:22px"><button class="pc-btn pc-sec" data-salir>Salir</button><button class="pc-btn pc-peligro" data-borrar>Borrar mi cuenta</button></div>`);
         const q = (sel) => h.querySelector(sel);
         q('[data-planes]').onclick = () => planes(1);
+        const canjear = q('[data-canjear]');
+        canjear.onclick = () => conBoton(canjear, async () => {
+            const codigo = q('[data-regalo]').value.trim();
+            if (!codigo) return aviso(q('[data-regalo-msg]'), 'Escribe el código.');
+            try {
+                const r = await api('canjear_codigo', { codigo });
+                cuenta = r.cuenta; pintarBoton();
+                cerrar();
+                toast(`¡Listo! Sumaste ${r.dias} ${r.dias === 1 ? 'día' : 'días'}: ${NOMBRES_PLAN[r.plan]} hasta el ${fecha(r.vence_en)}.`);
+            } catch (e) { aviso(q('[data-regalo-msg]'), e.message); }
+        });
         if (q('[data-delegar]')) q('[data-delegar]').onclick = () => PascalDelegar.gestionar();
         if (q('[data-recibidas]')) q('[data-recibidas]').onclick = () => PascalDelegar.recibidas();
         h.querySelectorAll('[data-exp]').forEach(b => b.onclick = () => conBoton(b, async () => {

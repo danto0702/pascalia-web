@@ -170,6 +170,9 @@ const depsCuenta: DepsCuenta = {
       if (existe) revisar(await db.from("pascalpdf_promos").update(resto).eq("codigo", p.codigo));
       else revisar(await db.from("pascalpdf_promos").insert(resto));
     },
+    async canjearDias(codigo, usuario_id) {
+      return revisar(await db.rpc("pascalpdf_canjear_dias", { p_codigo: codigo, p_usuario: usuario_id })) as { plan: string; vence_en: string; dias: number };
+    },
     async adminUsuarios(buscar) {
       let q = db.from(USUARIOS).select("*").order("creado_en", { ascending: false }).limit(50);
       if (buscar) q = q.ilike("correo", `%${buscar.replace(/[%_,()]/g, "")}%`);
