@@ -245,6 +245,7 @@
                     <button type="button" class="btn btn-primary" id="camara-firma" style="width:100%;margin-top:10px">Tomar foto con la cámara</button></div>
                 <div id="t-type" class="hidden"><input type="text" id="escrita" placeholder="Escribe tu nombre como firma" value="${esc(info.firmante_nombre)}"><div class="typed" id="vista">${esc(info.firmante_nombre)}</div></div>
                 <p style="margin-top:14px"><label for="nombre" class="muted">Nombre completo de quien firma</label><input type="text" id="nombre" autocomplete="name" value="${esc(info.firmante_nombre)}"></p>
+                <label class="check"><input type="checkbox" id="evidencia" checked><span>Agregar hoja de evidencia de firma electrónica (quién firmó, cuándo y la huella del documento)</span></label>
                 <label class="check"><input type="checkbox" id="acepto"><span>Acepto firmar electrónicamente este documento (Ley 527 de 1999 y Decreto 2364 de 2012) y autorizo el tratamiento de mis datos según el aviso de privacidad, la <a href="/PascalPDF_Studio/politica/" target="_blank" rel="noopener">política de datos</a> y los <a href="/PascalPDF_Studio/terminos/" target="_blank" rel="noopener">términos</a> de PascalPDF.</span></label>
                 <details><summary>Aviso de privacidad</summary>
                     <p>Responsable: Danilo Orlando Torrado Blanco (PascalIA), Ábrego, Norte de Santander, Colombia · contacto@pascalia.lat. Para registrar tu firma guardamos tu correo, la fecha y hora de verificación y de firma, el nombre y tipo del documento, el identificador de tu firma y las huellas SHA-256 del documento recibido y firmado. Tu firma y el documento se procesan en tu dispositivo; el documento viaja cifrado y PascalIA no puede leerlo. El archivo cifrado se borra del servidor a más tardar a los 7 días. Los datos se alojan en Supabase (fuera de Colombia) y los correos se envían con Resend. Puedes conocer, actualizar, rectificar o pedir la supresión de tus datos escribiendo a contacto@pascalia.lat.</p>
@@ -339,7 +340,7 @@
                 btn.textContent = 'Firmando…';
                 const firmaId = crypto.randomUUID();
                 const firma = modo === 'draw' ? { png: recortar(pad), metodo: 'dibujada' } : modo === 'img' ? { png: imagenFirma, metodo: 'imagen' } : { texto: escrita.value.trim(), metodo: 'escrita' };
-                const firmado = await construirFirmado(bytes, info, v, { nombre, firmaId, ...firma });
+                const firmado = await construirFirmado(bytes, info, v, { nombre, firmaId, ...firma, evidencia: document.getElementById('evidencia').checked });
                 const firmadoHash = hex(await crypto.subtle.digest('SHA-256', firmado));
                 const c = await api('completar', { id, sesion: v.sesion, firmado_hash: firmadoHash, firma_id: firmaId, aceptacion_version: ACEPTACION });
                 btn.textContent = 'Enviando…';
@@ -420,7 +421,12 @@
             page.drawText(sub, { x: ps.x, y: ps.y, size: s, font: mono, color: rgb(0.35, 0.35, 0.4), rotate: degrees(rot) });
         });
 
-        // Hoja de evidencia (mismo formato que PascalPDF, para poder verificarla)
+        // Hoja de evidencia (mismo formato que PascalPDF, para poder verificarla), si quien firma la pidió
+        if (f.evidencia === false) {
+            doc.setTitle(info.documento_nombre);
+            doc.setProducer('PascalPDF');
+            return doc.save();
+        }
         const page = doc.addPage([612, 792]);
         const ink = rgb(0.12, 0.12, 0.12), muted = rgb(0.36, 0.36, 0.36);
         let yy = 740;
