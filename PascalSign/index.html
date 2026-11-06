@@ -24,6 +24,7 @@
     <script src="/PascalPDF_Studio/sello.js"></script>
     <script src="/PascalPDF_Studio/limpiafirma.js"></script>
     <script src="/PascalPDF_Studio/cuenta.js"></script>
+    <script src="/PascalPDF_Studio/delegar.js"></script>
     <style>
         :root {
             --yellow: #FFC107; --yellow-hover: #FFB300; --yellow-soft: #FFD54F; --gold-ink: #8A6100;
@@ -273,6 +274,16 @@
         };
     })();
     let misFirmas = [];
+    // Delegación de firma: usa las firmas de este celular y pone las delegadas en la página
+    if (window.PascalDelegar) PascalDelegar.configurar({
+        firmas: async () => { await cargarFirmas(); return misFirmas.filter(f => !f.soloSesion); },
+        hayDocumento: () => !!doc,
+        estampar: (x) => {
+            const c = colocar(x.sig, false, { objeto: x.objeto || (ultimoSello && ultimoSello.objeto) || '', radicado: '', delegado: x.delegado });
+            c.delegacionId = x.delegacionId;
+            toast(`Firma de ${x.sig.signer} agregada por delegación. Muévela a donde la necesites.`);
+        }
+    });
     async function cargarFirmas() {
         try { misFirmas = await Firmas.lista(); } catch (e) { misFirmas = misFirmas.filter(f => f.soloSesion); }
     }
@@ -378,7 +389,7 @@
         const pg = doc.paginas[n];
         const aspecto = firma.kind === 'text' ? 0.32 : firma.h / firma.w;
         const w = selloDatos ? 0.46 : 0.42;
-        const sello = selloDatos ? { nombre: firma.signer, fecha: PascalSello.fechaISO(new Date()), objeto: selloDatos.objeto, radicado: selloDatos.radicado } : null;
+        const sello = selloDatos ? { nombre: firma.signer, fecha: PascalSello.fechaISO(new Date()), objeto: selloDatos.objeto, radicado: selloDatos.radicado, delegado: selloDatos.delegado || undefined } : null;
         let hFrac, ratio = null;
         if (sello) {
             const wv = w * pg.w;
@@ -400,6 +411,7 @@
         dibujarColocada(c, true);
         activar(c.id);
         actualizarListo();
+        return c;
         mostrarAyuda('Arrastra la firma. Usa el círculo amarillo para cambiar el tamaño.');
         if (navigator.vibrate) navigator.vibrate(12);
     }
@@ -507,8 +519,11 @@
             <p class="muted">${soloGestionar ? 'Guardadas cifradas solo en este celular.' : 'Toca una firma para ponerla en la página.'}</p>
             <div class="firmas">${misFirmas.map(f => `<div class="firma-card" data-id="${f.id}" role="button" tabindex="0">${vistaFirma(f)}<small>${esc(f.signer)}</small><button class="borrar" data-borrar="${f.id}" aria-label="Borrar esta firma">×</button></div>`).join('') || '<p class="muted">Aún no tienes firmas guardadas.</p>'}</div>
             ${soloGestionar ? '' : camposSello()}
-            <div class="fila-botones"><button class="btn btn-ghost" id="nueva">Nueva firma</button>${soloGestionar ? '<button class="btn btn-dark" id="cerrar">Cerrar</button>' : ''}</div>`);
+            <div class="fila-botones"><button class="btn btn-ghost" id="nueva">Nueva firma</button>${soloGestionar ? '<button class="btn btn-dark" id="cerrar">Cerrar</button>' : ''}</div>
+            ${window.PascalDelegar ? `<div class="fila-botones" style="margin-top:8px"><button class="btn btn-ghost" id="delegadas">${soloGestionar ? 'Delegar mi firma' : 'Firmas que me delegaron'}</button></div>` : ''}`);
         h.querySelector('#nueva').onclick = () => hojaNueva(soloGestionar);
+        const delegadas = h.querySelector('#delegadas');
+        if (delegadas) delegadas.onclick = () => { cerrarHoja(); soloGestionar ? PascalDelegar.gestionar() : PascalDelegar.recibidas(); };
         const cerrar = h.querySelector('#cerrar');
         if (cerrar) cerrar.onclick = cerrarHoja;
         h.querySelectorAll('[data-borrar]').forEach(b => b.onclick = async (e) => {
@@ -548,7 +563,10 @@
             <input class="campo" id="nombre" autocomplete="name" placeholder="Nombre completo" value="${esc(nombre)}">
             <label class="check"><input type="checkbox" id="guardar" checked> Guardar en este celular (cifrada)</label>
             ${soloGestionar ? '' : camposSello()}
-            <div class="fila-botones"><button class="btn btn-ghost" id="cancelar">Cancelar</button><button class="btn btn-primary" id="usar">${soloGestionar ? 'Guardar firma' : 'Usar firma'}</button></div>`);
+            <div class="fila-botones"><button class="btn btn-ghost" id="cancelar">Cancelar</button><button class="btn btn-primary" id="usar">${soloGestionar ? 'Guardar firma' : 'Usar firma'}</button></div>
+            ${window.PascalDelegar && !soloGestionar && !misFirmas.length ? '<div class="fila-botones" style="margin-top:8px"><button class="btn btn-ghost" id="delegadas">Usar una firma que me delegaron</button></div>' : ''}`);
+        const delegadasN = h.querySelector('#delegadas');
+        if (delegadasN) delegadasN.onclick = () => { cerrarHoja(); PascalDelegar.recibidas(); };
         let modo = 'dibujar', tinta = false, imagen = null;
         h.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
             modo = b.dataset.tab;
@@ -670,7 +688,8 @@
                     app: 'pascalsign', documento_nombre: doc.nombre, documento_tipo: 'Otro', documento_hash: doc.hash,
                     firma_id: c.firma.id, metodo: c.firma.kind === 'text' ? 'escrita' : c.firma.kind === 'drawn' ? 'dibujada' : 'imagen',
                     paginas: doc.pdf.numPages, firmante: c.firma.signer,
-                    objeto: c.sello ? c.sello.objeto : null, radicado: c.sello ? c.sello.radicado : null
+                    objeto: c.sello ? c.sello.objeto : null, radicado: c.sello ? c.sello.radicado : null,
+                    delegacion_id: c.delegacionId || null
                 })));
                 if (regs) regs.forEach((r, i) => {
                     nuevas[i].registroId = r.id; nuevas[i].registradoEn = r.firmado_en;
