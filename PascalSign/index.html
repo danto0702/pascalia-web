@@ -296,8 +296,12 @@
     function camposSello() {
         return `<p class="muted">Debajo de la firma van tu nombre, la fecha y un consecutivo automático (iniciales-número-año).</p>
             <div id="sello-campos"><input class="campo" id="sello-objeto" maxlength="120" placeholder="Objeto (ej. Certificado de cumplimiento)" value="${esc(ultimoSello.objeto)}" style="margin-top:10px">
-            <input class="campo" id="sello-radicado" maxlength="60" placeholder="Radicado (opcional)" value="${esc(ultimoSello.radicado)}" style="margin-top:8px"></div>`;
+            <input class="campo" id="sello-radicado" maxlength="60" placeholder="Radicado (opcional)" value="${esc(ultimoSello.radicado)}" style="margin-top:8px"></div>
+            <label class="check"><input type="checkbox" class="chk-evidencia" ${conEvidencia ? 'checked' : ''} onchange="window.__pascalEvidencia(this.checked)"> Agregar hoja de evidencia de firma electrónica (quién firmó, cuándo y la huella del documento)</label>`;
     }
+    // Hoja de evidencia: una sola elección, visible al poner la firma y al guardar
+    let conEvidencia = true;
+    window.__pascalEvidencia = (v) => { conEvidencia = v; document.querySelectorAll('.chk-evidencia, #evidencia').forEach(c => { c.checked = v; }); };
     function leerSello(h) {
         const o = h.querySelector('#sello-objeto');
         if (!o) return null;
@@ -668,7 +672,7 @@
         const h = hoja(`
             <h2>Tu documento firmado</h2>
             <p class="muted">${colocadas.length} ${colocadas.length === 1 ? 'firma' : 'firmas'} en «${esc(doc.nombre)}».</p>
-            <label class="check"><input type="checkbox" id="evidencia" checked> Agregar hoja de evidencia (quién firmó, cuándo y la huella del documento)</label>
+            <label class="check"><input type="checkbox" id="evidencia" ${conEvidencia ? 'checked' : ''} onchange="window.__pascalEvidencia(this.checked)"> Agregar hoja de evidencia (quién firmó, cuándo y la huella del documento)</label>
             <div class="fila-botones" style="flex-direction:column">
                 <button class="btn btn-primary btn-block" id="compartir">Compartir PDF firmado</button>
                 <button class="btn btn-ghost btn-block" id="descargar">Guardar en el celular</button>
