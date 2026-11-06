@@ -357,6 +357,8 @@
                 <dt>Solicitudes de firma</dt><dd>${s.usadas} de ${s.cupo} este mes${s.extra ? ` · ${s.extra} adicionales` : ''}</dd>
             </dl>
             <div class="pc-fila"><button class="pc-btn" data-planes>${c.activo ? 'Renovar o cambiar de plan' : 'Elegir un plan'}</button></div>
+            ${window.PascalDelegar ? '<div class="pc-sec-t">Delegación de firma</div><p class="pc-muted">Autoriza a otra persona a usar tu firma por un tiempo, y suspéndelo cuando quieras.</p><div class="pc-fila"><button class="pc-btn pc-sec" data-delegar>Delegar mi firma</button><button class="pc-btn pc-sec" data-recibidas>Firmas que me delegaron</button></div>' : ''}
+            ${c.admin ? '<div class="pc-fila"><a class="pc-btn pc-sec" href="/PascalPDF_Studio/admin/" style="text-decoration:none">Administración</a></div>' : ''}
             <div class="pc-sec-t">Historial de documentos firmados</div>
             <p class="pc-muted">Fecha y hora (del servidor), documento, objeto, radicado, consecutivo, firmante y huella de cada firma.</p>
             <div class="pc-fila"><button class="pc-btn pc-sec" data-exp="pdf">PDF</button><button class="pc-btn pc-sec" data-exp="csv">CSV (Excel)</button><button class="pc-btn pc-sec" data-exp="txt">TXT</button></div>
@@ -364,6 +366,8 @@
             <div class="pc-fila" style="margin-top:22px"><button class="pc-btn pc-sec" data-salir>Salir</button><button class="pc-btn pc-peligro" data-borrar>Borrar mi cuenta</button></div>`);
         const q = (sel) => h.querySelector(sel);
         q('[data-planes]').onclick = () => planes(1);
+        if (q('[data-delegar]')) q('[data-delegar]').onclick = () => PascalDelegar.gestionar();
+        if (q('[data-recibidas]')) q('[data-recibidas]').onclick = () => PascalDelegar.recibidas();
         h.querySelectorAll('[data-exp]').forEach(b => b.onclick = () => conBoton(b, async () => {
             try { await exportar(b.dataset.exp); aviso(q('[data-msg]'), 'Historial descargado.', true); } catch (e) { aviso(q('[data-msg]'), e.message); }
         }));
@@ -376,7 +380,7 @@
     }
 
     // ------------------------------------------------------------------ historial exportable
-    const COLS = [['firmado_en', 'Fecha y hora (Colombia)'], ['documento_nombre', 'Documento'], ['objeto', 'Objeto'], ['radicado', 'Radicado'], ['consecutivo', 'Consecutivo'], ['firmante', 'Firmante'], ['documento_tipo', 'Tipo'], ['metodo', 'Método'], ['paginas', 'Páginas'], ['app', 'Aplicación'], ['firma_id', 'ID de la firma'], ['id', 'ID del registro'], ['documento_hash', 'Huella SHA-256 del documento']];
+    const COLS = [['firmado_en', 'Fecha y hora (Colombia)'], ['documento_nombre', 'Documento'], ['objeto', 'Objeto'], ['radicado', 'Radicado'], ['consecutivo', 'Consecutivo'], ['delegado_nombre', 'Firmado por delegación'], ['firmante', 'Firmante'], ['documento_tipo', 'Tipo'], ['metodo', 'Método'], ['paginas', 'Páginas'], ['app', 'Aplicación'], ['firma_id', 'ID de la firma'], ['id', 'ID del registro'], ['documento_hash', 'Huella SHA-256 del documento']];
     const valor = (e, k) => k === 'firmado_en' ? new Date(e[k]).toLocaleString('es-CO', { timeZone: 'America/Bogota', dateStyle: 'short', timeStyle: 'medium' }) : k === 'app' ? (e[k] === 'pascalsign' ? 'Pascal Sign' : 'PascalPDF') : (e[k] ?? '');
 
     async function exportar(formato) {
@@ -472,7 +476,8 @@
         setTimeout(() => t.remove(), 4200);
     }
 
-    window.PascalCuenta = { api, entrar, exigir, abrir, requiere, planes, cargar, registrarFirmas, exportar, get cuenta() { return cuenta; }, activa: !!API };
+    window.PascalCuenta = { api, entrar, exigir, abrir, requiere, planes, cargar, registrarFirmas, exportar, get cuenta() { return cuenta; }, activa: !!API,
+        ui: { hoja, cerrar, aviso, esc, toast, conBoton, fecha } };
     if (API) {
         const iniciar = () => { pintarBoton(); if (!document.documentElement.hasAttribute('data-sin-exigir')) exigir().then(revisarRetornoPago); };
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();

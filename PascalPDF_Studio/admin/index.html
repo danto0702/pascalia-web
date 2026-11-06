@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es-CO" data-sin-exigir>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Administración · PascalPDF</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFC107">
+<link rel="icon" href="/PascalPDF_Studio/img/favicon-32.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="/legal.js" defer></script>
+<style>
+    :root { --amarillo: #FFC107; --ambar: #FFB300; --grafito: #1F1F1F; --gris: #5C5C5C; --borde: #E9E9E9; --crema: #FFF8E1; --rojo: #991B1B; --verde: #166534; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #FAFAF7; color: var(--grafito); font: 15px/1.5 Inter, system-ui, sans-serif; }
+    header { background: var(--grafito); color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    header img { border-radius: 10px; }
+    header h1 { font: 800 18px Montserrat, sans-serif; margin: 0; flex: 1; }
+    header a { color: #fff; font-size: 14px; }
+    main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+    nav.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+    nav.tabs button { border: 0; background: #fff; box-shadow: inset 0 0 0 1px var(--borde); border-radius: 999px; padding: 9px 18px; font: 700 14px Montserrat, sans-serif; cursor: pointer; color: var(--grafito); }
+    nav.tabs button[aria-selected=true] { background: var(--amarillo); box-shadow: none; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid #8A6100; outline-offset: 2px; }
+    .tarjetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+    .tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 18px; padding: 16px; }
+    .tarjeta small { color: var(--gris); display: block; }
+    .tarjeta b { font: 800 26px Montserrat, sans-serif; font-variant-numeric: tabular-nums; }
+    .panel { background: #fff; border: 1px solid var(--borde); border-radius: 18px; padding: 18px; margin-bottom: 16px; overflow-x: auto; }
+    .panel h2 { font: 800 17px Montserrat, sans-serif; margin: 0 0 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+    th { color: var(--gris); font-weight: 600; font-size: 13px; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .chip { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--crema); color: #8A6100; }
+    .chip.no { background: #FEE2E2; color: var(--rojo); }
+    .chip.si { background: #DCFCE7; color: var(--verde); }
+    form.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px 14px; align-items: end; }
+    label { display: block; font-size: 13px; color: var(--gris); }
+    input, select { width: 100%; font: 15px Inter, sans-serif; padding: 10px 12px; border-radius: 12px; border: 1px solid #CFCFCF; background: #fff; color: var(--grafito); margin-top: 4px; }
+    .btn { border: 0; border-radius: 999px; padding: 11px 20px; font: 700 14px Montserrat, sans-serif; cursor: pointer; background: var(--amarillo); color: var(--grafito); }
+    .btn:hover { background: var(--ambar); }
+    .btn.sec { background: #fff; box-shadow: inset 0 0 0 1px var(--borde); }
+    .btn.peq { padding: 6px 12px; font-size: 13px; }
+    .msg { padding: 10px 14px; border-radius: 12px; margin-top: 10px; font-size: 14px; }
+    .msg.err { background: #FEE2E2; color: var(--rojo); }
+    .msg.ok { background: #DCFCE7; color: var(--verde); }
+    .productos { display: flex; flex-wrap: wrap; gap: 6px 14px; grid-column: 1 / -1; }
+    .productos label { display: flex; align-items: center; gap: 6px; color: var(--grafito); font-size: 14px; }
+    .productos input { width: auto; margin: 0; }
+    [hidden] { display: none !important; }
+</style>
+</head>
+<body data-sin-franja-legal>
+<header>
+    <img src="/PascalPDF_Studio/img/apple-touch-icon.png" alt="" width="36" height="36">
+    <h1>Administración de PascalPDF</h1>
+    <a href="/PascalPDF_Studio/">Volver a PascalPDF</a>
+</header>
+<main id="contenido">
+    <p id="estado">Comprobando tu acceso…</p>
+    <div id="app" hidden>
+        <nav class="tabs" role="tablist" aria-label="Secciones">
+            <button role="tab" aria-selected="true" data-tab="resumen">Resumen</button>
+            <button role="tab" aria-selected="false" data-tab="codigos">Códigos promocionales</button>
+            <button role="tab" aria-selected="false" data-tab="usuarios">Usuarios</button>
+            <button role="tab" aria-selected="false" data-tab="pagos">Pagos</button>
+        </nav>
+
+        <section data-panel="resumen">
+            <div class="tarjetas" id="tarjetas"></div>
+        </section>
+
+        <section data-panel="codigos" hidden>
+            <div class="panel">
+                <h2 id="form-titulo">Crear un código</h2>
+                <form class="grid" id="form-codigo">
+                    <div><label for="c-codigo">Código</label><input id="c-codigo" required maxlength="30" pattern="[A-Za-z0-9_\-]{3,30}" style="text-transform:uppercase" placeholder="LANZAMIENTO"></div>
+                    <div><label for="c-tipo">Tipo</label><select id="c-tipo"><option value="porcentaje">Porcentaje (%)</option><option value="valor">Valor en pesos</option></select></div>
+                    <div><label for="c-valor">Descuento</label><input id="c-valor" type="number" min="1" required placeholder="30"></div>
+                    <div><label for="c-vence">Vence (opcional)</label><input id="c-vence" type="datetime-local"></div>
+                    <div><label for="c-max">Máximo de usos (opcional)</label><input id="c-max" type="number" min="1" placeholder="Sin límite"></div>
+                    <div><label for="c-activo">Estado</label><select id="c-activo"><option value="1">Activo</option><option value="0">Apagado</option></select></div>
+                    <div style="grid-column:1/-1"><label for="c-nota">Nota (solo para ti)</label><input id="c-nota" maxlength="200"></div>
+                    <fieldset class="productos" style="border:0;padding:0;margin:0"><legend style="font-size:13px;color:var(--gris);margin-bottom:4px">Aplica a (si no marcas ninguno, aplica a todos)</legend>
+                        <label><input type="checkbox" value="pro_mes"> Pro mensual</label>
+                        <label><input type="checkbox" value="pro_anual"> Pro anual</label>
+                        <label><input type="checkbox" value="suite_mes"> Suite mensual</label>
+                        <label><input type="checkbox" value="suite_anual"> Suite anual</label>
+                        <label><input type="checkbox" value="paquete10"> Paquete de 10 solicitudes</label>
+                    </fieldset>
+                    <div style="display:flex;gap:8px"><button class="btn" type="submit">Guardar código</button><button class="btn sec" type="button" id="c-limpiar">Nuevo</button></div>
+                </form>
+                <div id="c-msg"></div>
+            </div>
+            <div class="panel"><h2>Códigos</h2><table><thead><tr><th>Código</th><th>Descuento</th><th>Aplica a</th><th>Vence</th><th class="num">Usos</th><th>Estado</th><th>Nota</th><th></th></tr></thead><tbody id="t-codigos"></tbody></table></div>
+        </section>
+
+        <section data-panel="usuarios" hidden>
+            <div class="panel">
+                <h2>Usuarios</h2>
+                <form id="form-buscar" style="display:flex;gap:8px;max-width:520px;margin-bottom:12px"><label for="u-buscar" style="position:absolute;left:-9999px">Buscar por correo</label><input id="u-buscar" placeholder="Buscar por correo"><button class="btn" type="submit">Buscar</button></form>
+                <table><thead><tr><th>Correo</th><th>Nombre</th><th>Plan</th><th>Vence</th><th>Acceso</th><th>Creada</th><th></th></tr></thead><tbody id="t-usuarios"></tbody></table>
+            </div>
+            <div class="panel" id="panel-plan" hidden>
+                <h2>Cambiar el plan de <span id="p-correo"></span></h2>
+                <form class="grid" id="form-plan">
+                    <div><label for="p-plan">Plan</label><select id="p-plan"><option value="pro">Pascal Sign Pro</option><option value="suite">PascalPDF Suite</option><option value="prueba">Prueba</option></select></div>
+                    <div><label for="p-dias">Días a sumar (0 = vence ya)</label><input id="p-dias" type="number" value="30" min="-3650" max="3650"></div>
+                    <div><button class="btn" type="submit">Aplicar</button></div>
+                </form>
+                <div id="p-msg"></div>
+            </div>
+        </section>
+
+        <section data-panel="pagos" hidden>
+            <div class="panel"><h2>Últimos 100 pagos</h2><table><thead><tr><th>Fecha</th><th>Correo</th><th>Producto</th><th class="num">Precio</th><th class="num">Descuento</th><th class="num">Pagado</th><th>Código</th><th>Estado</th><th>Referencia</th></tr></thead><tbody id="t-pagos"></tbody></table></div>
+        </section>
+    </div>
+</main>
+<script src="/PascalPDF_Studio/config.js"></script>
+<script src="/PascalPDF_Studio/cuenta.js"></script>
+<script>
+(function () {
+    'use strict';
+    const { api } = PascalCuenta;
+    const { esc } = PascalCuenta.ui;
+    const $ = (s) => document.querySelector(s);
+    const pesos = (n) => '$' + Number(n || 0).toLocaleString('es-CO');
+    const fecha = (iso, hora) => iso ? new Date(iso).toLocaleString('es-CO', hora ? { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Bogota' } : { dateStyle: 'medium', timeZone: 'America/Bogota' }) : '—';
+    const local = (iso) => { if (!iso) return ''; const d = new Date(iso); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
+    const PRODUCTOS = { pro_mes: 'Pro mensual', pro_anual: 'Pro anual', suite_mes: 'Suite mensual', suite_anual: 'Suite anual', paquete10: 'Paquete 10' };
+    const PLANES = { prueba: 'Prueba', pro: 'Pro', suite: 'Suite' };
+    const msg = (el, t, ok) => { el.innerHTML = t ? `<div class="msg ${ok ? 'ok' : 'err'}">${esc(t)}</div>` : ''; };
+
+    // Pestañas
+    document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
+        document.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+        document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== b.dataset.tab);
+        ({ resumen, codigos, usuarios, pagos })[b.dataset.tab]();
+    });
+
+    async function resumen() {
+        const { resumen: r } = await api('admin_resumen');
+        const act = r.activos || {};
+        const t = [
+            ['Usuarios', r.usuarios], ['Nuevos este mes', r.usuarios_mes],
+            ['En prueba activa', act.prueba || 0], ['Pro activos', act.pro || 0], ['Suite activos', act.suite || 0],
+            ['Ingresos este mes', pesos(r.ingresos_mes)], ['Ingresos totales', pesos(r.ingresos_total)], ['Pagos aprobados', r.pagos_aprobados],
+            ['Firmas este mes', r.firmas_mes], ['Firmas en total', r.firmas_total], ['Delegaciones vigentes', r.delegaciones_activas]
+        ];
+        $('#tarjetas').innerHTML = t.map(([k, v]) => `<div class="tarjeta"><small>${k}</small><b>${esc(v)}</b></div>`).join('');
+    }
+
+    let promos = [];
+    async function codigos() {
+        ({ promos } = await api('admin_promos'));
+        const ahora = Date.now();
+        $('#t-codigos').innerHTML = promos.length ? promos.map((p, i) => {
+            const vencido = p.vence_en && new Date(p.vence_en).getTime() < ahora, agotado = p.max_usos !== null && p.usos >= p.max_usos;
+            const estado = !p.activo ? ['Apagado', 'no'] : vencido ? ['Vencido', 'no'] : agotado ? ['Agotado', 'no'] : ['Activo', 'si'];
+            return `<tr><td><b>${esc(p.codigo)}</b></td><td>${p.tipo === 'porcentaje' ? p.valor + ' %' : pesos(p.valor)}</td><td>${p.productos.length ? p.productos.map(x => PRODUCTOS[x] || x).join(', ') : 'Todos'}</td>
+                <td>${fecha(p.vence_en, true)}</td><td class="num">${p.usos}${p.max_usos !== null ? ' / ' + p.max_usos : ''}</td><td><span class="chip ${estado[1]}">${estado[0]}</span></td><td>${esc(p.nota || '')}</td>
+                <td><button class="btn sec peq" data-editar="${i}">Editar</button> <button class="btn sec peq" data-alternar="${i}">${p.activo ? 'Apagar' : 'Encender'}</button></td></tr>`;
+        }).join('') : '<tr><td colspan="8">Todavía no hay códigos.</td></tr>';
+        document.querySelectorAll('[data-editar]').forEach(b => b.onclick = () => editar(promos[+b.dataset.editar]));
+        document.querySelectorAll('[data-alternar]').forEach(b => b.onclick = async () => {
+            const p = promos[+b.dataset.alternar];
+            try { await api('admin_promo_guardar', { promo: { ...p, activo: !p.activo } }); codigos(); } catch (e) { msg($('#c-msg'), e.message); }
+        });
+    }
+    function editar(p) {
+        $('#form-titulo').textContent = p ? `Editar ${p.codigo}` : 'Crear un código';
+        $('#c-codigo').value = p ? p.codigo : ''; $('#c-codigo').readOnly = !!p;
+        $('#c-tipo').value = p ? p.tipo : 'porcentaje';
+        $('#c-valor').value = p ? p.valor : '';
+        $('#c-vence').value = p ? local(p.vence_en) : '';
+        $('#c-max').value = p && p.max_usos !== null ? p.max_usos : '';
+        $('#c-activo').value = !p || p.activo ? '1' : '0';
+        $('#c-nota').value = p ? p.nota || '' : '';
+        document.querySelectorAll('.productos input').forEach(x => x.checked = !!p && p.productos.includes(x.value));
+        msg($('#c-msg'), '');
+        $('#c-codigo').focus();
+    }
+    $('#c-limpiar').onclick = () => editar(null);
+    $('#form-codigo').onsubmit = async (e) => {
+        e.preventDefault();
+        const promo = {
+            codigo: $('#c-codigo').value.trim().toUpperCase(), tipo: $('#c-tipo').value, valor: +$('#c-valor').value,
+            vence_en: $('#c-vence').value ? new Date($('#c-vence').value).toISOString() : null,
+            max_usos: $('#c-max').value ? +$('#c-max').value : null, activo: $('#c-activo').value === '1', nota: $('#c-nota').value.trim(),
+            productos: [...document.querySelectorAll('.productos input:checked')].map(x => x.value)
+        };
+        try { await api('admin_promo_guardar', { promo }); msg($('#c-msg'), `Código ${promo.codigo} guardado.`, true); editar(null); codigos(); }
+        catch (err) { msg($('#c-msg'), err.message); }
+    };
+
+    let elegido = null;
+    async function usuarios() {
+        const { usuarios: us } = await api('admin_usuarios', { buscar: $('#u-buscar').value.trim() });
+        $('#t-usuarios').innerHTML = us.length ? us.map((u, i) => `<tr><td>${esc(u.correo)}</td><td>${esc(u.nombre || '')}</td><td><span class="chip ${u.activo ? 'si' : 'no'}">${PLANES[u.plan]}${u.activo ? '' : ' · vencido'}</span></td>
+            <td>${fecha(u.vence_en)}</td><td>${[u.google && 'Google', u.clave && 'Contraseña'].filter(Boolean).join(', ') || 'Código'}</td><td>${fecha(u.creado_en)}</td>
+            <td><button class="btn sec peq" data-plan="${esc(u.correo)}">Cambiar plan</button></td></tr>`).join('') : '<tr><td colspan="7">Sin resultados.</td></tr>';
+        document.querySelectorAll('[data-plan]').forEach(b => b.onclick = () => { elegido = b.dataset.plan; $('#p-correo').textContent = elegido; $('#panel-plan').hidden = false; msg($('#p-msg'), ''); $('#p-plan').focus(); });
+    }
+    $('#form-buscar').onsubmit = (e) => { e.preventDefault(); usuarios(); };
+    $('#form-plan').onsubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const r = await api('admin_plan', { correo: elegido, plan: $('#p-plan').value, dias: +$('#p-dias').value });
+            msg($('#p-msg'), `Listo: ${elegido} queda con ${PLANES[$('#p-plan').value]} hasta el ${fecha(r.vence_en)}.`, true);
+            usuarios();
+        } catch (err) { msg($('#p-msg'), err.message); }
+    };
+
+    async function pagos() {
+        const { pagos: ps } = await api('admin_pagos');
+        const est = { aprobado: 'si', pendiente: '', rechazado: 'no', anulado: 'no' };
+        $('#t-pagos').innerHTML = ps.length ? ps.map(p => `<tr><td>${fecha(p.creado_en, true)}</td><td>${esc(p.correo)}</td><td>${PRODUCTOS[p.producto] || esc(p.producto)}</td>
+            <td class="num">${pesos(p.precio)}</td><td class="num">${pesos(p.descuento)}</td><td class="num"><b>${pesos(p.monto)}</b></td><td>${esc(p.codigo || '')}</td>
+            <td><span class="chip ${est[p.estado]}">${esc(p.estado)}</span></td><td style="font-size:12px">${esc(p.referencia)}</td></tr>`).join('') : '<tr><td colspan="9">Todavía no hay pagos.</td></tr>';
+    }
+
+    // Acceso: cuenta.js pide entrar; aquí solo se comprueba que el correo tenga permiso
+    (async function iniciar() {
+        const c = await PascalCuenta.exigir();
+        if (!c || !c.admin) { $('#estado').textContent = 'Tu cuenta no tiene acceso a la administración.'; return; }
+        $('#estado').hidden = true;
+        $('#app').hidden = false;
+        try { await resumen(); } catch (e) { $('#estado').hidden = false; $('#estado').textContent = e.message; }
+    })();
+})();
+</script>
+</body>
+</html>

@@ -40,6 +40,7 @@
             'Firmado electrónicamente por ' + String(datos.nombre || '').toUpperCase(),
             'Fecha: ' + (datos.fecha || fechaISO())
         ];
+        if (datos.delegado) out.push('Usada por delegación: ' + datos.delegado);
         if (datos.objeto) out.push('Objeto: ' + datos.objeto);
         if (datos.radicado) out.push('Radicado: ' + datos.radicado);
         out.push('Consecutivo: ' + (datos.consecutivo || `${iniciales(datos.nombre)}-____-${new Date().getFullYear()} (se asigna al guardar)`));

@@ -9,7 +9,7 @@
         'Firmar (dibujo, texto o imagen)', 'Pedir firma a otra persona', 'Casilla de firma para otra persona',
         'Firmar desde el celular (Pascal Sign)', 'Agregar texto', 'Fecha y hora', 'Mis firmas y evidencia',
         'Rellenar el formulario del PDF', 'Campo de texto', 'Casilla de verificación', 'Opción única', 'Lista desplegable',
-        'Exportar respuestas (CSV)', 'Guardar PDF', 'Verificar un documento firmado'
+        'Exportar respuestas (CSV)', 'Guardar PDF', 'Verificar un documento firmado', 'Delegar mi firma', 'Firmas que me delegaron'
     ]);
     const GRATIS = new Set(['Firmar desde el celular (Pascal Sign)']);
 
@@ -45,7 +45,8 @@
                 paginas: pdfPages.length,
                 firmante: obj.signer,
                 objeto: obj.sello ? obj.sello.objeto : null,
-                radicado: obj.sello ? obj.sello.radicado : null
+                radicado: obj.sello ? obj.sello.radicado : null,
+                delegacion_id: obj.delegacionId || null
             })));
             if (registros) registros.forEach((r, i) => {
                 const o = nuevas[i].obj;
