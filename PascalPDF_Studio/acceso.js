@@ -32,6 +32,8 @@
     const exportarOriginal = window.exportAndDownloadPDF;
     window.exportAndDownloadPDF = async function (indices, filename) {
         if (!(await PascalCuenta.requiere(1, 'Guardar el PDF'))) return;
+        // Con firmas en el documento, siempre se pregunta si va la hoja de evidencia
+        if (!Array.isArray(indices) && documentSignatures().length && !(await preguntarEvidencia())) return;
         const nuevas = documentSignatures().filter(({ obj }) => !obj.registroId);
         if (nuevas.length) {
             const src = pdfSources.find(s => pdfPages.some(p => p.srcId === s.id));
@@ -59,6 +61,35 @@
         if (window.renderCurrentPage) renderCurrentPage();
         return exportarOriginal(indices, filename);
     };
+
+    // Ventana al guardar: activar o desactivar la hoja de evidencia de firma electrónica
+    function preguntarEvidencia() {
+        const { hoja, cerrar } = PascalCuenta.ui;
+        const t = document.getElementById('evidence-toggle');
+        return new Promise((resolve) => {
+            const n = documentSignatures().length;
+            const h = hoja(`
+                <h2>Guardar el PDF firmado</h2>
+                <p class="pc-muted">El documento tiene ${n === 1 ? '1 firma' : n + ' firmas'}.</p>
+                <label style="display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;box-shadow:inset 0 0 0 1px #E9E9E9;cursor:pointer">
+                    <input type="checkbox" data-evidencia ${!t || t.checked ? 'checked' : ''} style="width:20px;height:20px;margin-top:2px;accent-color:#FFB300">
+                    <span><b>Agregar hoja de evidencia de firma electrónica</b><br><span class="pc-muted">Una página final con quién firmó, cuándo, el consecutivo y la huella SHA-256 del documento original, para comprobar después que no cambió.</span></span>
+                </label>
+                <div class="pc-fila"><button class="pc-btn pc-sec" data-no>Cancelar</button><button class="pc-btn" data-si>Guardar PDF</button></div>`);
+            const fin = (ok) => {
+                if (ok && t) {
+                    t.checked = h.querySelector('[data-evidencia]').checked;
+                    const m = document.getElementById('evidence-toggle-modal');
+                    if (m) m.checked = t.checked;
+                }
+                cerrar();
+                resolve(ok);
+            };
+            h.querySelector('[data-si]').onclick = () => fin(true);
+            h.querySelector('[data-no]').onclick = () => fin(false);
+            h.parentElement.querySelector('.pc-cerrar').addEventListener('click', () => resolve(false));
+        });
+    }
 
     // Toda descarga (páginas, imágenes, ZIP, comprimidos, protegidos, TXT, CSV…) exige cuenta con plan activo.
     // La copia de respaldo de tus firmas (.pascalfirma) solo exige haber entrado.
