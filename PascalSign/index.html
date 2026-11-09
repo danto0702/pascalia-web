@@ -24,6 +24,7 @@
     <script src="/PascalPDF_Studio/sello.js"></script>
     <script src="/PascalPDF_Studio/limpiafirma.js"></script>
     <script src="/PascalPDF_Studio/cuenta.js"></script>
+    <script src="/PascalPDF_Studio/tutorial.js"></script>
     <script src="/PascalPDF_Studio/delegar.js"></script>
     <style>
         :root {
@@ -146,7 +147,7 @@
     </style>
 <script src="/legal.js" defer></script>
 </head>
-<body>
+<body data-sin-franja-legal>
 
 <!-- ==================== INICIO ==================== -->
 <section id="inicio">
@@ -274,6 +275,17 @@
         };
     })();
     let misFirmas = [];
+    // Tutorial de la primera vez (y desde «Mi cuenta → Ver el tutorial»)
+    const PASOS_SIGN = [
+        { titulo: 'Bienvenido a Pascal Sign', texto: 'Firma tus PDF desde el celular en tres pasos. Tus documentos y tus firmas no salen de este dispositivo.' },
+        { el: 'label[for="archivo"]', titulo: 'Abre el PDF', texto: 'Elígelo de tus archivos. También puedes compartirlo a Pascal Sign desde WhatsApp o el correo.' },
+        { el: '#btn-mis-firmas', titulo: 'Tus firmas', texto: 'Crea tu firma una vez: dibújala, escríbela, súbela o tómale una foto. Desde aquí también puedes delegarla.' },
+        { titulo: 'Firma y muévela', texto: 'Con el PDF abierto, toca «Firmar», elige tu firma y arrástrala a su lugar. Debajo van tu nombre, la fecha, el objeto y el consecutivo.' },
+        { titulo: 'Listo y comparte', texto: 'Toca «Listo»: decides si agregas la hoja de evidencia y lo compartes o lo guardas en el celular.' },
+        { el: '#btn-cuenta', titulo: 'Tu cuenta', texto: 'Tu plan, el historial de firmas, las firmas que te delegaron y los códigos de regalo. ¡A firmar!' }
+    ];
+    window.PascalTutorialApp = (forzar) => window.PascalTutorial && PascalTutorial.iniciar('pascalsign-tutorial-v1', PASOS_SIGN, { forzar });
+    document.addEventListener('pascal:lista', () => setTimeout(() => { if (!doc) window.PascalTutorialApp(false); }, 700));
     // Delegación de firma: usa las firmas de este celular y pone las delegadas en la página
     if (window.PascalDelegar) PascalDelegar.configurar({
         firmas: async () => { await cargarFirmas(); return misFirmas.filter(f => !f.soloSesion); },
