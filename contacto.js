@@ -15,6 +15,7 @@
     ["mision_medica", "Misión Médica"],
     ["cuentafacil", "CuentaFacil · cuentas de cobro"],
     ["mesaviva", "MesaViva · restaurantes"],
+    ["pascal_web", "Pascal Web · páginas web"],
     ["consultoria", "Consultoría"],
     ["desarrollo", "Desarrollo a la medida"],
     ["capacitacion", "Capacitación"],
