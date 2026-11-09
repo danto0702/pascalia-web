@@ -104,6 +104,22 @@
     const imprimirOriginal = window.print.bind(window);
     window.print = async function () { if (await PascalCuenta.requiere(1, 'Imprimir el documento')) imprimirOriginal(); };
 
+    // Tutorial de la primera vez (y desde «Mi cuenta → Ver el tutorial»)
+    const porTexto = (t) => () => [...document.querySelectorAll('button')].find(b => b.textContent.trim().startsWith(t) && b.getBoundingClientRect().width > 0) || null;
+    const PASOS = [
+        { titulo: 'Bienvenido a PascalPDF', texto: 'Te mostramos en un minuto lo esencial: abrir, firmar, editar y guardar tus PDF. Todo se procesa en tu dispositivo.' },
+        { el: 'label[for="pdf-upload-input"]', titulo: 'Abre tu PDF', texto: 'Empieza aquí. También puedes arrastrar el archivo a la página.' },
+        { el: ['#mobile-bottom-dock button[onclick="openSignatureModal()"]', porTexto('Firmar (dibujo')], titulo: 'Firma', texto: 'Dibuja tu firma, escríbela, súbela o tómale una foto. Se guarda cifrada solo en este dispositivo para la próxima vez.' },
+        { titulo: 'Datos de la firma', texto: 'Debajo de la firma van tu nombre, la fecha, el objeto, el radicado (opcional) y un consecutivo automático, por ejemplo DTB-0001-2026. Puedes agregar la hoja de evidencia.' },
+        { el: '#btn-edit-text-mode', titulo: 'Edita el texto', texto: 'Corrige el texto del propio PDF: toca una línea y escribe. Está en el plan Suite ★.' },
+        { el: porTexto('Pedir firma a otra persona'), titulo: 'Pide firmas', texto: 'Envía el documento a otra persona para que lo firme desde su celular o computador, con su propia cuenta.' },
+        { el: ['#mobile-bottom-dock button[onclick="openModal(\'modal-all-features\')"]', '#btn-mode-full'], titulo: 'Todas las herramientas', texto: 'Firma en masa de PDF y Word, delegar tu firma, OCR, comparar, proteger, comprimir y más.' },
+        { el: () => { const s = document.querySelector('[data-pascal-cuenta]'); return s ? s.closest('button') : null; }, titulo: 'Tu cuenta', texto: 'Tu plan, el historial de documentos firmados (PDF, CSV o TXT), la delegación de firma y los códigos de regalo.' },
+        { el: 'header button[onclick^="exportAndDownloadPDF"]', titulo: 'Guarda', texto: 'Descarga el PDF firmado. Antes te preguntamos si agregas la hoja de evidencia. ¡Listo para empezar!' }
+    ];
+    window.PascalTutorialApp = (forzar) => window.PascalTutorial && PascalTutorial.iniciar('pascalpdf-tutorial-v1', PASOS, { forzar });
+    document.addEventListener('pascal:lista', () => setTimeout(() => window.PascalTutorialApp(false), 700));
+
     // Botón de cuenta en la barra superior
     function montar() {
         const guardar = document.querySelector('header button[onclick^="exportAndDownloadPDF"]');

@@ -1,10 +1,10 @@
 // Pascal Sign: funciona sin conexión y recibe PDF compartidos desde otras apps (Android).
-const VERSION = 'pascalsign-v10';
+const VERSION = 'pascalsign-v11';
 const COMPARTIDO = 'pascalsign-compartido';
 const BASE = [
   '/PascalSign/', '/PascalSign/manifest.webmanifest', '/PascalSign/icon-192.png', '/PascalSign/icon-512.png',
   '/PascalSign/apple-touch-icon.png', '/PascalSign/favicon-64.png',
-  '/PascalPDF_Studio/config.js', '/PascalPDF_Studio/sello.js', '/PascalPDF_Studio/limpiafirma.js', '/PascalPDF_Studio/cuenta.js', '/PascalPDF_Studio/delegar.js',
+  '/PascalPDF_Studio/config.js', '/PascalPDF_Studio/sello.js', '/PascalPDF_Studio/limpiafirma.js', '/PascalPDF_Studio/cuenta.js', '/PascalPDF_Studio/delegar.js', '/PascalPDF_Studio/tutorial.js',
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
   'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js'

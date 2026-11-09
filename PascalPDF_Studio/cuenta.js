@@ -363,13 +363,16 @@
             <div data-regalo-msg></div>
             ${window.PascalDelegar ? '<div class="pc-sec-t">Delegación de firma</div><p class="pc-muted">Autoriza a otra persona a usar tu firma por un tiempo, y suspéndelo cuando quieras.</p><div class="pc-fila"><button class="pc-btn pc-sec" data-delegar>Delegar mi firma</button><button class="pc-btn pc-sec" data-recibidas>Firmas que me delegaron</button></div>' : ''}
             ${c.admin ? '<div class="pc-fila"><a class="pc-btn pc-sec" href="/PascalPDF_Studio/admin/" style="text-decoration:none">Administración</a></div>' : ''}
+            ${window.PascalTutorialApp ? '<div class="pc-fila"><button class="pc-btn pc-sec" data-tutorial>Ver el tutorial</button></div>' : ''}
             <div class="pc-sec-t">Historial de documentos firmados</div>
             <p class="pc-muted">Fecha y hora (del servidor), documento, objeto, radicado, consecutivo, firmante y huella de cada firma.</p>
             <div class="pc-fila"><button class="pc-btn pc-sec" data-exp="pdf">PDF</button><button class="pc-btn pc-sec" data-exp="csv">CSV (Excel)</button><button class="pc-btn pc-sec" data-exp="txt">TXT</button></div>
             <div data-msg></div>
-            <div class="pc-fila" style="margin-top:22px"><button class="pc-btn pc-sec" data-salir>Salir</button><button class="pc-btn pc-peligro" data-borrar>Borrar mi cuenta</button></div>`);
+            <div class="pc-fila" style="margin-top:22px"><button class="pc-btn pc-sec" data-salir>Salir</button><button class="pc-btn pc-peligro" data-borrar>Borrar mi cuenta</button></div>
+            <p class="pc-muted" style="font-size:12px;margin-top:16px;line-height:1.9">PascalIA · <a href="/PascalPDF_Studio/terminos/" target="_blank" rel="noopener">Términos</a> · <a href="/PascalPDF_Studio/politica/" target="_blank" rel="noopener">Política de datos</a> · <a href="/reembolsos/" target="_blank" rel="noopener">Reembolsos</a> · <a href="/politica-de-cookies/" target="_blank" rel="noopener">Cookies</a> · <a href="/eliminar-mis-datos/" target="_blank" rel="noopener">Eliminar mis datos</a> · <a href="/aviso-legal/" target="_blank" rel="noopener">Aviso legal</a></p>`);
         const q = (sel) => h.querySelector(sel);
         q('[data-planes]').onclick = () => planes(1);
+        if (q('[data-tutorial]')) q('[data-tutorial]').onclick = () => { cerrar(); window.PascalTutorialApp(true); };
         const canjear = q('[data-canjear]');
         canjear.onclick = () => conBoton(canjear, async () => {
             const codigo = q('[data-regalo]').value.trim();
@@ -494,7 +497,7 @@
     window.PascalCuenta = { api, entrar, exigir, abrir, requiere, planes, cargar, registrarFirmas, exportar, get cuenta() { return cuenta; }, activa: !!API,
         ui: { hoja, cerrar, aviso, esc, toast, conBoton, fecha } };
     if (API) {
-        const iniciar = () => { pintarBoton(); if (!document.documentElement.hasAttribute('data-sin-exigir')) exigir().then(revisarRetornoPago); };
+        const iniciar = () => { pintarBoton(); if (!document.documentElement.hasAttribute('data-sin-exigir')) exigir().then(() => { document.dispatchEvent(new CustomEvent('pascal:lista')); return revisarRetornoPago(); }); };
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
     }
 })();
