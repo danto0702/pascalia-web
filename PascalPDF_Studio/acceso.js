@@ -109,8 +109,9 @@
     const PASOS = [
         { titulo: 'Bienvenido a PascalPDF', texto: 'Te mostramos en un minuto lo esencial: abrir, firmar, editar y guardar tus PDF. Todo se procesa en tu dispositivo.' },
         { el: 'label[for="pdf-upload-input"]', titulo: 'Abre tu PDF', texto: 'Empieza aquí. También puedes arrastrar el archivo a la página.' },
-        { el: ['#mobile-bottom-dock button[onclick="openSignatureModal()"]', porTexto('Firmar (dibujo')], titulo: 'Firma', texto: 'Dibuja tu firma, escríbela, súbela o tómale una foto. Se guarda cifrada solo en este dispositivo para la próxima vez.' },
+        { el: ['#mobile-bottom-dock button[onclick="openSignatureModal()"]', porTexto('Firmar (dibujo')], titulo: 'Firma con la tecnología de Pascal Sign', texto: 'Dibuja tu firma, escríbela, súbela o tómale una foto. Con Pascal Sign tienes el control de todas tus firmas: guardadas cifradas en tu dispositivo, con consecutivo e historial, delegables cuando quieras y listas también en tu celular con la app Pascal Sign.' },
         { titulo: 'Datos de la firma', texto: 'Debajo de la firma van tu nombre, la fecha, el objeto, el radicado (opcional) y un consecutivo automático, por ejemplo DTB-0001-2026. Puedes agregar la hoja de evidencia.' },
+        { el: ['#floating-pagination-bar [data-deshacer]'], titulo: 'Deshacer y rehacer', texto: '¿Te equivocaste? Deshaz o rehaz cualquier cambio desde aquí. En el computador también con Ctrl+Z y Ctrl+Y.' },
         { el: '#btn-edit-text-mode', titulo: 'Edita el texto', texto: 'Corrige el texto del propio PDF: toca una línea y escribe. Está en el plan Suite ★.' },
         { el: porTexto('Pedir firma a otra persona'), titulo: 'Pide firmas', texto: 'Envía el documento a otra persona para que lo firme desde su celular o computador, con su propia cuenta.' },
         { el: ['#mobile-bottom-dock button[onclick="openModal(\'modal-all-features\')"]', '#btn-mode-full'], titulo: 'Todas las herramientas', texto: 'Firma en masa de PDF y Word, delegar tu firma, OCR, comparar, proteger, comprimir y más.' },
