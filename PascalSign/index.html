@@ -93,9 +93,16 @@
         .colocada .asa { position: absolute; right: -14px; bottom: -14px; width: 30px; height: 30px; border-radius: 999px; background: var(--yellow); box-shadow: 0 2px 6px rgba(0,0,0,.25); display: none; }
         .colocada .quitar { position: absolute; left: -14px; top: -14px; width: 30px; height: 30px; border-radius: 999px; background: var(--graphite); color: #fff; display: none; font-size: 16px; line-height: 30px; text-align: center; }
         .colocada.activa .asa, .colocada.activa .quitar { display: block; }
+        a.btn { text-decoration: none; color: var(--graphite); }
+        .dock .btn { white-space: nowrap; padding-left: 14px; padding-right: 14px; }
+        .casilla-req { position: absolute; border: 2px dashed #2563EB; background: rgba(37,99,235,.09); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #1D4ED8; font: 600 11px Inter, sans-serif; text-align: center; padding: 2px; }
+        .casilla-req button { position: absolute; top: -12px; right: -12px; width: 26px; height: 26px; border-radius: 99px; border: 0; background: var(--graphite); color: #fff; font-size: 15px; line-height: 26px; padding: 0; cursor: pointer; }
+        #barra-pedir { position: fixed; left: 12px; right: 12px; top: calc(70px + var(--safe-t, 0px)); z-index: 8; background: #fff; border-radius: 18px; padding: 12px 14px; box-shadow: 0 12px 30px rgba(0,0,0,.18); font-size: 14px; max-width: 560px; margin: 0 auto; }
+        .solicitud { display: block; padding: 12px 14px; border-radius: 14px; box-shadow: inset 0 0 0 1px var(--line, #E9E9E9); margin: 8px 0; text-decoration: none; color: inherit; }
+        .solicitud small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
         .dock { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + var(--safe-b)); display: flex; gap: 10px; background: linear-gradient(transparent, rgba(242,235,214,.95) 30%); z-index: 6; }
         .dock .btn { flex: 1; }
-        .ayuda { position: fixed; left: 50%; bottom: calc(92px + var(--safe-b)); transform: translateX(-50%); background: var(--graphite); color: #fff; font-size: 13px; padding: 8px 14px; border-radius: 999px; z-index: 6; width: max-content; max-width: calc(100% - 32px); text-align: center; animation: subir .3s var(--ease) both; }
+        .ayuda { position: fixed; left: 0; right: 0; margin: 0 auto; bottom: calc(92px + var(--safe-b)); background: var(--graphite); color: #fff; font-size: 13px; padding: 8px 14px; border-radius: 999px; z-index: 6; width: max-content; max-width: calc(100% - 32px); text-align: center; animation: subir .3s var(--ease) both; }
 
         /* ---------- Hoja inferior ---------- */
         .velo { position: fixed; inset: 0; background: rgba(31,31,31,.45); z-index: 20; animation: aparecer .2s ease-out both; }
@@ -173,6 +180,7 @@
         </label>
         <input id="archivo" type="file" accept="application/pdf,.pdf" class="hidden">
         <button class="btn btn-ghost btn-block" id="btn-mis-firmas">Mis firmas</button>
+        <button class="btn btn-ghost btn-block" id="btn-solicitudes">Mis solicitudes de firma</button>
         <p class="pie">Firma electrónica (Ley 527 de 1999 y Decreto 2364 de 2012). No es firma digital certificada.<br>
             <a href="/PascalPDF_Studio/terminos/">Términos</a> · <a href="/PascalPDF_Studio/politica/">Datos</a> · <a href="/PascalPDF_Studio/">¿Necesitas editar? PascalPDF</a></p>
     </div>
@@ -192,6 +200,7 @@
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17c3-5 5-8 6-7s-2 7 0 7 3-6 5-6-1 5 1 5 3-3 6-3"/><path d="M3 21h18"/></svg>
             Firmar
         </button>
+        <button class="btn btn-ghost" id="btn-pedir" aria-label="Pedir firma a otra persona">Pedir firma</button>
         <button class="btn btn-dark" id="btn-listo" disabled>Listo</button>
     </div>
 </section>
@@ -282,6 +291,7 @@
         { el: '#btn-mis-firmas', titulo: 'Tus firmas', texto: 'Crea tu firma una vez: dibújala, escríbela, súbela o tómale una foto. Desde aquí también puedes delegarla.' },
         { titulo: 'Firma y muévela', texto: 'Con el PDF abierto, toca «Firmar», elige tu firma y arrástrala a su lugar. Debajo van tu nombre, la fecha, el objeto y el consecutivo.' },
         { titulo: 'Listo y comparte', texto: 'Toca «Listo»: decides si agregas la hoja de evidencia y lo compartes o lo guardas en el celular.' },
+        { el: '#btn-solicitudes', titulo: 'Pide firmas', texto: 'Con el PDF abierto, toca «Pedir firma», marca dónde debe firmar la otra persona y envíale el enlace por WhatsApp. Aquí ves el estado de tus solicitudes.' },
         { el: '#btn-cuenta', titulo: 'Tu cuenta', texto: 'Tu plan, el historial de firmas, las firmas que te delegaron y los códigos de regalo. ¡A firmar!' }
     ];
     window.PascalTutorialApp = (forzar) => window.PascalTutorial && PascalTutorial.iniciar('pascalsign-tutorial-v1', PASOS_SIGN, { forzar });
@@ -865,7 +875,7 @@
     // ------------------------------------------------------------------ navegación y arranque
     function cerrarDocumento() {
         if (colocadas.length && !confirm('¿Cerrar sin guardar el documento firmado?')) return false;
-        doc = null; colocadas = [];
+        doc = null; colocadas = []; casillas = []; marcando = false; barraPedir();
         $('#paginas').innerHTML = '';
         $('#doc').classList.add('hidden');
         $('#inicio').classList.remove('hidden');
@@ -876,6 +886,148 @@
     $('#btn-mis-firmas').onclick = () => hojaElegir(true);
     $('#btn-cuenta').onclick = () => window.PascalCuenta && PascalCuenta.abrir();
     if (!(window.PascalCuenta && PascalCuenta.activa)) $('#btn-cuenta').classList.add('hidden');
+    // ------------------------------------------------------------------ pedir firma a otra persona
+    // Se marcan en la página las casillas donde debe firmar; el PDF se cifra en el celular y la clave
+    // viaja solo en el enlace. Mismo servicio y mismas solicitudes del plan que en PascalPDF.
+    const SOLICITUDES = 'pascalpdf-solicitudes';
+    const TIPOS_DOC = ['Contrato', 'Cuenta de cobro', 'Informe', 'Acta', 'Autorización', 'Certificado', 'Otro'];
+    let casillas = [], marcando = false;
+    const b64url = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const misSolicitudes = () => { try { return JSON.parse(localStorage.getItem(SOLICITUDES) || '[]'); } catch (e) { return []; } };
+    const guardarSolicitudes = (l) => { try { localStorage.setItem(SOLICITUDES, JSON.stringify(l.slice(0, 50))); } catch (e) { /* sin almacenamiento */ } };
+    const enlaceFirma = (s) => `${location.origin}/PascalPDF_Studio/firmar/#s=${s.id}.${s.key}`;
+    const enlaceSeguimiento = (s) => `${location.origin}/PascalPDF_Studio/firmar/#t=${s.id}.${s.key}.${s.token}`;
+
+    function pintarCasillas() {
+        document.querySelectorAll('.casilla-req').forEach(e => e.remove());
+        casillas.forEach((c, i) => {
+            const box = document.querySelector(`.pagina[data-n="${c.pagina}"]`);
+            if (!box) return;
+            const el = document.createElement('div');
+            el.className = 'casilla-req';
+            el.style.cssText = `left:${c.x * 100}%;top:${c.y * 100}%;width:${c.w * 100}%;height:${c.h * 100}%`;
+            el.innerHTML = '<span>Firma de la otra persona</span><button type="button" aria-label="Quitar casilla">×</button>';
+            el.querySelector('button').onclick = (e) => { e.stopPropagation(); casillas.splice(i, 1); pintarCasillas(); barraPedir(); };
+            box.appendChild(el);
+        });
+    }
+    function barraPedir() {
+        let b = $('#barra-pedir');
+        if (!marcando) { if (b) b.remove(); return; }
+        if (!b) { b = document.createElement('div'); b.id = 'barra-pedir'; document.body.appendChild(b); }
+        b.innerHTML = `<span>Toca la página donde debe firmar la otra persona · <b>${casillas.length}</b> ${casillas.length === 1 ? 'casilla' : 'casillas'}</span>
+            <div class="fila-botones" style="margin:8px 0 0"><button class="btn btn-ghost" data-cancelar>Cancelar</button><button class="btn btn-primary" data-seguir ${casillas.length ? '' : 'disabled'}>Continuar</button></div>`;
+        b.querySelector('[data-cancelar]').onclick = () => { marcando = false; casillas = []; pintarCasillas(); barraPedir(); };
+        b.querySelector('[data-seguir]').onclick = () => { marcando = false; barraPedir(); hojaPedir(); };
+    }
+    $('#paginas').addEventListener('click', (e) => {
+        if (!marcando || e.target.closest('.casilla-req, .colocada')) return;
+        const box = e.target.closest('.pagina');
+        if (!box) return;
+        const r = box.getBoundingClientRect(), w = 0.42, h = 0.085;
+        const x = Math.min(1 - w, Math.max(0, (e.clientX - r.left) / r.width - w / 2));
+        const y = Math.min(1 - h, Math.max(0, (e.clientY - r.top) / r.height - h / 2));
+        casillas.push({ pagina: +box.dataset.n, x, y, w, h });
+        pintarCasillas();
+        barraPedir();
+    });
+
+    async function empezarPedir() {
+        if (!doc) return;
+        if (window.PascalCuenta && !(await PascalCuenta.requiere(1, 'Pedir firmas a otras personas'))) return;
+        marcando = true;
+        pintarCasillas();
+        barraPedir();
+    }
+
+    function hojaPedir() {
+        const c = window.PascalCuenta ? PascalCuenta.cuenta : null;
+        const s = c && c.solicitudes;
+        const h = hoja(`
+            <h2>Pedir firma a otra persona</h2>
+            <p class="muted">El documento se cifra en tu celular. Te damos un enlace para enviarlo por WhatsApp o correo; la persona entra con su cuenta y confirma su correo antes de verlo. PascalIA no puede leerlo.</p>
+            ${s ? `<p class="muted">Solicitudes de este mes: <b>${s.usadas} de ${s.cupo}</b>${s.extra ? ` · ${s.extra} adicionales` : ''}.</p>` : ''}
+            ${colocadas.length ? '<p class="muted"><b>Ojo:</b> las firmas que pusiste tú no van en el documento enviado. Fírmalo cuando te lo devuelvan, o primero guárdalo firmado y ábrelo de nuevo.</p>' : ''}
+            <label class="lbl" for="pd-rn">Tu nombre</label><input class="campo" id="pd-rn" autocomplete="name" value="${esc((c && c.nombre) || '')}">
+            <label class="lbl" for="pd-fn">Nombre de quien debe firmar</label><input class="campo" id="pd-fn" autocomplete="off">
+            <label class="lbl" for="pd-fc">Correo de quien debe firmar</label><input class="campo" id="pd-fc" type="email" autocomplete="off">
+            <label class="lbl" for="pd-tipo">Tipo de documento</label><select class="campo" id="pd-tipo">${TIPOS_DOC.map(t => `<option>${t}</option>`).join('')}</select>
+            <label class="lbl" for="pd-msg">Mensaje (opcional)</label><textarea class="campo" id="pd-msg" rows="2" maxlength="500"></textarea>
+            <label class="check"><input type="checkbox" id="pd-decl"> Declaro que tengo una razón legítima para pedir esta firma y para compartir el correo de esa persona, y acepto los <a href="/PascalPDF_Studio/terminos/" target="_blank" rel="noopener">términos</a> y la <a href="/PascalPDF_Studio/politica/" target="_blank" rel="noopener">política de datos</a>.</label>
+            <div class="fila-botones"><button class="btn btn-ghost" id="pd-volver">Mover casillas</button><button class="btn btn-primary" id="pd-crear">Crear el enlace</button></div>`);
+        h.querySelector('#pd-volver').onclick = () => { cerrarHoja(); marcando = true; barraPedir(); };
+        h.querySelector('#pd-crear').onclick = async () => {
+            const datos = {
+                remitente_nombre: h.querySelector('#pd-rn').value.trim(), firmante_nombre: h.querySelector('#pd-fn').value.trim(),
+                firmante_correo: h.querySelector('#pd-fc').value.trim().toLowerCase(), documento_tipo: h.querySelector('#pd-tipo').value,
+                mensaje: h.querySelector('#pd-msg').value.trim()
+            };
+            if (!datos.remitente_nombre || !datos.firmante_nombre || !/^\S+@\S+\.\S+$/.test(datos.firmante_correo)) return toast('Completa los nombres y un correo válido.', true);
+            if (!h.querySelector('#pd-decl').checked) return toast('Marca la declaración para continuar.', true);
+            try {
+                const sol = await crearSolicitud(datos);
+                casillas = []; pintarCasillas();
+                hojaEnlaces(sol);
+                if (window.PascalCuenta) PascalCuenta.cargar();
+            } catch (e) { toast(e.message, true); }
+        };
+    }
+
+    async function crearSolicitud(datos) {
+        ocupado('Cifrando y subiendo el documento…');
+        try {
+            const bytes = doc.bytes;
+            const clave = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt']);
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const cifrado = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, clave, bytes));
+            const paquete = new Uint8Array(12 + cifrado.length);
+            paquete.set(iv, 0); paquete.set(cifrado, 12);
+            const r = await PascalCuenta.api('crear', { ...datos, documento_nombre: doc.nombre, documento_hash: doc.hash, campos: casillas });
+            const up = await fetch(r.subida, { method: 'PUT', headers: { 'Content-Type': 'application/octet-stream', 'x-upsert': 'true' }, body: paquete });
+            if (!up.ok) throw new Error('No se pudo subir el documento cifrado. Intenta de nuevo.');
+            const sol = {
+                id: r.id, token: r.token_remitente, key: b64url(await crypto.subtle.exportKey('raw', clave)),
+                documento: doc.nombre, firmante: datos.firmante_nombre, creada: new Date().toISOString(), vence: r.vence_en
+            };
+            guardarSolicitudes([sol, ...misSolicitudes()]);
+            return sol;
+        } finally { ocupado(null); }
+    }
+
+    function hojaEnlaces(s) {
+        const firma = enlaceFirma(s), seg = enlaceSeguimiento(s);
+        const msg = `Hola, ${s.firmante}. Te envío «${s.documento}» para que lo firmes en Pascal Sign: ${firma}`;
+        const h = hoja(`
+            <h2>Solicitud creada</h2>
+            <p class="muted">1. Envía este enlace a ${esc(s.firmante)}:</p>
+            <div class="fila-botones" style="margin-top:6px">
+                ${navigator.share ? '<button class="btn btn-primary" id="en-compartir">Compartir</button>' : ''}
+                <a class="btn btn-ghost" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">WhatsApp</a>
+                <button class="btn btn-ghost" id="en-copiar">Copiar enlace</button>
+            </div>
+            <p class="muted" style="margin-top:14px">2. Tu enlace para ver el estado (no lo compartas). También queda en «Mis solicitudes».</p>
+            <div class="fila-botones" style="margin-top:6px"><a class="btn btn-ghost" href="${esc(seg)}" target="_blank" rel="noopener">Ver estado</a><button class="btn btn-ghost" id="en-seg">Copiar</button></div>
+            <p class="muted" style="margin-top:12px">Te avisamos por correo cuando firme. El documento cifrado se borra del servidor el ${new Date(s.vence).toLocaleDateString('es-CO')}.</p>
+            <div class="fila-botones"><button class="btn btn-dark" id="en-listo">Listo</button></div>`);
+        const copiar = async (t) => { try { await navigator.clipboard.writeText(t); toast('Enlace copiado.'); } catch (e) { prompt('Copia el enlace:', t); } };
+        const comp = h.querySelector('#en-compartir');
+        if (comp) comp.onclick = () => navigator.share({ title: 'Firma: ' + s.documento, text: msg }).catch(() => {});
+        h.querySelector('#en-copiar').onclick = () => copiar(firma);
+        h.querySelector('#en-seg').onclick = () => copiar(seg);
+        h.querySelector('#en-listo').onclick = cerrarHoja;
+    }
+
+    function hojaSolicitudes() {
+        const l = misSolicitudes();
+        const h = hoja(`<h2>Mis solicitudes de firma</h2>
+            <p class="muted">Las que pediste desde este dispositivo (en PascalPDF o Pascal Sign). Toca una para ver si ya la firmaron y descargarla.</p>
+            ${l.length ? l.map(s => `<a class="solicitud" href="${esc(enlaceSeguimiento(s))}" target="_blank" rel="noopener"><b>${esc(s.documento)}</b><small>Para ${esc(s.firmante)} · ${new Date(s.creada).toLocaleDateString('es-CO')} · ver estado</small></a>`).join('') : '<p class="muted">Aún no has pedido firmas desde este dispositivo. Abre un PDF y toca «Pedir firma».</p>'}
+            <div class="fila-botones"><button class="btn btn-dark" id="sl-cerrar">Cerrar</button></div>`);
+        h.querySelector('#sl-cerrar').onclick = cerrarHoja;
+    }
+
+    $('#btn-pedir').onclick = () => empezarPedir();
+    $('#btn-solicitudes').onclick = () => hojaSolicitudes();
     $('#btn-firmar').onclick = () => hojaElegir(false);
     $('#btn-listo').onclick = hojaListo;
     $('#btn-cerrar').onclick = () => { if (cerrarDocumento()) history.back(); };
