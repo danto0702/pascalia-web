@@ -1,7 +1,7 @@
 -- Analítica propia de Pascal Sign y PascalPDF: visitas anónimas (solo con el permiso de «Analítica» del banner de cookies),
 -- origen de cada cuenta nueva (utm de la primera visita) y el embudo para la página de administración.
 -- Sin IP, sin correo, sin huella del navegador: el visitante es un identificador aleatorio que guarda su propio navegador.
--- Sin políticas RLS: solo la Edge Function pascalpdf-firma (service role) lee y escribe.
+-- RLS activa y sin políticas: solo la Edge Function pascalpdf-firma (service role) lee y escribe.
 
 create table if not exists public.pascalpdf_visitas (
   id bigint generated always as identity primary key,
@@ -16,6 +16,8 @@ create table if not exists public.pascalpdf_visitas (
   referente text check (char_length(referente) <= 120),         -- solo el dominio de origen
   dispositivo text not null default 'otro' check (dispositivo in ('android', 'ios', 'escritorio', 'otro'))
 );
+alter table public.pascalpdf_visitas enable row level security;
+revoke all on table public.pascalpdf_visitas from anon, authenticated;
 create index if not exists pascalpdf_visitas_creado_idx on public.pascalpdf_visitas (creado_en);
 create index if not exists pascalpdf_visitas_pagina_idx on public.pascalpdf_visitas (pagina, creado_en);
 
