@@ -270,11 +270,16 @@
         body.mobile-touch-mode .mobile-sheet-handle {
             display: flex;
         }
+        /* Celular: la altura real visible (sin la barra del navegador) y espacio para la barra de gestos */
+        @supports (height: 100dvh) { body.h-screen { height: 100dvh; } }
+        #mobile-bottom-dock { padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: content-box; }
+        #floating-pagination-bar button:disabled { cursor: not-allowed; }
+        @media (max-width: 767px) { #toast-container { top: calc(120px + env(safe-area-inset-top, 0px)); bottom: auto; left: 16px; right: 16px; } }
     </style>
 <script src="/legal.js" defer></script>
 <script src="/analitica.js" defer></script>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans antialiased h-screen w-screen overflow-hidden flex flex-col select-none">
+<body data-sin-franja-legal class="bg-zinc-950 text-zinc-100 font-sans antialiased h-screen w-screen overflow-hidden flex flex-col select-none">
 
     <!-- ==================== BARRA SUPERIOR PWA & MODO ==================== -->
     <header class="h-14 bg-zinc-900/90 backdrop-blur border-b border-zinc-800 px-3 flex items-center justify-between z-30 shrink-0">
@@ -312,6 +317,11 @@
                     <div id="mobile-switch-dot" class="w-3 h-3 rounded-full bg-zinc-400 transition-transform duration-200"></div>
                 </div>
             </button>
+
+            <div class="hidden sm:flex items-center gap-1">
+                <button data-deshacer onclick="PascalDeshacer.deshacer()" title="Deshacer (Ctrl+Z)" aria-label="Deshacer" class="hdr-btn px-2.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium flex items-center gap-1.5 border border-zinc-700"><i class="fa-solid fa-reply text-amber-400"></i><span class="hidden xl:inline">Deshacer</span></button>
+                <button data-rehacer onclick="PascalDeshacer.rehacer()" title="Rehacer (Ctrl+Y)" aria-label="Rehacer" class="hdr-btn px-2.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium flex items-center gap-1.5 border border-zinc-700"><i class="fa-solid fa-share text-amber-400"></i><span class="hidden xl:inline">Rehacer</span></button>
+            </div>
 
             <label for="pdf-upload-input" aria-label="Abrir PDF" title="Abrir PDF" class="hdr-btn cursor-pointer px-2.5 sm:px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition border border-zinc-700">
                 <i class="fa-solid fa-folder-open text-indigo-400"></i>
@@ -475,6 +485,13 @@
 
             <!-- Barra flotante inferior de Paginación -->
             <div id="floating-pagination-bar" class="fixed bottom-5 bg-zinc-900/95 backdrop-blur border border-zinc-800 rounded-full px-4 py-1.5 flex items-center gap-3 shadow-2xl z-30 transition-all">
+                <button data-deshacer onclick="PascalDeshacer.deshacer()" class="text-amber-400 hover:text-amber-300 text-xs p-1" title="Deshacer (Ctrl+Z)" aria-label="Deshacer">
+                    <i class="fa-solid fa-reply"></i>
+                </button>
+                <button data-rehacer onclick="PascalDeshacer.rehacer()" class="text-amber-400 hover:text-amber-300 text-xs p-1" title="Rehacer (Ctrl+Y)" aria-label="Rehacer">
+                    <i class="fa-solid fa-share"></i>
+                </button>
+                <span class="h-3 w-[1px] bg-zinc-700"></span>
                 <button onclick="goToPage(currentPageIndex - 1)" class="text-zinc-400 hover:text-white text-xs p-1">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
@@ -3247,6 +3264,9 @@
             };
             toast.className = `toast-enter px-4 py-2.5 rounded-xl border shadow-xl backdrop-blur text-xs font-medium flex items-center gap-2 transition-all duration-300 ${colors[color] || colors.indigo}`;
             toast.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${escapeHtml(message)}</span>`;
+            // En pantallas pequeñas se muestra un solo aviso a la vez (no tapan el documento)
+            if (window.innerWidth < 768) [...container.children].forEach(t => t.remove());
+            else while (container.children.length >= 3) container.firstElementChild.remove();
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
@@ -3325,6 +3345,9 @@
     <script src="config.js"></script>
     <script src="cuenta.js"></script>
     <script src="firmas-terceros.js"></script>
+    <script src="deshacer.js"></script>
+    <script src="cuadros.js"></script>
+    <script src="tutorial.js"></script>
     <script src="delegar.js"></script>
     <script src="masiva.js"></script>
     <script src="acceso.js"></script>

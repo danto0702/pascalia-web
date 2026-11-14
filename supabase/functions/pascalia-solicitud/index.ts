@@ -15,6 +15,7 @@ const SOLUCIONES: Record<string, string> = {
   mision_medica: "Misión Médica",
   cuentafacil: "CuentaFacil",
   mesaviva: "MesaViva",
+  pascal_web: "Pascal Web",
   consultoria: "Consultoría",
   desarrollo: "Desarrollo a la medida",
   capacitacion: "Capacitación",
