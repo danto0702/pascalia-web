@@ -910,7 +910,8 @@
         let currentZoom = 1.0;
         let currentPageIndex = 0;
         let selectedObjectId = null;
-        let showPageNumbering = true;
+        let showPageNumbering = false; // la numeración se agrega solo si la persona la activa
+        let encabezadoEnTodas = false;  // encabezado/pie escritos por la persona: van en todas las páginas
         let drawingMode = null; // null, 'freehand', 'arrow', 'rect', 'circle', 'highlight'
         let isMobileTouchMode = false; // Interruptor de modo móvil optimizado (Android / iOS)
         const PAGE_W = 680;   // ancho lógico de la página en el editor
@@ -1308,8 +1309,12 @@
             bgZone.style.backgroundSize = '100% 100%';
             bgZone.style.backgroundRepeat = 'no-repeat';
             // En páginas de un PDF real se ocultan el encabezado y pie de demostración
-            document.getElementById('page-header-zone').classList.toggle('hidden', !!page.bgImage);
-            document.getElementById('footer-left-text').classList.toggle('invisible', !!page.bgImage);
+            document.getElementById('page-header-zone').classList.toggle('hidden', !!page.bgImage && !encabezadoEnTodas);
+            document.getElementById('footer-left-text').classList.toggle('invisible', !!page.bgImage && !encabezadoEnTodas);
+            // Color de fondo sobre un PDF abierto: se tiñe la página (como papel de color)
+            let tinte = document.getElementById('page-tint-layer');
+            if (!tinte) { tinte = document.createElement('div'); tinte.id = 'page-tint-layer'; tinte.style.cssText = 'position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;z-index:5'; bgZone.parentElement.insertBefore(tinte, bgZone.nextSibling); }
+            tinte.style.background = page.bgImage && page.background && page.background.toLowerCase() !== '#ffffff' ? page.background : 'transparent';
 
             // Capa de dibujo propia de cada página
             const drawCanvas = document.getElementById('drawing-overlay-canvas');
@@ -1401,6 +1406,14 @@
                             <i class="fa-solid fa-circle-check text-emerald-600"></i> ${escapeHtml(obj.subtext || 'Firma Electrónica')}
                         </div>
                     `;
+                } else if (obj.type === 'markup') {
+                    // Resaltado o tachado sobre el PDF: un rectángulo que se mueve y se ajusta con las asas
+                    el.style.padding = '0';
+                    el.style.width = (obj.width || 240) + 'px';
+                    el.style.height = (obj.height || 22) + 'px';
+                    el.style.borderRadius = '2px';
+                    el.style.background = obj.kind === 'strike' ? 'linear-gradient(transparent calc(50% - 1.5px), #DC2626 calc(50% - 1.5px), #DC2626 calc(50% + 1.5px), transparent calc(50% + 1.5px))' : 'rgba(250, 204, 21, 0.42)';
+                    el.title = obj.kind === 'strike' ? 'Tachado: arrástralo y ajústalo sobre el texto' : 'Resaltado: arrástralo y ajústalo sobre el texto';
                 } else if (obj.type === 'stamp') {
                     el.className += " border-2 font-black tracking-widest uppercase px-3 py-1 rounded text-xs";
                     el.style.borderColor = obj.color || '#059669';
@@ -1495,8 +1508,18 @@
                 if (selectedObjectId !== obj.id) selectObject(obj.id, true);
                 return;
             }
+            // Doble clic o doble toque sobre un texto, sello o nota: editar directamente en la página
+            const ahoraToque = Date.now();
+            if (window.__ultimoToque && __ultimoToque.id === obj.id && ahoraToque - __ultimoToque.t < 400 && ['text', 'stamp', 'sticky'].includes(obj.type)) {
+                window.__ultimoToque = null;
+                if (e.cancelable) e.preventDefault();
+                startInlineEdit(obj.id);
+                return;
+            }
+            window.__ultimoToque = { id: obj.id, t: ahoraToque };
             if (e.cancelable) e.preventDefault();
-            selectObject(obj.id);
+            // Si ya estaba seleccionado no se vuelve a dibujar (así no se pierde el doble clic)
+            selectObject(obj.id, selectedObjectId === obj.id);
             isDraggingObj = true;
             const startClientX = e.touches ? e.touches[0].clientX : e.clientX;
             const startClientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -1600,6 +1623,8 @@
             if (selectedObjectId !== id) selectObject(id);
             const el = document.querySelector(`#page-interactive-layer [data-id="${id}"]`);
             if (!el) return;
+            // Mientras se escribe no van la barra ni las asas del cuadro
+            el.querySelectorAll('.cx-barra, .cx-asa').forEach(n => n.remove());
             // En sellos y notas solo se edita el texto, sin el icono/cabecera
             if (obj.type !== 'text') el.textContent = obj.text;
             el.contentEditable = 'true';
@@ -1902,7 +1927,9 @@
             if (footer === null) return;
             h.textContent = header.trim();
             f.textContent = footer.trim();
-            showToast("Encabezado y pie actualizados en las páginas creadas en PascalPDF.", "indigo");
+            encabezadoEnTodas = !!(header.trim() || footer.trim());
+            renderCurrentPage();
+            showToast(encabezadoEnTodas ? "Encabezado y pie agregados a todas las páginas del documento." : "Encabezado y pie quitados.", "indigo");
         }
 
         function applyWatermark() {
@@ -1914,9 +1941,11 @@
         }
 
         function setPageBackground(hex) {
-            pdfPages[currentPageIndex].background = hex;
+            const page = pdfPages[currentPageIndex];
+            const quitar = (page.background || '#ffffff').toLowerCase() === hex.toLowerCase();
+            page.background = quitar ? '#ffffff' : hex;
             renderCurrentPage();
-            showToast("Fondo de página actualizado.", "indigo");
+            showToast(quitar ? "Color de fondo quitado." : "Color de fondo aplicado a esta página. Úsalo de nuevo para quitarlo.", "indigo");
         }
 
         // Formularios
@@ -1957,13 +1986,19 @@
         // Comentarios y Revisión
         function addAnnotationMarkup(kind) {
             const page = pdfPages[currentPageIndex];
-            const obj = page.objects.find(o => o.id === selectedObjectId) || page.objects[0];
-            if (obj) {
-                if (kind === 'highlight') obj.highlight = !obj.highlight;
-                if (kind === 'strike') obj.strike = !obj.strike;
+            const sel = page.objects.find(o => o.id === selectedObjectId);
+            // Sobre un texto agregado en PascalPDF: se activa o quita el estilo
+            if (sel && sel.type === 'text') {
+                if (kind === 'highlight') sel.highlight = !sel.highlight;
+                if (kind === 'strike') sel.strike = !sel.strike;
                 renderCurrentPage();
-                showToast("Anotación de texto aplicada.", "amber");
+                return showToast(kind === 'highlight' ? (sel.highlight ? 'Texto resaltado.' : 'Resaltado quitado.') : (sel.strike ? 'Texto tachado.' : 'Tachado quitado.'), "amber");
             }
+            // Sobre el PDF: se crea una marca para poner encima del texto
+            const obj = { id: 'mk-' + Date.now(), type: 'markup', kind, x: 80, y: 220, width: 240, height: kind === 'strike' ? 16 : 22 };
+            page.objects.push(obj);
+            selectObject(obj.id);
+            showToast(kind === 'highlight' ? "Resaltado agregado: arrástralo sobre el texto y ajusta su tamaño con las asas." : "Tachado agregado: arrástralo sobre el texto y ajusta su largo con el asa.", "amber");
         }
 
         function addStickyNote() {
@@ -2692,6 +2727,10 @@
                     commentsList = [];
                     document.getElementById('doc-title-display').textContent = file.name;
                     document.getElementById('watermark-text-el').classList.add('hidden');
+                    // El encabezado y pie personales eran del documento anterior
+                    encabezadoEnTodas = false;
+                    document.getElementById('header-left-text').textContent = '';
+                    document.getElementById('footer-left-text').textContent = '';
                     currentPageIndex = 0;
                 }
                 selectedObjectId = null;
@@ -2899,6 +2938,17 @@
                     text(footerText, 40, logicalH - 28, 8, fonts.regular, rgb(0.45, 0.45, 0.5));
                 }
 
+                // PDF abierto: encabezado/pie de la persona y color de fondo (tinte que multiplica, como papel de color)
+                if (pData.srcId || pData.raster) {
+                    if (pData.background && pData.background.toLowerCase() !== '#ffffff') {
+                        rect(0, 0, PAGE_W, logicalH, { color: hexToRgb(pData.background), blendMode: PDFLib.BlendMode.Multiply });
+                    }
+                    if (encabezadoEnTodas) {
+                        text(headerText, 40, 18, 8, fonts.regular, rgb(0.45, 0.45, 0.5));
+                        text(footerText, 40, logicalH - 28, 8, fonts.regular, rgb(0.45, 0.45, 0.5));
+                    }
+                }
+
                 if (watermark && !opts.noWatermark) {
                     const size = 64;
                     const w = fonts.bold.widthOfTextAtSize(toWinAnsi(watermark), size * k);
@@ -2983,6 +3033,10 @@
                         } else {
                             text(obj.subtext || 'Firma Electrónica', sx, sy + h + 4, 7, fonts.mono, rgb(0.35, 0.35, 0.4));
                         }
+                    } else if (obj.type === 'markup') {
+                        const w = obj.width || 240, h = obj.height || 22;
+                        if (obj.kind === 'strike') rect(obj.x, obj.y + h / 2 - 1.2, w, 2.4, { color: rgb(0.86, 0.15, 0.15) });
+                        else rect(obj.x, obj.y, w, h, { color: rgb(0.98, 0.8, 0.08), opacity: 0.42 });
                     } else if (obj.type === 'stamp') {
                         const size = 10;
                         const t = toWinAnsi(obj.text).toUpperCase();

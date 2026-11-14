@@ -4,7 +4,7 @@
 (function () {
     'use strict';
     if (typeof pdfPages === 'undefined') return;
-    const TIPOS = ['text', 'stamp', 'sticky'];
+    const TIPOS = ['text', 'stamp', 'sticky', 'markup'];
     let portapapeles = null;
 
     const css = `
@@ -97,11 +97,11 @@
             <button data-a="copiar" title="Copiar (Ctrl+C)" aria-label="Copiar"><i class="fa-regular fa-copy"></i></button>
             <button data-a="pegar" title="Pegar (Ctrl+V)" aria-label="Pegar"${portapapeles ? '' : ' style="opacity:.45"'}><i class="fa-solid fa-paste"></i></button>
             <button data-a="duplicar" title="Duplicar (Ctrl+D)" aria-label="Duplicar"><i class="fa-solid fa-clone"></i></button>
-            <span class="cx-sep"></span>
+            ${obj.type === 'markup' ? '' : `<span class="cx-sep"></span>
             <button data-a="menos" title="Letra más pequeña" aria-label="Letra más pequeña">A−</button>
             <button data-a="mas" title="Letra más grande" aria-label="Letra más grande">A+</button>
             <span class="cx-sep"></span>
-            <button data-a="editar" title="Editar el texto" aria-label="Editar el texto"><i class="fa-solid fa-pen"></i></button>
+            <button data-a="editar" title="Editar el texto" aria-label="Editar el texto"><i class="fa-solid fa-pen"></i></button>`}
             <button data-a="borrar" title="Eliminar" aria-label="Eliminar"><i class="fa-solid fa-trash-can" style="color:#fda4af"></i></button>`;
         // La barra no crece con el zoom: se compensa para que siempre se vea del mismo tamaño
         barra.style.transform = `scale(${1 / (currentZoom || 1)})`;
@@ -137,6 +137,16 @@
         aislar(escala);
         escala.addEventListener('pointerdown', (e) => {
             const w0 = obj.width || el.offsetWidth, f0 = obj.fontSize || 14;
+            // Resaltado/tachado: la esquina cambia ancho y alto libremente
+            if (obj.type === 'markup') {
+                const h0 = obj.height || el.offsetHeight;
+                return arrastrar(e, (dx, dy) => {
+                    obj.width = Math.round(Math.max(20, Math.min(PAGE_W - obj.x, w0 + dx)));
+                    obj.height = Math.round(Math.max(6, h0 + dy));
+                    el.style.width = obj.width + 'px';
+                    el.style.height = obj.height + 'px';
+                });
+            }
             arrastrar(e, (dx, dy) => {
                 const k = Math.max(0.3, Math.min(6, (w0 + (dx + dy) / 2) / w0));
                 obj.fontSize = Math.max(6, Math.min(120, Math.round(f0 * k)));
