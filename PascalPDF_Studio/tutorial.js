@@ -30,6 +30,7 @@
     function objetivo(p) {
         if (typeof p.el === 'function') return p.el();
         for (const sel of [].concat(p.el || [])) {
+            if (typeof sel === 'function') { const el = sel(); if (el) return el; continue; }
             for (const el of document.querySelectorAll(sel)) {
                 const r = el.getBoundingClientRect();
                 if (r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden') return el;

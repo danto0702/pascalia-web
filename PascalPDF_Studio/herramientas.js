@@ -577,6 +577,8 @@
             await loadScript(CDN.jszip);
             const zip = new JSZip();
             const saved = { pdfPages, pdfSources, bookmarks, showPageNumbering, cleanOnExport, title: document.getElementById('doc-title-display').textContent };
+            const encSaved = encabezadoEnTodas;
+            encabezadoEnTodas = false; // el encabezado del documento abierto no va en el lote
             const wmEl = document.getElementById('watermark-text-el');
             const wmSaved = { text: wmEl.textContent, hidden: wmEl.classList.contains('hidden') };
             const evToggle = document.getElementById('evidence-toggle');
@@ -618,6 +620,7 @@
                 }
             } finally {
                 ({ pdfPages, pdfSources, bookmarks, showPageNumbering, cleanOnExport } = saved);
+                encabezadoEnTodas = encSaved;
                 document.getElementById('doc-title-display').textContent = saved.title;
                 wmEl.textContent = wmSaved.text;
                 wmEl.classList.toggle('hidden', wmSaved.hidden);
