@@ -23,3 +23,9 @@ Va en el **proyecto Supabase de CuentaFacil** (`dfzoqenxvpqkzkuakmli`, Canadá) 
 
 ## Pruebas
 `functions/pascalpdf-firma/logica.ts` no depende de Deno ni de Supabase: se probó de punta a punta con un servidor simulado en Node (`node --experimental-strip-types`) y el navegador (remitente en escritorio, firmante en iPhone). La migración se probó en Postgres 16 (aplicada dos veces).
+
+## Analítica propia (embudo de Pascal Sign)
+- Migración `migrations/20261109_pascalpdf_analitica.sql`: tabla `pascalpdf_visitas` (visitas anónimas: identificador aleatorio del navegador, página, botón, utm, dominio de origen y tipo de dispositivo; **sin IP ni correo**), columna `pascalpdf_usuarios.origen` (de dónde llegó cada cuenta nueva) y la función `pascalpdf_admin_analitica(desde, hasta, app)`, que arma el embudo visitas → app → cuentas → activadas (firmaron) → pagaron, y borra las visitas de más de 13 meses.
+- Acciones nuevas de la función: `analitica` (pública, la envía `/analitica.js` solo si la persona aceptó «Analítica» en el banner de cookies) y `admin_analitica` (solo administradores; pestaña «Analítica» de `/PascalPDF_Studio/admin/`).
+- Desplegar (pide aprobación del dueño: cambia el esquema de producción): aplicar la migración y volver a desplegar `pascalpdf-firma`. Sin la migración, las visitas fallan en silencio y la pestaña muestra un error; la app sigue funcionando.
+- Probado en Postgres 16 local (todas las migraciones aplicadas dos veces) y la lógica en Node con dependencias simuladas.

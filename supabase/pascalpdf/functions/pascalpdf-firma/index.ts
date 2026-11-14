@@ -161,6 +161,12 @@ const depsCuenta: DepsCuenta = {
     async adminResumen() {
       return revisar(await db.rpc("pascalpdf_admin_resumen")) as Record<string, unknown>;
     },
+    async registrarVisita(v) {
+      revisar(await db.from("pascalpdf_visitas").insert(v));
+    },
+    async adminAnalitica(desde, hasta, app) {
+      return revisar(await db.rpc("pascalpdf_admin_analitica", { p_desde: desde.toISOString(), p_hasta: hasta.toISOString(), p_app: app })) as Record<string, unknown>;
+    },
     async adminPromos() {
       return revisar(await db.from("pascalpdf_promos").select("*").order("codigo")) as Promo[];
     },

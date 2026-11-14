@@ -7,6 +7,14 @@ export type Usuario = {
   id: string; correo: string; nombre: string | null; creado_en: string;
   plan: "prueba" | "pro" | "suite"; vence_en: string; solicitudes_extra: number;
   clave_hash?: string | null; clave_fallos?: number; clave_bloqueo?: string | null; google_sub?: string | null;
+  origen?: Origen | null;
+};
+// De dónde llegó la persona (utm de su primera visita), solo si aceptó la analítica en el banner de cookies
+export type Origen = { fuente?: string; medio?: string; campana?: string; referente?: string };
+export type Visita = {
+  visitante: string; evento: "visita" | "cta"; pagina: string; etiqueta: string | null;
+  fuente: string | null; medio: string | null; campana: string | null; referente: string | null;
+  dispositivo: "android" | "ios" | "escritorio" | "otro";
 };
 export type DatosGoogle = { sub: string; email: string; email_verified: boolean; name?: string };
 export type Promo = {
@@ -50,12 +58,14 @@ export type DepsCuenta = {
     canjearDias(codigo: string, usuario_id: string): Promise<{ plan: string; vence_en: string; dias: number }>;
     adminUsuarios(buscar: string): Promise<Usuario[]>;
     adminPagos(): Promise<Record<string, unknown>[]>;
+    registrarVisita(v: Visita): Promise<void>;
+    adminAnalitica(desde: Date, hasta: Date, app: string | null): Promise<Record<string, unknown>>;
     insertCodigo(c: { correo: string; codigo_hash: string; vence_en: string; intentos: number; creado_en: string }): Promise<void>;
     ultimoCodigo(correo: string): Promise<{ correo: string; codigo_hash: string; vence_en: string; intentos: number; creado_en: string } | null>;
     contarCodigosDesde(correo: string, desde: Date): Promise<number>;
     actualizarCodigo(correo: string, creado_en: string, cambios: { intentos: number }): Promise<void>;
     usuarioPorCorreo(correo: string): Promise<Usuario | null>;
-    crearUsuario(u: { correo: string; nombre: string | null; plan: string; vence_en: string; clave_hash?: string; google_sub?: string }): Promise<Usuario>;
+    crearUsuario(u: { correo: string; nombre: string | null; plan: string; vence_en: string; clave_hash?: string; google_sub?: string; origen?: Origen | null }): Promise<Usuario>;
     actualizarUsuario(id: string, cambios: Partial<Usuario>): Promise<void>;
     borrarUsuario(id: string): Promise<void>;
     crearSesion(s: { token_hash: string; usuario_id: string; vence_en: string }): Promise<void>;
@@ -90,6 +100,35 @@ const DIAS_SESION = 180;
 const MINUTOS_CODIGO = 10;
 
 const texto = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, max) : "");
+const opcional = (v: unknown, max: number) => texto(v, max) || null;
+
+// Origen que envía el navegador al crear la cuenta (solo lo manda si hubo permiso de analítica)
+export function origenDe(v: unknown): Origen | null {
+  if (!v || typeof v !== "object") return null;
+  const o = v as Record<string, unknown>;
+  const r: Origen = {};
+  for (const [k, max] of [["fuente", 60], ["medio", 60], ["campana", 80], ["referente", 120]] as const) {
+    const x = texto(o[k], max);
+    if (x) r[k] = x;
+  }
+  return Object.keys(r).length ? r : null;
+}
+
+const DISPOSITIVOS = new Set(["android", "ios", "escritorio", "otro"]);
+// Visita anónima: un identificador aleatorio del navegador, la página y de dónde vino. Nada que identifique a la persona.
+export function visitaDe(d: Record<string, unknown>): Visita {
+  const visitante = texto(d.visitante, 40);
+  if (!/^[A-Za-z0-9_-]{8,40}$/.test(visitante)) throw new ErrorCliente("Visita no válida.");
+  const evento = d.evento === "cta" ? "cta" : d.evento === "visita" ? "visita" : null;
+  if (!evento) throw new ErrorCliente("Visita no válida.");
+  const pagina = texto(d.pagina, 120);
+  if (!/^\/[^\s?#]*$/.test(pagina)) throw new ErrorCliente("Visita no válida.");
+  const dispositivo = typeof d.dispositivo === "string" && DISPOSITIVOS.has(d.dispositivo) ? d.dispositivo as Visita["dispositivo"] : "otro";
+  return {
+    visitante, evento, pagina, etiqueta: evento === "cta" ? opcional(d.etiqueta, 40) : null,
+    fuente: opcional(d.fuente, 60), medio: opcional(d.medio, 60), campana: opcional(d.campana, 80), referente: opcional(d.referente, 120), dispositivo,
+  };
+}
 const correoValido = (c: string) => /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i.test(c);
 const escHtml = (t: string) => t.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 const uuidValido = (v: unknown) => typeof v === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v);
@@ -293,7 +332,7 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
       await verificarCodigo(deps, correo, d.codigo);
       let u = await deps.db.usuarioPorCorreo(correo);
       const nuevo = !u;
-      if (!u) u = await deps.db.crearUsuario({ correo, nombre: texto(d.nombre, 120) || null, plan: "prueba", vence_en: vencePrueba(ahora) });
+      if (!u) u = await deps.db.crearUsuario({ correo, nombre: texto(d.nombre, 120) || null, plan: "prueba", vence_en: vencePrueba(ahora), origen: origenDe(d.origen) });
       return nuevaSesion(deps, u, nuevo);
     }
 
@@ -310,7 +349,7 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
       const clave_hash = await hashClave(clave);
       const nuevo = !u;
       if (u) await deps.db.actualizarUsuario(u.id, { clave_hash, nombre: u.nombre || nombre });
-      else u = await deps.db.crearUsuario({ correo, nombre, plan: "prueba", vence_en: vencePrueba(ahora), clave_hash });
+      else u = await deps.db.crearUsuario({ correo, nombre, plan: "prueba", vence_en: vencePrueba(ahora), clave_hash, origen: origenDe(d.origen) });
       return nuevaSesion(deps, u, nuevo);
     }
 
@@ -352,7 +391,7 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
       const correo = g.email.toLowerCase();
       let u = await deps.db.usuarioPorCorreo(correo);
       const nuevo = !u;
-      if (!u) u = await deps.db.crearUsuario({ correo, nombre: texto(g.name, 120) || null, plan: "prueba", vence_en: vencePrueba(ahora), google_sub: g.sub });
+      if (!u) u = await deps.db.crearUsuario({ correo, nombre: texto(g.name, 120) || null, plan: "prueba", vence_en: vencePrueba(ahora), google_sub: g.sub, origen: origenDe(d.origen) });
       else if (!u.google_sub) await deps.db.actualizarUsuario(u.id, { google_sub: g.sub });
       else if (u.google_sub !== g.sub) throw new ErrorCliente("Ese correo está vinculado a otra cuenta de Google.", 403);
       return nuevaSesion(deps, u, nuevo);
@@ -499,6 +538,17 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
     }
 
     // ------------------------------------------------------------ administración (solo correos autorizados)
+    // Visita anónima (el navegador solo la envía con el permiso de «Analítica» del banner de cookies)
+    case "analitica": {
+      await deps.db.registrarVisita(visitaDe(d));
+      return { ok: true };
+    }
+    case "admin_analitica": {
+      await requerirAdmin(deps, d.token);
+      const dias = Math.min(366, Math.max(1, Math.round(Number(d.dias) || 30)));
+      const app = d.app === "pascalpdf" ? "pascalpdf" : d.app === "todas" ? null : "pascalsign";
+      return { ok: true, dias, app: app ?? "todas", analitica: await deps.db.adminAnalitica(new Date(ahora.getTime() - dias * 86400_000), ahora, app) };
+    }
     case "admin_resumen": {
       await requerirAdmin(deps, d.token);
       return { ok: true, resumen: await deps.db.adminResumen() };
