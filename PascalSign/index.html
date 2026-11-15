@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Pascal Sign · Firma tus PDF desde el celular</title>
-    <meta name="description" content="Pascal Sign de PascalIA: abre un PDF, pon tu firma con el dedo y compártelo. Tus documentos y firmas no salen de tu celular.">
+    <meta name="description" content="Pascal Sign de PascalIA: abre un PDF, pon tu firma con el dedo y compártelo. Tus firmas no salen de tu celular.">
     <meta name="theme-color" content="#FFC107">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -26,6 +26,7 @@
     <script src="/PascalPDF_Studio/cuenta.js"></script>
     <script src="/PascalPDF_Studio/tutorial.js"></script>
     <script src="/PascalPDF_Studio/delegar.js"></script>
+    <script src="/PascalPDF_Studio/word.js"></script>
     <style>
         :root {
             --yellow: #FFC107; --yellow-hover: #FFB300; --yellow-soft: #FFD54F; --gold-ink: #8A6100;
@@ -248,7 +249,7 @@
     </div>
     <div class="hero entra">
         <h1>Firma tus PDF <mark>desde el celular</mark></h1>
-        <p>Abre el documento, pon tu firma con el dedo y compártelo. Tus documentos y tus firmas no salen de tu celular.</p>
+        <p>Abre el documento, pon tu firma con el dedo y compártelo. Tus firmas y tus PDF no salen de tu celular.</p>
     </div>
     <div class="demo entra" data-fase="0" aria-hidden="true" style="animation-delay:.1s">
         <div class="archivo-vuela">PDF</div>
@@ -260,7 +261,7 @@
         <div class="chip-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Listo para compartir</div>
     </div>
     <ol class="pasos" aria-label="Cómo funciona">
-        <li data-p="0" tabindex="0"><span>1</span>Abre el PDF desde tus archivos, el correo o WhatsApp.</li>
+        <li data-p="0" tabindex="0"><span>1</span>Abre el PDF o Word desde tus archivos, el correo o WhatsApp.</li>
         <li data-p="1" tabindex="0"><span>2</span>Toca «Firmar» y arrastra tu firma a su lugar.</li>
         <li data-p="2" tabindex="0"><span>3</span>Comparte o guarda el PDF firmado.</li>
     </ol>
@@ -273,9 +274,9 @@
         <div id="instalar" class="instalar hidden"><span id="instalar-texto">Instala Pascal Sign para abrirla como una app.</span><button id="btn-instalar">Instalar</button></div>
         <label class="btn btn-primary btn-block abrir" for="archivo">
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M12 18v-6M9 15l3-3 3 3"/></svg>
-            <span>Abrir PDF para firmar<small>Desde archivos, correo o WhatsApp</small></span>
+            <span>Abrir documento para firmar<small>PDF o Word, desde archivos, correo o WhatsApp</small></span>
         </label>
-        <input id="archivo" type="file" accept="application/pdf,.pdf" class="hidden">
+        <input id="archivo" type="file" accept="application/pdf,.pdf,.docx,.doc,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden">
         <div class="opciones">
         <div class="opcion">
             <div class="opcion-fila"><button class="ir" id="btn-pedir-inicio"><span class="opcion-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13 7l4 4"/><path d="M15 20h5"/></svg></span><span><b>Pedir firma a otra persona</b><small>Marca dónde firma y envíale un enlace</small></span></button>
@@ -405,7 +406,7 @@
     let misFirmas = [];
     // Tutorial de la primera vez (y desde «Mi cuenta → Ver el tutorial»)
     const PASOS_SIGN = [
-        { titulo: 'Bienvenido a Pascal Sign', texto: 'Firma tus PDF desde el celular en tres pasos. Tus documentos y tus firmas no salen de este dispositivo.' },
+        { titulo: 'Bienvenido a Pascal Sign', texto: 'Firma tus PDF desde el celular en tres pasos. Tus firmas y tus PDF no salen de este dispositivo; los Word, solo si eliges la conversión exacta.' },
         { el: 'label[for="archivo"]', titulo: 'Abre el PDF', texto: 'Elígelo de tus archivos. También puedes compartirlo a Pascal Sign desde WhatsApp o el correo.' },
         { el: '#btn-mis-firmas', titulo: 'Tus firmas', texto: 'Crea tu firma una vez: dibújala, escríbela, súbela o tómale una foto. Desde aquí también puedes delegarla.' },
         { titulo: 'Firma y muévela', texto: 'Con el PDF abierto, toca «Firmar», elige tu firma y arrástrala a su lugar. Debajo van tu nombre, la fecha, el objeto y el consecutivo.' },
@@ -468,6 +469,8 @@
             doc = { nombre: nombre || file.name || 'Documento.pdf', bytes, hash: hex(await crypto.subtle.digest('SHA-256', bytes)), pdf, paginas: [] };
             colocadas = [];
             activa = null;
+            document.querySelectorAll('.pw-franja').forEach(n => n.remove());
+            ['#btn-firmar', '#btn-pedir'].forEach(q => { $(q).disabled = false; });
             $('#doc-nombre').textContent = doc.nombre;
             $('#doc-info').textContent = `${pdf.numPages} ${pdf.numPages === 1 ? 'página' : 'páginas'}`;
             $('#inicio').classList.add('hidden');
@@ -1058,6 +1061,22 @@
         poner();
         $('#consejo-otro').onclick = () => { i = (i + 1) % C.length; try { localStorage.setItem('ps-consejo', String(i)); } catch (e) { /* nada */ } poner(); };
     })();
+    // Word: se convierte a PDF y no se puede firmar hasta confirmar que se ve igual
+    async function abrirWord(f, modo, pedir) {
+        ocupado('Convirtiendo el Word a PDF…');
+        let r;
+        try { r = await PascalWord.convertir(f, modo ? { modo } : {}); }
+        catch (e) { ocupado(null); if (e.message !== 'cancelado') toast(e.message || 'No se pudo convertir el Word.', true); return; }
+        ocupado(null);
+        await abrirPDF(new File([r.bytes], r.nombre, { type: 'application/pdf' }), r.nombre);
+        if ($('#doc').classList.contains('hidden')) return;
+        const bloquear = ['#btn-firmar', '#btn-pedir'];
+        bloquear.forEach(q => { $(q).disabled = true; });
+        PascalWord.franjaRevision(r, () => {
+            bloquear.forEach(q => { $(q).disabled = false; });
+            if (pedir) setTimeout(() => $('#btn-pedir').click(), 200);
+        }, { reintentar: (m) => abrirWord(f, m, pedir) });
+    }
     // «Pedir firma» desde el inicio: abre el PDF y entra directo a marcar dónde firma la otra persona
     let pedirAlAbrir = false;
     document.querySelector('label[for=archivo]').addEventListener('click', () => { pedirAlAbrir = false; });
@@ -1066,6 +1085,7 @@
         const f = e.target.files[0]; e.target.value = '';
         const pedir = pedirAlAbrir; pedirAlAbrir = false;
         if (!f) return;
+        if (window.PascalWord && PascalWord.esWord(f)) return abrirWord(f, null, pedir);
         await abrirPDF(f);
         if (pedir && !$('#doc').classList.contains('hidden')) setTimeout(() => $('#btn-pedir').click(), 300);
     };
@@ -1216,7 +1236,7 @@
     $('#btn-solicitudes').onclick = () => hojaSolicitudes();
     $('#btn-firmar').onclick = () => hojaElegir(false);
     $('#btn-listo').onclick = hojaListo;
-    $('#btn-cerrar').onclick = () => { if (cerrarDocumento()) history.back(); };
+    $('#btn-cerrar').onclick = () => { if (cerrarDocumento()) { document.querySelectorAll('.pw-franja').forEach(n => n.remove()); history.back(); } };
     window.addEventListener('popstate', () => {
         if ($('#capa-hoja').innerHTML) { cerrarHoja(); history.pushState({ doc: true }, ''); return; }
         if (doc && !cerrarDocumento()) history.pushState({ doc: true }, '');

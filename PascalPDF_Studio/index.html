@@ -325,7 +325,7 @@
             <label for="pdf-upload-input" aria-label="Abrir PDF" title="Abrir PDF" class="hdr-btn cursor-pointer px-2.5 sm:px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition border border-zinc-700">
                 <i class="fa-solid fa-folder-open text-indigo-400"></i>
                 <span class="hidden sm:inline">Abrir PDF</span>
-                <input id="pdf-upload-input" type="file" accept="application/pdf" class="hidden" onchange="handleRealPDFUpload(event)">
+                <input id="pdf-upload-input" type="file" accept="application/pdf,.pdf,.docx,.doc,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden" onchange="handleRealPDFUpload(event)">
             </label>
 
             <button id="btn-edit-text-mode" onclick="toggleTextEditMode()" aria-label="Editar texto" class="hdr-btn px-2.5 sm:px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition border border-zinc-700" title="Editar el texto existente del PDF">
@@ -3399,6 +3399,7 @@
     <script src="limpiafirma.js"></script>
     <script src="herramientas.js"></script>
     <script src="config.js"></script>
+    <script src="word.js"></script>
     <script src="cuenta.js"></script>
     <script src="firmas-terceros.js"></script>
     <script src="deshacer.js"></script>
@@ -3409,5 +3410,21 @@
     <script src="ubicar.js"></script>
     <script src="masiva.js"></script>
     <script src="acceso.js"></script>
+<script>
+    // Abrir Word: se convierte a PDF y se pide revisar que se vea igual antes de firmar
+    (function () {
+        const original = window.importPDFFile;
+        if (!original || !window.PascalWord) return;
+        window.importPDFFile = async function (file, append, modo) {
+            if (!file || !PascalWord.esWord(file)) return original.apply(this, arguments);
+            showToast('Convirtiendo el Word a PDF…', 'indigo');
+            let r;
+            try { r = await PascalWord.convertir(file, modo ? { modo } : {}); }
+            catch (e) { if (e.message !== 'cancelado') showToast(e.message || 'No se pudo convertir el Word.', 'rose'); return; }
+            await original.call(this, new File([r.bytes], r.nombre, { type: 'application/pdf' }), append);
+            PascalWord.franjaRevision(r, () => showToast('Listo. Ya puedes firmar el documento.', 'emerald'), { reintentar: (m) => window.importPDFFile(file, append, m) });
+        };
+    })();
+</script>
 </body>
 </html>

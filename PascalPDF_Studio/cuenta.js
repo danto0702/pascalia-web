@@ -494,7 +494,7 @@
         setTimeout(() => t.remove(), 4200);
     }
 
-    window.PascalCuenta = { api, entrar, exigir, abrir, requiere, planes, cargar, registrarFirmas, exportar, get cuenta() { return cuenta; }, activa: !!API,
+    window.PascalCuenta = { api, token, entrar, exigir, abrir, requiere, planes, cargar, registrarFirmas, exportar, get cuenta() { return cuenta; }, activa: !!API,
         ui: { hoja, cerrar, aviso, esc, toast, conBoton, fecha } };
     if (API) {
         const iniciar = () => { pintarBoton(); if (!document.documentElement.hasAttribute('data-sin-exigir')) exigir().then(() => { document.dispatchEvent(new CustomEvent('pascal:lista')); return revisarRetornoPago(); }); };
