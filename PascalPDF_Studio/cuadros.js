@@ -128,7 +128,7 @@
                 el.style.width = obj.width + 'px';
             });
         });
-        el.appendChild(ancho);
+        if (obj.type !== 'stamp') el.appendChild(ancho);
 
         // Asa de la esquina: cambia el tamaño del cuadro y del texto en proporción
         const escala = document.createElement('div');
