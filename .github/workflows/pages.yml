@@ -31,7 +31,7 @@ jobs:
         run: |
           mkdir -p _site
           git archive HEAD | tar -x -C _site
-          rm -rf _site/.github _site/.claude _site/.agents _site/supabase \
+          rm -rf _site/.github _site/.claude _site/.agents _site/supabase _site/servicios \
                  _site/README.md _site/.gitignore _site/CLAUDE.md _site/AGENTS.md \
                  _site/PRODUCT.md _site/DESIGN.md _site/.impeccable _site/docs _site/CUMPLIMIENTO.md
           test -f _site/index.html && test -f _site/CNAME && test -f _site/.nojekyll
