@@ -1,6 +1,6 @@
 // Firma en masa: un lote de PDF o Word se firma con la misma firma y el mismo objeto.
 // Cada documento recibe su propio consecutivo (asignado por el servidor) y su registro en el historial.
-// Todo se procesa en el navegador; los documentos no se suben a ningún servidor.
+// Los PDF se procesan en el navegador; los Word pueden pasar por el convertidor exacto (se borran al convertirse).
 (function () {
     'use strict';
     if (!window.PascalCuenta || !window.PascalSello) return;
@@ -25,58 +25,12 @@
     const winAnsi = (t) => String(t).normalize('NFC').replace(/[^\x20-\x7E\xA0-\xFF—–‘’“”…•€]/g, '?');
     const base = (n) => n.replace(/\.(pdf|docx)$/i, '').replace(/[\\/:*?"<>|]+/g, '_').trim() || 'Documento';
 
-    // ------------------------------------------------------------------ Word → PDF (en el navegador)
-    // Se dibuja el documento con docx-preview y se pasa a imágenes de página: el resultado conserva el
-    // aspecto del Word, pero el texto del PDF no se puede seleccionar.
+    // ------------------------------------------------------------------ Word → PDF (word.js)
+    // En el lote no se pregunta en cada archivo: se usa la elección guardada o, si hay convertidor, la conversión exacta.
     async function wordAPdf(file) {
-        await cargar(LIBS.jszip); await cargar(LIBS.docx); await cargar(LIBS.h2c);
-        const caja = document.createElement('div');
-        caja.style.cssText = 'position:fixed;left:-20000px;top:0;background:#fff;color:#000';
-        document.body.appendChild(caja);
-        try {
-            await window.docx.renderAsync(file, caja, null, { inWrapper: false, breakPages: true, ignoreLastRenderedPageBreak: false, renderHeaders: true, renderFooters: true, useBase64URL: true });
-            const secciones = [...caja.querySelectorAll('section.docx')];
-            if (!secciones.length) throw new Error('El Word no tiene contenido que se pueda mostrar.');
-            const pdf = await PDFLib.PDFDocument.create();
-            for (const sec of secciones) {
-                const cs = getComputedStyle(sec);
-                const wpx = sec.offsetWidth;
-                const hpx = parseFloat(cs.minHeight) || wpx * 1.294;
-                const escala = 2;
-                const lienzo = await html2canvas(sec, { scale: escala, backgroundColor: '#ffffff', logging: false, useCORS: true });
-                // Cada página repite los márgenes superior e inferior del Word; se corta solo el área de texto
-                const mT = Math.round((parseFloat(cs.paddingTop) || 72) * escala), mB = Math.round((parseFloat(cs.paddingBottom) || 72) * escala);
-                const altoPag = Math.round(hpx * escala), util = altoPag - mT - mB;
-                const cx = lienzo.getContext('2d');
-                const finContenido = lienzo.height;
-                const enBlanco = (y0, y1) => { const d = cx.getImageData(0, y0, lienzo.width, Math.max(1, y1 - y0)).data; for (let i = 0; i < d.length; i += 64) if (d[i] < 245 || d[i + 1] < 245 || d[i + 2] < 245) return false; return true; };
-                let y = mT;
-                while (y < finContenido - 4) {
-                    let fin = Math.min(finContenido, y + util);
-                    // Corta en una fila en blanco cerca del borde para no partir líneas de texto
-                    if (fin < finContenido) {
-                        const desde = fin - util * 0.15;
-                        for (let f = fin; f > desde; f -= 2) {
-                            const fila = cx.getImageData(0, f, lienzo.width, 1).data;
-                            let blanca = true;
-                            for (let i = 0; i < fila.length; i += 16) if (fila[i] < 245 || fila[i + 1] < 245 || fila[i + 2] < 245) { blanca = false; break; }
-                            if (blanca) { fin = f; break; }
-                        }
-                    }
-                    if (enBlanco(y, fin)) break; // lo que queda es margen vacío
-                    const trozo = document.createElement('canvas');
-                    trozo.width = lienzo.width; trozo.height = altoPag;
-                    const tx = trozo.getContext('2d');
-                    tx.fillStyle = '#fff'; tx.fillRect(0, 0, trozo.width, trozo.height);
-                    tx.drawImage(lienzo, 0, y, lienzo.width, fin - y, 0, mT, lienzo.width, fin - y);
-                    const jpg = await pdf.embedJpg(await (await fetch(trozo.toDataURL('image/jpeg', 0.9))).arrayBuffer());
-                    const page = pdf.addPage([wpx * 0.75, hpx * 0.75]);
-                    page.drawImage(jpg, { x: 0, y: 0, width: wpx * 0.75, height: hpx * 0.75 });
-                    y = fin;
-                }
-            }
-            return await pdf.save();
-        } finally { caja.remove(); }
+        let modo = null; try { modo = localStorage.getItem('pascal-word-modo'); } catch (e) { /* nada */ }
+        if (!modo) modo = window.PASCAL_CONVERTIDOR ? 'servidor' : 'local';
+        return (await PascalWord.convertir(file, { modo })).bytes;
     }
 
     // ------------------------------------------------------------------ estampar firma + datos en un PDF
@@ -129,7 +83,7 @@
         const h = hoja(`
             <h2>Firma en masa</h2>
             <p class="pc-muted">Carga hasta ${MAX_ARCHIVOS} PDF o Word. Todos se firman con la misma firma y el mismo objeto; cada uno recibe su propio consecutivo y queda en tu historial. Los documentos no salen de tu dispositivo.</p>
-            <label class="pc-btn pc-sec" style="width:100%;box-sizing:border-box;margin:6px 0">Elegir documentos (PDF o Word)<input type="file" data-archivos multiple accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden></label>
+            <label class="pc-btn pc-sec" style="width:100%;box-sizing:border-box;margin:6px 0">Elegir documentos (PDF o Word)<input type="file" data-archivos multiple accept=".pdf,.docx,.doc,application/msword,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden></label>
             <p class="pc-muted" data-cuantos style="margin:0 0 6px">Ningún documento elegido.</p>
             ${opciones.length ? `<label class="pc-muted" for="ms-firma">Firma</label><select class="pc-campo" id="ms-firma">${opciones.map(o => `<option value="${o.v}">${esc(o.t)}</option>`).join('')}</select>`
             : '<p class="pc-msg pc-err">Primero guarda una firma en este dispositivo (Firmar → «Guardar esta firma»).</p>'}
@@ -211,12 +165,12 @@
         pintarModo();
 
         q('[data-archivos]').onchange = (e) => {
-            archivos = [...e.target.files].filter(f => /\.(pdf|docx)$/i.test(f.name));
+            archivos = [...e.target.files].filter(f => /\.(pdf|docx?)$/i.test(f.name));
             const grandes = archivos.filter(f => f.size > MAX_MB * 1048576);
             if (archivos.length > MAX_ARCHIVOS) { aviso(msg, `Máximo ${MAX_ARCHIVOS} documentos por lote.`); archivos = archivos.slice(0, MAX_ARCHIVOS); }
             else if (grandes.length) { aviso(msg, `${grandes.length} documento(s) pasan de ${MAX_MB} MB y no se incluirán.`); archivos = archivos.filter(f => f.size <= MAX_MB * 1048576); }
             else aviso(msg, '');
-            const w = archivos.filter(f => /\.docx$/i.test(f.name)).length;
+            const w = archivos.filter(f => /\.docx?$/i.test(f.name)).length;
             q('[data-cuantos]').textContent = archivos.length ? `${archivos.length} documento(s): ${archivos.length - w} PDF y ${w} Word.` : 'Ningún documento elegido.';
             docs = []; errores = []; marca = null; pintarModo();
         };
