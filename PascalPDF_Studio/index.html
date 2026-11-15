@@ -3037,6 +3037,9 @@
                         const w = obj.width || 240, h = obj.height || 22;
                         if (obj.kind === 'strike') rect(obj.x, obj.y + h / 2 - 1.2, w, 2.4, { color: rgb(0.86, 0.15, 0.15) });
                         else rect(obj.x, obj.y, w, h, { color: rgb(0.98, 0.8, 0.08), opacity: 0.42 });
+                    } else if (obj.type === 'stamp' && window.PascalSellos) {
+                        const sp = PascalSellos.png(obj);
+                        image(await embedDataImage(pdfDoc, imgCache, sp.src), obj.x, obj.y, sp.w, sp.h);
                     } else if (obj.type === 'stamp') {
                         const size = 10;
                         const t = toWinAnsi(obj.text).toUpperCase();
@@ -3399,6 +3402,7 @@
     <script src="cuenta.js"></script>
     <script src="firmas-terceros.js"></script>
     <script src="deshacer.js"></script>
+    <script src="sellos.js"></script>
     <script src="cuadros.js"></script>
     <script src="tutorial.js"></script>
     <script src="delegar.js"></script>
