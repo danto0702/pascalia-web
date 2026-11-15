@@ -100,7 +100,7 @@
                 if (!obj || obj.type !== 'stamp') return;
                 const d = dibujar(obj, 3 * (window.devicePixelRatio || 1) / 1.5);
                 el.className = el.className.replace(/\b(border-2|font-black|tracking-widest|uppercase|px-3|py-1|rounded|text-xs)\b/g, '');
-                Object.assign(el.style, { transform: 'none', border: '0', padding: '0', width: d.w + 'px', height: d.h + 'px', fontSize: '' });
+                Object.assign(el.style, { zIndex: '6', transform: 'none', border: '0', padding: '0', width: d.w + 'px', height: d.h + 'px', fontSize: '' });
                 el.innerHTML = '';
                 const img = new Image();
                 img.src = d.canvas.toDataURL();
@@ -113,6 +113,34 @@
         } catch (e) { /* la vista sigue aunque falle un sello */ }
         return r;
     };
+
+    // Al tocar cerca de un objeto pequeño (sello, nota, imagen, firma) que está sobre un cuadro de texto grande,
+    // se agarra el objeto pequeño y no el texto de atrás (en el celular el dedo cubre más que el sello).
+    const arrastre0 = window.startDragObject;
+    if (typeof arrastre0 === 'function') {
+        window.startDragObject = function (e, obj) {
+            try {
+                const t = e.touches ? e.touches[0] : e;
+                const cx = t.clientX, cy = t.clientY, M = e.touches ? 18 : 8;
+                const page = pdfPages[currentPageIndex];
+                const actual = document.querySelector(`#page-interactive-layer [data-id="${obj.id}"]`);
+                const ra = actual && actual.getBoundingClientRect();
+                const areaA = ra ? ra.width * ra.height : Infinity;
+                let mejor = null, areaM = areaA;
+                document.querySelectorAll('#page-interactive-layer [data-id]').forEach(el => {
+                    if (el === actual) return;
+                    const r = el.getBoundingClientRect(), area = r.width * r.height;
+                    if (area >= areaM || area > areaA * 0.5) return;
+                    if (cx >= r.left - M && cx <= r.right + M && cy >= r.top - M && cy <= r.bottom + M) {
+                        const o = page.objects.find(x => x.id === el.dataset.id);
+                        if (o) { mejor = o; areaM = area; }
+                    }
+                });
+                if (mejor) return arrastre0.call(this, e, mejor);
+            } catch (err) { /* sigue con el objeto tocado */ }
+            return arrastre0.apply(this, arguments);
+        };
+    }
 
     // Para el PDF: PNG en alta resolución
     window.PascalSellos = {
