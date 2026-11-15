@@ -112,6 +112,55 @@
         return null;
     }
 
+    // ------------------------------------------------------------------ 2b. bloque de firma con el nombre
+    // Distingue el nombre del bloque de firma de las menciones en el texto: el nombre va solo en su
+    // renglón, con el cargo (u otro dato) justo debajo y espacio libre o una línea encima.
+    function porNombre(paginas, cfg) {
+        const nombre = sinTildes(cfg.nombre).replace(/\s+/g, ' ').trim();
+        if (nombre.length < 4) return null;
+        const cargo = sinTildes(cfg.cargo || '').replace(/\s+/g, ' ').trim();
+        let mejor = null;
+        paginas.forEach((pg, p) => {
+            const { lineas } = pg;
+            lineas.forEach(l => {
+                const norm = l.norm.replace(/\s+/g, ' ');
+                const i = norm.indexOf(nombre);
+                if (i < 0) return;
+                const xi = xDeCaracter(l, l.norm.indexOf(nombre.split(' ')[0]));
+                const xf = xDeCaracter(l, Math.min(l.mapa.length - 1, l.norm.indexOf(nombre.split(' ')[0]) + nombre.length));
+                const solo = norm.replace(nombre, '').replace(/[^a-z0-9]/g, '').length <= 6;
+                // Renglón justo debajo que se cruza horizontalmente con el nombre
+                const debajo = lineas.filter(o => o.y < l.y && l.y - o.y < Math.max(26, l.h * 2.4) && o.x1 > xi - 40 && o.x0 < xf + 40).sort((a, b) => b.y - a.y)[0];
+                if (cargo && !(debajo && debajo.norm.replace(/\s+/g, ' ').includes(cargo))) return; // el cargo es obligatorio si se configuró
+                let puntos = 0;
+                if (solo) puntos += 3;
+                if (cargo) puntos += 4;
+                else if (debajo && (debajo.texto.length < 60 || PALABRAS_FIRMA.test(debajo.norm))) puntos += 2;
+                // Encima: una línea de firma cercana, o espacio libre para la firma
+                const arriba = lineas.filter(o => o.y > l.y && o.y - l.y < 60 && o.x1 > xi - 30 && o.x0 < xf + 30).sort((a, b) => a.y - b.y);
+                const linea = arriba.find(o => o.y - l.y < 36 && LINEA.test(o.texto));
+                if (linea) puntos += 3;
+                else if (!arriba.length || arriba[0].y - l.y > 34) puntos += 2;
+                if (!cargo && puntos < 3) return; // una mención dentro de un párrafo no basta
+                const cand = { p, l, xi, xf, linea, puntos, orden: p * 10000 - l.y };
+                if (!mejor || cand.puntos > mejor.puntos || (cand.puntos === mejor.puntos && cand.orden > mejor.orden)) mejor = cand;
+            });
+        });
+        if (!mejor) return null;
+        const { p, l, xi, xf, linea } = mejor;
+        const detalle = cfg.cargo ? `sobre «${cfg.nombre}» con «${cfg.cargo}» debajo` : `sobre «${cfg.nombre}»`;
+        if (linea && (cfg.lado || 'encima') === 'encima') {
+            const m = linea.texto.match(LINEA);
+            const xl = xDeCaracter(linea, m.index), xr = xDeCaracter(linea, m.index + m[0].length);
+            return { pagina: p, tipo: 'linea', x: xl, y: linea.y, w: Math.max(80, xr - xl), metodo: 'Bloque de firma (nombre)', detalle };
+        }
+        const anchoNombre = Math.max(60, xf - xi);
+        if (cfg.lado === 'izquierda') return { pagina: p, tipo: 'linea', x: Math.max(paginas[p].view[0] + 12, xi - 178), y: l.y - 6, w: 170, datos: 'arriba', metodo: 'Bloque de firma (nombre)', detalle: detalle + ', a la izquierda' };
+        if (cfg.lado === 'derecha') return { pagina: p, tipo: 'linea', x: xf + 8, y: l.y - 6, w: 170, datos: 'arriba', metodo: 'Bloque de firma (nombre)', detalle: detalle + ', a la derecha' };
+        const w = Math.max(150, anchoNombre);
+        return { pagina: p, tipo: 'linea', x: xi + anchoNombre / 2 - w / 2, y: l.y + l.h + 2, w, metodo: 'Bloque de firma (nombre)', detalle };
+    }
+
     // ------------------------------------------------------------------ 3. línea de firma «____»
     function porLinea(paginas) {
         for (let p = paginas.length - 1; p >= 0; p--) {
@@ -159,7 +208,8 @@
         const sinTexto = !paginas.some(p => p.items.length);
         if (op.modo === 'marcada' && op.marca) return [marcada(paginas, op.marca, n)];
         if (op.modo === 'fija') return fija(paginas, op.fija, n);
-        const r = (await campoFirma(bytes)) || (op.palabra ? porPalabra(paginas, op.palabra) : null) || porLinea(paginas);
+        const r = (await campoFirma(bytes)) || (op.bloque && op.bloque.activo ? porNombre(paginas, op.bloque) : null)
+            || (op.palabra ? porPalabra(paginas, op.palabra) : null) || porLinea(paginas);
         if (r) return [r];
         if (op.marca) return [{ ...marcada(paginas, op.marca, n), aviso: sinTexto ? 'sin texto (imagen)' : 'no se encontró el campo' }];
         return fija(paginas, op.fija, n).map(u => ({ ...u, aviso: sinTexto ? 'sin texto (imagen)' : 'no se encontró el campo' }));
@@ -206,7 +256,7 @@
         const anchoDatos = 190;
         const altoDatos = PascalSello.alto(anchoDatos, datos);
         const derecha = Math.max(xImg + iw, u.x + (u.w || 0)) + 8;
-        if (derecha + anchoDatos <= X0 + W - 12) dibujarDatos(anchoDatos, derecha, base + Math.max(ih, altoDatos));
+        if (u.datos !== 'arriba' && derecha + anchoDatos <= X0 + W - 12) dibujarDatos(anchoDatos, derecha, base + Math.max(ih, altoDatos));
         else dibujarDatos(anchoDatos, Math.max(X0 + 12, Math.min(xImg, X0 + W - anchoDatos - 12)), base + ih + 4 + altoDatos);
     }
 

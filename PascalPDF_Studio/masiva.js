@@ -146,9 +146,22 @@
                 <option value="fija">Posición fija</option>
             </select>
             <div data-bloque="auto">
+                <div style="border:1px solid #E9E9E9;border-radius:14px;padding:10px 12px;margin:6px 0">
+                    <label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="ms-bloque"> Firmo sobre mi nombre</label>
+                    <div data-bloque-campos hidden>
+                        <label class="pc-muted" for="ms-nombre">Nombre como aparece en los documentos</label>
+                        <input class="pc-campo" id="ms-nombre" maxlength="120" placeholder="Ej. Danilo Torrado Blanco">
+                        <label class="pc-muted" for="ms-cargo">Cargo o texto debajo del nombre (opcional)</label>
+                        <input class="pc-campo" id="ms-cargo" maxlength="80" placeholder="Ej. Coordinador">
+                        <label class="pc-muted" for="ms-lado">Dónde va la firma</label>
+                        <select class="pc-campo" id="ms-lado"><option value="encima">Encima del nombre</option><option value="izquierda">A la izquierda del nombre</option><option value="derecha">A la derecha del nombre</option></select>
+                        <p class="pc-muted" style="font-size:12px;margin:4px 0">Se usa el nombre que va solo en su renglón (con el cargo debajo, si lo escribes), no las veces que aparece dentro del texto.</p>
+                        <button type="button" class="pc-btn pc-sec" data-guardar-bloque style="min-height:38px;padding:6px 14px">Guardar como mi bloque de firma</button>
+                    </div>
+                </div>
                 <label class="pc-muted" for="ms-palabra">Palabra o frase junto a la firma (opcional)</label>
                 <input class="pc-campo" id="ms-palabra" maxlength="80" placeholder="Ej. Firma del contratista, Firma:, tu nombre">
-                <p class="pc-muted" style="font-size:12px;margin:2px 0 6px">Busca, en este orden: el campo de firma del PDF, esta palabra, y una línea «______» junto a «Firma», «Contratista», «C.C.»…</p>
+                <p class="pc-muted" style="font-size:12px;margin:2px 0 6px">Busca, en este orden: el campo de firma del PDF, tu bloque de firma (si lo activas), esta palabra y una línea «______» junto a «Firma», «Contratista», «C.C.»…</p>
             </div>
             <div data-bloque="marca" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:4px 0">
                 <button type="button" class="pc-btn pc-sec" data-marcar>Marcar en el primer documento</button>
@@ -181,7 +194,20 @@
             q('[data-marca-txt]').textContent = marca ? `Marcada en la ${marca.pagina === 'ultima' ? 'última página' : 'página ' + (marca.pagina + 1)}` : (m === 'marcada' ? 'Falta marcar la posición' : 'Sin marcar (opcional)');
             invalidar();
         };
-        ['#ms-modo', '#ms-palabra', '#ms-pagina', '#ms-lugar'].forEach(s => q(s).addEventListener('input', pintarModo));
+        ['#ms-modo', '#ms-palabra', '#ms-pagina', '#ms-lugar', '#ms-bloque', '#ms-nombre', '#ms-cargo', '#ms-lado'].forEach(s => q(s).addEventListener('input', pintarModo));
+        // Bloque de firma: se recuerda en el dispositivo; el nombre se sugiere con el de la firma elegida
+        const BLOQUE = 'pascalpdf-bloque-firma';
+        try { const b = JSON.parse(localStorage.getItem(BLOQUE) || 'null'); if (b) { q('#ms-bloque').checked = !!b.activo; q('#ms-nombre').value = b.nombre || ''; q('#ms-cargo').value = b.cargo || ''; q('#ms-lado').value = b.lado || 'encima'; } } catch (e) { /* sin almacenamiento */ }
+        const pintarBloque = () => { q('[data-bloque-campos]').hidden = !q('#ms-bloque').checked; };
+        q('#ms-bloque').addEventListener('change', () => {
+            pintarBloque();
+            if (q('#ms-bloque').checked && !q('#ms-nombre').value) { const e = elegida(); q('#ms-nombre').value = e.propia ? e.propia.signer : (e.delegada ? e.delegada.firma_nombre : ''); }
+        });
+        pintarBloque();
+        q('[data-guardar-bloque]').onclick = () => {
+            try { localStorage.setItem(BLOQUE, JSON.stringify({ activo: q('#ms-bloque').checked, nombre: q('#ms-nombre').value.trim(), cargo: q('#ms-cargo').value.trim(), lado: q('#ms-lado').value })); toast('Bloque de firma guardado en este dispositivo.'); }
+            catch (e) { toast('No se pudo guardar en este navegador.', true); }
+        };
         pintarModo();
 
         q('[data-archivos]').onchange = (e) => {
@@ -227,6 +253,7 @@
         }
         const opcionesUbicar = () => ({
             modo: q('#ms-modo').value, palabra: q('#ms-palabra').value.trim(), marca,
+            bloque: { activo: q('#ms-bloque').checked, nombre: q('#ms-nombre').value.trim(), cargo: q('#ms-cargo').value.trim(), lado: q('#ms-lado').value },
             fija: { pagina: q('#ms-pagina').value, lugar: q('#ms-lugar').value }
         });
 
