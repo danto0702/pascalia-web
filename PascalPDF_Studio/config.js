@@ -5,4 +5,4 @@ window.PASCALPDF_API = 'https://dfzoqenxvpqkzkuakmli.supabase.co/functions/v1/pa
 
 // Convertidor Word → PDF con LibreOffice (servicio en Railway). Mientras esté vacío,
 // los Word se convierten solo en el navegador (puede variar el formato).
-window.PASCAL_CONVERTIDOR = '';
+window.PASCAL_CONVERTIDOR = 'https://convertidor-production-6da794b8.up.railway.app';
