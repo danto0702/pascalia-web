@@ -220,6 +220,18 @@
         .btn-primary.abrir small { display: block; font: 500 12px Inter, sans-serif; opacity: .8; }
         @keyframes brillo { 0%, 70% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
         .entra { animation: subir .6s var(--ease) both; }
+
+        /* ---------- Pascal ---------- */
+        .pascal-cara { width: 46px; height: 46px; border-radius: 999px; object-fit: cover; object-position: 50% 16%; background: var(--cream); box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--cream-line); flex: none; }
+        .consejo { display: flex; gap: 12px; align-items: center; margin: -10px 0 26px; padding: 12px 14px; border-radius: 18px; background: var(--cream); box-shadow: inset 0 0 0 1px var(--cream-line); }
+        .consejo p { margin: 0; font-size: 14px; line-height: 1.45; color: #3D3D3D; }
+        .consejo b { display: block; font: 700 13px Montserrat, sans-serif; color: var(--gold-ink); margin-bottom: 1px; }
+        .consejo button { margin-left: auto; align-self: flex-start; width: 32px; height: 32px; border-radius: 999px; color: var(--gold-ink); display: grid; place-items: center; flex: none; }
+        .consejo button:hover { background: #fff; }
+        .consejo p span { display: inline-block; animation: aparecer .4s ease-out both; }
+        .pascal-fin { display: block; width: 104px; height: 104px; border-radius: 999px; object-fit: cover; object-position: 50% 22%; margin: 4px auto 10px; background: var(--cream); box-shadow: 0 0 0 4px var(--cream), 0 14px 26px -16px rgba(138,97,0,.6); animation: saludo .6s var(--ease) both; }
+        .hoja-fin h2, .hoja-fin > p.muted { text-align: center; }
+        @keyframes saludo { 0% { transform: scale(.6) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.05) rotate(2deg); opacity: 1; } 100% { transform: none; } }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
         @media (min-width: 760px) { #paginas { padding-left: 24px; padding-right: 24px; } .dock { max-width: 640px; margin: 0 auto; } }
     </style>
@@ -252,6 +264,11 @@
         <li data-p="1" tabindex="0"><span>2</span>Toca «Firmar» y arrastra tu firma a su lugar.</li>
         <li data-p="2" tabindex="0"><span>3</span>Comparte o guarda el PDF firmado.</li>
     </ol>
+    <div class="consejo" id="consejo">
+        <img class="pascal-cara" src="/PascalSign/pascal-rostro.webp" alt="Pascal, el asistente de PascalIA" width="46" height="46">
+        <p><b>Consejo de Pascal</b><span id="consejo-texto">Guarda tu firma en «Mis firmas» y la próxima vez firmas en dos toques.</span></p>
+        <button id="consejo-otro" aria-label="Otro consejo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 10-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>
+    </div>
     <div class="acciones">
         <div id="instalar" class="instalar hidden"><span id="instalar-texto">Instala Pascal Sign para abrirla como una app.</span><button id="btn-instalar">Instalar</button></div>
         <label class="btn btn-primary btn-block abrir" for="archivo">
@@ -794,7 +811,8 @@
     async function hojaListo() {
         if (window.PascalCuenta && !(await PascalCuenta.requiere(1, 'Para guardar tu documento firmado necesitas un plan.'))) return;
         const h = hoja(`
-            <h2>Tu documento firmado</h2>
+            <img class="pascal-fin" src="/PascalSign/pascal-guino.webp" alt="Pascal guiñando el ojo" width="104" height="104">
+            <h2>¡Listo, ya firmaste!</h2>
             <p class="muted">${colocadas.length} ${colocadas.length === 1 ? 'firma' : 'firmas'} en «${esc(doc.nombre)}».</p>
             <label class="check"><input type="checkbox" id="evidencia" ${conEvidencia ? 'checked' : ''} onchange="window.__pascalEvidencia(this.checked)"> Agregar hoja de evidencia (quién firmó, cuándo y la huella del documento)</label>
             <div class="fila-botones" style="flex-direction:column">
@@ -802,6 +820,7 @@
                 <button class="btn btn-ghost btn-block" id="descargar">Guardar en el celular</button>
             </div>
             <p class="aviso-legal">Firma electrónica (Ley 527 de 1999 y Decreto 2364 de 2012). Verifica que tu trámite la acepte. Tú respondes por lo que firmas.</p>`);
+        h.classList.add('hoja-fin');
         h.querySelector('#compartir').onclick = () => terminar(true, h.querySelector('#evidencia').checked);
         h.querySelector('#descargar').onclick = () => terminar(false, h.querySelector('#evidencia').checked);
     }
@@ -1020,6 +1039,24 @@
             document.querySelectorAll('.opcion.abierta').forEach(x => { x.classList.remove('abierta'); x.querySelector('.info').setAttribute('aria-expanded', 'false'); });
             o.classList.toggle('abierta', abierta); b.setAttribute('aria-expanded', String(abierta));
         });
+    })();
+
+    // ---- Consejo de Pascal: uno distinto en cada visita; se puede pedir otro ----
+    (function () {
+        const C = [
+            'Guarda tu firma en «Mis firmas» y la próxima vez firmas en dos toques.',
+            'Arrastra la esquina amarilla de la firma para hacerla más grande o más pequeña.',
+            '¿Necesitas la firma de otra persona? Usa «Pedir firma» y envíale el enlace por WhatsApp.',
+            'Activa la hoja de evidencia al terminar: queda quién firmó, cuándo y la huella del documento.',
+            'Instala Pascal Sign en tu pantalla de inicio y ábrela como cualquier app.',
+            'Puedes abrir el PDF directo desde WhatsApp o el correo y firmarlo aquí.'
+        ];
+        let i = 0;
+        try { i = (parseInt(localStorage.getItem('ps-consejo'), 10) + 1 || 0) % C.length; localStorage.setItem('ps-consejo', String(i)); } catch (e) { /* nada */ }
+        const t = $('#consejo-texto');
+        const poner = () => { t.textContent = C[i]; t.style.animation = 'none'; void t.offsetWidth; t.style.animation = ''; };
+        poner();
+        $('#consejo-otro').onclick = () => { i = (i + 1) % C.length; try { localStorage.setItem('ps-consejo', String(i)); } catch (e) { /* nada */ } poner(); };
     })();
     // «Pedir firma» desde el inicio: abre el PDF y entra directo a marcar dónde firma la otra persona
     let pedirAlAbrir = false;
