@@ -80,7 +80,8 @@
     }
 
     // ------------------------------------------------------------------ estampar firma + datos en un PDF
-    async function estampar(bytes, firma, datos, opciones, evidencia) {
+    // ubicaciones: lista de PascalUbicar.localizar (página, tipo y coordenadas)
+    async function estampar(bytes, firma, datos, ubicaciones, evidencia) {
         const { PDFDocument, StandardFonts, rgb } = PDFLib;
         let pdf;
         try { pdf = await PDFDocument.load(bytes); }
@@ -88,21 +89,9 @@
         const fuente = await pdf.embedFont(StandardFonts.Helvetica);
         const img = await pdf.embedPng(firma.png);
         const paginas = pdf.getPages();
-        const elegidas = opciones.pagina === 'todas' ? paginas : [opciones.pagina === 'primera' ? paginas[0] : paginas[paginas.length - 1]];
-        for (const page of elegidas) {
-            const { width: W, height: H } = page.getSize();
-            const ancho = Math.min(210, W * 0.38), margen = Math.max(24, W * 0.05);
-            const k = Math.min(ancho / img.width, 56 / img.height);
-            const iw = img.width * k, ih = img.height * k;
-            const altoDatos = PascalSello.alto(ancho, datos);
-            const altoTotal = ih + 4 + altoDatos;
-            const x = opciones.lugar === 'izquierda' ? margen : opciones.lugar === 'centro' ? (W - ancho) / 2 : W - margen - ancho;
-            const arriba = H - margen - altoTotal; // coordenada desde arriba
-            page.drawImage(img, { x: x + (opciones.lugar === 'centro' ? (ancho - iw) / 2 : 0), y: H - arriba - ih, width: iw, height: ih });
-            PascalSello.pdf({
-                texto: (t, tx, ty, size, font, color) => page.drawText(t, { x: tx, y: H - ty - size, size, font, color }),
-                rect: () => {}
-            }, { regular: fuente }, x, arriba + ih + 4, ancho, datos, winAnsi);
+        for (const u of ubicaciones) {
+            const page = paginas[Math.min(u.pagina, paginas.length - 1)];
+            PascalUbicar.estamparEn(page, u, img, fuente, datos, winAnsi);
         }
         if (evidencia) {
             const p = pdf.addPage([612, 792]);
@@ -149,26 +138,61 @@
             <select class="pc-campo" id="ms-objeto-sel" hidden></select>
             <label class="pc-muted" for="ms-radicado">Radicado (opcional, igual para todos)</label>
             <input class="pc-campo" id="ms-radicado" maxlength="60">
-            <div class="pc-fila" style="margin-top:4px">
-                <div><label class="pc-muted" for="ms-pagina">Página</label><select class="pc-campo" id="ms-pagina"><option value="ultima">Última</option><option value="primera">Primera</option><option value="todas">Todas</option></select></div>
-                <div><label class="pc-muted" for="ms-lugar">Ubicación</label><select class="pc-campo" id="ms-lugar"><option value="derecha">Abajo a la derecha</option><option value="centro">Abajo al centro</option><option value="izquierda">Abajo a la izquierda</option></select></div>
+
+            <div class="pc-sec-t">Dónde va la firma</div>
+            <select class="pc-campo" id="ms-modo" aria-label="Cómo ubicar la firma">
+                <option value="auto">Automática: campo de firma, palabra y línea de firma (recomendado)</option>
+                <option value="marcada">La posición que marque en el primer documento</option>
+                <option value="fija">Posición fija</option>
+            </select>
+            <div data-bloque="auto">
+                <label class="pc-muted" for="ms-palabra">Palabra o frase junto a la firma (opcional)</label>
+                <input class="pc-campo" id="ms-palabra" maxlength="80" placeholder="Ej. Firma del contratista, Firma:, tu nombre">
+                <p class="pc-muted" style="font-size:12px;margin:2px 0 6px">Busca, en este orden: el campo de firma del PDF, esta palabra, y una línea «______» junto a «Firma», «Contratista», «C.C.»…</p>
+            </div>
+            <div data-bloque="marca" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:4px 0">
+                <button type="button" class="pc-btn pc-sec" data-marcar>Marcar en el primer documento</button>
+                <span class="pc-muted" data-marca-txt>Sin marcar (opcional en la automática)</span>
+            </div>
+            <div data-bloque="fija">
+                <p class="pc-muted" data-fija-txt style="margin:6px 0 0;font-size:13px">Si no se encuentra el campo de firma:</p>
+                <div class="pc-fila" style="margin-top:4px">
+                    <div><label class="pc-muted" for="ms-pagina">Página</label><select class="pc-campo" id="ms-pagina"><option value="ultima">Última</option><option value="primera">Primera</option><option value="todas">Todas</option></select></div>
+                    <div><label class="pc-muted" for="ms-lugar">Ubicación</label><select class="pc-campo" id="ms-lugar"><option value="derecha">Abajo a la derecha</option><option value="centro">Abajo al centro</option><option value="izquierda">Abajo a la izquierda</option></select></div>
+                </div>
             </div>
             <label style="display:flex;gap:8px;align-items:center;margin:8px 0;font-size:14px"><input type="checkbox" id="ms-evidencia" checked> Agregar hoja de evidencia al final de cada documento</label>
-            <div class="pc-fila"><button class="pc-btn" data-firmar ${opciones.length ? '' : 'disabled'}>Firmar los documentos</button></div>
+            <div class="pc-fila"><button class="pc-btn pc-sec" data-revisar ${opciones.length ? '' : 'disabled'}>1. Revisar dónde queda la firma</button><button class="pc-btn" data-firmar disabled>2. Firmar los documentos</button></div>
             <div data-progreso class="pc-muted" style="margin-top:10px" aria-live="polite"></div>
+            <div data-revision></div>
             <div data-msg></div>
-            <p class="pc-muted" style="font-size:12px;margin-top:12px">Los Word se convierten a PDF en tu navegador: conservan su aspecto, pero el texto queda como imagen. Si necesitas texto seleccionable, guárdalos como PDF desde Word antes de cargarlos.</p>`);
+            <p class="pc-muted" style="font-size:12px;margin-top:12px">Los Word se convierten a PDF en tu navegador: conservan su aspecto, pero el texto queda como imagen, así que en ellos no se busca el campo: se usa la posición marcada o la fija. Si necesitas que se busque, guárdalos como PDF desde Word antes de cargarlos.</p>`);
         const q = (s) => h.querySelector(s);
-        let archivos = [];
+        const msg = q('[data-msg]'), prog = q('[data-progreso]');
+        let archivos = [], docs = [], errores = [], marca = null, revisado = false;
+
+        const invalidar = () => { revisado = false; q('[data-firmar]').disabled = true; q('[data-revision]').innerHTML = ''; };
+        const pintarModo = () => {
+            const m = q('#ms-modo').value;
+            q('[data-bloque="auto"]').hidden = m !== 'auto';
+            q('[data-bloque="marca"]').style.display = m === 'fija' ? 'none' : 'flex';
+            q('[data-bloque="fija"]').hidden = m === 'marcada';
+            q('[data-fija-txt]').textContent = m === 'fija' ? 'Posición en todos los documentos:' : 'Si no se encuentra el campo de firma (ni hay posición marcada):';
+            q('[data-marca-txt]').textContent = marca ? `Marcada en la ${marca.pagina === 'ultima' ? 'última página' : 'página ' + (marca.pagina + 1)}` : (m === 'marcada' ? 'Falta marcar la posición' : 'Sin marcar (opcional)');
+            invalidar();
+        };
+        ['#ms-modo', '#ms-palabra', '#ms-pagina', '#ms-lugar'].forEach(s => q(s).addEventListener('input', pintarModo));
+        pintarModo();
+
         q('[data-archivos]').onchange = (e) => {
             archivos = [...e.target.files].filter(f => /\.(pdf|docx)$/i.test(f.name));
             const grandes = archivos.filter(f => f.size > MAX_MB * 1048576);
-            if (archivos.length > MAX_ARCHIVOS) { aviso(q('[data-msg]'), `Máximo ${MAX_ARCHIVOS} documentos por lote.`); archivos = archivos.slice(0, MAX_ARCHIVOS); }
-            else if (grandes.length) { aviso(q('[data-msg]'), `${grandes.length} documento(s) pasan de ${MAX_MB} MB y no se incluirán.`); archivos = archivos.filter(f => f.size <= MAX_MB * 1048576); }
-            else aviso(q('[data-msg]'), '');
+            if (archivos.length > MAX_ARCHIVOS) { aviso(msg, `Máximo ${MAX_ARCHIVOS} documentos por lote.`); archivos = archivos.slice(0, MAX_ARCHIVOS); }
+            else if (grandes.length) { aviso(msg, `${grandes.length} documento(s) pasan de ${MAX_MB} MB y no se incluirán.`); archivos = archivos.filter(f => f.size <= MAX_MB * 1048576); }
+            else aviso(msg, '');
             const w = archivos.filter(f => /\.docx$/i.test(f.name)).length;
             q('[data-cuantos]').textContent = archivos.length ? `${archivos.length} documento(s): ${archivos.length - w} PDF y ${w} Word.` : 'Ningún documento elegido.';
-            q('[data-firmar]').textContent = archivos.length ? `Firmar ${archivos.length} documento(s)` : 'Firmar los documentos';
+            docs = []; errores = []; marca = null; pintarModo();
         };
         // Firma delegada con objetos restringidos: el objeto se elige de la lista autorizada
         const elegida = () => {
@@ -183,20 +207,97 @@
         };
         if (q('#ms-firma')) { q('#ms-firma').onchange = ajustarObjeto; ajustarObjeto(); }
 
+        // Prepara cada documento una sola vez (Word → PDF, huella, número de páginas)
+        async function preparar() {
+            if (docs.length || !archivos.length) return;
+            errores = [];
+            for (let i = 0; i < archivos.length; i++) {
+                const f = archivos[i];
+                prog.textContent = `Preparando ${i + 1} de ${archivos.length}: ${f.name}`;
+                try {
+                    const original = new Uint8Array(await f.arrayBuffer());
+                    const esWord = /\.docx$/i.test(f.name);
+                    const pdfBytes = esWord ? new Uint8Array(await wordAPdf(f)) : original;
+                    const doc = await PDFLib.PDFDocument.load(pdfBytes).catch(err => { throw new Error(/encrypt/i.test(err.message) ? 'está protegido con contraseña' : 'no es un PDF válido'); });
+                    docs.push({ nombre: f.name, bytes: pdfBytes, hash: await huella(original), paginas: doc.getPageCount(), esWord });
+                } catch (err) { errores.push(`${f.name}: ${err.message}`); }
+            }
+            prog.textContent = '';
+            if (!docs.length) throw new Error('Ningún documento se pudo leer. ' + errores.slice(0, 3).join(' · '));
+        }
+        const opcionesUbicar = () => ({
+            modo: q('#ms-modo').value, palabra: q('#ms-palabra').value.trim(), marca,
+            fija: { pagina: q('#ms-pagina').value, lugar: q('#ms-lugar').value }
+        });
+
+        const bMarcar = q('[data-marcar]');
+        bMarcar.onclick = () => conBoton(bMarcar, async () => {
+            if (!archivos.length) return aviso(msg, 'Primero elige los documentos.');
+            try { await preparar(); } catch (e) { return aviso(msg, e.message); }
+            const m = await PascalUbicar.marcar(docs[0].bytes, docs[0].nombre);
+            if (m) { marca = m; pintarModo(); }
+        });
+
+        // 1. Revisar: ubica la firma en cada documento y muestra el resumen con vista previa
+        async function revisar() {
+            aviso(msg, '');
+            if (!archivos.length) { aviso(msg, 'Elige los documentos que vas a firmar.'); return false; }
+            const op = opcionesUbicar();
+            if (op.modo === 'marcada' && !marca) { aviso(msg, 'Marca la posición en el primer documento o elige otra forma de ubicar la firma.'); return false; }
+            await preparar();
+            for (let i = 0; i < docs.length; i++) {
+                prog.textContent = `Buscando dónde va la firma: ${i + 1} de ${docs.length}`;
+                docs[i].ubic = await PascalUbicar.localizar(docs[i].bytes, docs[i].esWord && op.modo === 'auto' ? { ...op, palabra: '' } : op);
+            }
+            prog.textContent = '';
+            const conAviso = docs.filter(d => d.ubic[0].aviso).length;
+            q('[data-revision]').innerHTML = `
+                <div class="pc-sec-t">Revisión del lote${conAviso ? ` · <span style="color:#991B1B">${conAviso} sin campo encontrado</span>` : ''}</div>
+                <div style="max-height:260px;overflow:auto;border:1px solid #E9E9E9;border-radius:14px">
+                ${docs.map((d, i) => `<div style="display:flex;gap:8px;align-items:center;padding:8px 12px;border-bottom:1px solid #F2F2F2;font-size:13px">
+                    <span style="flex:1;min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.nombre)}</b>
+                    <span style="color:${d.ubic[0].aviso ? '#991B1B' : '#166534'}">${esc(d.ubic[0].metodo)}</span><span class="pc-muted"> · pág. ${d.ubic.map(u => u.pagina + 1).join(', ')} · ${esc(d.ubic[0].detalle || '')}${d.ubic[0].aviso ? ' · ' + esc(d.ubic[0].aviso) : ''}</span></span>
+                    <button type="button" class="pc-btn pc-sec" data-ver="${i}" style="min-height:36px;padding:6px 14px;flex:0 0 auto">Ver</button></div>`).join('')}
+                </div>
+                ${errores.length ? `<p class="pc-msg pc-err">No se pudieron leer: ${esc(errores.slice(0, 4).join(' · '))}</p>` : ''}`;
+            q('[data-revision]').querySelectorAll('[data-ver]').forEach(b => b.onclick = () => conBoton(b, async () => {
+                const d = docs[+b.dataset.ver];
+                const lienzo = await PascalUbicar.vistaPrevia(d.bytes, d.ubic[0]);
+                const v = document.createElement('div');
+                v.style.cssText = 'position:fixed;inset:0;z-index:10001;background:rgba(20,20,20,.86);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px;color:#fff;font:14px Inter,sans-serif';
+                lienzo.style.cssText = 'max-width:min(560px,94vw);max-height:78vh;width:auto;height:auto;background:#fff;border-radius:6px';
+                v.innerHTML = `<b>${esc(d.nombre)} · página ${d.ubic[0].pagina + 1}</b>`;
+                v.appendChild(lienzo);
+                const c = document.createElement('button');
+                c.textContent = 'Cerrar';
+                c.style.cssText = 'min-height:44px;padding:0 24px;border-radius:999px;border:0;background:#FFC107;color:#1F1F1F;font:700 14px Montserrat,Inter,sans-serif';
+                c.onclick = () => v.remove();
+                v.appendChild(c);
+                v.onclick = (e) => { if (e.target === v) v.remove(); };
+                document.body.appendChild(v);
+            }));
+            revisado = true;
+            q('[data-firmar]').disabled = false;
+            q('[data-firmar]').textContent = `2. Firmar ${docs.length} documento(s)`;
+            return true;
+        }
+        const bRev = q('[data-revisar]');
+        bRev.onclick = () => conBoton(bRev, async () => { try { await revisar(); } catch (e) { prog.textContent = ''; aviso(msg, e.message); } });
+
+        // 2. Firmar: registra en el servidor (consecutivos), estampa y descarga
         const btn = q('[data-firmar]');
         btn.onclick = () => conBoton(btn, async () => {
-            const msg = q('[data-msg]'), prog = q('[data-progreso]');
             aviso(msg, '');
-            if (!archivos.length) return aviso(msg, 'Elige los documentos que vas a firmar.');
+            if (!revisado && !(await revisar())) return;
             const e = elegida();
             const objeto = (e.delegada && e.delegada.objetos.length ? q('#ms-objeto-sel').value : q('#ms-objeto').value).trim();
             if (!objeto) return aviso(msg, 'Escribe el objeto que va en los documentos.');
             const radicado = q('#ms-radicado').value.trim();
-            if (!confirm(`Vas a firmar ${archivos.length} documento(s) con el objeto «${objeto}». Revisa que sean los correctos: tú respondes por lo que firmas. ¿Continuar?`)) return;
-            const ops = { pagina: q('#ms-pagina').value, lugar: q('#ms-lugar').value };
+            const sinCampo = docs.filter(d => d.ubic[0].aviso).length;
+            if (!confirm(`Vas a firmar ${docs.length} documento(s) con el objeto «${objeto}».${sinCampo ? ` En ${sinCampo} no se encontró el campo de firma y se usará la posición ${marca ? 'marcada' : 'fija'}.` : ''} Revisa que sean los correctos: tú respondes por lo que firmas. ¿Continuar?`)) return;
             const conEvidencia = q('#ms-evidencia').checked;
             try {
-                // 1. Firma a usar
+                // Firma a usar
                 let firma, delegacionId = null, delegado = null, metodo;
                 if (e.delegada) {
                     prog.textContent = 'Trayendo la firma delegada…';
@@ -208,20 +309,7 @@
                     firma = { id: e.propia.id, nombre: e.propia.signer, png: await PascalDelegar.firmaPNG(e.propia) };
                     metodo = e.propia.kind === 'text' ? 'escrita' : e.propia.kind === 'drawn' ? 'dibujada' : 'imagen';
                 }
-                // 2. Preparar cada documento (Word → PDF) y su huella
-                const docs = [], errores = [];
-                for (let i = 0; i < archivos.length; i++) {
-                    const f = archivos[i];
-                    prog.textContent = `Preparando ${i + 1} de ${archivos.length}: ${f.name}`;
-                    try {
-                        const original = new Uint8Array(await f.arrayBuffer());
-                        const pdfBytes = /\.docx$/i.test(f.name) ? await wordAPdf(f) : original;
-                        const doc = await PDFLib.PDFDocument.load(pdfBytes).catch(err => { throw new Error(/encrypt/i.test(err.message) ? 'está protegido con contraseña' : 'no es un PDF válido'); });
-                        docs.push({ nombre: f.name, bytes: pdfBytes, hash: await huella(original), paginas: doc.getPageCount() });
-                    } catch (err) { errores.push(`${f.name}: ${err.message}`); }
-                }
-                if (!docs.length) throw new Error('Ningún documento se pudo leer. ' + errores.slice(0, 3).join(' · '));
-                // 3. Registrar las firmas en el servidor (consecutivo y hora del servidor), de a 50
+                // Registrar las firmas en el servidor (consecutivo y hora del servidor), de a 50
                 const registros = [];
                 for (let i = 0; i < docs.length; i += 50) {
                     prog.textContent = `Registrando firmas ${i + 1}–${Math.min(i + 50, docs.length)} de ${docs.length}…`;
@@ -234,29 +322,30 @@
                     });
                     registros.push(...r.registros);
                 }
-                // 4. Estampar firma, datos y consecutivo en cada documento
+                // Estampar firma, datos y consecutivo en cada documento
                 await cargar(LIBS.jszip);
                 const zip = new JSZip();
-                const salidas = [];
+                const salidas = [], fallos = [];
                 for (let i = 0; i < docs.length; i++) {
                     const d = docs[i], reg = registros[i];
                     prog.textContent = `Firmando ${i + 1} de ${docs.length}: ${d.nombre}`;
                     const datos = { nombre: firma.nombre, fecha: PascalSello.fechaISO(new Date(reg.firmado_en)), objeto, radicado, consecutivo: reg.consecutivo, delegado };
                     try {
-                        const out = await estampar(d.bytes, firma, datos, ops, conEvidencia ? { ...reg, hash: d.hash } : null);
-                        let n = `${base(d.nombre)}_firmado_${reg.consecutivo}.pdf`;
+                        const out = await estampar(d.bytes, firma, datos, d.ubic, conEvidencia ? { ...reg, hash: d.hash } : null);
+                        const n = `${base(d.nombre)}_firmado_${reg.consecutivo}.pdf`;
                         salidas.push({ n, out });
                         zip.file(n, out);
-                    } catch (err) { errores.push(`${d.nombre}: ${err.message}`); }
+                    } catch (err) { fallos.push(`${d.nombre}: ${err.message}`); }
                 }
-                // 5. Descargar
                 prog.textContent = 'Preparando la descarga…';
                 if (salidas.length === 1) await downloadBlob(new Blob([salidas[0].out], { type: 'application/pdf' }), salidas[0].n);
                 else if (salidas.length) await downloadBlob(await zip.generateAsync({ type: 'blob' }), `PascalPDF_firmados_${new Date().toISOString().slice(0, 10)}.zip`);
                 prog.textContent = `Listo: ${salidas.length} documento(s) firmados, consecutivos ${registros[0].consecutivo} a ${registros[registros.length - 1].consecutivo}.`;
-                if (errores.length) aviso(msg, `No se pudieron firmar ${errores.length}: ${errores.slice(0, 5).join(' · ')}${errores.length > 5 ? '…' : ''}`);
+                const todos = [...errores, ...fallos];
+                if (todos.length) aviso(msg, `No se pudieron firmar ${todos.length}: ${todos.slice(0, 5).join(' · ')}${todos.length > 5 ? '…' : ''}`);
                 else aviso(msg, 'Todos los documentos quedaron firmados y registrados en tu historial.', true);
                 toast(`${salidas.length} documento(s) firmados.`);
+                invalidar();
             } catch (err) {
                 console.error(err);
                 prog.textContent = '';
