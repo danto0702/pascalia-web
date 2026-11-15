@@ -149,6 +149,77 @@
         @keyframes colocar { 0% { transform: scale(.85); opacity: 0; } 100% { transform: none; opacity: 1; } }
         .colocada.nueva { animation: colocar .35s var(--ease) both; }
         .ayuda.nueva { animation: subir .3s var(--ease) both; }
+
+        /* ---------- Presentación ---------- */
+        #presentacion { position: fixed; inset: 0; z-index: 2147483000; background: var(--cream); display: grid; place-content: center; justify-items: center; gap: 18px; transition: clip-path .7s var(--ease), opacity .7s var(--ease); clip-path: circle(150% at 50% 42%); }
+        #presentacion.fuera { clip-path: circle(0% at 50% 42%); opacity: .6; pointer-events: none; }
+        #presentacion img { width: 96px; height: 96px; border-radius: 26px; box-shadow: 0 18px 40px -18px rgba(138,97,0,.55); animation: entrarLogo .8s var(--ease) both; }
+        #presentacion .rubrica { position: relative; font: 600 54px/1 Caveat, cursive; color: var(--graphite); clip-path: inset(0 100% 0 0); animation: escribir 1.1s .35s cubic-bezier(.45,0,.2,1) forwards; }
+        #presentacion .rubrica::after { content: ""; position: absolute; left: 4px; right: -6px; bottom: -6px; height: 4px; border-radius: 4px; background: var(--yellow); transform-origin: left; transform: scaleX(0); animation: subrayar .5s 1.35s var(--ease) forwards; }
+        #presentacion small { color: var(--muted); font-size: 13px; opacity: 0; animation: aparecer .5s 1.5s ease-out forwards; }
+        #presentacion .saltar { position: absolute; bottom: calc(22px + var(--safe-b)); left: 50%; transform: translateX(-50%); color: var(--muted); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; padding: 10px; }
+        @keyframes entrarLogo { from { transform: scale(.6) rotate(-12deg); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes escribir { to { clip-path: inset(0 0 0 0); } }
+        @keyframes subrayar { to { transform: scaleX(1); } }
+
+        /* ---------- Demostración animada ---------- */
+        .demo { position: relative; margin: 6px auto 0; width: min(100%, 360px); aspect-ratio: 1 / .78; }
+        .hoja-demo { position: absolute; inset: 6% 12% 0 8%; background: #fff; border-radius: 6px; box-shadow: 0 24px 40px -26px rgba(74,58,18,.55), inset 0 0 0 1px rgba(31,31,31,.06); padding: 9% 9% 0; transform: rotate(-2.5deg); transition: transform .8s var(--ease); }
+        .demo[data-fase="3"] .hoja-demo { transform: rotate(0) translateY(-4px); }
+        .hoja-demo i { display: block; height: 7px; border-radius: 4px; background: var(--gray); margin-bottom: 9px; }
+        .hoja-demo i:nth-child(1) { width: 58%; height: 10px; background: #d9d6cf; margin-bottom: 14px; }
+        .hoja-demo i:nth-child(3) { width: 88%; } .hoja-demo i:nth-child(4) { width: 72%; } .hoja-demo i:nth-child(5) { width: 80%; }
+        .hoja-demo .zona { position: absolute; left: 9%; right: 30%; bottom: 13%; height: 30%; border-radius: 8px; outline: 2px dashed transparent; transition: outline-color .3s, background .3s; }
+        .demo[data-fase="1"] .zona { outline-color: var(--yellow-hover); background: rgba(255,193,7,.12); }
+        .zona svg { position: absolute; inset: 0 0 18% 0; width: 100%; height: 82%; }
+        .zona path { fill: none; stroke: #1d4ed8; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 420; stroke-dashoffset: 420; }
+        .demo[data-fase="2"] .zona path, .demo[data-fase="3"] .zona path { animation: trazo 1.3s cubic-bezier(.45,0,.2,1) forwards; }
+        .demo[data-fase="3"] .zona path { animation: none; stroke-dashoffset: 0; }
+        .zona .linea-f { position: absolute; left: 0; right: 0; bottom: 16%; border-top: 1px solid #cfcac0; }
+        .zona .datos { position: absolute; left: 0; bottom: 0; font: 7px/1.2 Inter, sans-serif; color: #6b6b75; opacity: 0; transition: opacity .4s .2s; white-space: nowrap; }
+        .demo[data-fase="2"] .datos, .demo[data-fase="3"] .datos { opacity: 1; transition-delay: 1.1s; }
+        .demo[data-fase="3"] .datos { transition-delay: 0s; }
+        .archivo-vuela { position: absolute; left: -2%; top: 30%; width: 26%; aspect-ratio: .8; border-radius: 8px; background: var(--graphite); color: var(--yellow); display: grid; place-items: center; font: 800 12px Montserrat, sans-serif; box-shadow: 0 14px 24px -14px rgba(0,0,0,.6); opacity: 0; transform: translate(-30%, 20%) rotate(-14deg); transition: opacity .5s var(--ease), transform .7s var(--ease); }
+        .demo[data-fase="0"] .archivo-vuela { opacity: 1; transform: translate(10%, 0) rotate(-6deg); }
+        .chip-ok { position: absolute; right: 2%; top: 14%; display: flex; align-items: center; gap: 6px; background: var(--graphite); color: #fff; font: 700 13px Montserrat, sans-serif; padding: 9px 14px 9px 10px; border-radius: 999px; box-shadow: 0 14px 26px -12px rgba(0,0,0,.5); opacity: 0; transform: translateY(10px) scale(.9); transition: opacity .4s var(--ease), transform .5s var(--ease); }
+        .chip-ok svg { width: 18px; height: 18px; color: var(--yellow); }
+        .demo[data-fase="3"] .chip-ok { opacity: 1; transform: none; }
+        .dedo { position: absolute; width: 34px; height: 34px; border-radius: 999px; background: rgba(255,193,7,.35); box-shadow: inset 0 0 0 2px var(--yellow-hover); left: 30%; bottom: 22%; opacity: 0; transition: opacity .3s; pointer-events: none; }
+        .demo[data-fase="1"] .dedo { opacity: 1; animation: pulso 1s ease-in-out infinite; }
+        @keyframes trazo { to { stroke-dashoffset: 0; } }
+        @keyframes pulso { 50% { transform: scale(1.25); } }
+        .pasos li { cursor: pointer; transition: box-shadow .3s var(--ease), transform .3s var(--ease), background .3s; position: relative; overflow: hidden; }
+        .pasos li[aria-current="step"] { box-shadow: inset 0 0 0 2px var(--yellow); transform: translateX(4px); }
+        .pasos li[aria-current="step"] span { background: var(--yellow); }
+        .pasos li::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--yellow); transform: scaleX(0); transform-origin: left; }
+        .pasos li[aria-current="step"]::after { animation: avance var(--dur, 2.6s) linear forwards; }
+        .demo.pausa ~ .pasos li::after, .pasos.pausa li::after { animation-play-state: paused; }
+        @keyframes avance { to { transform: scaleX(1); } }
+
+        /* ---------- Acciones explicadas ---------- */
+        .opciones { background: #fff; border-radius: 22px; box-shadow: inset 0 0 0 1px var(--gray); overflow: hidden; }
+        .opcion + .opcion { border-top: 1px solid var(--gray); }
+        .opcion-fila { display: flex; align-items: center; gap: 14px; padding: 14px 8px 14px 16px; }
+        .opcion-fila > button.ir { flex: 1; display: flex; align-items: center; gap: 14px; text-align: left; min-height: 48px; }
+        .opcion-ico { width: 42px; height: 42px; border-radius: 13px; background: var(--cream); display: grid; place-items: center; flex: none; transition: transform .35s var(--ease), background .3s; }
+        .opcion-ico svg { width: 22px; height: 22px; }
+        .ir:hover .opcion-ico, .ir:focus-visible .opcion-ico { background: var(--yellow); transform: rotate(-6deg) scale(1.05); }
+        .ir:active .opcion-ico { transform: scale(.92); }
+        .opcion b { display: block; font: 700 15px Montserrat, sans-serif; }
+        .opcion-fila small { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; }
+        .info { width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center; color: var(--gold-ink); flex: none; transition: transform .35s var(--ease), background .2s; }
+        .info:hover { background: var(--cream); }
+        .info[aria-expanded="true"] { transform: rotate(180deg); background: var(--cream); }
+        .detalle { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s var(--ease); }
+        .detalle > div { overflow: hidden; }
+        .opcion.abierta .detalle { grid-template-rows: 1fr; }
+        .detalle ul { margin: 0 16px 16px 72px; padding: 12px 14px 12px 30px; background: var(--cream); border-radius: 14px; font-size: 14px; color: #3d3d3d; }
+        .detalle li + li { margin-top: 4px; }
+        .btn-primary.abrir { position: relative; overflow: hidden; min-height: 60px; font-size: 17px; box-shadow: 0 14px 28px -16px rgba(138,97,0,.7); }
+        .btn-primary.abrir::before { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%); transform: translateX(-100%); animation: brillo 3.6s 2.4s ease-in-out infinite; }
+        .btn-primary.abrir small { display: block; font: 500 12px Inter, sans-serif; opacity: .8; }
+        @keyframes brillo { 0%, 70% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .entra { animation: subir .6s var(--ease) both; }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
         @media (min-width: 760px) { #paginas { padding-left: 24px; padding-right: 24px; } .dock { max-width: 640px; margin: 0 auto; } }
     </style>
@@ -163,28 +234,59 @@
         <div><b>Pascal Sign</b><small>de PascalIA</small></div>
         <button class="btn btn-ghost" id="btn-cuenta" style="margin-left:auto;min-height:40px;padding:8px 16px;font-size:14px"><span data-pascal-cuenta>Entrar</span></button>
     </div>
-    <div class="hero">
+    <div class="hero entra">
         <h1>Firma tus PDF <mark>desde el celular</mark></h1>
         <p>Abre el documento, pon tu firma con el dedo y compártelo. Tus documentos y tus firmas no salen de tu celular.</p>
     </div>
-    <ol class="pasos">
-        <li><span>1</span>Abre el PDF desde tus archivos, el correo o WhatsApp.</li>
-        <li><span>2</span>Toca «Firmar» y arrastra tu firma a su lugar.</li>
-        <li><span>3</span>Comparte o guarda el PDF firmado.</li>
+    <div class="demo entra" data-fase="0" aria-hidden="true" style="animation-delay:.1s">
+        <div class="archivo-vuela">PDF</div>
+        <div class="hoja-demo"><i></i><i></i><i></i><i></i><i></i>
+            <div class="zona"><svg viewBox="0 0 200 60"><path d="M8 44 C 20 10, 30 8, 28 30 S 22 56, 40 40 S 60 12, 66 26 S 70 48, 84 36 C 92 28, 96 22, 104 30 S 112 46, 122 34 S 136 18, 142 30 C 148 42, 158 40, 170 28 C 178 20, 186 22, 194 26"/></svg>
+                <span class="linea-f"></span><span class="datos">Firmado electrónicamente · 2026-11-15 10:24</span></div>
+            <span class="dedo"></span>
+        </div>
+        <div class="chip-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Listo para compartir</div>
+    </div>
+    <ol class="pasos" aria-label="Cómo funciona">
+        <li data-p="0" tabindex="0"><span>1</span>Abre el PDF desde tus archivos, el correo o WhatsApp.</li>
+        <li data-p="1" tabindex="0"><span>2</span>Toca «Firmar» y arrastra tu firma a su lugar.</li>
+        <li data-p="2" tabindex="0"><span>3</span>Comparte o guarda el PDF firmado.</li>
     </ol>
     <div class="acciones">
         <div id="instalar" class="instalar hidden"><span id="instalar-texto">Instala Pascal Sign para abrirla como una app.</span><button id="btn-instalar">Instalar</button></div>
-        <label class="btn btn-primary btn-block" for="archivo">
+        <label class="btn btn-primary btn-block abrir" for="archivo">
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M12 18v-6M9 15l3-3 3 3"/></svg>
-            Abrir PDF para firmar
+            <span>Abrir PDF para firmar<small>Desde archivos, correo o WhatsApp</small></span>
         </label>
         <input id="archivo" type="file" accept="application/pdf,.pdf" class="hidden">
-        <button class="btn btn-ghost btn-block" id="btn-mis-firmas">Mis firmas</button>
-        <button class="btn btn-ghost btn-block" id="btn-solicitudes">Mis solicitudes de firma</button>
+        <div class="opciones">
+        <div class="opcion">
+            <div class="opcion-fila"><button class="ir" id="btn-pedir-inicio"><span class="opcion-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13 7l4 4"/><path d="M15 20h5"/></svg></span><span><b>Pedir firma a otra persona</b><small>Marca dónde firma y envíale un enlace</small></span></button>
+            <button class="info" aria-expanded="false" aria-label="Cómo funciona: Pedir firma a otra persona"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
+            <div class="detalle"><div><ul><li>Abre el PDF y toca en la hoja dónde debe firmar.</li><li>Comparte el enlace por WhatsApp o correo.</li><li>La otra persona firma desde su celular, sin instalar nada.</li><li>Te avisamos y descargas el PDF firmado.</li></ul></div></div>
+        </div>
+        <div class="opcion">
+            <div class="opcion-fila"><button class="ir" id="btn-mis-firmas"><span class="opcion-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17c3-4 5-9 7-9s-1 9 2 9 3-5 5-5 2 3 4 3"/><path d="M3 21h18"/></svg></span><span><b>Mis firmas</b><small>Dibuja, escribe o sube tu firma una vez</small></span></button>
+            <button class="info" aria-expanded="false" aria-label="Cómo funciona: Mis firmas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
+            <div class="detalle"><div><ul><li>Crea varias firmas: dibujada, escrita o desde una foto.</li><li>Se guardan cifradas solo en este celular.</li><li>Puedes borrarlas cuando quieras.</li></ul></div></div>
+        </div>
+        <div class="opcion">
+            <div class="opcion-fila"><button class="ir" id="btn-solicitudes"><span class="opcion-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/><path d="M15 16l1.5 1.5L19 15"/></svg></span><span><b>Mis solicitudes de firma</b><small>Mira quién ya firmó y quién falta</small></span></button>
+            <button class="info" aria-expanded="false" aria-label="Cómo funciona: Mis solicitudes de firma"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
+            <div class="detalle"><div><ul><li>Ves el estado de cada solicitud que enviaste.</li><li>Vuelves a compartir el enlace si alguien lo perdió.</li><li>Descargas el documento cuando ya está firmado.</li></ul></div></div>
+        </div>
+        </div>
         <p class="pie">Firma electrónica (Ley 527 de 1999 y Decreto 2364 de 2012). No es firma digital certificada.<br>
             <a href="/PascalPDF_Studio/terminos/">Términos</a> · <a href="/PascalPDF_Studio/politica/">Datos</a> · <a href="/PascalPDF_Studio/">¿Necesitas editar? PascalPDF</a></p>
     </div>
 </section>
+
+<div id="presentacion" aria-hidden="true">
+    <img src="/PascalSign/icon-192.png" alt="" width="96" height="96">
+    <div class="rubrica">Pascal Sign</div>
+    <small>Firma tus PDF desde el celular</small>
+    <button class="saltar" tabindex="-1">Saltar</button>
+</div>
 
 <!-- ==================== DOCUMENTO ==================== -->
 <section id="doc" class="hidden">
@@ -882,7 +984,54 @@
         cerrarHoja();
         return true;
     }
-    $('#archivo').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) abrirPDF(f); };
+
+    // ---- Presentación (una vez por sesión) y demostración animada del inicio ----
+    (function () {
+        const pres = $('#presentacion'), quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let visto = false; try { visto = sessionStorage.getItem('ps-presentacion'); sessionStorage.setItem('ps-presentacion', '1'); } catch (e) { /* nada */ }
+        const quitar = () => { pres.classList.add('fuera'); setTimeout(() => pres.remove(), 750); };
+        if (visto || quieto) pres.remove(); else { pres.onclick = quitar; setTimeout(quitar, 2300); }
+        const demo = $('.demo'), pasos = [...document.querySelectorAll('.pasos li')];
+        const DUR = [2200, 1400, 2600, 2400]; // abrir, tocar, firmar, compartir
+        const PASO = [0, 1, 1, 2];
+        let fase = 0, reloj = null;
+        function ir(f) {
+            fase = f; demo.dataset.fase = f;
+            if (f !== 2) pasos.forEach((li, i) => {
+                li.removeAttribute('aria-current');
+                if (i !== PASO[f]) return;
+                void li.offsetWidth; // reinicia la barra de avance
+                li.style.setProperty('--dur', (f === 1 ? DUR[1] + DUR[2] : DUR[f]) + 'ms');
+                li.setAttribute('aria-current', 'step');
+            });
+            if (quieto) return;
+            clearTimeout(reloj); reloj = setTimeout(() => ir((fase + 1) % 4), DUR[f]);
+        }
+        pasos.forEach((li, i) => {
+            const elegir = () => ir([0, 1, 3][i]);
+            li.onclick = elegir;
+            li.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); elegir(); } };
+        });
+        if (quieto) ir(3); else setTimeout(() => ir(0), visto ? 300 : 2400);
+        document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(reloj); else if (!quieto && !$('#inicio').classList.contains('hidden')) ir(fase); });
+        // Explicaciones desplegables de cada opción
+        document.querySelectorAll('.opcion .info').forEach(b => b.onclick = () => {
+            const o = b.closest('.opcion'), abierta = !o.classList.contains('abierta');
+            document.querySelectorAll('.opcion.abierta').forEach(x => { x.classList.remove('abierta'); x.querySelector('.info').setAttribute('aria-expanded', 'false'); });
+            o.classList.toggle('abierta', abierta); b.setAttribute('aria-expanded', String(abierta));
+        });
+    })();
+    // «Pedir firma» desde el inicio: abre el PDF y entra directo a marcar dónde firma la otra persona
+    let pedirAlAbrir = false;
+    document.querySelector('label[for=archivo]').addEventListener('click', () => { pedirAlAbrir = false; });
+    $('#btn-pedir-inicio').onclick = () => { pedirAlAbrir = true; $('#archivo').click(); };
+    $('#archivo').onchange = async (e) => {
+        const f = e.target.files[0]; e.target.value = '';
+        const pedir = pedirAlAbrir; pedirAlAbrir = false;
+        if (!f) return;
+        await abrirPDF(f);
+        if (pedir && !$('#doc').classList.contains('hidden')) setTimeout(() => $('#btn-pedir').click(), 300);
+    };
     $('#btn-mis-firmas').onclick = () => hojaElegir(true);
     $('#btn-cuenta').onclick = () => window.PascalCuenta && PascalCuenta.abrir();
     if (!(window.PascalCuenta && PascalCuenta.activa)) $('#btn-cuenta').classList.add('hidden');
