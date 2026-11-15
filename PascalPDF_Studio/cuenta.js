@@ -16,7 +16,10 @@
     const guardar = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } };
     const token = () => leer(LLAVE);
 
+    // Al crear la cuenta se envía de dónde llegó la persona (solo si aceptó «Analítica»; ver /analitica.js)
+    const CREAN_CUENTA = ['entrar', 'crear_cuenta', 'entrar_google'];
     async function api(accion, datos = {}) {
+        if (CREAN_CUENTA.includes(accion) && window.PascaliaAnalitica) { const origen = PascaliaAnalitica.origen(); if (origen) datos = { ...datos, origen }; }
         const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion, token: token(), ...datos }) });
         let j = {};
         try { j = await r.json(); } catch (e) { /* vacío */ }

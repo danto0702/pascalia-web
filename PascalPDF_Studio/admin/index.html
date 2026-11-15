@@ -50,6 +50,22 @@
     .productos { display: flex; flex-wrap: wrap; gap: 6px 14px; grid-column: 1 / -1; }
     .productos label { display: flex; align-items: center; gap: 6px; color: var(--grafito); font-size: 14px; }
     .productos input { width: auto; margin: 0; }
+    .filtros { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; margin-bottom: 14px; }
+    .filtros > div { min-width: 170px; }
+    .embudo { display: grid; gap: 10px; }
+    .paso { display: grid; grid-template-columns: 210px 1fr 110px; gap: 12px; align-items: center; }
+    .paso b { font: 700 14px Montserrat, sans-serif; }
+    .paso small { color: var(--gris); display: block; font-size: 12px; }
+    .barra { height: 34px; border-radius: 10px; background: #F4F1E8; overflow: hidden; }
+    .barra i { display: flex; align-items: center; height: 100%; min-width: 2px; padding-left: 10px; background: var(--amarillo); font: 800 15px Montserrat, sans-serif; font-style: normal; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .tasa { font: 700 14px Montserrat, sans-serif; text-align: right; font-variant-numeric: tabular-nums; }
+    .tasa small { color: var(--gris); font: 500 12px Inter, sans-serif; display: block; }
+    .nota { color: var(--gris); font-size: 13px; margin: 10px 0 0; }
+    .dos { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+    .grafica svg { width: 100%; height: auto; display: block; }
+    .leyenda { display: flex; gap: 16px; font-size: 13px; color: var(--gris); margin-top: 6px; }
+    .leyenda span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+    @media (max-width: 640px) { .paso { grid-template-columns: 1fr; gap: 4px; } .tasa { text-align: left; } }
     [hidden] { display: none !important; }
 </style>
 </head>
@@ -67,6 +83,7 @@
             <button role="tab" aria-selected="false" data-tab="codigos">Códigos promocionales</button>
             <button role="tab" aria-selected="false" data-tab="usuarios">Usuarios</button>
             <button role="tab" aria-selected="false" data-tab="pagos">Pagos</button>
+            <button role="tab" aria-selected="false" data-tab="analitica">Analítica</button>
         </nav>
 
         <section data-panel="resumen">
@@ -119,6 +136,29 @@
         <section data-panel="pagos" hidden>
             <div class="panel"><h2>Últimos 100 pagos</h2><table><thead><tr><th>Fecha</th><th>Correo</th><th>Producto</th><th class="num">Precio</th><th class="num">Descuento</th><th class="num">Pagado</th><th>Código</th><th>Estado</th><th>Referencia</th></tr></thead><tbody id="t-pagos"></tbody></table></div>
         </section>
+
+        <section data-panel="analitica" hidden>
+            <div class="panel">
+                <div class="filtros">
+                    <div><label for="a-dias">Periodo</label><select id="a-dias"><option value="7">Últimos 7 días</option><option value="30" selected>Últimos 30 días</option><option value="90">Últimos 90 días</option><option value="365">Último año</option></select></div>
+                    <div><label for="a-app">Firmas de</label><select id="a-app"><option value="pascalsign">Pascal Sign</option><option value="pascalpdf">PascalPDF</option><option value="todas">Ambas apps</option></select></div>
+                    <div><button class="btn sec" type="button" id="a-recargar">Actualizar</button></div>
+                </div>
+                <h2>Embudo</h2>
+                <div class="embudo" id="a-embudo"></div>
+                <p class="nota">Las visitas solo cuentan a quienes aceptaron «Analítica» en el banner de cookies; las cuentas, firmas y pagos son el total real. Por eso una tasa puede pasar de 100 %. Activada = la cuenta firmó al menos un documento.</p>
+            </div>
+            <div class="tarjetas" id="a-tarjetas" style="margin-bottom:16px"></div>
+            <div class="panel grafica"><h2>Día a día</h2><div id="a-dias-graf"></div><div class="leyenda"><span style="--c:#FFC107">Visitantes</span><span style="--c:#1F1F1F">Cuentas nuevas</span></div></div>
+            <div class="panel"><h2>Por canal</h2><table><thead><tr><th>Fuente</th><th class="num">Visitantes</th><th class="num">Abrieron la app</th><th class="num">Cuentas</th><th class="num">Activadas</th><th class="num">Pagaron</th><th class="num">Pago / cuenta</th></tr></thead><tbody id="t-fuentes"></tbody></table>
+                <p class="nota">«Sin dato» = cuentas de personas que no aceptaron la analítica. Para medir un canal, comparte el enlace con utm, por ejemplo <code>pascalia.lat/PascalSign/contratistas/?utm_source=whatsapp&amp;utm_medium=grupo&amp;utm_campaign=hospital</code>.</p></div>
+            <div class="dos">
+                <div class="panel"><h2>Campañas</h2><table><thead><tr><th>Campaña</th><th>Fuente</th><th class="num">Visitantes</th></tr></thead><tbody id="t-campanas"></tbody></table></div>
+                <div class="panel"><h2>Botones</h2><table><thead><tr><th>Página</th><th>Botón</th><th class="num">Clics</th></tr></thead><tbody id="t-botones"></tbody></table></div>
+                <div class="panel"><h2>Páginas</h2><table><thead><tr><th>Página</th><th class="num">Visitantes</th><th class="num">Visitas</th></tr></thead><tbody id="t-paginas"></tbody></table></div>
+                <div class="panel"><h2>Dispositivos</h2><table><thead><tr><th>Dispositivo</th><th class="num">Visitantes</th><th class="num">%</th></tr></thead><tbody id="t-dispositivos"></tbody></table></div>
+            </div>
+        </section>
     </div>
 </main>
 <script src="/PascalPDF_Studio/config.js"></script>
@@ -140,8 +180,49 @@
     document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
         document.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
         document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== b.dataset.tab);
-        ({ resumen, codigos, usuarios, pagos })[b.dataset.tab]();
+        ({ resumen, codigos, usuarios, pagos, analitica })[b.dataset.tab]();
     });
+
+    // Analítica: embudo de visitas a pagos, por canal, campaña, página, botón y dispositivo
+    const pct = (a, b) => b ? Math.round(a / b * 1000) / 10 + ' %' : '—';
+    const vacio = (n) => `<tr><td colspan="${n}" style="color:var(--gris)">Sin datos en este periodo.</td></tr>`;
+    const NOM_DISP = { android: 'Android', ios: 'iPhone / iPad', escritorio: 'Computador', otro: 'Otro' };
+    async function analitica() {
+        const dias = $('#a-dias').value, app = $('#a-app').value;
+        $('#a-embudo').innerHTML = '<p class="nota">Cargando…</p>';
+        let r;
+        try { r = await api('admin_analitica', { dias: +dias, app }); } catch (e) { $('#a-embudo').innerHTML = `<div class="msg err">${esc(e.message)}</div>`; return; }
+        const a = r.analitica, e = a.embudo;
+        const pasos = [
+            ['Visitantes', 'personas distintas en el sitio', e.visitantes],
+            ['Abrieron la app', 'entraron a Pascal Sign', e.app],
+            ['Crearon cuenta', 'empezaron la prueba gratis', e.cuentas],
+            ['Activadas', 'firmaron al menos un documento', e.activadas],
+            ['Pagaron', 'con un pago aprobado', e.pagaron]
+        ];
+        const max = Math.max(1, ...pasos.map(p => p[2]));
+        $('#a-embudo').innerHTML = pasos.map(([t, s, n], i) => `<div class="paso"><div><b>${t}</b><small>${s}</small></div>
+            <div class="barra" role="img" aria-label="${t}: ${n}"><i style="width:${Math.max(2, n / max * 100)}%">${n.toLocaleString('es-CO')}</i></div>
+            <div class="tasa">${i ? pct(n, pasos[i - 1][2]) : ''}${i ? '<small>del paso anterior</small>' : ''}</div></div>`).join('');
+        const t = [['Ingresos del periodo', pesos(e.ingresos)], ['Visitaron la página para contratistas', e.landing], ['Tocaron un botón', e.cta],
+            ['Visitas', e.visitas], ['Cuentas con origen conocido', `${e.cuentas_con_origen} de ${e.cuentas}`], ['De visitante a pago', pct(e.pagaron, e.visitantes)]];
+        $('#a-tarjetas').innerHTML = t.map(([k, v]) => `<div class="tarjeta"><small>${k}</small><b>${esc(v)}</b></div>`).join('');
+        // gráfica diaria (SVG propio, sin librerías)
+        const ds = a.dias || [], W = 1000, H = 220, P = 26, n = ds.length || 1, bw = (W - P * 2) / n;
+        const top = Math.max(1, ...ds.map(d => Math.max(d.visitantes, d.cuentas)));
+        const y = (v) => H - P - (v / top) * (H - P * 2);
+        const barras = ds.map((d, i) => `<rect x="${(P + i * bw + bw * .15).toFixed(1)}" y="${y(d.visitantes).toFixed(1)}" width="${(bw * .7).toFixed(1)}" height="${(H - P - y(d.visitantes)).toFixed(1)}" rx="3" fill="#FFC107"><title>${fecha(d.dia + 'T12:00:00')}: ${d.visitantes} visitantes, ${d.cuentas} cuentas</title></rect>`).join('');
+        const linea = ds.map((d, i) => `${i ? 'L' : 'M'}${(P + i * bw + bw / 2).toFixed(1)} ${y(d.cuentas).toFixed(1)}`).join(' ');
+        const marcas = ds.map((d, i) => (n <= 31 ? i % Math.ceil(n / 8) === 0 : i % Math.ceil(n / 6) === 0) ? `<text x="${(P + i * bw + bw / 2).toFixed(1)}" y="${H - 6}" font-size="12" text-anchor="middle" fill="#5C5C5C">${d.dia.slice(5).split('-').reverse().join('/')}</text>` : '').join('');
+        $('#a-dias-graf').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Visitantes y cuentas nuevas por día"><line x1="${P}" y1="${H - P}" x2="${W - P}" y2="${H - P}" stroke="#E9E9E9"/>${barras}${ds.length ? `<path d="${linea}" fill="none" stroke="#1F1F1F" stroke-width="2.5"/>` : ''}<text x="${P}" y="14" font-size="12" fill="#5C5C5C">máx. ${top}</text>${marcas}</svg>`;
+        $('#t-fuentes').innerHTML = (a.fuentes || []).length ? a.fuentes.map(f => `<tr><td>${esc(f.fuente)}</td><td class="num">${f.visitantes}</td><td class="num">${f.app}</td><td class="num">${f.cuentas}</td><td class="num">${f.activadas}</td><td class="num">${f.pagaron}</td><td class="num">${pct(f.pagaron, f.cuentas)}</td></tr>`).join('') : vacio(7);
+        $('#t-campanas').innerHTML = (a.campanas || []).length ? a.campanas.map(c => `<tr><td>${esc(c.campana)}</td><td>${esc(c.fuente)}</td><td class="num">${c.visitantes}</td></tr>`).join('') : vacio(3);
+        $('#t-botones').innerHTML = (a.botones || []).length ? a.botones.map(c => `<tr><td>${esc(c.pagina)}</td><td>${esc(c.etiqueta)}</td><td class="num">${c.clics}</td></tr>`).join('') : vacio(3);
+        $('#t-paginas').innerHTML = (a.paginas || []).length ? a.paginas.map(c => `<tr><td>${esc(c.pagina)}</td><td class="num">${c.visitantes}</td><td class="num">${c.visitas}</td></tr>`).join('') : vacio(3);
+        const disp = Object.entries(a.dispositivos || {}), tot = disp.reduce((s, [, v]) => s + v, 0);
+        $('#t-dispositivos').innerHTML = disp.length ? disp.sort((x, z) => z[1] - x[1]).map(([k, v]) => `<tr><td>${NOM_DISP[k] || esc(k)}</td><td class="num">${v}</td><td class="num">${pct(v, tot)}</td></tr>`).join('') : vacio(3);
+    }
+    $('#a-dias').onchange = analitica; $('#a-app').onchange = analitica; $('#a-recargar').onclick = analitica;
 
     async function resumen() {
         const { resumen: r } = await api('admin_resumen');

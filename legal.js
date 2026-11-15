@@ -8,11 +8,11 @@
    Hoy el sitio solo usa almacenamiento necesario: no hay analítica ni publicidad. */
 (function () {
   "use strict";
-  var CLAVE = "pascalia_consentimiento", VERSION = 1;
+  var CLAVE = "pascalia_consentimiento", VERSION = 2;
   var CATS = [
     { id: "necesarias", nombre: "Necesarias", fija: true, txt: "Recuerdan tu elección de cookies, tu sesión en el panel o en PascalPDF y el avance de las demos. Sin ellas el sitio no funciona." },
     { id: "preferencias", nombre: "Preferencias", txt: "Guardan ajustes opcionales, como una firma o sello que decidas recordar en este navegador." },
-    { id: "analitica", nombre: "Analítica", txt: "Medición anónima de visitas. Hoy no usamos ninguna; si la activamos, solo correrá con tu permiso." }
+    { id: "analitica", nombre: "Analítica", txt: "Medición propia y anónima de visitas, sin terceros: un identificador al azar en tu navegador, la página que visitas, de dónde llegaste y tu tipo de dispositivo. Nunca tu IP ni tus datos personales. Se borra a los 13 meses." }
   ];
   var oyentes = [];
   function leer() { try { var v = JSON.parse(localStorage.getItem(CLAVE)); return v && v.v === VERSION ? v : null; } catch (e) { return null; } }
