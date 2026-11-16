@@ -12,6 +12,10 @@ web
 - **Secondary audiences (served by the site, lower priority):**
   - Organizations in public health: coordinators and managers of ESE, IPS and secretarías de salud evaluating the Suite de Salud Pública (Flota Vehicular, NANA DNT, SI-APS, Misión Médica).
   - Empresas y comercios looking for custom development (web, NFC, menús interactivos, dashboards, asistentes por WhatsApp, documentos, CRM, reservas, apps de campo).
+  - Added 2026-11-16 from the published pages; the owner confirmed they do not change the priority above:
+    - Owners and managers of restaurants, bars, fast food and consultorios evaluating **MesaViva** (orders, bill splitting and payment from the table) and **Pascal Web** (a website for the business, built and maintained by PascalIA).
+    - Organizers of amateur football championships evaluating **Fanátikos**.
+    - People who need to edit or sign a PDF: **PascalPDF Studio** (edit and sign in the browser) and **Pascal Sign** (sign from the phone). These two are tools used on the site itself, not pages that ask for a request.
 
 ## Product Purpose
 
@@ -33,14 +37,25 @@ Success for the site: a visitor from the primary audience understands what Cuent
 
 - Static HTML/CSS/JS site, no build step, published from `main` to GitHub Pages at pascalia.lat (DNS at Porkbun). The publish workflow excludes internal folders (`.claude`, `supabase`, docs) from the site.
 - Pages: `/` (PascalIA), `/desarrollos/`, `/cuentafacil/`, `/flota/`, `/nana-dnt/`, `/si-aps/`, `/mision-medica/`, `/politica-de-datos/`, `/terminos/`, `/panel/` (private, noindex).
+- Pages and products added after 2026-10-15 (recorded 2026-11-16 from the repository):
+  - `/mesaviva/`: MesaViva sales page with a plan configurator and a simulated demo in `/mesaviva/demo/`. The page states the product is in development.
+  - `/pascal-web/`: Pascal Web, websites with maintenance for restaurants, bars and consultorios, with three example sites (`restaurante`, `bar`, `odontologia`) and published plans.
+  - `/fanatikos/`: Fanátikos, management of amateur football championships, with a demo in `/fanatikos/demo/` (noindex; data stays in the browser). The page states it is in testing with one championship.
+  - `/PascalPDF_Studio/`: PascalPDF Studio, a browser tool to edit and sign PDF, with accounts, an admin area, a third-party signing flow (`firmar/`) and its own política and términos.
+  - `/PascalSign/`: Pascal Sign, an installable app (web manifest and service worker) to sign PDF from the phone; signatures and documents stay on the device.
+  - `/pascal/`: teaser page for Pascal ("Muy pronto"), noindex and outside the sitemap until the official launch.
+  - `/reembolsos/`, `/politica-de-cookies/`, `/eliminar-mis-datos/`, `/aviso-legal/`: legal pages.
+- PascalBot (`pascalbot/`) is a chat widget on `/` and `/cuentafacil/` that answers questions about the scope of CuentaFacil and sends anything about a specific cuenta to WhatsApp.
+- `servicios/convertidor/` is a Word to PDF conversion service deployed on Railway; it is not part of the published site.
+- Every new page or product must meet `CUMPLIMIENTO.md` before it is published; `.github/scripts/cumplimiento.py` blocks the publish workflow when the automatic checks fail.
 - Contact form (`contacto.js`) posts to the Supabase Edge Function `pascalia-solicitud`, temporarily hosted in the client's SI-APS HRNO project and isolated with the `pascalia_` prefix and RLS; confirmation and notice emails via Resend from contacto@pascalia.lat.
-- Sub-brands keep their own identity inside the PascalIA site: CuentaFacil (green, calendar-with-check logo), NANA DNT (own logo and palette), Misión Médica (official module logo; its emblem's use is regulated by Res. 4481 de 2012).
-- Legal pages exist and are authoritative: Política de tratamiento de datos (v1.1) and Términos y condiciones of CuentaFacil.
+- Sub-brands keep their own identity inside the PascalIA site: CuentaFacil (PascalIA yellow, calendar-with-check logo; green is not part of the PascalIA palette, owner correction 2026-11-16), NANA DNT (own logo and palette), Misión Médica (official module logo; its emblem's use is regulated by Res. 4481 de 2012).
+- Legal pages exist and are authoritative: Política de tratamiento de datos and Términos y condiciones of CuentaFacil (both show version 1.3, in force since 2026-10-20), plus Política de reembolsos, Política de cookies, Aviso legal and Eliminar mis datos.
 - CuentaFacil pricing (confirmed 2026-10-15, matches `/terminos/#precios`): **$15.000** one-time per contract configuration (covers that contract's prórrogas and adiciones) and **$50.000** per generated cuenta de cobro (informe). Prices in COP, final value.
 - CuentaFacil is open in pilot (confirmed 2026-10-15): a contratista who writes on WhatsApp can start now; if their entity is not configured yet, it is configured with them. CuentaFacil CTAs say "Empezar", not "lista de espera".
 - Documents a contratista sends over WhatsApp (contrato, PILA, cédula, soportes) are stored in Supabase, encrypted, and are the input used to configure the contract and each cuenta; retention and deletion follow the Política de datos (24 months, or earlier on "borrar mis datos").
 - Sales WhatsApp: **+57 312 388 5012** (`https://wa.me/573123885012`), also listed in the Términos as the attention line.
-- Undecided product facts: how the other solutions (Suite de Salud Pública, desarrollos) are sold (licenses, subscriptions or projects) and their prices; none are published.
+- Undecided product facts: how the Suite de Salud Pública and desarrollos are sold (licenses, subscriptions or projects) and their prices; none are published. MesaViva and Pascal Web publish their plans on their own pages, and those pages are the source for any price; no price for Fanátikos is published.
 
 ## Brand Commitments
 

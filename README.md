@@ -38,7 +38,7 @@ y abrir http://localhost:8000.
 - Colores: amarillo PascalIA `#FFC107`, gris grafito `#1F1F1F`, gris claro `#E9E8E9`, crema `#FFF8E1` (variables en `pascalia.css`). Para texto amarillo sobre fondo claro se usa `--gold-text` (`#8A6100`) por contraste.
 - Tipografía: Montserrat (Google Fonts).
 - Logo: `flower.svg` (flor) + palabra "Pascal**IA**" con "IA" en amarillo; `flower-outline.svg` para las flores de fondo.
-- `styles.css` es solo para `/cuentafacil/`, que conserva su propia identidad de producto (verde).
+- `/cuentafacil/` usa `sitio.css` con el amarillo de PascalIA y su logo de calendario con chulo. El verde no hace parte de la paleta de PascalIA.
 
 ## Notas
 
