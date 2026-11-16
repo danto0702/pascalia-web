@@ -25,7 +25,7 @@
       if (tabs) tabs.insertAdjacentHTML("beforeend", '<button type="button" aria-pressed="' + (i === 0) + '" data-tab="' + i + '">' + esc(cat.nombre) + "</button>");
       cont.insertAdjacentHTML("beforeend", '<div class="carta-cat" data-panel="' + i + '"' + (i ? " hidden" : "") + "><ul>" + cat.platos.map(function (p, j) {
         var id = i + "-" + j;
-        return '<li class="plato"><div class="plato-tx"><h3>' + esc(p.n) + "</h3>" + (p.d ? "<p>" + esc(p.d) + "</p>" : "") + '</div><div class="plato-ac"><span class="precio">' + cop(p.p) +
+        return '<li class="plato' + (p.i ? ' con-foto' : '') + '">' + (p.i ? '<img class="plato-foto" src="' + esc(p.i) + '" alt="" width="320" height="320" loading="lazy">' : '') + '<div class="plato-tx"><h3>' + esc(p.n) + "</h3>" + (p.d ? "<p>" + esc(p.d) + "</p>" : "") + '</div><div class="plato-ac"><span class="precio">' + cop(p.p) +
           '</span><button type="button" class="mas" data-add="' + id + '" aria-label="Agregar ' + esc(p.n) + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div></li>';
       }).join("") + "</ul></div>");
     });
