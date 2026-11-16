@@ -1,6 +1,6 @@
 ---
 name: PascalIA
-description: "Ideas que hacen florecer tu organización": warm white and cream pages, yellow for action, graphite for results, and the original six-petal PascalIA flower.
+description: '"Ideas que hacen florecer tu organización": warm white and cream pages, yellow for action, graphite for results, and the original six-petal PascalIA flower.'
 colors:
   yellow: "#FFC107"
   yellow-hover: "#FFB300"
@@ -13,6 +13,18 @@ colors:
   cream: "#FFF8E1"
   cream-line: "#F3E7BE"
   white: "#FFFFFF"
+  page-warm: "#FFFDF7"
+  ink-2: "#55514B"
+  ink-3: "#8C877E"
+  line-warm: "#E2DED3"
+  amber-deep: "#F2B300"
+  amber-ink: "#7D5B00"
+  amber-soft: "#FFF1C2"
+  night-2: "#2A2927"
+  on-night: "#F4F1EA"
+  on-night-2: "#C9C4BA"
+  navy: "#0C2858"
+  navy-2: "#163A78"
 typography:
   display:
     fontFamily: "Montserrat, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
@@ -59,6 +71,28 @@ typography:
     fontSize: "0.875rem"
     fontWeight: 400
     lineHeight: 1.65
+  corporate-display:
+    fontFamily: "Bricolage Grotesque, Geist, system-ui, sans-serif"
+    fontSize: "clamp(2.5rem, 5vw, 4.1rem)"
+    fontWeight: 700
+    lineHeight: 1.02
+    letterSpacing: "-0.035em"
+  corporate-headline:
+    fontFamily: "Bricolage Grotesque, Geist, system-ui, sans-serif"
+    fontSize: "clamp(2rem, 4vw, 3.2rem)"
+    fontWeight: 700
+    lineHeight: 1.08
+    letterSpacing: "-0.03em"
+  corporate-body:
+    fontFamily: "Geist, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontSize: "1.0625rem"
+    fontWeight: 400
+    lineHeight: 1.6
+  corporate-label:
+    fontFamily: "Geist, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 600
+    lineHeight: 1
 rounded:
   field: "12px"
   tile: "14px"
@@ -66,6 +100,8 @@ rounded:
   item: "18px"
   window: "20px"
   panel: "24px"
+  mock: "26px"
+  stage: "40px"
   pill: "999px"
 spacing:
   xs: "8px"
@@ -166,11 +202,61 @@ components:
     typography: "{typography.label}"
   nav-link-hover:
     textColor: "{colors.graphite}"
+  corporate-button-accent:
+    backgroundColor: "{colors.yellow}"
+    textColor: "{colors.graphite}"
+    typography: "{typography.corporate-label}"
+    rounded: "{rounded.pill}"
+    padding: "0 26px"
+    height: "52px"
+  corporate-button-accent-hover:
+    backgroundColor: "{colors.amber-deep}"
+    textColor: "{colors.graphite}"
+  corporate-button-ink:
+    backgroundColor: "{colors.graphite}"
+    textColor: "{colors.white}"
+    typography: "{typography.corporate-label}"
+    rounded: "{rounded.pill}"
+    padding: "0 26px"
+    height: "52px"
+  corporate-button-line:
+    backgroundColor: "transparent"
+    textColor: "{colors.graphite}"
+    typography: "{typography.corporate-label}"
+    rounded: "{rounded.pill}"
+    padding: "0 26px"
+    height: "52px"
+  corporate-button-sm:
+    rounded: "{rounded.pill}"
+    padding: "0 18px"
+    height: "44px"
+  corporate-nav-link:
+    textColor: "{colors.ink-2}"
+    rounded: "10px"
+    padding: "10px 12px"
+  corporate-nav-link-hover:
+    backgroundColor: "{colors.cream}"
+    textColor: "{colors.graphite}"
+  corporate-faq-item:
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.graphite}"
+    rounded: "{rounded.inner}"
+    padding: "18px 56px 18px 22px"
+  corporate-mock:
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.graphite}"
+    rounded: "{rounded.mock}"
+    width: "400px"
+  corporate-price-card:
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.graphite}"
+    rounded: "{rounded.panel}"
+    padding: "34px"
 ---
 
 # Design System: PascalIA
 
-> **Scope.** This system is recorded from the redesigned MesaViva sales page (`/mesaviva/`: `mesaviva.css`, `mesaviva.js`, `mesaviva/img/`), the first surface built in the PascalIA corporate world fixed by the owner's brand sheet. It is the system going forward for pascalia.lat. **The other pages (home, `/desarrollos/`, `/cuentafacil/`, the public health suite pages, legal pages) have not been migrated to it yet**: they still run on `sitio.css` / `pascalia.css` / `inicio.css`, which share the brand palette but use older components. Do not read those stylesheets as the reference for new work. Sub-brands keep their own identities (CuentaFacil green with its calendar-with-check logo, NANA DNT's own logo and palette, Misión Médica's official module logo); this system frames them as PascalIA, it does not repaint them.
+> **Scope.** This system is recorded from the redesigned MesaViva sales page (`/mesaviva/`: `mesaviva.css`, `mesaviva.js`, `mesaviva/img/`), the first surface built in the PascalIA corporate world fixed by the owner's brand sheet. It is one of the two families in use on pascalia.lat (owner decision, 2026-11-16: both are documented and neither is pending migration). The **product-sales family** recorded here (Montserrat + Inter) runs on `/mesaviva/`, `/fanatikos/` (`fanatikos.css`) and `/pascal-web/` (which loads `mesaviva.css` plus `pascal-web.css`). The **corporate family** (Bricolage Grotesque + Geist) runs on the home page (`inicio.css`) and on the pages that share `sitio.css`: `/desarrollos/`, `/cuentafacil/`, `/flota/`, `/nana-dnt/`, `/si-aps/`, `/mision-medica/`. Everything in this file describes the product-sales family unless a subsection is titled "Corporate family". Legal pages still run on `pascalia.css` (Montserrat only) and are not a reference for new components. PascalPDF Studio and Pascal Sign are app interfaces with their own styles and are not covered by this file. Sub-brands keep their own identities (CuentaFacil green with its calendar-with-check logo, NANA DNT's own logo and palette, Misión Médica's official module logo); this system frames them as PascalIA, it does not repaint them.
 
 ## Overview
 
@@ -181,6 +267,8 @@ PascalIA pages are bright, warm and conversational. White carries most of the pa
 The signature is the original PascalIA flower (`/flower.svg`): six pointed petals in Amarillo PascalIA at 82 % fill opacity, so their overlaps read slightly deeper, with curved white veins running out from the center and white nodes at the vein tips. It is the logo mark, it turns slowly and very faintly behind the hero, it blooms from the corner of the graphite result card, and it watermarks the footer. Pascal, the 3D character in the yellow cap, is a real presence on the page, always in the site's own art from `/pascal/`: his face is the avatar in the ask bar and in his replies, a yellow full-body panel of him leans into the hero as a tilted card, and a wink panel stands beside the FAQ.
 
 The page feels like a conversation you can touch: an ask bar where you write to Pascal, suggestion chips, white interface mockups that assemble themselves as you scroll, and numbers set in Montserrat with tabular figures so sums line up. Density is relaxed: sections breathe at 104px, cards have 22–36px of padding, and text sits at 1.65 line height.
+
+**Two families, one brand.** Both families share the flower, the yellow, graphite ink, cream bands, pill controls and the stroke icon set. They differ in voice and finish. The product-sales family is the one described above: Montserrat and Inter, pure white ground, inset hairlines, a graphite footer. The corporate family sets headings in Bricolage Grotesque and everything else in Geist, sits on a warm off-white ground (`page-warm`), outlines containers with real 1px warm borders (`line-warm`), closes with a full yellow contact band and a light footer, and lets each product page swap its accent through a class on `<body>` (`theme-navy` for Flota, `theme-nana` for NANA DNT). Use the family of the page you are working on; a new page takes the family of its closest sibling.
 
 **Key Characteristics:**
 - White page with cream sections; graphite reserved for results and closings.
@@ -209,7 +297,21 @@ A sunny yellow family over white and cream, grounded by near-black graphite and 
 - **Línea Crema** (`cream-line`): the hairline used on cream-on-cream containers (the demo stage, icon tiles on cream).
 - **Blanco** (`white`): page background and every card, window and bubble.
 
+### Corporate family tones
+The corporate family uses the same yellow, graphite, cream and white, plus these tones of its own.
+- **Blanco Cálido** (`page-warm`): the page ground of the home and the `sitio.css` pages, in place of pure white. Cards and mockups stay white on top of it.
+- **Tinta Secundaria** (`ink-2`): leads, secondary paragraphs, nav links at rest, footer links.
+- **Tinta Terciaria** (`ink-3`): the outline of line buttons and the menu button, and the border of an open FAQ item.
+- **Línea Cálida** (`line-warm`): the 1px border of cards, mockups, pills, FAQ items, the nav once scrolled and the footer rule.
+- **Ámbar Profundo** (`amber-deep`): hover of the accent button and the fill of the progress line in step flows.
+- **Tinta Ámbar** (`amber-ink`): small yellow-family accents on light ground (the "IA" in "de PascalIA", point icons).
+- **Ámbar Suave** (`amber-soft`): soft accent fills.
+- **Noche 2** (`night-2`), **Sobre Noche** (`on-night`) and **Sobre Noche 2** (`on-night-2`): the second dark tone and the two text tones used on deep sections.
+- **Azul Marino** (`navy`) and **Azul Marino 2** (`navy-2`): the deep surfaces of Flota (`theme-navy`) and the accent and deep surfaces of NANA DNT (`theme-nana`, where text on the accent is white).
+
 ### Named Rules
+**The Accent Slot Rule.** In the corporate family a page never hardcodes its accent. Buttons, markers, flow dots, selected tabs and FAQ toggles read the accent variables, and a product theme changes them once on `<body>`.
+
 **The Graphite-On-Yellow Rule.** Text and icons on any yellow fill are graphite. Never white on yellow.
 
 **The Yellow Means Act Rule.** Yellow fills are for controls, selected state, the marker and the flower. Large yellow areas appear only as low-opacity glows (the hero radial at 14 %, the spotlight at 16 %), as the flower itself, or as Pascal's yellow art panels, never as a section background.
@@ -233,7 +335,23 @@ A sunny yellow family over white and cream, grounded by near-black graphite and 
 - **Label** (Montserrat 600, 0.9–1rem): buttons, nav links, tabs, chips in option groups, pills, window-bar captions.
 - **Fine** (Inter 0.875rem, muted): disclaimers such as "Pagos, documentos DIAN y mensajes de la demo son simulados."
 
+### Corporate family
+**Display Font:** Bricolage Grotesque 500–800, variable optical size (with Geist, system-ui, sans-serif)
+**Body Font:** Geist 400–700 (with system-ui, -apple-system, Segoe UI, Roboto, sans-serif)
+
+**Character:** Bricolage Grotesque gives headings a tighter, more editorial voice at weight 700 with strong negative tracking; Geist carries paragraphs, navigation and buttons.
+
+- **Display** (`corporate-display`: 700, clamp 2.5–4.1rem, 1.02, -0.035em): the hero headline of a page.
+- **Headline** (`corporate-headline`: 700, clamp 2–3.2rem, 1.08, -0.03em): section headings in a 760px header block, left aligned by default and centered with the `center` variant. The contact headline goes to clamp 2.1–3.3rem.
+- **Title** (Bricolage 650, 1.12–1.25rem): card and proof titles, the footer slogan, the nav brand name at 700.
+- **Figure** (Bricolage 700, clamp 2.4–3.2rem, tabular figures): price amounts.
+- **Lead** (Geist, 1.12–1.18rem, `ink-2`, max 32em): hero and section intros.
+- **Body** (`corporate-body`: Geist 400, 1.0625rem, 1.6).
+- **Label** (`corporate-label`: Geist 600, 1rem): buttons, tabs, menu button. Nav links are Geist 500 at 0.97rem.
+
 ### Named Rules
+**The Family Stays Whole Rule.** Do not mix the two type families on one page. Montserrat with Inter, or Bricolage Grotesque with Geist.
+
 **The Two Voices Rule.** Montserrat speaks (headings, labels, buttons, numbers); Inter explains (paragraphs, chips you can type, inputs). Do not set paragraphs in Montserrat or headings in Inter.
 
 **The One Marker Rule.** At most one phrase per heading gets the yellow highlighter (a band from 58 % to 90 % of the line height), and it draws itself left to right on reveal (900ms). On graphite, emphasis is yellow text instead of a marker.
@@ -246,6 +364,11 @@ The plan configurator is a 1.15/0.85 split with the graphite result card sticky 
 
 Breakpoints observed: 1240px (Pascal shrinks), 1080px (Pascal hidden, stacked configurator and stage), 860px (mobile nav, single columns), 520px (plan table becomes cards, simplified mockups). Navigation is sticky at 72px and compresses to 60px with a frosted white background once scrolled.
 
+### Corporate family
+The same 1200px wrap with a 28px gutter. The hero is a two-column grid (1.05fr/0.95fr, 48px gap): copy on the left with headline, lead, buttons and a row of point pills, and an animated product mockup on the right, standing on a cream panel rotated -3deg. Sections run at 104px vertical padding and alternate the warm ground, cream (`tint`) and a deep band (`deep`). Section headers are left aligned at 760px, or a 1.1fr/0.9fr split with the lead beside the heading. Recurring structures: a step flow in equal columns joined by a line that fills on reveal, a feature explorer (tab list at 0.8fr, panel at 1.2fr), a four-column proof strip divided by 1px rules on a deep band, a two-cell price card, and a contact band split 0.9fr/1.1fr with sticky copy beside the form. On the home page the hero holds three route rows (one per audience) under the buttons and the flower drawn as a node network on the right.
+
+Breakpoints observed: 1240px and 1080px (nav links tighten), 960px (menu button, single columns), 680px (compact mockups and tiles). The nav is sticky at 68px and gains a border and a soft shadow once scrolled.
+
 ## Elevation & Depth
 
 A light hybrid: surfaces are outlined with a 1px gray inset shadow (never a CSS border on cards) and lifted with a soft, low-contrast neutral shadow. The yellow glow shadow belongs to yellow controls only. Graphite cards use a deeper lift. Depth also comes from layering: white cards on cream panels, cream badges inside white cards, the translucent flower behind the hero.
@@ -257,12 +380,21 @@ A light hybrid: surfaces are outlined with a 1px gray inset shadow (never a CSS 
 - **Ask bar** (`box-shadow: inset 0 0 0 1px #E9E9E9, 0 18px 44px -20px rgba(31,31,31,.25)`): turns into a 2px yellow inset with a warm glow on focus.
 - **Device** (`box-shadow: 0 30px 60px -30px rgba(31,31,31,.5)`): the phone frame of the demo.
 
+### Corporate family
+Containers carry a real 1px `line-warm` border and one of two shadows; resting cards are often flat with only the border.
+- **Shadow 1** (`box-shadow: 0 1px 2px rgba(31,31,31,.06), 0 8px 24px -16px rgba(31,31,31,.25)`): selected explorer tab, open FAQ item.
+- **Shadow 2** (`box-shadow: 0 2px 6px rgba(31,31,31,.06), 0 28px 56px -28px rgba(31,31,31,.4)`; the home page uses `0 24px 48px -24px` at .35): product mockups, the phone frame, the price card.
+- **Accent button** (`box-shadow: 0 12px 24px -14px rgba(31,31,31,.5)`, deepening to `0 18px 30px -14px` at .55 on hover): a neutral shadow, not a yellow glow.
+- **Form on yellow** (`box-shadow: 0 30px 60px -30px rgba(90,60,0,.55)`): the contact form inside the yellow band.
+
 ### Named Rules
 **The Hairline-Plus-Warmth Rule.** Every white container is a 1px gray inset outline plus the soft card shadow. No heavy borders, no offset or solid shadows.
 
 ## Shapes
 
 Round everywhere. Everything you press is a pill (999px) or a circle: buttons, chips, tabs and their sliding indicator, option buttons, steppers, the ask bar, the send button, play dots, step letters, check bullets, the menu button. Containers step down by size: large panels and the demo stage 24px, interface windows and the plan table 20px, FAQ items and icon tiles 18px, inner mockup cards 16px, tickets and mini tables 14px, form fields 12px. Pascal's reply bubble is the one asymmetric shape (6px top-left, 22px elsewhere), pointing back at the avatar. Pascal's face sits in a circle ringed 2px in yellow; his art panels are 22px cards. Left-edge accent bars (3–4px yellow, scaling in vertically) mark the open FAQ item and the active method step. The flower's pointed petals are the system's one pointed form and belong to the mark alone; nothing interactive has a sharp corner.
+
+In the corporate family the same pill rule holds for buttons, point pills and the menu button, while nav links and explorer tabs are rounded rectangles (10px and 16px). Containers use 24px for large cards and the price card, 16px for FAQ items and tabs, 26px for product mockups, 40px for the phone frame and the tilted cream stage behind a mockup, and 12px for icon tiles (42px squares).
 
 ## Components
 
@@ -318,6 +450,25 @@ White items at 18px with a gray outline, Montserrat 700 questions, a 28px cream 
 ### Footer
 Graphite-deep with a faint flower watermark at the bottom right, four columns (brand, Soluciones, Empresa, Legal), light-gray links that turn yellow on hover, a 1px dark rule above the legal line.
 
+### Corporate family components
+- **Buttons:** pills at 52px (50px on the home page), 0 26px, Geist 600 1rem, with a 1.5px transparent border. Accent: accent fill with graphite text (white on NANA DNT) and a neutral shadow; hover lifts 2px, deepens the fill and runs one diagonal shine. Ink: graphite with white text, black on hover. Line: transparent with an `ink-3` border that turns graphite on a white fill. Small: 44px, 0 18px. Press scales to 0.97 and draws a ripple. The trailing icon slides 4px right on hover.
+- **Text link:** weight 600 with a 2px accent underline at 4px offset that turns graphite on hover.
+- **Focus:** 3px graphite outline at 3px offset plus a 7px yellow halo (55–60 % opacity).
+- **Navigation:** sticky 68px bar on the warm ground. Brand: a 40px logo at 10px radius, the product name in Bricolage 700 1.25rem and "de PascalIA" in 0.74rem with "IA" in `amber-ink`. Links are Geist 500 in `ink-2` and get a cream fill on hover. Below 960px a pill menu button with an `ink-3` border takes over.
+- **Marker:** a band of the accent color from 60 % to 90 % of the line height that draws left to right in 1s.
+- **Point pills:** white pills with a `line-warm` border and an 18px `amber-ink` icon, rising in one after another under the hero buttons.
+- **Product mockup:** a white card up to 400px wide at 26px radius with border and shadow 2, a deep header bar with the product logo, and animated content that only runs while it is on screen. CuentaFacil uses a phone frame (graphite, 40px radius) with a yellow chat header.
+- **Word ticker:** a deep band with Bricolage 700 words separated by 12px yellow dots, scrolling in 40s, paused on hover and off screen.
+- **Step flow:** equal columns with an 18px accent dot ringed in the ground color and a 2px line that fills in `amber-deep` on reveal.
+- **Feature explorer:** a tab list of 16px rows, each with a 42px icon tile; the selected tab turns white with border and shadow 1 and its tile takes the accent.
+- **Proof strip:** four columns on a deep band, a 32px yellow icon, a white Bricolage 650 title and `on-night-2` text, divided by 1px white rules at 16 % opacity.
+- **Price card:** two cells in a white 24px card with shadow 2, divided by a 1px rule; the amount in Bricolage 700 with tabular figures.
+- **FAQ:** native `details` at 16px radius with a `line-warm` border; the toggle is a 22px accent circle with a graphite plus that rotates 135deg; an open item gains shadow 1 and an `ink-3` border.
+- **Contact band:** a full yellow section with graphite text, sticky copy on the left and the shared form (`pf`) on the right with 50px fields.
+- **Footer:** light, on the warm ground with a top rule; brand in Bricolage 700 with "IA" in `amber-deep`, `ink-2` links that gain a yellow underline on hover.
+- **Route rows (home page only):** full-width links, one per audience, with a 42px cream icon tile and a two-line label, separated by `line-warm` rules.
+- **Reveal:** content is visible without JavaScript; with it, blocks rise 18px and fade in. All loops and reveals stop under `prefers-reduced-motion`.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -331,12 +482,17 @@ Graphite-deep with a faint flower watermark at the bottom right, four columns (b
 - **Do** draw Pascal only from the site art in `/pascal/` and its crops.
 - **Do** honor `prefers-reduced-motion`: the spinning flower, marquee, rings, tickets and petals stop, and reveals show in place.
 - **Do** keep sub-brand pages in their own identity inside this frame.
+- **Do** work in the family of the page you are editing, and give a new page the family of its closest sibling: corporate for company, suite and service pages, product-sales for a product's own selling page.
+- **Do** change a corporate product page's accent with a theme class on `<body>`, through the accent variables.
+- **Do** use a real 1px `line-warm` border on corporate containers and the 1px gray inset outline on product-sales containers.
 
 ### Don't:
 - **Don't** put white text on yellow, or yellow text on white (use `gold-ink` for a small yellow-family accent on white).
-- **Don't** use yellow as a section background or a large flat fill.
+- **Don't** use yellow as a section background or a large flat fill. The one exception is the contact band that closes corporate family pages.
 - **Don't** use sharp-cornered buttons or chips, solid or offset shadows, or heavy borders on cards.
 - **Don't** put a small label above section headlines; sections open on the headline itself.
 - **Don't** use text characters or emoji as icons; draw them with the stroke icon set.
 - **Don't** redraw the flower with round petals or a gradient fill, and don't use the brand-sheet character cutouts.
-- **Don't** take `sitio.css`, `pascalia.css` or `inicio.css` as the reference for new components; they predate this system.
+- **Don't** take `pascalia.css` as the reference for new components; it predates both families. `inicio.css` and `sitio.css` are the reference for the corporate family.
+- **Don't** mix Montserrat or Inter with Bricolage Grotesque or Geist on the same page.
+- **Don't** hardcode a product color in a corporate component; set it through the theme class.

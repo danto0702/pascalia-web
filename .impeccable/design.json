@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-26T12:00:00Z",
+  "generatedAt": "2026-11-16T14:05:09Z",
   "title": "Design System: PascalIA",
   "extensions": {
     "colorMeta": {
@@ -168,6 +168,186 @@
           "#FAFAFA",
           "#FFFFFF"
         ]
+      },
+      "page-warm": {
+        "role": "neutral",
+        "displayName": "Blanco Cálido",
+        "canonical": "#FFFDF7",
+        "tonalRamp": [
+          "#4C3900",
+          "#856300",
+          "#C29100",
+          "#FFBF00",
+          "#FFCF3D",
+          "#FFDE7A",
+          "#FFECB2",
+          "#FFF9E5"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Tinta Secundaria",
+        "canonical": "#55514B",
+        "tonalRamp": [
+          "#292724",
+          "#46433E",
+          "#67625B",
+          "#878178",
+          "#A49F98",
+          "#C1BEB9",
+          "#DBD9D6",
+          "#F3F2F1"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Tinta Terciaria",
+        "canonical": "#8C877E",
+        "tonalRamp": [
+          "#282724",
+          "#46433E",
+          "#66625B",
+          "#878278",
+          "#A4A099",
+          "#C1BEB9",
+          "#DBD9D7",
+          "#F3F2F2"
+        ]
+      },
+      "line-warm": {
+        "role": "neutral",
+        "displayName": "Línea Cálida",
+        "canonical": "#E2DED3",
+        "tonalRamp": [
+          "#2E2A1E",
+          "#504935",
+          "#756A4D",
+          "#9A8C65",
+          "#B2A78A",
+          "#CAC3AF",
+          "#E1DCD1",
+          "#F5F3F0"
+        ]
+      },
+      "amber-deep": {
+        "role": "primary",
+        "displayName": "Ámbar Profundo",
+        "canonical": "#F2B300",
+        "tonalRamp": [
+          "#4C3900",
+          "#856200",
+          "#C28F00",
+          "#FFBD00",
+          "#FFCD3D",
+          "#FFDC7A",
+          "#FFEBB2",
+          "#FFF8E5"
+        ]
+      },
+      "amber-ink": {
+        "role": "primary",
+        "displayName": "Tinta Ámbar",
+        "canonical": "#7D5B00",
+        "tonalRamp": [
+          "#4C3800",
+          "#856100",
+          "#C28D00",
+          "#FFBA00",
+          "#FFCA3D",
+          "#FFDB7A",
+          "#FFEAB2",
+          "#FFF8E5"
+        ]
+      },
+      "amber-soft": {
+        "role": "primary",
+        "displayName": "Ámbar Suave",
+        "canonical": "#FFF1C2",
+        "tonalRamp": [
+          "#4C3B00",
+          "#856600",
+          "#C29500",
+          "#FFC400",
+          "#FFD33D",
+          "#FFE17A",
+          "#FFEDB2",
+          "#FFF9E5"
+        ]
+      },
+      "night-2": {
+        "role": "neutral",
+        "displayName": "Noche 2",
+        "canonical": "#2A2927",
+        "tonalRamp": [
+          "#282725",
+          "#454340",
+          "#64625D",
+          "#84817B",
+          "#A29F9B",
+          "#BFBEBA",
+          "#DAD9D7",
+          "#F3F2F2"
+        ]
+      },
+      "on-night": {
+        "role": "neutral",
+        "displayName": "Sobre Noche",
+        "canonical": "#F4F1EA",
+        "tonalRamp": [
+          "#322B1A",
+          "#574B2E",
+          "#7F6D43",
+          "#A78F58",
+          "#BCAA80",
+          "#D1C5A8",
+          "#E5DECD",
+          "#F6F4EE"
+        ]
+      },
+      "on-night-2": {
+        "role": "neutral",
+        "displayName": "Sobre Noche 2",
+        "canonical": "#C9C4BA",
+        "tonalRamp": [
+          "#2B2822",
+          "#4A453A",
+          "#6D6555",
+          "#8F8570",
+          "#AAA292",
+          "#C5BFB5",
+          "#DDDAD4",
+          "#F4F3F1"
+        ]
+      },
+      "navy": {
+        "role": "secondary",
+        "displayName": "Azul Marino",
+        "canonical": "#0C2858",
+        "tonalRamp": [
+          "#091F43",
+          "#103575",
+          "#174EAB",
+          "#1F66E0",
+          "#548BE8",
+          "#8AAFEF",
+          "#BCD1F6",
+          "#E9F0FC"
+        ]
+      },
+      "navy-2": {
+        "role": "secondary",
+        "displayName": "Azul Marino 2",
+        "canonical": "#163A78",
+        "tonalRamp": [
+          "#0C1F41",
+          "#153670",
+          "#1E4FA4",
+          "#2868D7",
+          "#5B8CE1",
+          "#8FB1EA",
+          "#BED2F3",
+          "#E9F0FB"
+        ]
       }
     },
     "typographyMeta": {
@@ -202,6 +382,22 @@
       "fine": {
         "displayName": "Fine",
         "purpose": "Disclaimers and simulated-data notes."
+      },
+      "corporate-display": {
+        "displayName": "Corporate Display",
+        "purpose": "Hero headline of home and sitio.css pages (Bricolage Grotesque 700)."
+      },
+      "corporate-headline": {
+        "displayName": "Corporate Headline",
+        "purpose": "Section headings in the corporate family."
+      },
+      "corporate-body": {
+        "displayName": "Corporate Body",
+        "purpose": "Paragraphs in Geist on corporate pages."
+      },
+      "corporate-label": {
+        "displayName": "Corporate Label",
+        "purpose": "Buttons, tabs and the menu button in Geist 600."
       }
     },
     "gradients": [
@@ -251,6 +447,26 @@
         "name": "focus",
         "value": "outline: 3px solid #1F1F1F; outline-offset: 2px",
         "purpose": "Focus ring on light surfaces; yellow on graphite."
+      },
+      {
+        "name": "corporate-shadow-1",
+        "value": "0 1px 2px rgba(31,31,31,.06), 0 8px 24px -16px rgba(31,31,31,.25)",
+        "purpose": "Corporate family: selected explorer tab, open FAQ item."
+      },
+      {
+        "name": "corporate-shadow-2",
+        "value": "0 2px 6px rgba(31,31,31,.06), 0 28px 56px -28px rgba(31,31,31,.4)",
+        "purpose": "Corporate family: product mockups, phone frame, price card."
+      },
+      {
+        "name": "corporate-accent-button",
+        "value": "0 12px 24px -14px rgba(31,31,31,.5)",
+        "purpose": "Corporate family: neutral shadow under the accent button."
+      },
+      {
+        "name": "corporate-form-on-yellow",
+        "value": "0 30px 60px -30px rgba(90,60,0,.55)",
+        "purpose": "Corporate family: contact form inside the yellow band."
       }
     ],
     "motion": [
@@ -288,6 +504,11 @@
         "name": "reduced-motion",
         "value": "prefers-reduced-motion: reduce",
         "purpose": "Stops all ambient loops and shows reveals in place."
+      },
+      {
+        "name": "corporate-ease-out",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Corporate family: easing for lifts, reveals and the marker."
       }
     ],
     "breakpoints": [
@@ -306,9 +527,17 @@
       {
         "name": "phone",
         "value": "520px"
+      },
+      {
+        "name": "corporate-menu",
+        "value": "960px"
+      },
+      {
+        "name": "corporate-phone",
+        "value": "680px"
       }
     ],
-    "scope": "Recorded from /mesaviva/ (first surface in the PascalIA world). Home, /desarrollos/, /cuentafacil/, health-suite and legal pages still use sitio.css / pascalia.css / inicio.css and are not migrated yet. Sub-brands keep their own identities.",
+    "scope": "Two families are documented (owner decision 2026-11-16). Product-sales family (Montserrat + Inter): /mesaviva/, /fanatikos/, /pascal-web/. Corporate family (Bricolage Grotesque + Geist): home (inicio.css) and the sitio.css pages (/desarrollos/, /cuentafacil/, /flota/, /nana-dnt/, /si-aps/, /mision-medica/). Legal pages run on pascalia.css and are not a reference. PascalPDF Studio and Pascal Sign are not covered. Sub-brands keep their own identities.",
     "brandAssets": [
       {
         "name": "flower",
@@ -425,11 +654,35 @@
       "description": "Muted Montserrat links with a yellow underline that grows from the left.",
       "html": "<nav class=\"ds-nav\"><a href=\"#\">Cómo funciona</a><a href=\"#\">Planes</a><a href=\"#\">Preguntas</a></nav>",
       "css": ".ds-nav { display: flex; gap: 28px; } .ds-nav a { position: relative; text-decoration: none; font: 600 .95rem 'Montserrat', system-ui, sans-serif; color: var(--muted, #5C5C5C); padding: 6px 0; transition: color 200ms; } .ds-nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--yellow, #FFC107); transform: scaleX(0); transform-origin: left; transition: transform 300ms cubic-bezier(.22, 1, .36, 1); } .ds-nav a:hover, .ds-nav a:focus-visible { color: var(--graphite, #1F1F1F); } .ds-nav a:hover::after, .ds-nav a:focus-visible::after { transform: scaleX(1); } .ds-nav a:focus-visible { outline: 3px solid var(--graphite, #1F1F1F); outline-offset: 2px; border-radius: 6px; }"
+    },
+    {
+      "name": "Corporate Accent Button",
+      "kind": "button",
+      "refersTo": "corporate-button-accent",
+      "description": "Primary action on home and sitio.css pages; the fill follows the page accent.",
+      "html": "<a class=\"ds-cbtn ds-cbtn-accent\" href=\"#\">Hablemos de tu proyecto</a>",
+      "css": ".ds-cbtn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 999px; border: 1.5px solid transparent; font-weight: 600; font-size: 1rem; line-height: 1; font-family: Geist, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; text-decoration: none; white-space: nowrap; cursor: pointer; transition: transform .25s cubic-bezier(.16,1,.3,1), background-color .2s, box-shadow .25s cubic-bezier(.16,1,.3,1); } .ds-cbtn:hover { transform: translateY(-2px); } .ds-cbtn:active { transform: scale(.97); } .ds-cbtn:focus-visible { outline: 3px solid #1F1F1F; outline-offset: 3px; box-shadow: 0 0 0 7px rgba(255,193,7,.55); } .ds-cbtn-accent { background: #FFC107; color: #1F1F1F; box-shadow: 0 12px 24px -14px rgba(31,31,31,.5); } .ds-cbtn-accent:hover { background: #F2B300; box-shadow: 0 18px 30px -14px rgba(31,31,31,.55); }"
+    },
+    {
+      "name": "Corporate Line Button",
+      "kind": "button",
+      "refersTo": "corporate-button-line",
+      "description": "Secondary action beside the accent button on corporate pages.",
+      "html": "<a class=\"ds-cbtn-line\" href=\"#\">Ver cómo funciona</a>",
+      "css": ".ds-cbtn-line { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 26px; border-radius: 999px; border: 1.5px solid #8C877E; background: transparent; color: #1F1F1F; font-weight: 600; font-size: 1rem; line-height: 1; font-family: Geist, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; text-decoration: none; cursor: pointer; transition: transform .25s cubic-bezier(.16,1,.3,1), background-color .2s, border-color .2s; } .ds-cbtn-line:hover { transform: translateY(-2px); border-color: #1F1F1F; background: #FFFFFF; } .ds-cbtn-line:active { transform: scale(.97); } .ds-cbtn-line:focus-visible { outline: 3px solid #1F1F1F; outline-offset: 3px; box-shadow: 0 0 0 7px rgba(255,193,7,.55); }"
+    },
+    {
+      "name": "Corporate FAQ Item",
+      "kind": "custom",
+      "refersTo": "corporate-faq-item",
+      "description": "Native details accordion used on sitio.css pages.",
+      "html": "<details class=\"ds-cfaq\"><summary>¿Cuánto cuesta?</summary><p>El valor se muestra completo antes de cobrar.</p></details>",
+      "css": ".ds-cfaq { background: #FFFFFF; border: 1px solid #E2DED3; border-radius: 16px; font-family: Geist, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: #1F1F1F; transition: box-shadow .25s, border-color .25s; } .ds-cfaq[open] { border-color: #8C877E; box-shadow: 0 1px 2px rgba(31,31,31,.06), 0 8px 24px -16px rgba(31,31,31,.25); } .ds-cfaq summary { position: relative; display: block; padding: 18px 56px 18px 22px; font-weight: 650; cursor: pointer; list-style: none; } .ds-cfaq summary::-webkit-details-marker { display: none; } .ds-cfaq summary::after { content: '+'; position: absolute; right: 20px; top: 50%; width: 22px; height: 22px; margin-top: -11px; border-radius: 50%; background: #FFC107; color: #1F1F1F; display: grid; place-items: center; font-weight: 700; line-height: 1; transition: transform .25s; } .ds-cfaq[open] summary::after { transform: rotate(135deg); } .ds-cfaq summary:focus-visible { outline: 3px solid #1F1F1F; outline-offset: 3px; border-radius: 10px; } .ds-cfaq p { margin: 0; padding: 0 22px 20px; color: #55514B; }"
     }
   ],
   "narrative": {
     "northStar": "The Idea That Blooms",
-    "overview": "PascalIA pages are bright, warm and conversational. White carries most of the page, cream (#FFF8E1 family) marks alternating sections and inner panels, and graphite takes over only where something resolves: the recommended plan, the strip of rules, the closing call, the footer. Yellow is not a background color; it is the color of doing something (buttons, the send button, picked chips, checked options), of emphasis (the marker drawn under a key phrase) and of the flower mark. Everything interactive is round: pills and circles, never sharp corners.\n\nThe signature is the original PascalIA flower (`/flower.svg`): six pointed petals in Amarillo PascalIA at 82 % fill opacity, so their overlaps read slightly deeper, with curved white veins running out from the center and white nodes at the vein tips. It is the logo mark, it turns slowly and very faintly behind the hero, it blooms from the corner of the graphite result card, and it watermarks the footer. Pascal, the 3D character in the yellow cap, is a real presence on the page, always in the site's own art from `/pascal/`: his face is the avatar in the ask bar and in his replies, a yellow full-body panel of him leans into the hero as a tilted card, and a wink panel stands beside the FAQ.\n\nThe page feels like a conversation you can touch: an ask bar where you write to Pascal, suggestion chips, white interface mockups that assemble themselves as you scroll, and numbers set in Montserrat with tabular figures so sums line up. Density is relaxed: sections breathe at 104px, cards have 22–36px of padding, and text sits at 1.65 line height.",
+    "overview": "PascalIA pages are bright, warm and conversational. White carries most of the page, cream (#FFF8E1 family) marks alternating sections and inner panels, and graphite takes over only where something resolves: the recommended plan, the strip of rules, the closing call, the footer. Yellow is not a background color; it is the color of doing something (buttons, the send button, picked chips, checked options), of emphasis (the marker drawn under a key phrase) and of the flower mark. Everything interactive is round: pills and circles, never sharp corners.\n\nThe signature is the original PascalIA flower (`/flower.svg`): six pointed petals in Amarillo PascalIA at 82 % fill opacity, so their overlaps read slightly deeper, with curved white veins running out from the center and white nodes at the vein tips. It is the logo mark, it turns slowly and very faintly behind the hero, it blooms from the corner of the graphite result card, and it watermarks the footer. Pascal, the 3D character in the yellow cap, is a real presence on the page, always in the site's own art from `/pascal/`: his face is the avatar in the ask bar and in his replies, a yellow full-body panel of him leans into the hero as a tilted card, and a wink panel stands beside the FAQ.\n\nThe page feels like a conversation you can touch: an ask bar where you write to Pascal, suggestion chips, white interface mockups that assemble themselves as you scroll, and numbers set in Montserrat with tabular figures so sums line up. Density is relaxed: sections breathe at 104px, cards have 22–36px of padding, and text sits at 1.65 line height.\n\n**Two families, one brand.** Both families share the flower, the yellow, graphite ink, cream bands, pill controls and the stroke icon set. They differ in voice and finish. The product-sales family is the one described above: Montserrat and Inter, pure white ground, inset hairlines, a graphite footer. The corporate family sets headings in Bricolage Grotesque and everything else in Geist, sits on a warm off-white ground (`page-warm`), outlines containers with real 1px warm borders (`line-warm`), closes with a full yellow contact band and a light footer, and lets each product page swap its accent through a class on `<body>` (`theme-navy` for Flota, `theme-nana` for NANA DNT). Use the family of the page you are working on; a new page takes the family of its closest sibling.",
     "keyCharacteristics": [
       "White page with cream sections; graphite reserved for results and closings.",
       "Yellow means act, mark or bloom; text on yellow is always graphite.",
@@ -468,6 +721,16 @@
         "name": "The Hairline-Plus-Warmth Rule",
         "body": "Every white container is a 1px gray inset outline plus the soft card shadow. No heavy borders, no offset or solid shadows.",
         "section": "elevation"
+      },
+      {
+        "name": "The Accent Slot Rule",
+        "body": "In the corporate family a page never hardcodes its accent. Buttons, markers, flow dots, selected tabs and FAQ toggles read the accent variables, and a product theme changes them once on `<body>`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Family Stays Whole Rule",
+        "body": "Do not mix the two type families on one page. Montserrat with Inter, or Bricolage Grotesque with Geist.",
+        "section": "typography"
       }
     ],
     "dos": [
@@ -480,16 +743,21 @@
       "**Do** use the original flower geometry from `/flower.svg` (six pointed petals at 0.82 opacity, curved white veins, white nodes) whenever the mark appears, and `/flower-outline.svg` for the line version.",
       "**Do** draw Pascal only from the site art in `/pascal/` and its crops.",
       "**Do** honor `prefers-reduced-motion`: the spinning flower, marquee, rings, tickets and petals stop, and reveals show in place.",
-      "**Do** keep sub-brand pages in their own identity inside this frame."
+      "**Do** keep sub-brand pages in their own identity inside this frame.",
+      "**Do** work in the family of the page you are editing, and give a new page the family of its closest sibling: corporate for company, suite and service pages, product-sales for a product's own selling page.",
+      "**Do** change a corporate product page's accent with a theme class on `<body>`, through the accent variables.",
+      "**Do** use a real 1px `line-warm` border on corporate containers and the 1px gray inset outline on product-sales containers."
     ],
     "donts": [
       "**Don't** put white text on yellow, or yellow text on white (use `gold-ink` for a small yellow-family accent on white).",
-      "**Don't** use yellow as a section background or a large flat fill.",
+      "**Don't** use yellow as a section background or a large flat fill. The one exception is the contact band that closes corporate family pages.",
       "**Don't** use sharp-cornered buttons or chips, solid or offset shadows, or heavy borders on cards.",
       "**Don't** put a small label above section headlines; sections open on the headline itself.",
       "**Don't** use text characters or emoji as icons; draw them with the stroke icon set.",
       "**Don't** redraw the flower with round petals or a gradient fill, and don't use the brand-sheet character cutouts.",
-      "**Don't** take `sitio.css`, `pascalia.css` or `inicio.css` as the reference for new components; they predate this system."
+      "**Don't** take `pascalia.css` as the reference for new components; it predates both families. `inicio.css` and `sitio.css` are the reference for the corporate family.",
+      "**Don't** mix Montserrat or Inter with Bricolage Grotesque or Geist on the same page.",
+      "**Don't** hardcode a product color in a corporate component; set it through the theme class."
     ]
   }
 }
