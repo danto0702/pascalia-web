@@ -1,5 +1,7 @@
 # La Cebolla Roja (demo `/pascal-web/restaurante/`): imágenes
 
+**Estado (2026-11-16):** las 9 imágenes de página y el logo ya están en `pascal-web/restaurante/img/`; del logo se usa solo la cebolla (`logo-cebolla.webp`). Las 15 miniaturas de la carta siguen pendientes.
+
 Formato WebP o JPG, al tamaño indicado o mayor con la misma proporción. Ninguna imagen debe llevar texto, logos, marcas, ni personas reales o reconocibles. Se guardan en `pascal-web/restaurante/img/` con el nombre indicado.
 
 **Estilo común:** al final de cada prompt va este texto, para que todas parezcan de la misma casa:
