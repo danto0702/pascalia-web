@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Niebla · Bistró contemporáneo (demostración de Pascal Web)</title>
+<meta name="description" content="Sitio de demostración hecho por Pascal Web de PascalIA para un restaurante ficticio: historia, chef, equipo, reconocimientos, carta y reservas.">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#0D0D0F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230D0D0F'/%3E%3Cpath d='M14 44c8-14 26-20 36-12M18 52c10-10 22-12 30-8M22 34c6-8 16-12 24-8' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Caveat:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/pascal-web/bistro/bistro.css?v=20261116">
+<script src="/pascal-web/bistro/bistro.js?v=20261116" defer></script>
+<script src="/legal.js" defer></script>
+</head>
+<body class="cargando">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="marca" viewBox="0 0 64 80">
+    <path d="M6 76 56 4" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M30 20c14-6 27 4 26 19-1 14-13 25-27 23" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M27 31c9-5 19 0 19 10 0 9-8 16-18 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M22 44c7-6 16-4 17 3 1 6-5 11-12 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M16 58c8-2 15 0 21 5M12 66c9-3 18-2 26 3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M36 12c5-2 11-1 15 2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="sello" viewBox="0 0 48 56">
+    <path d="M12 44C4 36 3 24 9 14M36 44c8-8 9-20 3-30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M9 14l-4 3M6 22l-5 1M5 30l-5-1M7 38l-5-3M39 14l4 3M42 22l5 1M43 30l5-1M41 38l5-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M24 12l3.2 7 7.6.8-5.7 5.1 1.7 7.5L24 28.500l-6.800 3.900 1.700-7.500-5.700-5.100 7.600-.8Z" fill="currentColor"/>
+    <path d="M14 50h20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24"><path d="M4 20l1.300-4.200A8 8 0 1 1 8.400 19Z" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linejoin="round"/><path d="M9 8.500c0 3.300 3.200 6.500 6.500 6.500l1-1.700-2.200-1-0.800.9c-1.200-.5-2.200-1.500-2.700-2.700l.9-.8-1-2.200Z" fill="currentColor"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3.500" y="3.500" width="17" height="17" rx="4.500" fill="none" stroke="currentColor" stroke-width="1.700"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.700"/><circle cx="17" cy="7" r="1.100" fill="currentColor"/></symbol>
+  <symbol id="i-tel" viewBox="0 0 24 24"><path d="M6 3.500l3 .5 1.200 4-2 1.500a11 11 0 0 0 6.300 6.300l1.500-2 4 1.200.5 3c.1 1.300-1 2.500-2.300 2.400C10.300 20 4 13.700 3.600 5.800 3.500 4.500 4.700 3.400 6 3.500Z" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linejoin="round"/><path d="M14.500 3.500a6 6 0 0 1 6 6M14.500 7a2.500 2.500 0 0 1 2.500 2.500" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 2.500a6 6 0 0 0-6 6c0 4.200 6 9.500 6 9.500s6-5.300 6-9.500a6 6 0 0 0-6-6Z" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linejoin="round"/><circle cx="12" cy="8.500" r="2" fill="currentColor"/><path d="M5 18.500l-2 3h18l-2-3" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.500" fill="none" stroke="currentColor" stroke-width="1.700"/><path d="M3.500 6.500l8.500 6.500 8.500-6.500" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linejoin="round"/></symbol>
+  <symbol id="i-izq" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.600" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-der" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.600" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round"/></symbol>
+</svg>
+
+<div class="carga" data-carga aria-hidden="true">
+  <p class="logo logo-carga"><span>LA NIEBLA</span><svg><use href="#marca"/></svg></p>
+  <i class="carga-linea"></i>
+</div>
+
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="cab" data-cab>
+  <a class="logo logo-corto" href="#inicio" aria-label="La Niebla, inicio"><span>LN</span><svg aria-hidden="true"><use href="#marca"/></svg></a>
+  <a class="cab-sello" href="#reconocimientos" aria-label="Reconocimientos"><svg aria-hidden="true"><use href="#sello"/></svg><svg aria-hidden="true"><use href="#sello"/></svg></a>
+  <button class="btn" type="button" data-abrir="reserva" data-en="BOOK">RESERVAR</button>
+  <button class="hamb" type="button" data-menu-btn aria-expanded="false" aria-controls="menu"><span class="oculto" data-en="Menu">Menú</span><i></i><i></i></button>
+</header>
+
+<nav class="menu" id="menu" data-menu aria-label="Principal" hidden>
+  <ul>
+    <li><a href="#inicio" data-en="Home">Inicio</a></li>
+    <li><a href="#nosotros" data-en="About us">Nosotros</a></li>
+    <li><a href="#reconocimientos" data-en="Awards">Reconocimientos</a></li>
+    <li><a href="#contacto" data-en="Contact">Contacto</a></li>
+    <li><a href="#carta" data-abrir="carta" data-en="Menu">Carta</a></li>
+    <li><a href="#reserva" data-abrir="reserva" data-en="Book">Reservar</a></li>
+    <li><a href="#chef">Chef</a></li>
+  </ul>
+  <p class="idiomas"><button type="button" data-idioma="es" aria-pressed="true">Español</button><span aria-hidden="true">|</span><button type="button" data-idioma="en" aria-pressed="false">English</button></p>
+</nav>
+
+<main id="contenido">
+
+<section class="hero" id="inicio">
+  <picture>
+    <source media="(min-width:900px)" srcset="img/hero-ancho.webp">
+    <img src="img/hero.webp" alt="" width="1080" height="1920" fetchpriority="high">
+  </picture>
+  <h1 class="logo logo-hero"><span>LA NIEBLA</span><svg aria-hidden="true"><use href="#marca"/></svg></h1>
+  <ul class="redes">
+    <li><a href="#contacto" aria-label="WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg></a></li>
+    <li><a href="#contacto" aria-label="Instagram"><svg aria-hidden="true"><use href="#i-ig"/></svg></a></li>
+    <li><a href="#contacto" aria-label="Teléfono"><svg aria-hidden="true"><use href="#i-tel"/></svg></a></li>
+    <li><a href="#ubicacion" aria-label="Ubicación"><svg aria-hidden="true"><use href="#i-pin"/></svg></a></li>
+  </ul>
+</section>
+
+<section class="sec dos" id="nosotros">
+  <div class="txt" data-ver>
+    <h2 data-en="About us">Nosotros</h2>
+    <p data-en="La Niebla is a contemporary Colombian bistro. Under the vision of chef Elena Quintero, it explores the high-mountain pantry through menus that keep changing, made with produce from nearby farms. Creativity, technique and research come together in an experience that honors the cooking of the Andes and carries it forward.">La Niebla es un bistró colombiano contemporáneo que, bajo la visión de la chef Elena Quintero, explora la despensa de la alta montaña a través de menús en permanente transformación, elaborados con productos de fincas cercanas. Creatividad, técnica e investigación se integran para ofrecer una experiencia que honra y proyecta la cocina de los Andes.</p>
+    <a class="btn" href="#galeria" data-en="VIEW GALLERY">VER GALERÍA</a>
+  </div>
+  <figure class="foto" data-ver><img src="img/nosotros.webp" alt="La cocina abierta de La Niebla durante el servicio" width="1200" height="900" loading="lazy"></figure>
+</section>
+
+<section class="sec dos inv" id="acerca">
+  <div class="txt" data-ver>
+    <h2 data-en="The kitchen">Acerca de</h2>
+    <p data-en="At La Niebla we work hand in hand with local growers, so every dish tells the story of the land and of the people who farm it. Our menu changes with research, exploration and the seasons, and the dishes keep evolving.">En La Niebla trabajamos de la mano con productores locales, permitiendo que cada plato cuente la historia de la tierra y de quienes la cultivan. Nuestro menú cambia según la investigación, la exploración y la estacionalidad, dando lugar a preparaciones que evolucionan constantemente.</p>
+    <p class="fuerte" data-en="We offer:">Contamos con:</p>
+    <ul class="lista">
+      <li data-en="À la carte menu">Menú a la carta</li>
+      <li data-en="Tasting menu">Menú degustación</li>
+      <li data-en="Vegetarian options">Opciones vegetarianas</li>
+    </ul>
+    <p class="accion"><button class="btn" type="button" data-abrir="reserva" data-en="BOOK">RESERVAR</button><img class="pegatina" src="img/chef-pegatina.webp" alt="" width="500" height="500" loading="lazy"></p>
+  </div>
+  <figure class="foto" data-ver><img src="img/acerca.webp" alt="Manos terminando varios platos en el pase" width="1200" height="900" loading="lazy"></figure>
+</section>
+
+<section class="sec" id="galeria" aria-label="Galería">
+  <div class="carrusel" data-carrusel data-ver>
+    <ul class="pista" tabindex="0" aria-label="Fotos de la cocina">
+      <li><img src="img/galeria-1.webp" alt="Tazones de cerámica apilados en la cocina" width="1080" height="1350" loading="lazy"></li>
+      <li><img src="img/galeria-2.webp" alt="Tomates sobre una tabla, iluminados en la oscuridad" width="1080" height="1350" loading="lazy"></li>
+      <li><img src="img/galeria-3.webp" alt="Una mesa del salón lista para el servicio" width="1080" height="1350" loading="lazy"></li>
+    </ul>
+    <button class="flecha ant" type="button" data-ant aria-label="Foto anterior"><svg aria-hidden="true"><use href="#i-izq"/></svg></button>
+    <button class="flecha sig" type="button" data-sig aria-label="Foto siguiente"><svg aria-hidden="true"><use href="#i-der"/></svg></button>
+  </div>
+</section>
+
+<section class="sec dos" id="inspiracion">
+  <div class="txt" data-ver>
+    <h2 data-en="Inspiration">Inspiración</h2>
+    <p data-en="Since it opened, La Niebla has built a close relationship with small growers, creating dishes that celebrate flavor and also support local farming. Our philosophy is clear: cook from the territory.">Desde su apertura, La Niebla ha construido una relación profunda con pequeños productores, creando platos que no solo celebran el sabor, sino que también impulsan la agricultura local. Nuestra filosofía es clara: cocinar desde el territorio.</p>
+    <p data-en="For Elena Quintero, cooking is an ongoing conversation between tradition and the present. We do not copy classic recipes; we reinterpret ingredients, techniques and food memories from a current, mindful point of view.">Para Elena Quintero, la cocina es un diálogo permanente entre tradición y presente. No buscamos replicar recetas típicas, sino reinterpretar ingredientes, técnicas y memorias culinarias desde una perspectiva actual y consciente.</p>
+    <p data-en="That exploration, across regions, growers, stories and flavors, is what gives this project its voice.">Esa exploración, entre regiones, productores, historias y sabores, es la que le da voz a este proyecto.</p>
+  </div>
+  <figure class="foto notas" data-ver>
+    <img src="img/inspiracion.webp" alt="Un plato oscuro con verduras, frutos y semillas de la región" width="1200" height="900" loading="lazy">
+    <svg viewBox="0 0 400 300" aria-hidden="true">
+      <g fill="none" stroke="#fff" stroke-width="1">
+        <ellipse cx="150" cy="78" rx="34" ry="20" transform="rotate(-8 150 78)"/><ellipse cx="238" cy="72" rx="30" ry="22" transform="rotate(10 238 72)"/>
+        <ellipse cx="112" cy="140" rx="38" ry="24"/><ellipse cx="205" cy="150" rx="46" ry="26" transform="rotate(-6 205 150)"/>
+        <ellipse cx="270" cy="190" rx="40" ry="24" transform="rotate(8 270 190)"/><ellipse cx="170" cy="225" rx="42" ry="22" transform="rotate(-10 170 225)"/>
+      </g>
+      <g fill="#fff" font-family="Caveat, cursive" font-size="15" text-anchor="middle">
+        <text x="150" y="82">origen</text><text x="238" y="76">sabor</text><text x="112" y="145">ideas</text>
+        <text x="205" y="154">descubrimiento</text><text x="270" y="194">creación</text><text x="170" y="229">exploración</text>
+      </g>
+    </svg>
+  </figure>
+</section>
+
+<section class="sec dos inv" id="chef">
+  <div class="txt" data-ver>
+    <h2 data-en="The chef, Elena Quintero">La chef, Elena Quintero</h2>
+    <p data-en="Elena Quintero is the heart of La Niebla. She trained in professional kitchens in and outside the country and came back to cook with what grows near her. Her style joins the discipline of classic technique with the produce and memory of the mountains, and her goal is simple: a kitchen with a place of its own.">Elena Quintero es el corazón de La Niebla. Se formó en cocinas profesionales dentro y fuera del país y volvió para cocinar con lo que crece cerca. Su estilo combina la disciplina de la técnica clásica con el producto y la memoria de la montaña, y su propósito es sencillo: una cocina con lugar propio.</p>
+  </div>
+  <div class="carrusel" data-carrusel data-ver>
+    <ul class="pista" tabindex="0" aria-label="Fotos de la chef">
+      <li><img src="img/chef-1.webp" alt="Vapor sobre el acero de la cocina" width="1080" height="1350" loading="lazy"></li>
+      <li><img src="img/chef-2.webp" alt="La chef Elena Quintero en el salón" width="1080" height="1350" loading="lazy"></li>
+      <li><img src="img/chef-3.webp" alt="Manos emplatando a toda velocidad" width="1080" height="1350" loading="lazy"></li>
+    </ul>
+    <button class="flecha ant" type="button" data-ant aria-label="Foto anterior"><svg aria-hidden="true"><use href="#i-izq"/></svg></button>
+    <button class="flecha sig" type="button" data-sig aria-label="Foto siguiente"><svg aria-hidden="true"><use href="#i-der"/></svg></button>
+  </div>
+</section>
+
+<section class="sec dos" id="equipo">
+  <div class="txt" data-ver>
+    <h2 data-en="The team">El equipo</h2>
+    <p data-en="The La Niebla team shares the passion and commitment of its chef. Each person adds to the warm, welcoming mood of the restaurant, and their work together makes sure every part of the experience, from the kitchen to the table, is cared for.">El equipo de La Niebla comparte la misma pasión y compromiso que su chef. Cada persona contribuye al ambiente cálido y acogedor que distingue al restaurante, y su trabajo colectivo asegura que cada aspecto de la experiencia, desde la cocina hasta la mesa, esté cuidado.</p>
+    <ul class="caras">
+      <li><img src="img/equipo-1.webp" alt="Integrante del equipo de sala" width="400" height="400" loading="lazy"></li>
+      <li><img src="img/equipo-2.webp" alt="Integrante del equipo de cocina" width="400" height="400" loading="lazy"></li>
+      <li><img src="img/equipo-3.webp" alt="Integrante del equipo de bar" width="400" height="400" loading="lazy"></li>
+    </ul>
+  </div>
+  <figure class="foto" data-ver><img src="img/equipo.webp" alt="El equipo completo de La Niebla frente al restaurante" width="1600" height="1000" loading="lazy"></figure>
+</section>
+
+<section class="sec dos inv" id="reconocimientos">
+  <div class="txt" data-ver>
+    <h2 data-en="Awards">Reconocimientos</h2>
+    <ul class="sellos" aria-hidden="true">
+      <li><svg><use href="#sello"/></svg><b>GUÍA<br>DE EJEMPLO</b></li>
+      <li><svg><use href="#sello"/></svg><b>MEJOR<br>COCINA</b></li>
+      <li><svg><use href="#sello"/></svg><b>PREMIO<br>DE EJEMPLO</b></li>
+      <li><svg><use href="#sello"/></svg><b>ELECCIÓN<br>DEL PÚBLICO</b></li>
+    </ul>
+    <p data-en="This is where your restaurant's real awards go. The ones below are examples to show the format:">Aquí van los reconocimientos reales de tu restaurante. Los de abajo son ejemplos para mostrar el formato:</p>
+    <ul class="anios">
+      <li data-en="<b>2021:</b> Best new opening, Example Guide."><b>2021:</b> Mejor apertura del año, Guía de ejemplo.</li>
+      <li data-en="<b>2022:</b> Signature cooking selection, Example Award."><b>2022:</b> Selección de cocina de autor, Premio de ejemplo.</li>
+      <li data-en="<b>2023:</b> Top 10 of the region, Example Guide; Service distinction."><b>2023:</b> Entre los 10 mejores de la región, Guía de ejemplo; Distinción al servicio.</li>
+      <li data-en="<b>2024:</b> Restaurant of the year, Example Award; Public's choice."><b>2024:</b> Restaurante del año, Premio de ejemplo; Elección del público.</li>
+      <li data-en="<b>2025:</b> Best chef, Example Guide; Sustainable kitchen distinction."><b>2025:</b> Mejor chef, Guía de ejemplo; Distinción a la cocina sostenible.</li>
+    </ul>
+    <p class="accion"><button class="btn" type="button" data-abrir="reserva" data-en="BOOK">RESERVAR</button></p>
+  </div>
+  <figure class="foto alta" data-ver><img src="img/chef-retrato.webp" alt="La chef Elena Quintero con delantal blanco en la cocina" width="1080" height="1500" loading="lazy"></figure>
+</section>
+
+<section class="sec" aria-label="Celebración">
+  <figure class="foto ancha" data-ver><img src="img/evento.webp" alt="El equipo celebrando un reconocimiento en un escenario" width="1600" height="900" loading="lazy"></figure>
+</section>
+
+<section class="sec contacto" id="contacto">
+  <img class="pegatina sola" src="img/chef-pegatina.webp" alt="" width="500" height="500" loading="lazy">
+  <div class="cols">
+    <div data-ver>
+      <h3><span data-en="Hours">Horarios</span><svg aria-hidden="true"><use href="#marca"/></svg></h3>
+      <p class="mayus" data-en="MONDAY AND TUESDAY: 2:00PM TO 11:00PM">LUNES Y MARTES: 2:00PM A 11:00PM</p>
+      <p class="mayus" data-en="WEDNESDAY TO SATURDAY: 12:00PM TO 11:00PM">MIÉRCOLES A SÁBADOS: 12:00PM A 11:00PM</p>
+      <p class="mayus" data-en="SUNDAY: 12:00PM TO 5:00PM">DOMINGOS: 12:00PM A 5:00PM</p>
+      <p>WhatsApp: <a href="#contacto">+57 300 000 0000</a></p>
+      <p><span data-en="Phone:">Teléfono:</span> <a href="#contacto">+57 300 000 0000</a></p>
+    </div>
+    <div data-ver>
+      <h3><span data-en="Inquiries">Contacto</span><svg aria-hidden="true"><use href="#marca"/></svg></h3>
+      <p><span data-en="Bookings:">Reservas:</span> <a href="#contacto">reservas@laniebla.example</a></p>
+      <p><span data-en="Business:">Negocios:</span> <a href="#contacto">mercadeo@laniebla.example</a></p>
+      <p><span data-en="Press and partnerships:">Prensa y alianzas:</span> <a href="#contacto">prensa@laniebla.example</a></p>
+      <p><span data-en="Work with us:">Trabaja con nosotros:</span> <a href="#contacto">equipo@laniebla.example</a></p>
+    </div>
+    <div id="ubicacion" data-ver>
+      <h3><span data-en="Location">Ubicación</span><svg aria-hidden="true"><use href="#marca"/></svg></h3>
+      <a class="mapa" href="#ubicacion" aria-label="Mapa de la zona: La Niebla, Calle del Mercado, local 4">
+        <svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="170" fill="#E9EAEC"/>
+          <g fill="#F7F7F8"><path d="M-10 40 150-20l30 20L20 70Z"/><path d="M200 10 330-30l40 40-120 50Z"/><path d="M60 110l110-45 50 60-110 60Z"/><path d="M250 90l120-45 60 70-120 60Z"/></g>
+          <g fill="none" stroke="#C9CCD1" stroke-width="7"><path d="M-10 80 420 -40"/><path d="M-10 160 420 20"/><path d="M100-20l150 210"/><path d="M250-20l150 210"/><path d="M-20 10l150 200"/></g>
+          <g font-family="Poppins, sans-serif" font-size="8" fill="#7A7F87"><text x="70" y="50" transform="rotate(-16 70 50)">Calle del Mercado</text><text x="230" y="118" transform="rotate(-18 230 118)">Calle de la Plaza</text><text x="168" y="40" transform="rotate(54 168 40)">Carrera Primera</text></g>
+          <path d="M196 62a10 10 0 0 0-10 10c0 7 10 16 10 16s10-9 10-16a10 10 0 0 0-10-10Z" fill="#D93025"/><circle cx="196" cy="72" r="3.500" fill="#7A1A12"/>
+          <text x="210" y="76" font-family="Poppins, sans-serif" font-size="9" font-weight="600" fill="#D93025">La Niebla</text>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="pie">
+  <a class="logo logo-pie" href="#inicio" aria-label="La Niebla, inicio"><span>LN</span><svg aria-hidden="true"><use href="#marca"/></svg></a>
+  <ul class="pie-nav">
+    <li><a href="#nosotros" data-en="About us">Nosotros</a></li>
+    <li><a href="#acerca" data-en="The kitchen">Acerca de</a></li>
+    <li><a href="#chef" data-en="The chef">La chef</a></li>
+    <li class="sep"><a href="#reconocimientos" data-en="Awards">Reconocimientos</a></li>
+    <li><a href="#contacto" data-en="Contact">Contacto</a></li>
+    <li><a href="#carta" data-abrir="carta" data-en="Menu">Carta</a></li>
+    <li class="sep"><a href="#galeria" data-en="Gallery">Galería</a></li>
+  </ul>
+  <p class="pie-datos">WhatsApp: <a href="#contacto">+57 300 000 0000</a><br><span data-en="Phone:">Teléfono:</span> <a href="#contacto">+57 300 000 0000</a><br><span data-en="Address: Calle del Mercado, unit 4 (example address)">Dirección: Calle del Mercado, local 4 (dirección de ejemplo)</span></p>
+  <ul class="redes">
+    <li><a href="#contacto" aria-label="WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg></a></li>
+    <li><a href="#contacto" aria-label="Instagram"><svg aria-hidden="true"><use href="#i-ig"/></svg></a></li>
+    <li><a href="#contacto" aria-label="Teléfono"><svg aria-hidden="true"><use href="#i-tel"/></svg></a></li>
+    <li><a href="#ubicacion" aria-label="Ubicación"><svg aria-hidden="true"><use href="#i-pin"/></svg></a></li>
+  </ul>
+  <p class="pie-demo" data-en="Demo site by Pascal Web, from PascalIA. La Niebla is a fictional restaurant: names, awards, prices and contact details are examples.">Sitio de demostración de <a href="/pascal-web/">Pascal Web</a>, de PascalIA. La Niebla es un restaurante ficticio: nombres, reconocimientos, precios y datos de contacto son de ejemplo.</p>
+</footer>
+
+<dialog class="capa reserva" id="reserva" data-capa="reserva" aria-labelledby="reserva-t">
+  <img class="capa-fondo" src="img/reserva-fondo.webp" alt="" width="1080" height="1920" loading="lazy">
+  <div class="capa-in">
+    <button class="capa-x" type="button" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
+    <p class="logo logo-capa"><span>LA NIEBLA</span><svg aria-hidden="true"><use href="#marca"/></svg></p>
+    <div class="avance" role="progressbar" aria-label="Avance de la reserva" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"><i data-avance></i></div>
+
+    <div class="paso" data-paso="1">
+      <h2 id="reserva-t" data-en="Choose the number of guests">Elige el número de personas</h2>
+      <div class="contador">
+        <button type="button" data-menos aria-label="Una persona menos">−</button>
+        <output data-personas aria-live="polite">2</output>
+        <button type="button" data-mas aria-label="Una persona más">+</button>
+      </div>
+    </div>
+    <div class="paso" data-paso="2" hidden>
+      <h2 data-en="Select the date">Selecciona la fecha</h2>
+      <div class="mes"><button type="button" data-mes-ant aria-label="Mes anterior"><svg aria-hidden="true"><use href="#i-izq"/></svg></button><b data-mes aria-live="polite"></b><button type="button" data-mes-sig aria-label="Mes siguiente"><svg aria-hidden="true"><use href="#i-der"/></svg></button></div>
+      <div class="dias-nom" aria-hidden="true"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span></div>
+      <div class="dias" data-dias></div>
+    </div>
+    <div class="paso" data-paso="3" hidden>
+      <h2 data-en="Choose the time">Elige la hora</h2>
+      <div class="horas" data-horas></div>
+    </div>
+    <div class="paso" data-paso="4" hidden>
+      <h2 data-en="Your booking">Tu reserva</h2>
+      <p class="resumen" data-resumen></p>
+      <p class="nota" data-en="Demo: no booking was sent. On your real site it reaches your WhatsApp or your booking system.">Demostración: no se envió ninguna reserva. En tu sitio real llega a tu WhatsApp o a tu sistema de reservas.</p>
+    </div>
+
+    <button class="btn ancho" type="button" data-continuar data-en="Continue">Continuar</button>
+    <button class="enlace" type="button" data-atras hidden data-en="Back">Volver</button>
+    <button class="enlace" type="button" data-abrir="carta" data-en="View menu">Ver menú</button>
+    <ul class="capa-datos">
+      <li><svg aria-hidden="true"><use href="#i-pin"/></svg><span data-en="Calle del Mercado, unit 4">Calle del Mercado, local 4</span></li>
+      <li><svg aria-hidden="true"><use href="#i-mail"/></svg>reservas@laniebla.example</li>
+      <li><svg aria-hidden="true"><use href="#i-wa"/></svg>+57 300 000 0000</li>
+    </ul>
+  </div>
+</dialog>
+
+<dialog class="capa carta" id="carta" data-capa="carta" aria-label="Carta">
+  <img class="capa-fondo" src="img/reserva-fondo.webp" alt="" width="1080" height="1920" loading="lazy">
+  <div class="capa-in">
+    <button class="capa-x" type="button" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
+    <div class="carta-botones">
+      <button type="button" data-carta="carta" aria-pressed="false" data-en="À la carte menu">Menú a la carta</button>
+      <button type="button" data-carta="degustacion" aria-pressed="false" data-en="Tasting menu">Menú degustación</button>
+    </div>
+    <div class="hoja" data-hoja="carta" hidden>
+      <h2 data-en="À LA CARTE MENU">MENÚ A LA CARTA</h2>
+      <ul class="platos">
+        <li><b data-en="Cassava arepa">Arepa de yuca</b><i></i><span>$22.000</span><em data-en="Grilled vegetable ají.">Ají de vegetales parrillados.</em></li>
+        <li><b data-en="Corn bread">Pan de maíz</b><i></i><span>$24.000</span><em data-en="Cultured butter and panela.">Mantequilla madurada y panela.</em></li>
+        <li><b data-en="Carrot salad">Ensalada de zanahoria</b><i></i><span>$34.000</span><em data-en="Sunflower seeds and goat cream.">Semillas de girasol y crema de cabra.</em></li>
+        <li><b data-en="Native potatoes">Papas nativas</b><i></i><span>$38.000</span><em data-en="Fresh cheese whey and purslane.">Suero de queso fresco y verdolaga.</em></li>
+        <li><b data-en="Cured trout">Trucha curada</b><i></i><span>$62.000</span><em data-en="Tree tomato, cucumber and pear.">Tomate de árbol, pepino y pera.</em></li>
+        <li><b data-en="Hen rice">Arroz de gallina</b><i></i><span>$68.000</span><em data-en="Smoked bone broth and sofrito.">Caldo de hueso ahumado y sofrito.</em></li>
+        <li><b data-en="Lamb shoulder">Paleta de cordero</b><i></i><span>$120.000</span><em data-en="Cabbage, mint and guasca.">Col, hierbabuena y guasca.</em></li>
+        <li><b data-en="Pork belly">Tocino de cerdo</b><i></i><span>$98.000</span><em data-en="Garden herbs and apple.">Hierbas de huerta y manzana.</em></li>
+      </ul>
+      <h3 data-en="DESSERTS">POSTRES</h3>
+      <ul class="platos">
+        <li><b data-en="Blackberry">Mora</b><i></i><span>$28.000</span><em data-en="Lemongrass ice cream.">Helado de limonaria.</em></li>
+        <li><b data-en="Cacao">Cacao</b><i></i><span>$30.000</span><em data-en="Chocolate and coffee.">Chocolate y café.</em></li>
+        <li><b data-en="Soursop">Guanábana</b><i></i><span>$32.000</span><em data-en="Soursop and guava sorbet.">Sorbete de guanábana y guayaba.</em></li>
+      </ul>
+      <p class="nota" data-en="Example dishes and prices.">Platos y precios de ejemplo.</p>
+    </div>
+    <div class="hoja centro" data-hoja="degustacion" hidden>
+      <h2 data-en="TASTING MENU">MENÚ DEGUSTACIÓN</h2>
+      <ul class="tiempos">
+        <li><b data-en="MUSHROOM BROTH">CALDO DE HONGOS</b><em data-en="Arracacha and fennel. Drink: sour guava and rue.">Arracacha e hinojo. Bebida de guayaba agria y ruda.</em></li>
+        <li><b data-en="SMOKED TROUT">TRUCHA AHUMADA</b><em data-en="Palm heart and huacatay. Drink: elderflower and pear.">Palmito y huacatay. Bebida de flor de sauco y pera.</em></li>
+        <li><b data-en="NATIVE POTATO">PAPA NATIVA</b><em data-en="Whey and purslane. Drink: green grape and fig leaf.">Suero y verdolaga. Bebida de uva verde y hoja de higo.</em></li>
+        <li><b data-en="GRILLED CHICKEN">POLLO A LA PARRILLA</b><em data-en="Zucchini and peas. Drink: borojó, lime and cilantro.">Zucchini y arvejas. Bebida de borojó, limón y cilantro.</em></li>
+        <li><b data-en="CACAO">CACAO</b><em data-en="Coffee and panela. Drink: gulupa and ginger.">Café y panela. Bebida de gulupa y jengibre.</em></li>
+      </ul>
+      <p class="nota" data-en="Example dishes. Prices are shown before you book.">Platos de ejemplo. El valor se muestra antes de reservar.</p>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>
