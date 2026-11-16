@@ -156,4 +156,93 @@
   atras.addEventListener('click', function () { paso = Math.max(1, paso - 1); pintarPaso(); });
 
   pintarMes(); pintarPaso();
+
+  /* Movimiento adicional */
+  var quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cab = $('[data-cab]'), hero = $('.hero'), luz = $('[data-luz]');
+
+  // Letras de la marca, una por una
+  var marca = $('.logo-hero span');
+  if (marca) {
+    var letras = marca.textContent; marca.textContent = ''; marca.setAttribute('aria-label', letras);
+    letras.split('').forEach(function (c, i) {
+      var l = doc.createElement('span'); l.className = 'l'; l.setAttribute('aria-hidden', 'true');
+      l.style.setProperty('--i', i); l.textContent = c === ' ' ? ' ' : c; marca.appendChild(l);
+    });
+  }
+  ['.hero .redes li', '.lista li', '.anios li', '.sellos li', '.caras li', '.platos li', '.tiempos li', '.notas .trazos ellipse', '.notas .rotulos text'].forEach(function (sel) {
+    var grupos = {};
+    $$(sel).forEach(function (el) {
+      var k = sel + '|' + $$('*').indexOf(el.parentNode);
+      grupos[k] = (grupos[k] || 0); el.style.setProperty('--i', grupos[k]++);
+    });
+  });
+
+  // Avance de lectura, cabecera que se esconde al bajar y fotos con profundidad
+  var pars = $$('[data-par]'), ultimoY = 0, pedido = false;
+  function alDesplazar() {
+    pedido = false;
+    var y = window.scrollY, alto = doc.documentElement.scrollHeight - innerHeight;
+    cab.style.setProperty('--avance', alto > 0 ? (y / alto).toFixed(4) : 0);
+    cab.classList.toggle('oculta', y > ultimoY && y > 500 && menu.hidden);
+    ultimoY = y;
+    if (quieto) return;
+    pars.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > innerHeight + 100) return;
+      var centro = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
+      var fuerza = el.getAttribute('data-par') === 'hero' ? y * 0.28 : centro * -34;
+      (el.getAttribute('data-par') === 'hero' ? $('img', el) : $('img', el)).style.setProperty('--y', fuerza.toFixed(1));
+    });
+  }
+  window.addEventListener('scroll', function () { if (!pedido) { pedido = true; requestAnimationFrame(alDesplazar); } }, { passive: true });
+  alDesplazar();
+
+  // Luz cálida que sigue el puntero en la portada
+  if (luz && !quieto) {
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      luz.style.setProperty('--lx', (e.clientX - r.left) + 'px');
+      luz.style.setProperty('--ly', (e.clientY - r.top) + 'px');
+    });
+  }
+
+  // Cinta de palabras: solo corre cuando se ve
+  var cinta = $('[data-cinta]');
+  if (cinta && 'IntersectionObserver' in window && !quieto) {
+    new IntersectionObserver(function (es) { cinta.classList.toggle('anda', es[0].isIntersecting); }).observe(cinta);
+  }
+
+  // Carruseles: avance automático con indicador; se detiene al tocarlos
+  $$('[data-carrusel]').forEach(function (c) {
+    var pista = $('.pista', c), n = pista.children.length, i = 0, reloj = null, visible = false, pausa = false;
+    var puntos = doc.createElement('div'); puntos.className = 'puntos'; puntos.setAttribute('aria-hidden', 'true');
+    for (var k = 0; k < n; k++) puntos.appendChild(doc.createElement('i'));
+    c.appendChild(puntos);
+    function marcar() {
+      i = Math.round(pista.scrollLeft / Math.max(1, pista.clientWidth));
+      $$('i', puntos).forEach(function (p, k) { p.classList.remove('activo'); if (k === i) { void p.offsetWidth; if (visible && !pausa && !quieto) p.classList.add('activo'); else p.style.background = ''; } });
+      $$('i', puntos).forEach(function (p, k) { p.style.background = (k === i && (pausa || quieto || !visible)) ? 'var(--am)' : ''; });
+    }
+    function programar() {
+      clearTimeout(reloj); marcar();
+      if (!visible || pausa || quieto) return;
+      reloj = setTimeout(function () {
+        var sig = (i + 1) % n;
+        pista.scrollTo({ left: sig * pista.clientWidth, behavior: 'smooth' });
+      }, 5000);
+    }
+    var espera;
+    pista.addEventListener('scroll', function () { clearTimeout(espera); espera = setTimeout(programar, 160); }, { passive: true });
+    ['pointerenter', 'focusin', 'touchstart'].forEach(function (ev) { c.addEventListener(ev, function () { pausa = true; programar(); }, { passive: true }); });
+    ['pointerleave', 'focusout'].forEach(function (ev) { c.addEventListener(ev, function () { pausa = false; programar(); }); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { visible = es[0].isIntersecting; programar(); }, { threshold: 0.5 }).observe(c);
+    }
+  });
+
+  // El número de personas salta al cambiar
+  ['[data-menos]', '[data-mas]'].forEach(function (sel) {
+    $(sel).addEventListener('click', function () { salida.classList.remove('salta'); void salida.offsetWidth; salida.classList.add('salta'); });
+  });
 })();

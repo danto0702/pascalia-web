@@ -1,4 +1,6 @@
-# La Niebla (demo `/pascal-web/bistro/`): imágenes que faltan
+# La Niebla (demo `/pascal-web/bistro/`): imágenes
+
+**Estado (2026-11-16):** las 19 imágenes y el logo ya están en `pascal-web/bistro/img/`, entregadas por el dueño a partir de estos prompts. `equipo-1`, `equipo-2` y `equipo-3` salen de una sola imagen con tres retratos; `chef-pegatina` se recortó sobre fondo transparente; el logo se separó en `logo-letras.webp` (blanco) y `logo-espiral.webp` (amarillo PascalIA) para que la espiral gire. Los prompts quedan aquí para regenerar cualquiera.
 
 Cada imagen reemplaza un archivo provisional de `pascal-web/bistro/img/` con **el mismo nombre**. Formato WebP. Ninguna debe llevar texto, logos, marcas ni personas reales o reconocibles.
 
