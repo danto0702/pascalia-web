@@ -233,6 +233,17 @@
         .pascal-fin { display: block; width: 104px; height: 104px; border-radius: 999px; object-fit: cover; object-position: 50% 22%; margin: 4px auto 10px; background: var(--cream); box-shadow: 0 0 0 4px var(--cream), 0 14px 26px -16px rgba(138,97,0,.6); animation: saludo .6s var(--ease) both; }
         .hoja-fin h2, .hoja-fin > p.muted { text-align: center; }
         @keyframes saludo { 0% { transform: scale(.6) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.05) rotate(2deg); opacity: 1; } 100% { transform: none; } }
+
+        /* ---------- Pestaña hacia PascalPDF ---------- */
+        .ir-pdf { position: fixed; right: 0; top: 56%; z-index: 12; display: flex; align-items: center; gap: 10px; background: #fff; color: var(--graphite); text-decoration: none; padding: 9px 12px 9px 9px; border-radius: 18px 0 0 18px; box-shadow: -10px 14px 30px -14px rgba(0,0,0,.4), inset 0 0 0 1px var(--gray); max-width: 250px; transform: translateX(calc(100% - 54px)); transition: transform .5s var(--ease), box-shadow .3s; }
+        .ir-pdf.abierta { transform: none; }
+        .ir-pdf img { width: 38px; height: 38px; border-radius: 10px; flex: none; }
+        .ir-pdf span { font: 700 13px/1.25 Montserrat, sans-serif; white-space: nowrap; }
+        .ir-pdf small { display: block; font: 500 12px Inter, sans-serif; color: var(--muted); }
+        .ir-pdf i { font-style: normal; color: var(--gold-ink); font-size: 20px; line-height: 1; }
+        .ir-pdf:focus-visible { outline: 2px solid var(--graphite); outline-offset: 2px; }
+        .ir-pdf.entrando { animation: asomar .6s var(--ease) both; }
+        @keyframes asomar { from { transform: translateX(100%); } }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
         @media (min-width: 760px) { #paginas { padding-left: 24px; padding-right: 24px; } .dock { max-width: 640px; margin: 0 auto; } }
     </style>
@@ -297,6 +308,10 @@
         <p class="pie">Firma electrónica (Ley 527 de 1999 y Decreto 2364 de 2012). No es firma digital certificada.<br>
             <a href="/PascalPDF_Studio/terminos/">Términos</a> · <a href="/PascalPDF_Studio/politica/">Datos</a> · <a href="/PascalPDF_Studio/">¿Necesitas editar? PascalPDF</a></p>
     </div>
+    <a class="ir-pdf" id="ir-pdf" href="/PascalPDF_Studio/" aria-label="¿Necesitas editar? Abre PascalPDF">
+        <img src="/PascalPDF_Studio/img/apple-touch-icon.png" alt="" width="38" height="38">
+        <span>¿Necesitas editar?<small>Abre PascalPDF</small></span><i aria-hidden="true">›</i>
+    </a>
 </section>
 
 <div id="presentacion" aria-hidden="true">
@@ -1044,6 +1059,20 @@
         });
     })();
 
+
+    // ---- Pestaña hacia PascalPDF: se asoma una vez por sesión y luego queda solo el ícono ----
+    (function () {
+        const t = $('#ir-pdf');
+        let vista = false; try { vista = sessionStorage.getItem('ps-ir-pdf'); sessionStorage.setItem('ps-ir-pdf', '1'); } catch (e) { /* nada */ }
+        let reloj = null;
+        const abrir = (ms) => { t.classList.add('abierta'); clearTimeout(reloj); if (ms) reloj = setTimeout(() => t.classList.remove('abierta'), ms); };
+        // Cerrada, el primer toque la abre; abierta, el toque lleva a PascalPDF
+        t.addEventListener('click', (e) => { if (!t.classList.contains('abierta')) { e.preventDefault(); abrir(6000); } });
+        t.addEventListener('focus', () => { if (t.matches(':focus-visible')) abrir(0); });
+        t.addEventListener('blur', () => t.classList.remove('abierta'));
+        t.classList.add('entrando');
+        if (!vista) setTimeout(() => abrir(5000), $('#presentacion') ? 3200 : 1200);
+    })();
     // ---- Consejo de Pascal: uno distinto en cada visita; se puede pedir otro ----
     (function () {
         const C = [
