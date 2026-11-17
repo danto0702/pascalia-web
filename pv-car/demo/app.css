@@ -245,3 +245,4 @@ dialog.guia { padding-bottom: calc(env(safe-area-inset-bottom) + 14px); }
 .lista-registro .imp { border-color: #8f3a35; }
 select { width: 100%; min-height: 46px; padding: 10px 12px; border-radius: 10px; border: 1px solid #5a5650; background: var(--grafito); color: var(--texto); font: 16px var(--fuente); }
 .botones-ayuda { display: grid; gap: 8px; }
+.guia-paso h2:focus { outline: none; } /* foco programático para lectores de pantalla, sin marco visible */
