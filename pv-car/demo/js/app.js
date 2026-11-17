@@ -10,12 +10,15 @@ import { agruparSesiones, duracionTexto } from "./sesiones.js";
 
 const $ = (id) => document.getElementById(id);
 const CLAVE = "pvcar_ajustes";
+// Versión de los términos de PV Car (/pv-car/terminos/). Si cambia, se pide aceptarlos de nuevo.
+const TERMINOS = "1.0";
 const PREDETERMINADOS = { cuotaGB: 16, resolucion: "1080p", minutos: 3, sensibilidad: "media", voz: true, tts: true, audio: false, placa: "", nombre: "", documento: "", bienvenida: false };
 
 function leerAjustes() {
   try { return { ...PREDETERMINADOS, ...JSON.parse(localStorage.getItem(CLAVE) || "{}") }; } catch { return { ...PREDETERMINADOS }; }
 }
 let ajustes = leerAjustes();
+const aceptoTerminos = () => ajustes.bienvenida && ajustes.terminos === TERMINOS;
 function guardarAjustes() { try { localStorage.setItem(CLAVE, JSON.stringify(ajustes)); } catch {} }
 
 const tel = new Telemetria();
@@ -247,7 +250,7 @@ grab.addEventListener("error", (e) => {
 
 document.addEventListener("visibilitychange", async () => {
   if (document.visibilityState !== "visible") return;
-  if (ajustes.voz && !voz.activa && ajustes.bienvenida) encenderVoz();
+  if (ajustes.voz && !voz.activa && aceptoTerminos()) encenderVoz();
   if (!grab.grabando) return;
   mantenerPantalla(true);
   const vivo = grab.stream?.getVideoTracks().some((t) => t.readyState === "live");
@@ -564,7 +567,7 @@ $("borrarTodo").addEventListener("click", async () => {
 /* ---------- Arranque ---------- */
 $("acepto").addEventListener("change", (e) => { $("btnEmpezar").disabled = !e.target.checked; });
 $("formBienv").addEventListener("submit", async () => {
-  ajustes.bienvenida = true; guardarAjustes();
+  ajustes.bienvenida = true; ajustes.terminos = TERMINOS; ajustes.terminosFecha = new Date().toISOString(); guardarAjustes();
   await tel.pedirPermisoMovimiento();
   if (ajustes.voz) encenderVoz();
 });
@@ -582,7 +585,7 @@ $("formBienv").addEventListener("submit", async () => {
   // Sella las evidencias que hayan quedado sin huella.
   for (const c of await db.listarClips().catch(() => [])) sellarSiCorresponde(c);
   pintarEspacio();
-  if (!ajustes.bienvenida) $("dlgBienvenida").showModal();
+  if (!aceptoTerminos()) $("dlgBienvenida").showModal();
   else if (ajustes.voz) {
     // Algunos navegadores solo permiten el micrófono tras un toque.
     document.addEventListener("pointerdown", () => encenderVoz(), { once: true });
