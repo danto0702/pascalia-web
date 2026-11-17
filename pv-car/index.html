@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PV Car de PascalIA · Tu celular, cámara testigo en cada viaje</title>
+<meta name="description" content="PV Car, de PascalIA: convierte tu celular en una cámara para el carro. Graba en bucle en el espacio que elijas, protege la evidencia con un golpe o con la voz («Hola Pascal») y saca un acta PDF con huella SHA-256 y firma.">
+<link rel="canonical" href="https://pascalia.lat/pv-car/">
+<meta name="theme-color" content="#FFC107">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CO">
+<meta property="og:url" content="https://pascalia.lat/pv-car/">
+<meta property="og:title" content="PV Car de PascalIA · Tu celular, cámara testigo">
+<meta property="og:description" content="Grabación en bucle, copiloto «Hola Pascal» y bóveda de evidencias con acta PDF, desde el navegador del celular.">
+<meta property="og:image" content="https://pascalia.lat/pv-car/img/og-1200x630.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/pv-car/demo/icons/icono-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="/pv-car/demo/icons/icono-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/contacto.css?v=20261027">
+<link rel="stylesheet" href="/pv-car/pvcar.css?v=20261117">
+<script src="/contacto.js?v=20261027" defer></script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","name":"PascalIA","url":"https://pascalia.lat/","logo":"https://pascalia.lat/flower.svg","slogan":"Ideas que hacen florecer tu organización","email":"contacto@pascalia.lat"},
+{"@type":"SoftwareApplication","name":"PV Car · Pascal Video Car","applicationCategory":"TravelApplication","operatingSystem":"Android, iOS (navegador)","url":"https://pascalia.lat/pv-car/","publisher":{"@type":"Organization","name":"PascalIA"}}
+]}
+</script>
+<script src="/legal.js" defer></script>
+</head>
+<body>
+
+<svg class="defs" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="flor" viewBox="-112 -112 224 224">
+      <defs><path id="flor-p" d="M0,-8 C40,-34 44,-78 0,-108 C-44,-78 -40,-34 0,-8Z"/><path id="flor-v" d="M0,0 C17,-16 15,-44 0,-62 C-15,-44 -17,-16 0,0"/></defs>
+      <g fill="#FFC107" fill-opacity=".82">
+        <use href="#flor-p"/><use href="#flor-p" transform="rotate(60)"/><use href="#flor-p" transform="rotate(120)"/>
+        <use href="#flor-p" transform="rotate(180)"/><use href="#flor-p" transform="rotate(240)"/><use href="#flor-p" transform="rotate(300)"/>
+      </g>
+      <g fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round">
+        <use href="#flor-v"/><use href="#flor-v" transform="rotate(-62)"/><use href="#flor-v" transform="rotate(62)"/>
+        <use href="#flor-v" transform="rotate(-132)"/><use href="#flor-v" transform="rotate(132)"/><path d="M0,0 V62"/>
+      </g>
+      <g fill="#fff">
+        <circle r="9"/><circle cy="-62" r="8"/><circle cy="-62" r="8" transform="rotate(-62)"/><circle cy="-62" r="8" transform="rotate(62)"/>
+        <circle cy="-62" r="8" transform="rotate(-132)"/><circle cy="-62" r="8" transform="rotate(132)"/>
+      </g>
+    </symbol>
+    <symbol id="i-loop" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.7"/><path d="M20 4v4.7h-4.7"/><path d="M20 12a8 8 0 0 1-13.7 5.6L4 15.3"/><path d="M4 20v-4.7h4.7"/></g></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 5.8v5.4c0 4.4 3 8.1 7 9.4 4-1.3 7-5 7-9.4V5.8L12 3Z"/><path d="m8.8 12 2.3 2.3 4.2-4.4"/></g></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></g></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" fill="currentColor"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/pv-car/" aria-label="PV Car de PascalIA, inicio">
+      <img src="/pv-car/demo/icons/icono-192.png" alt="" width="40" height="40">
+      <span class="brand-txt"><b>PV Car</b><span>de Pascal<i>IA</i></span></span>
+    </a>
+    <nav class="nav-links" aria-label="Secciones">
+      <a href="#que-hace">Qué hace</a>
+      <a href="#voz">Comandos de voz</a>
+      <a href="#como">Cómo se usa</a>
+      <a href="#preguntas">Preguntas</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="/pv-car/demo/">Probar la demo</a>
+  </div>
+</header>
+
+<main id="contenido">
+
+  <section class="hero" aria-labelledby="hero-title">
+    <svg class="hero-flor" aria-hidden="true"><use href="#flor"/></svg>
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <p class="pill-live"><i aria-hidden="true"></i>Demo abierta · Android y iPhone, desde el navegador</p>
+        <h1 id="hero-title">Tu celular, <span class="mark">cámara testigo</span> en cada viaje.</h1>
+        <p class="sub">Pon el teléfono en el soporte y PV Car graba la vía sin parar, con fecha, hora, ubicación y velocidad sobre el video. Si pasa algo, un golpe fuerte o un «Okay Pascal, guarda este video» protege la evidencia.</p>
+        <div class="ctas">
+          <a class="btn btn-primary" href="/pv-car/demo/"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg>Probar la demo</a>
+          <a class="btn btn-ghost" href="#contacto">Quiero PV Car para mi flota</a>
+        </div>
+        <p class="fine">Sin comprar otra cámara. Lo que grabes queda solo en tu teléfono.</p>
+      </div>
+      <div class="hero-art wide">
+        <figure class="hero-shot" style="margin:0"><img src="/pv-car/img/app-tablero.webp" alt="PV Car grabando en horizontal: vía con un carro adelante y, abajo, la franja con fecha, hora, coordenadas, placa, 52 km/h y 0,18 G" width="1280" height="591"></figure>
+        <img class="hero-logo" src="/pv-car/demo/icons/logo-pvcar.webp" alt="Logotipo de PV Car by PascalIA" width="320" height="320">
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="que-hace" aria-labelledby="que-title">
+    <div class="wrap">
+      <header class="head">
+        <p class="eyebrow">Qué hace</p>
+        <h2 id="que-title">Una dashcam completa, <span class="mark">con el celular que ya tienes</span></h2>
+      </header>
+
+      <article class="feat">
+        <div class="feat-copy">
+          <span class="feat-ico"><svg class="i" aria-hidden="true"><use href="#i-loop"/></svg></span>
+          <h3>Graba en bucle, sin llenarte el teléfono</h3>
+          <p>Tú decides cuánta memoria le das, de 4 a 64 GB. PV Car graba en fragmentos de 1, 3 o 5 minutos y, cuando se llena, borra el más antiguo que no esté protegido. Nunca toca tus fotos, tus videos ni tus archivos.</p>
+          <ul class="ticks">
+            <li>Fecha, hora, coordenadas, velocidad, fuerza G y placa sobre cada imagen</li>
+            <li>Si el teléfono se apaga de golpe, se recupera lo grabado hasta los últimos segundos</li>
+            <li>Funciona sin señal: no necesita internet para grabar</li>
+          </ul>
+        </div>
+        <div>
+          <form class="calc" aria-labelledby="calc-t" onsubmit="return false">
+            <label id="calc-t" for="calc-gb">Memoria para PV Car: <span id="calc-gb-txt">16 GB</span></label>
+            <input type="range" id="calc-gb" min="4" max="64" step="1" value="16">
+            <fieldset>
+              <legend>Calidad del video</legend>
+              <div class="seg">
+                <label><input type="radio" name="res" value="4000000"><span>720p HD</span></label>
+                <label><input type="radio" name="res" value="8000000" checked><span>1080p Full HD</span></label>
+                <label><input type="radio" name="res" value="25000000"><span>4K</span></label>
+              </div>
+            </fieldset>
+            <p class="calc-out" aria-live="polite">Alcanza para <b id="calc-h">4 h 27 min</b> de recorrido continuo antes de empezar a reciclar.</p>
+            <p class="calc-note">Cálculo con la tasa de video que pide la app (4, 8 y 25 Mbps). El tamaño real varía según el teléfono y la escena.</p>
+          </form>
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="feat-copy">
+          <span class="feat-ico"><svg class="i" aria-hidden="true"><use href="#i-shield"/></svg></span>
+          <h3>Un golpe y la evidencia queda a salvo</h3>
+          <p>El acelerómetro del teléfono detecta un impacto y pasa a la bóveda el clip en curso, el anterior (con los segundos previos) y el siguiente. Lo que está en la bóveda no se borra con el bucle.</p>
+          <ul class="ticks">
+            <li>Sensibilidad alta, media o baja, para vías pavimentadas o destapadas</li>
+            <li>También con el botón Proteger o diciendo «Okay Pascal, acaba de pasar un accidente»</li>
+            <li>Cada evidencia se sella con su huella SHA-256 al cerrarse</li>
+          </ul>
+        </div>
+        <figure class="shot shot-phone"><img src="/pv-car/img/app-boveda.webp" alt="Bóveda de PV Car con un clip protegido por «Impacto detectado», su huella SHA-256 y los botones Ver, Guardar, Acta PDF y Quitar protección" width="640" height="781" loading="lazy"></figure>
+      </article>
+
+      <article class="feat">
+        <div class="feat-copy">
+          <span class="feat-ico"><svg class="i" aria-hidden="true"><use href="#i-doc"/></svg></span>
+          <h3>Acta en PDF, firmada en la pantalla</h3>
+          <p>Para cada evidencia, PV Car arma un acta de custodia con los datos del archivo, su huella SHA-256, la telemetría, un fotograma de referencia y tu firma hecha con el dedo. Se genera en el teléfono, sin enviar nada a internet.</p>
+          <ul class="ticks">
+            <li>Instrucciones para que cualquiera verifique la huella en su computador</li>
+            <li>Si al video le cambian un solo byte, la huella deja de coincidir</li>
+            <li>Comparte el video y el acta por WhatsApp o correo</li>
+          </ul>
+          <p class="fine">El acta deja constancia técnica de que el archivo no ha cambiado desde que se selló. Su valor como prueba lo decide la autoridad competente.</p>
+        </div>
+        <figure class="shot shot-doc"><img src="/pv-car/img/acta-pdf.webp" alt="Acta de custodia de evidencia digital generada por PV Car, con huella SHA-256, telemetría, fotograma y firma" width="760" height="1075" loading="lazy"><figcaption class="cap">Acta generada con la demo, en una escena de prueba.</figcaption></figure>
+      </article>
+    </div>
+  </section>
+
+  <section class="sponsors" id="voz" aria-labelledby="voz-title">
+    <div class="wrap sponsors-in">
+      <div>
+        <p class="eyebrow on-dark">Copiloto por voz</p>
+        <h2 id="voz-title">Las manos en el volante, <span class="y">los ojos en la vía</span></h2>
+        <p class="lead">Di «Hola Pascal» o «Okay Pascal» y lo que quieres hacer. Pascal te confirma en voz alta, para que no tengas que mirar la pantalla.</p>
+        <p class="fine">El reconocimiento lo hace el teléfono. En Android funciona sin datos si tienes descargado el paquete de voz en español.</p>
+      </div>
+      <ul class="voice-list" aria-label="Comandos de voz">
+        <li><q>Hola Pascal, activa la grabación</q><span>También «detén la grabación».</span></li>
+        <li><q>Okay Pascal, guarda este video</q><span>O «acaba de pasar un accidente»: el clip pasa a la bóveda.</span></li>
+        <li><q>Hola Pascal, toma una foto</q><span>Foto con la franja de fecha, hora y ubicación.</span></li>
+        <li><q>Okay Pascal, modo ahorro térmico</q><span>Apaga casi toda la pantalla para que el teléfono no se caliente al sol, y sigue grabando.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="roles" id="como" aria-labelledby="como-title">
+    <div class="wrap">
+      <header class="head">
+        <p class="eyebrow">Cómo se usa</p>
+        <h2 id="como-title">Listo antes de arrancar el carro</h2>
+      </header>
+      <ol class="steps">
+        <li><h3>Soporte fijo</h3><p>Pon el teléfono en un soporte del tablero o del parabrisas, mirando hacia la vía, conectado al cargador.</p></li>
+        <li><h3>Elige la memoria</h3><p>Decide cuántos GB le das a PV Car y la calidad del video. La app te dice cuántas horas caben.</p></li>
+        <li><h3>Graba</h3><p>Toca Grabar o di «Hola Pascal, activa la grabación». Deja la app abierta durante el viaje.</p></li>
+        <li><h3>Si pasa algo</h3><p>La evidencia se protege sola con el golpe, con el botón o con la voz. Después sacas el acta en PDF.</p></li>
+      </ol>
+      <ul class="extras">
+        <li><b>Conductores particulares.</b> Un respaldo ante choques, cobros injustos o discusiones de tránsito.</li>
+        <li><b>Taxis y transporte público.</b> Registro de cada recorrido sin instalar equipos en el vehículo.</li>
+        <li><b>Flotas institucionales.</b> Se complementa con <a href="/flota/">Flota Vehicular</a>, la solución de PascalIA para itinerarios y marcas con GPS.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="faq" id="preguntas" aria-labelledby="faq-title">
+    <div class="wrap faq-in">
+      <h2 id="faq-title">Preguntas</h2>
+      <div class="faq-list">
+        <details><summary>¿Tengo que comprar una cámara para el carro?<svg class="faq-i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>No. PV Car usa la cámara trasera, el GPS y el acelerómetro de tu celular. Solo necesitas un soporte fijo y, para viajes largos, el cargador del carro.</p></div></details>
+        <details><summary>¿Gasta mis datos o necesita internet?<svg class="faq-i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>Para grabar, proteger y sacar el acta no necesita internet. La primera vez que abres la demo se descarga; después abre aunque no tengas señal. Los comandos de voz pueden necesitar datos si tu teléfono no tiene el paquete de voz en español.</p></div></details>
+        <details><summary>¿Puede grabar con la pantalla apagada?<svg class="faq-i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>En la versión de navegador, no: los navegadores detienen la cámara si bloqueas el teléfono o cambias de app. PV Car mantiene la pantalla encendida y tiene el modo ahorro térmico, que la deja casi negra mientras sigue grabando.</p></div></details>
+        <details><summary>¿Toca mis fotos o mis archivos?<svg class="faq-i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>No. Los videos se guardan en un espacio privado de la app, aparte de tu galería, y PV Car nunca pasa del límite de GB que tú le asignas.</p></div></details>
+        <details><summary>¿El video sirve como prueba?<svg class="faq-i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>El video y el acta muestran qué pasó, cuándo y dónde, y la huella SHA-256 permite comprobar que el archivo no se modificó después de sellarlo. Si sirve como prueba en un caso concreto lo decide la autoridad competente; PV Car no reemplaza la asesoría de un abogado.</p></div></details>
+        <details><summary>¿Está en Play Store o App Store?<svg class="faq-i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>Todavía no. Hoy funciona desde el navegador del celular: en Chrome para Android aparece «Instalar app» y en iPhone, desde Safari, la agregas con Compartir → «Agregar a inicio».</p></div></details>
+        <details><summary>¿Cuánto cuesta?<svg class="faq-i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>La demo es gratuita. Estamos definiendo los planes para conductores y flotas; escríbenos y te contamos.</p></div></details>
+        <details><summary>¿Qué pasa con mi ubicación y mis videos?<svg class="faq-i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>Se quedan en tu teléfono. PV Car no los envía a ningún servidor, no usa analítica ni publicidad, y solo salen si tú los compartes. Más detalles en la <a href="/politica-de-datos/">Política de tratamiento de datos</a>.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="close" id="contacto" aria-labelledby="close-title">
+    <div class="wrap close-in">
+      <div class="close-copy">
+        <h2 id="close-title">Cada viaje, <span class="y">con testigo.</span></h2>
+        <p>¿Tienes una flota, una empresa de transporte o una entidad con vehículos? Cuéntanos cuántos son y cómo trabajan, y te mostramos PV Car en tus vehículos.</p>
+        <a class="btn btn-outline-w" href="/pv-car/demo/">Probar la demo</a>
+        <p class="close-alt">O escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a></p>
+      </div>
+      <div class="close-form" data-pascalia-form data-solucion="otro">
+        <noscript><p>Para enviar el formulario activa JavaScript, o escríbenos a <a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a>.</p></noscript>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <a class="logo-w" href="/"><svg class="flor" aria-hidden="true"><use href="#flor"/></svg><span>Pascal<b>IA</b></span></a>
+      <p>Ideas que hacen florecer tu organización.</p>
+      <p class="foot-small">PV Car · Pascal Video Car es una solución de PascalIA, hecha en Colombia.</p>
+    </div>
+    <nav class="foot-col" aria-label="Soluciones"><h3>Soluciones</h3><a href="/pv-car/">PV Car</a><a href="/flota/">Flota Vehicular</a><a href="/PascalPDF_Studio/">PascalPDF Studio</a><a href="/PascalSign/">Pascal Sign</a><a href="/desarrollos/">Desarrollos a la medida</a></nav>
+    <nav class="foot-col" aria-label="Empresa"><h3>Empresa</h3><a href="/">PascalIA</a><a href="mailto:contacto@pascalia.lat">contacto@pascalia.lat</a><a href="https://wa.me/573123885012">WhatsApp de PascalIA</a></nav>
+    <nav class="foot-col" aria-label="Legal"><h3>Legal</h3><a href="/politica-de-datos/">Política de datos</a></nav>
+    <p class="foot-legal">© 2026 PascalIA · Hecho en Colombia</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var gb = document.getElementById("calc-gb"), txt = document.getElementById("calc-gb-txt"), out = document.getElementById("calc-h");
+  function horas(h) { var e = Math.floor(h), m = Math.round((h - e) * 60); if (m === 60) { e++; m = 0; } return h < 1 ? Math.round(h * 60) + " min" : e + " h" + (m ? " " + m + " min" : ""); }
+  function calcular() {
+    var bps = Number(document.querySelector('input[name="res"]:checked').value);
+    txt.textContent = gb.value + " GB";
+    gb.setAttribute("aria-valuetext", gb.value + " gigabytes");
+    out.textContent = horas((gb.value * 1e9) / (bps / 8) / 3600);
+  }
+  gb.form.addEventListener("input", calcular);
+  calcular();
+})();
+</script>
+</body>
+</html>
