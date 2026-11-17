@@ -13,6 +13,7 @@ Publicado en https://pascalia.lat con GitHub Pages: `.github/workflows/pages.yml
 | `/si-aps/` | SI-APS: caracterización sociofamiliar e individual en terreno y archivo plano APS124CCFP para PISIS |
 | `/mision-medica/` | Misión Médica: infracciones, carnet con QR, emblemas, capacitación DIH, riesgos, desplazamientos e inspección. Logotipo del módulo en `mision-medica/logo-*.png` (bordes redondeados) |
 | `/fanatikos/` | Fanátikos: gestión de campeonatos de fútbol aficionado (tabla, planilla arbitral, actas PDF, afiches para redes). Demo en `/fanatikos/demo/` (`noindex`, un solo HTML; lo que se hace se guarda solo en el navegador) |
+| `/pv-car/` | Página del producto PV Car · Pascal Video Car: qué hace, calculadora de horas según la memoria, comandos de voz, cómo se usa, preguntas y formulario. Capturas reales de la demo (escena de carretera simulada) en `pv-car/img/` |
 | `/pv-car/demo/` | Demo de PV Car · Pascal Video Car: cámara vehicular en bucle, copiloto «Hola Pascal», sensor de impacto y bóveda con SHA-256 y acta PDF. Es una PWA que funciona sin conexión (`sw.js` con alcance `/pv-car/demo/`); `noindex` y fuera del sitemap. Lo grabado queda solo en el navegador. El código fuente vive en el repositorio `PVCar`: copiar desde allí al actualizar y subir `VERSION` en `sw.js` |
 | `/cuentafacil/` | Página del producto CuentaFacil (cuentas de cobro de contratistas por WhatsApp) |
 | `/politica-de-datos/` | Política de tratamiento de datos personales (Ley 1581 de 2012), versión 1.1 aprobada por el abogado |
