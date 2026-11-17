@@ -13,7 +13,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="PV Car">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icons/icono.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/icono-48.png" type="image/png" sizes="48x48">
+  <link rel="icon" href="icons/icono-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="icons/icono-180.png">
   <link rel="stylesheet" href="app.css">
   <script src="/legal.js" defer></script>
@@ -38,12 +39,12 @@
       <video id="video" playsinline muted hidden></video>
       <canvas id="lienzo" aria-label="Vista de la cámara con telemetría"></canvas>
       <div class="visor-vacio" id="visorVacio">
-        <img src="icons/icono.svg" alt="" width="72" height="72">
+        <img src="icons/logo-pvcar.webp" alt="" width="120" height="120" class="logo">
         <p>Pon el teléfono en un soporte fijo, mirando hacia la vía,<br>y toca <b>Grabar</b>.</p>
       </div>
 
       <header class="barra">
-        <div class="marca"><img src="icons/icono.svg" alt="" width="28" height="28"><span>PV&nbsp;Car</span><span class="demo">Demo</span></div>
+        <div class="marca"><img src="icons/icono-192.png" alt="" width="28" height="28"><span>PV&nbsp;Car</span><span class="demo">Demo</span></div>
         <ul class="chips" aria-label="Estado de los sensores">
           <li id="chipRec" class="chip" data-tono="apagado"><span class="punto"></span><span>Detenido</span></li>
           <li id="chipGps" class="chip" data-tono="apagado">GPS <b>—</b></li>
@@ -208,7 +209,7 @@
   <!-- Primer uso -->
   <dialog class="hoja bienvenida" id="dlgBienvenida" aria-labelledby="tBienv">
     <form method="dialog" id="formBienv">
-      <img src="icons/icono.svg" alt="" width="64" height="64">
+      <img src="icons/logo-pvcar.webp" alt="PV Car, by PascalIA" width="112" height="112" class="logo">
       <h2 id="tBienv">Tu celular, cámara testigo</h2>
       <p class="nota fuerte">Versión demo de PV Car. Funciona de verdad con la cámara y los sensores de tu teléfono; lo que grabes queda solo en este navegador y nadie más lo ve.</p>
       <ol>
