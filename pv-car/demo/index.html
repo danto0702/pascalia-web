@@ -87,6 +87,7 @@
       <button type="button" role="tab" id="tabGrab" aria-selected="true" aria-controls="lista">Grabaciones <span id="nGrab">0</span></button>
       <button type="button" role="tab" id="tabBov" aria-selected="false" aria-controls="lista">Bóveda <span id="nBov">0</span></button>
     </div>
+    <button type="button" class="aviso-choque" data-abrir-choque>¿Tuviste un choque? <b>Qué hacer ahora</b></button>
     <p class="nota" id="notaLista"></p>
     <ul class="lista" id="lista" role="tabpanel" aria-labelledby="tabGrab"></ul>
   </dialog>
@@ -199,6 +200,26 @@
       </fieldset>
 
       <fieldset>
+        <legend>Automatización</legend>
+        <label class="interruptor"><input type="checkbox" id="autoOn"><span>Empezar a grabar al arrancar</span></label>
+        <div class="campo"><label for="autoUmbral">Cuando la velocidad supere</label>
+          <select id="autoUmbral"><option value="10">10 km/h</option><option value="15">15 km/h</option><option value="20">20 km/h</option><option value="30">30 km/h</option></select></div>
+        <div class="campo"><label for="autoParada">Detener si el carro está quieto</label>
+          <select id="autoParada"><option value="2">2 minutos</option><option value="5">5 minutos</option><option value="10">10 minutos</option><option value="0">Nunca</option></select></div>
+        <p class="ayuda">Funciona con la app abierta y el GPS activo. La detención automática solo aplica a las grabaciones que empezaron solas.</p>
+        <label class="interruptor"><input type="checkbox" id="vibrarOn"><span>Vibrar al iniciar, detener y proteger</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Ayuda</legend>
+        <div class="botones-ayuda">
+          <button type="button" class="boton sec" id="abrirGuia">Guía de bienvenida</button>
+          <button type="button" class="boton sec" data-abrir-choque>Qué hacer tras un choque</button>
+          <button type="button" class="boton sec" id="abrirRegistro">Registro de eventos</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
         <legend>Privacidad</legend>
         <p class="ayuda">Videos, fotos, ubicación y telemetría se guardan solo en el almacenamiento privado de esta app en tu teléfono. PV Car no los envía a ningún servidor, no usa analítica ni publicidad, y nunca lee tu galería. Solo salen del teléfono si tú los descargas o compartes.</p>
         <p class="ayuda">Responsable: PascalIA · <a href="/politica-de-datos/">Política de datos</a> · <a href="/pv-car/terminos/">Términos de PV Car</a> · <a href="/eliminar-mis-datos/">Eliminar mis datos</a> · <a href="/aviso-legal/">Aviso legal</a></p>
@@ -209,23 +230,71 @@
     </form>
   </dialog>
 
-  <!-- Primer uso -->
-  <dialog class="hoja bienvenida" id="dlgBienvenida" aria-labelledby="tBienv">
+  <!-- Guía de bienvenida (4 pantallas). Las imágenes viven en img/guia-*.webp -->
+  <dialog class="hoja guia" id="dlgBienvenida" aria-labelledby="tGuia" aria-roledescription="carrusel">
     <form method="dialog" id="formBienv">
-      <img src="icons/logo-pvcar.webp" alt="PV Car, by PascalIA" width="112" height="112" class="logo">
-      <h2 id="tBienv">Tu celular, cámara testigo</h2>
-      <p class="nota fuerte">Versión demo de PV Car. Funciona de verdad con la cámara y los sensores de tu teléfono; lo que grabes queda solo en este navegador y nadie más lo ve.</p>
-      <ol>
-        <li><b>Graba en bucle</b> dentro del espacio que elijas, sin tocar tus fotos ni tus archivos.</li>
-        <li><b>Protege la evidencia</b> con un golpe fuerte, con el botón o diciendo «Okay Pascal, guarda este video».</li>
-        <li><b>Saca un acta PDF</b> con la huella SHA-256 y tu firma.</li>
-      </ol>
-      <p class="nota">Pediremos cámara, ubicación y, si activas el copiloto, micrófono. Todo queda en el teléfono.</p>
-      <p class="nota fuerte">Instala el teléfono en un soporte fijo antes de arrancar y no lo manipules mientras conduces. Para usar las manos libres está «Hola Pascal».</p>
-      <p class="nota">Mantén la app abierta y la pantalla encendida: el navegador detiene la cámara si sales de la app o bloqueas el teléfono.</p>
+      <div class="hoja-cab"><span class="guia-marca"><img src="icons/icono-192.png" alt="" width="28" height="28"> PV Car</span><button type="button" class="enlace" id="guiaSaltar">Saltar</button></div>
+      <section class="guia-paso" data-paso="0" aria-roledescription="diapositiva" aria-label="1 de 4">
+        <figure class="guia-img"><img src="img/guia-1-soporte.webp" alt="Teléfono en horizontal en un soporte de parabrisas y otro en un soporte de tablero, ambos mirando hacia la vía" width="1200" height="900"></figure>
+        <h2 id="tGuia">Instala tu teléfono</h2>
+        <p>En un soporte fijo del parabrisas o del tablero, en horizontal, con la cámara trasera hacia la vía y conectado al cargador.</p>
+        <p class="nota fuerte">Que no tape tu visión. Configura todo antes de arrancar: mientras conduces, usa la voz.</p>
+      </section>
+      <section class="guia-paso" data-paso="1" aria-roledescription="diapositiva" aria-label="2 de 4" hidden>
+        <figure class="guia-img"><img src="img/guia-2-voz.webp" alt="Teléfono en el soporte mientras el conductor dice «Hola Pascal, graba»" width="1200" height="900"></figure>
+        <h2>Graba sin tocar la pantalla</h2>
+        <p>Toca <b>Grabar</b>, di <b>«Hola Pascal, activa la grabación»</b> o deja que empiece sola cuando el carro arranque (en Ajustes › Automatización).</p>
+      </section>
+      <section class="guia-paso" data-paso="2" aria-roledescription="diapositiva" aria-label="3 de 4" hidden>
+        <figure class="guia-img"><img src="img/guia-3-telemetria.webp" alt="Pantalla de PV Car grabando la vía, con la franja de fecha, hora, coordenadas, placa, velocidad y fuerza G" width="1200" height="555"></figure>
+        <h2>Cada detalle queda en el video</h2>
+        <p>Fecha, hora, coordenadas, velocidad, fuerza G y placa sobre cada imagen. Graba en bucle dentro del espacio que elijas, sin tocar tus fotos ni tus archivos.</p>
+      </section>
+      <section class="guia-paso" data-paso="3" aria-roledescription="diapositiva" aria-label="4 de 4" hidden>
+        <figure class="guia-img"><img src="img/guia-4-evidencia.webp" alt="Pantalla Videos de PV Car en la pestaña Bóveda, con un clip protegido por un impacto y su huella SHA-256" width="704" height="1162"></figure>
+        <h2>La evidencia, a salvo</h2>
+        <p>Un golpe fuerte, el botón <b>Proteger</b> o <b>«Okay Pascal, guarda este video»</b> pasan el clip a la bóveda. Después sacas un acta PDF con huella SHA-256 y tu firma.</p>
+        <p class="nota">Pediremos cámara, ubicación y, si activas el copiloto, micrófono. Todo queda en el teléfono. Mantén la app abierta y la pantalla encendida mientras grabas.</p>
+        <div class="guia-acepto">
       <label class="casilla"><input type="checkbox" id="acepto" required><span>Leí la <a href="/politica-de-datos/">política de datos</a> y los <a href="/pv-car/terminos/">términos y condiciones de PV Car</a>, y soy mayor de 18 años.</span></label>
-      <div class="acciones"><button type="submit" class="boton" id="btnEmpezar" disabled>Empezar</button></div>
+        </div>
+      </section>
+      <div class="guia-pie">
+        <div class="guia-puntos" role="tablist" aria-label="Pantallas de la guía"><button type="button" role="tab" aria-label="Pantalla 1" aria-selected="true"></button><button type="button" role="tab" aria-label="Pantalla 2" aria-selected="false"></button><button type="button" role="tab" aria-label="Pantalla 3" aria-selected="false"></button><button type="button" role="tab" aria-label="Pantalla 4" aria-selected="false"></button></div>
+        <div class="acciones"><button type="button" class="boton sec" id="guiaAtras" hidden>Atrás</button><button type="button" class="boton" id="guiaSig">Continuar</button><button type="submit" class="boton" id="btnEmpezar" hidden disabled>Empezar</button></div>
+      </div>
     </form>
+  </dialog>
+
+  <!-- Qué hacer después de un choque -->
+  <dialog class="hoja" id="dlgChoque" aria-labelledby="tChoque">
+    <div class="hoja-cab">
+      <h2 id="tChoque">Qué hacer después de un choque</h2>
+      <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+    </div>
+    <p class="nota">Una guía práctica, no asesoría legal. Ante dudas, consulta a tu aseguradora o a un abogado.</p>
+    <ol class="pasos-choque">
+      <li><b>Ponte a salvo.</b> Detente donde no haya peligro, enciende las luces de parqueo y usa las señales de tu equipo de carretera.</li>
+      <li><b>Si hay heridos, llama al 123</b> y no los muevas, salvo que corran peligro.</li>
+      <li><b>Protege el video ahora</b>, antes de que el bucle lo recicle.<br><button type="button" class="boton" id="choqueProteger">Proteger el video</button></li>
+      <li><b>Documenta la escena</b> antes de mover los vehículos: posición, daños, placas, señales y testigos.<br><button type="button" class="boton sec" id="choqueFoto">Tomar foto</button></li>
+      <li><b>Anota los datos del otro conductor:</b> nombre, documento, teléfono, placa, aseguradora y número del SOAT o de la póliza.</li>
+      <li><b>Evita discutir culpas o aceptar pagos en el sitio</b> sin hablar antes con tu aseguradora.</li>
+      <li><b>Si llega la autoridad,</b> anota el nombre y la placa del agente y pregunta cómo obtener el informe policial (IPAT).</li>
+      <li><b>Avisa a tu aseguradora</b> cuanto antes y guarda el video y las fotos fuera del teléfono.</li>
+      <li><b>Saca el acta PDF</b> de la evidencia protegida, con su huella SHA-256 y tu firma.<br><button type="button" class="boton sec" id="choqueActa">Ir a la bóveda</button></li>
+    </ol>
+  </dialog>
+
+  <!-- Registro de eventos -->
+  <dialog class="hoja" id="dlgRegistro" aria-labelledby="tRegistro">
+    <div class="hoja-cab">
+      <h2 id="tRegistro">Registro de eventos</h2>
+      <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+    </div>
+    <p class="nota" id="registroNota"></p>
+    <ul class="lista-registro" id="registroLista"></ul>
+    <div class="acciones"><button type="button" class="boton peligro" id="registroBorrar">Borrar registro</button><button type="button" class="boton" id="registroExportar">Exportar CSV</button></div>
   </dialog>
 
 </body>

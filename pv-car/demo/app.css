@@ -211,3 +211,37 @@ img.logo { border-radius: 22%; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
 .bienvenida ol { padding-left: 20px; margin: 0 0 12px; display: grid; gap: 8px; }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---- Guía de bienvenida ---- */
+dialog.guia { padding-bottom: calc(env(safe-area-inset-bottom) + 14px); }
+.guia-marca { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
+.guia-marca img { border-radius: 7px; }
+.guia-img { margin: 4px 0 14px; aspect-ratio: 4 / 3; background: #000; border-radius: 16px; overflow: hidden; display: grid; place-items: center; }
+.guia-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.guia-paso h2 { font-size: 22px; margin: 0 0 8px; letter-spacing: -.01em; }
+.guia-paso p { margin: 0 0 10px; color: var(--texto-2); }
+.guia-paso p b { color: var(--texto); }
+.guia-acepto { margin-top: 8px; }
+.guia-pie { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+.guia-pie .acciones { margin-top: 0; }
+.guia-puntos { display: flex; gap: 4px; }
+.guia-puntos button { width: 28px; height: 28px; border: 0; background: transparent; padding: 0; cursor: pointer; display: grid; place-items: center; }
+.guia-puntos button::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--linea); }
+.guia-puntos button[aria-selected="true"]::before { background: var(--amarillo); width: 22px; border-radius: 999px; }
+
+/* ---- Qué hacer tras un choque ---- */
+.aviso-choque { width: 100%; min-height: 48px; margin: 4px 0 10px; padding: 10px 14px; border-radius: 12px; border: 1px solid #8f3a35; background: rgba(179, 38, 30, .16); color: var(--texto); font: 500 15px var(--fuente); text-align: left; cursor: pointer; }
+.aviso-choque b { color: #ff8a80; }
+.pasos-choque { margin: 6px 0 4px; padding-left: 22px; display: grid; gap: 12px; }
+.pasos-choque li { color: var(--texto-2); }
+.pasos-choque li b { color: var(--texto); }
+.pasos-choque .boton { margin-top: 8px; min-height: 44px; }
+
+/* ---- Registro de eventos ---- */
+.lista-registro { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 50dvh; overflow-y: auto; }
+.lista-registro li { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; padding: 10px 12px; border-radius: 10px; background: var(--grafito); border: 1px solid var(--linea); font-size: 14px; }
+.lista-registro time { color: var(--texto-2); font-variant-numeric: tabular-nums; grid-row: span 2; }
+.lista-registro small { grid-column: 2; }
+.lista-registro .imp { border-color: #8f3a35; }
+select { width: 100%; min-height: 46px; padding: 10px 12px; border-radius: 10px; border: 1px solid #5a5650; background: var(--grafito); color: var(--texto); font: 16px var(--fuente); }
+.botones-ayuda { display: grid; gap: 8px; }

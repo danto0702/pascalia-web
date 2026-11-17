@@ -7,12 +7,14 @@ import { ACCIONES } from "./comandos.js";
 import { horasDeGrabacion, formatoHoras, formatoBytes, GB, RESOLUCIONES } from "./fifo.js";
 import { generarActa, fotogramaDeArchivo, nombreArchivo } from "./acta.js";
 import { agruparSesiones, duracionTexto } from "./sesiones.js";
+import { Autoarranque } from "./autoarranque.js";
+import { Registro, TIPOS, ORIGENES } from "./registro.js";
 
 const $ = (id) => document.getElementById(id);
 const CLAVE = "pvcar_ajustes";
 // Versión de los términos de PV Car (/pv-car/terminos/). Si cambia, se pide aceptarlos de nuevo.
 const TERMINOS = "1.0";
-const PREDETERMINADOS = { cuotaGB: 16, resolucion: "1080p", minutos: 3, sensibilidad: "media", voz: true, tts: true, audio: false, placa: "", nombre: "", documento: "", bienvenida: false };
+const PREDETERMINADOS = { cuotaGB: 16, resolucion: "1080p", minutos: 3, sensibilidad: "media", voz: true, tts: true, audio: false, placa: "", nombre: "", documento: "", bienvenida: false, autoInicio: false, autoUmbral: 15, autoParada: 5, vibrar: true };
 
 function leerAjustes() {
   try { return { ...PREDETERMINADOS, ...JSON.parse(localStorage.getItem(CLAVE) || "{}") }; } catch { return { ...PREDETERMINADOS }; }
@@ -42,7 +44,11 @@ function avisar(texto, { tono = "", hablar = false } = {}) {
   tAviso = setTimeout(() => a.classList.remove("ver"), 4500);
   if (hablar && ajustes.tts) voz.decir(texto);
 }
-const vibrar = (p) => { try { navigator.vibrate?.(p); } catch {} };
+const vibrar = (p) => { if (!ajustes.vibrar) return; try { navigator.vibrate?.(p); } catch {} };
+
+/* ---------- Registro de eventos ---------- */
+const registro = new Registro(localStorage);
+const anotar = (tipo, origen, detalle) => { try { registro.agregar(tipo, { origen, detalle }); } catch {} };
 
 /* ---------- Pantalla encendida (Wake Lock) ---------- */
 let bloqueo = null;
@@ -124,7 +130,8 @@ function sellarSiCorresponde(clip) {
 }
 
 /* ---------- Acciones principales ---------- */
-async function iniciarGrabacion() {
+let iniciadaPorAuto = false;
+async function iniciarGrabacion(origen = "manual") {
   if (grab.grabando) return;
   if (!mimeSoportado()) return avisar("Este navegador no puede grabar video. Usa Chrome en Android o Safari 14.5+ en iPhone.", { tono: "mal" });
   await tel.pedirPermisoMovimiento();
@@ -139,21 +146,26 @@ async function iniciarGrabacion() {
     return;
   }
   if (!grab.grabando) return; // sin espacio
+  iniciadaPorAuto = origen === "auto";
+  anotar("inicio", origen);
+  vibrar(80);
   inicioSesion = Date.now();
   mantenerPantalla(true);
   pintarRec();
   if (ajustes.voz) encenderVoz();
-  avisar("Grabación activada", { hablar: true });
+  avisar(origen === "auto" ? "Grabación iniciada automáticamente" : "Grabación activada", { hablar: true });
 }
 
-async function detenerGrabacion() {
+async function detenerGrabacion(origen = "manual") {
   if (!grab.grabando) return;
   await grab.detener();
   grab.apagarCamara();
-  tel.detener();
-  chip("chipGps", "apagado", "GPS <b>—</b>");
-  chip("chipG", "apagado", "G <b>—</b>");
-  mantenerPantalla(false);
+  anotar("detencion", origen);
+  vibrar([50, 60, 50]);
+  iniciadaPorAuto = false;
+  if (!ajustes.autoInicio) tel.detener(); // el inicio automático necesita el GPS encendido
+  if (!ajustes.autoInicio) { chip("chipGps", "apagado", "GPS <b>—</b>"); chip("chipG", "apagado", "G <b>—</b>"); }
+  mantenerPantalla(!!ajustes.autoInicio); // con inicio automático la pantalla sigue encendida para el próximo arranque
   salirAhorro();
   pintarRec();
   const { clips } = await pintarEspacio();
@@ -165,7 +177,7 @@ async function detenerGrabacion() {
   } else avisar("Grabación detenida", { hablar: true });
 }
 
-async function proteger(motivo = "Protegido por el conductor", extra = {}) {
+async function proteger(motivo = "Protegido por el conductor", extra = {}, origen = "manual") {
   const ids = await grab.proteger(motivo, extra);
   if (!ids.length) {
     const ult = (await db.listarClips()).find((c) => c.tipo === "video" && !c.protegido);
@@ -173,16 +185,18 @@ async function proteger(motivo = "Protegido por el conductor", extra = {}) {
   }
   if (!ids.length) return avisar("No hay un clip para proteger todavía.", { hablar: true });
   vibrar([60, 40, 60]);
+  anotar("proteccion", origen, motivo);
   avisar(ids.length > 1 ? "Video protegido en la bóveda, con los segundos previos." : "Video protegido en la bóveda.", { hablar: true });
   pintarEspacio();
 }
 
-async function foto() {
+async function foto(origen = "manual") {
   try {
     const { meta, blob } = await grab.foto();
     if (!grab.grabando) { grab.apagarCamara(); pintarRec(); } // no dejar la cámara encendida
     descargar(blob, nombreArchivo(meta));
     vibrar(40);
+    anotar("foto", origen);
     avisar("Foto tomada y guardada en la bóveda.", { hablar: true });
   } catch (err) {
     avisar(`No se pudo tomar la foto (${err?.message || err}).`, { tono: "mal" });
@@ -216,10 +230,10 @@ voz.addEventListener("orden", async (e) => {
   if (r.tipo === "atento") { vibrar(30); if (ajustes.tts) voz.decir("Dime"); return; }
   if (r.tipo === "desconocido") return avisar(`No entendí «${r.texto}»`, { hablar: true });
   switch (r.accion) {
-    case ACCIONES.iniciar: return iniciarGrabacion();
-    case ACCIONES.detener: return detenerGrabacion();
-    case ACCIONES.proteger: return proteger("Comando de voz");
-    case ACCIONES.foto: return foto();
+    case ACCIONES.iniciar: return iniciarGrabacion("voz");
+    case ACCIONES.detener: return detenerGrabacion("voz");
+    case ACCIONES.proteger: return proteger("Comando de voz", {}, "voz");
+    case ACCIONES.foto: return foto("voz");
     case ACCIONES.ahorroOn: entrarAhorro(); return avisar("Modo ahorro térmico activado", { hablar: true });
     case ACCIONES.ahorroOff: salirAhorro(); return avisar("Pantalla normal", { hablar: true });
     case ACCIONES.estado: {
@@ -234,11 +248,14 @@ voz.addEventListener("orden", async (e) => {
 tel.addEventListener("impacto", async (e) => {
   if (!grab.grabando) return;
   vibrar([200, 80, 200]);
-  await proteger("Impacto detectado", { g: e.detail.g });
+  anotar("impacto", "sistema", `${e.detail.g.toFixed(2).replace(".", ",")} G`);
+  await proteger("Impacto detectado", { g: e.detail.g }, "sistema");
+  avisar("Impacto detectado: video protegido. Cuando estés a salvo, abre Videos › «¿Tuviste un choque?».", { tono: "mal" });
 });
 grab.addEventListener("cerrado", (e) => { sellarSiCorresponde(e.detail); pintarEspacio(); if ($("dlgBoveda").open) pintarLista(); });
 grab.addEventListener("fragmento", () => pintarEspacio());
 grab.addEventListener("sin-espacio", () => {
+  anotar("sinEspacio", "sistema");
   avisar("Los clips protegidos llenaron la cuota. Sube la cuota o libera espacio en la bóveda.", { tono: "mal", hablar: true });
   mantenerPantalla(false); pintarRec();
 });
@@ -511,6 +528,7 @@ $("formActa").addEventListener("submit", async (e) => {
       clip, fotograma, firma: firmado ? firma : null,
       declarante: { nombre: ajustes.nombre, documento: ajustes.documento, nota: $("aNota").value.trim() },
     });
+    anotar("acta", "manual", nombreArchivo(clip));
     await compartir(pdf, `Acta_${nombreArchivo(clip).replace(/\.\w+$/, "")}.pdf`);
     $("dlgActa").close();
   } catch (err) {
@@ -524,6 +542,8 @@ async function pintarAjustes() {
   $("cuota").value = ajustes.cuotaGB;
   f.resolucion.value = ajustes.resolucion; f.minutos.value = String(ajustes.minutos); f.sensibilidad.value = ajustes.sensibilidad;
   $("vozOn").checked = ajustes.voz; $("ttsOn").checked = ajustes.tts; $("audioOn").checked = ajustes.audio; $("placa").value = ajustes.placa;
+  $("autoOn").checked = ajustes.autoInicio; $("autoUmbral").value = String(ajustes.autoUmbral); $("autoParada").value = String(ajustes.autoParada);
+  $("autoUmbral").disabled = $("autoParada").disabled = !ajustes.autoInicio; $("vibrarOn").checked = ajustes.vibrar;
   $("vozAyuda").textContent = vozDisponible()
     ? "El reconocimiento lo hace el sistema del teléfono. En Android, descarga el paquete de voz en español para que funcione sin datos."
     : "Este navegador no ofrece reconocimiento de voz. En Android usa Chrome; en iPhone, Safari 14.5 o superior.";
@@ -551,7 +571,9 @@ $("formAjustes").addEventListener("change", () => {
   Object.assign(ajustes, {
     cuotaGB: Number($("cuota").value), resolucion: f.resolucion.value, minutos: Number(f.minutos.value), sensibilidad: f.sensibilidad.value,
     voz: $("vozOn").checked, tts: $("ttsOn").checked, audio: $("audioOn").checked, placa: $("placa").value.trim().toUpperCase().slice(0, 10),
+    autoInicio: $("autoOn").checked, autoUmbral: Number($("autoUmbral").value), autoParada: Number($("autoParada").value), vibrar: $("vibrarOn").checked,
   });
+  configurarAuto();
   guardarAjustes(); aplicarAjustes(); pintarEspacio(); pintarAjustes();
   if (ajustes.voz) encenderVoz(); else voz.detener();
   if (grab.grabando && (antes.resolucion !== ajustes.resolucion || antes.audio !== ajustes.audio)) {
@@ -565,12 +587,94 @@ $("borrarTodo").addEventListener("click", async () => {
 });
 
 /* ---------- Arranque ---------- */
+/* ---------- Guía de bienvenida (4 pantallas) ---------- */
+const pasosGuia = [...document.querySelectorAll(".guia-paso")];
+const puntosGuia = [...document.querySelectorAll(".guia-puntos button")];
+let pasoGuia = 0;
+function irPaso(n) {
+  pasoGuia = Math.max(0, Math.min(pasosGuia.length - 1, n));
+  pasosGuia.forEach((s, i) => { s.hidden = i !== pasoGuia; });
+  puntosGuia.forEach((b, i) => b.setAttribute("aria-selected", String(i === pasoGuia)));
+  const ultimo = pasoGuia === pasosGuia.length - 1, yaAcepto = aceptoTerminos();
+  $("guiaAtras").hidden = pasoGuia === 0;
+  $("guiaSig").hidden = ultimo;
+  $("btnEmpezar").hidden = !ultimo;
+  $("btnEmpezar").textContent = yaAcepto ? "Cerrar" : "Empezar";
+  $("btnEmpezar").disabled = !yaAcepto && !$("acepto").checked;
+  document.querySelector(".guia-acepto").hidden = yaAcepto;
+  $("guiaSaltar").hidden = ultimo;
+  pasosGuia.at(pasoGuia).querySelector("h2").focus?.();
+}
+function abrirGuia(desde = 0) { if (!$("dlgBienvenida").open) $("dlgBienvenida").showModal(); irPaso(desde); }
+pasosGuia.forEach((s) => s.querySelector("h2").setAttribute("tabindex", "-1"));
+$("guiaSig").addEventListener("click", () => irPaso(pasoGuia + 1));
+$("guiaAtras").addEventListener("click", () => irPaso(pasoGuia - 1));
+$("guiaSaltar").addEventListener("click", () => irPaso(pasosGuia.length - 1));
+puntosGuia.forEach((b, i) => b.addEventListener("click", () => irPaso(i)));
+// Deslizar con el dedo entre pantallas
+let toqueX = null;
+$("dlgBienvenida").addEventListener("touchstart", (e) => { toqueX = e.touches[0].clientX; }, { passive: true });
+$("dlgBienvenida").addEventListener("touchend", (e) => {
+  if (toqueX === null) return;
+  const dx = e.changedTouches[0].clientX - toqueX; toqueX = null;
+  if (Math.abs(dx) > 60) irPaso(pasoGuia + (dx < 0 ? 1 : -1));
+});
+// Sin aceptar los términos no se puede cerrar con Escape
+$("dlgBienvenida").addEventListener("cancel", (e) => { if (!aceptoTerminos()) { e.preventDefault(); irPaso(pasosGuia.length - 1); } });
 $("acepto").addEventListener("change", (e) => { $("btnEmpezar").disabled = !e.target.checked; });
-$("formBienv").addEventListener("submit", async () => {
+$("formBienv").addEventListener("submit", async (e) => {
+  if (aceptoTerminos()) return; // solo cerrar
+  if (!$("acepto").checked) { e.preventDefault(); return; }
   ajustes.bienvenida = true; ajustes.terminos = TERMINOS; ajustes.terminosFecha = new Date().toISOString(); guardarAjustes();
   await tel.pedirPermisoMovimiento();
   if (ajustes.voz) encenderVoz();
+  configurarAuto();
 });
+$("abrirGuia").addEventListener("click", () => { $("dlgAjustes").close(); abrirGuia(0); });
+
+/* ---------- Qué hacer tras un choque ---------- */
+document.querySelectorAll("[data-abrir-choque]").forEach((b) => b.addEventListener("click", () => {
+  b.closest("dialog")?.close();
+  $("dlgChoque").showModal();
+}));
+$("choqueProteger").addEventListener("click", () => proteger("Protegido desde la guía de choque"));
+$("choqueFoto").addEventListener("click", () => foto());
+$("choqueActa").addEventListener("click", () => { $("dlgChoque").close(); pestana = "bov"; pintarLista(); $("dlgBoveda").showModal(); });
+
+/* ---------- Registro de eventos (pantalla) ---------- */
+function pintarRegistro() {
+  const lista = registro.listar().slice().reverse();
+  $("registroNota").textContent = lista.length
+    ? `${lista.length} evento(s) guardados en este teléfono (se conservan los últimos 500).`
+    : "Aún no hay eventos. Aquí quedan los inicios, detenciones, impactos, protecciones, fotos y actas.";
+  $("registroLista").innerHTML = lista.slice(0, 200).map((e) => `<li class="${e.tipo === "impacto" ? "imp" : ""}"><time>${esc(fechaHora(new Date(e.t)))}</time><span>${esc(TIPOS[e.tipo] || e.tipo)}</span><small>${esc([ORIGENES[e.origen] || e.origen, e.detalle].filter(Boolean).join(" · "))}</small></li>`).join("");
+  $("registroExportar").disabled = $("registroBorrar").disabled = !lista.length;
+}
+$("abrirRegistro").addEventListener("click", () => { $("dlgAjustes").close(); pintarRegistro(); $("dlgRegistro").showModal(); });
+$("registroExportar").addEventListener("click", () => {
+  const blob = new Blob([registro.csv((t) => fechaHora(new Date(t)))], { type: "text/csv;charset=utf-8" });
+  compartir(blob, `PVCar_registro_${fechaHora().slice(0, 10)}.csv`);
+});
+$("registroBorrar").addEventListener("click", () => { if (confirm("¿Borrar todo el registro de eventos?")) { registro.limpiar(); pintarRegistro(); } });
+
+/* ---------- Inicio automático por velocidad ---------- */
+const auto = new Autoarranque({ umbralKmh: ajustes.autoUmbral, minutosParada: ajustes.autoParada });
+let ocupadoAuto = false;
+async function revisarAuto() {
+  if (!ajustes.autoInicio || !aceptoTerminos() || ocupadoAuto || document.visibilityState !== "visible") return;
+  const accion = auto.actualizar({ velKmh: tel.estado.velKmh, ahora: Date.now(), grabando: grab.grabando, iniciadaPorAuto });
+  if (!accion) return;
+  ocupadoAuto = true;
+  try { if (accion === "iniciar") await iniciarGrabacion("auto"); else await detenerGrabacion("auto"); }
+  finally { ocupadoAuto = false; }
+}
+function configurarAuto() {
+  auto.configurar({ umbralKmh: ajustes.autoUmbral, minutosParada: ajustes.autoParada });
+  if (ajustes.autoInicio && aceptoTerminos()) { tel.iniciar(); mantenerPantalla(true); }
+  else if (!grab.grabando) { tel.detener(); chip("chipGps", "apagado", "GPS <b>—</b>"); }
+}
+tel.addEventListener("cambio", revisarAuto);
+setInterval(revisarAuto, 15000); // el GPS deja de avisar cuando el carro está quieto
 
 (async function arrancar() {
   pintarRec();
@@ -585,12 +689,13 @@ $("formBienv").addEventListener("submit", async () => {
   // Sella las evidencias que hayan quedado sin huella.
   for (const c of await db.listarClips().catch(() => [])) sellarSiCorresponde(c);
   pintarEspacio();
-  if (!aceptoTerminos()) $("dlgBienvenida").showModal();
-  else if (ajustes.voz) {
+  if (!aceptoTerminos()) abrirGuia(0);
+  else configurarAuto();
+  if (aceptoTerminos() && ajustes.voz) {
     // Algunos navegadores solo permiten el micrófono tras un toque.
     document.addEventListener("pointerdown", () => encenderVoz(), { once: true });
   }
 })();
 
 // Gancho para pruebas automáticas (solo con ?prueba en la URL).
-if (new URLSearchParams(location.search).has("prueba")) window.__pvcar = { grab, tel, db, voz, proteger, ajustes };
+if (new URLSearchParams(location.search).has("prueba")) window.__pvcar = { grab, tel, db, voz, proteger, ajustes, registro, auto, revisarAuto };
