@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Demo PV Car · Pascal Video Car | PascalIA</title>
+  <meta name="description" content="Convierte tu celular en una cámara vehicular: grabación en bucle, copiloto por voz «Hola Pascal» y bóveda forense con acta PDF y huella SHA-256.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#141413">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PV Car">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icono-48.png" type="image/png" sizes="48x48">
+  <link rel="icon" href="icons/icono-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="icons/icono-180.png">
+  <link rel="stylesheet" href="app.css">
+  <script src="/legal.js" defer></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="currentColor"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></symbol>
+    <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 2.8 4.5 5.6v5.6c0 4.7 3.2 8.6 7.5 10 4.3-1.4 7.5-5.3 7.5-10V5.6L12 2.8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.6 12 2.4 2.4 4.4-4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-foto" viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4V8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13.3" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-sol" viewBox="0 0 24 24"><path d="M14 14.8V4.5a2 2 0 1 0-4 0v10.3a4 4 0 1 0 4 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-boveda" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8.7v-1M12 16.3v-1M15.3 12h1M7.7 12h1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-ajustes" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-cerrar" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <div class="app">
+  <main id="contenido">
+    <section class="visor" aria-label="Cámara">
+      <video id="video" playsinline muted hidden></video>
+      <canvas id="lienzo" aria-label="Vista de la cámara con telemetría"></canvas>
+      <div class="visor-vacio" id="visorVacio">
+        <img src="icons/logo-pvcar.webp" alt="" width="120" height="120" class="logo">
+        <p>Pon el teléfono en un soporte fijo, mirando hacia la vía,<br>y toca <b>Grabar</b>.</p>
+      </div>
+
+      <header class="barra">
+        <div class="marca"><img src="icons/icono-192.png" alt="" width="28" height="28"><span>PV&nbsp;Car</span><span class="demo">Demo</span></div>
+        <ul class="chips" aria-label="Estado de los sensores">
+          <li id="chipRec" class="chip" data-tono="apagado"><span class="punto"></span><span>Detenido</span></li>
+          <li id="chipGps" class="chip" data-tono="apagado">GPS <b>—</b></li>
+          <li id="chipG" class="chip" data-tono="apagado">G <b>—</b></li>
+          <li id="chipVoz" class="chip" data-tono="apagado"><svg aria-hidden="true"><use href="#i-mic"/></svg><b>Voz apagada</b></li>
+          <li id="chipEspacio" class="chip" data-tono="apagado">Bucle <b>—</b></li>
+        </ul>
+      </header>
+
+      <p class="aviso" id="aviso" role="status" aria-live="polite"></p>
+    </section>
+
+    <nav class="controles" id="controles" aria-label="Controles de grabación">
+      <button type="button" class="ctl" id="btnBoveda"><svg aria-hidden="true"><use href="#i-boveda"/></svg><span>Bóveda</span></button>
+      <button type="button" class="ctl" id="btnFoto"><svg aria-hidden="true"><use href="#i-foto"/></svg><span>Foto</span></button>
+      <button type="button" class="ctl rec" id="btnRec" aria-pressed="false"><svg aria-hidden="true"><use href="#i-rec"/></svg><span>Grabar</span></button>
+      <button type="button" class="ctl proteger" id="btnProteger"><svg aria-hidden="true"><use href="#i-escudo"/></svg><span>Proteger</span></button>
+      <button type="button" class="ctl" id="btnAhorro"><svg aria-hidden="true"><use href="#i-sol"/></svg><span>Ahorro</span></button>
+      <button type="button" class="ctl" id="btnAjustes"><svg aria-hidden="true"><use href="#i-ajustes"/></svg><span>Ajustes</span></button>
+    </nav>
+  </main>
+  </div>
+
+  <!-- Ahorro térmico: la pantalla queda al 5 % de brillo y la grabación sigue -->
+  <div class="ahorro" id="ahorro" hidden>
+    <button type="button" id="salirAhorro">
+      <span class="ahorro-rec">● Grabando · ahorro térmico</span>
+      <span>Toca dos veces o di «Hola Pascal, sal del ahorro»</span>
+    </button>
+  </div>
+
+  <!-- Bóveda y bucle -->
+  <dialog class="hoja" id="dlgBoveda" aria-labelledby="tBoveda">
+    <div class="hoja-cab">
+      <h2 id="tBoveda">Bóveda y bucle</h2>
+      <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+    </div>
+    <div class="pestanas" role="tablist" aria-label="Tipo de archivo">
+      <button type="button" role="tab" id="tabProt" aria-selected="true" aria-controls="lista">Protegidos <span id="nProt">0</span></button>
+      <button type="button" role="tab" id="tabBucle" aria-selected="false" aria-controls="lista">Bucle <span id="nBucle">0</span></button>
+    </div>
+    <p class="nota" id="notaLista"></p>
+    <ul class="lista" id="lista" role="tabpanel" aria-labelledby="tabProt"></ul>
+  </dialog>
+
+  <!-- Reproductor -->
+  <dialog class="hoja" id="dlgVer" aria-labelledby="tVer">
+    <div class="hoja-cab">
+      <h2 id="tVer">Clip</h2>
+      <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+    </div>
+    <div id="verMedio" class="ver-medio"></div>
+    <dl class="datos" id="verDatos"></dl>
+  </dialog>
+
+  <!-- Acta PDF con firma -->
+  <dialog class="hoja" id="dlgActa" aria-labelledby="tActa">
+    <form method="dialog" id="formActa" novalidate>
+      <div class="hoja-cab">
+        <h2 id="tActa">Acta de custodia (PDF)</h2>
+        <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+      </div>
+      <p class="nota">El acta incluye la huella SHA-256 del archivo, la telemetría y tu firma. Se genera en el teléfono: nada se envía a internet.</p>
+      <div class="campo"><label for="aNombre">Nombre de quien declara</label><input id="aNombre" autocomplete="name" maxlength="80"></div>
+      <div class="campo"><label for="aDoc">Documento de identidad <small>(opcional)</small></label><input id="aDoc" inputmode="numeric" maxlength="20"></div>
+      <div class="campo"><label for="aNota">Observación <small>(opcional)</small></label><textarea id="aNota" rows="2" maxlength="300" placeholder="Ej.: colisión por alcance en la Av. 30 de Agosto"></textarea></div>
+      <div class="campo">
+        <span class="etiqueta" id="lFirma">Firma en pantalla <small>(Pascal Sign)</small></span>
+        <canvas id="firma" class="firma" width="600" height="200" role="img" aria-labelledby="lFirma"></canvas>
+        <button type="button" class="enlace" id="borrarFirma">Borrar firma</button>
+      </div>
+      <p class="estado-hash" id="estadoHash"></p>
+      <div class="acciones">
+        <button type="button" class="boton sec" data-cerrar>Cancelar</button>
+        <button type="submit" class="boton" id="btnGenerarActa">Generar acta PDF</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Ajustes -->
+  <dialog class="hoja" id="dlgAjustes" aria-labelledby="tAjustes">
+    <form method="dialog" id="formAjustes">
+      <div class="hoja-cab">
+        <h2 id="tAjustes">Ajustes</h2>
+        <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+      </div>
+
+      <fieldset>
+        <legend>Memoria para el bucle</legend>
+        <div class="campo">
+          <label for="cuota">Espacio asignado: <b id="cuotaTxt">16 GB</b></label>
+          <input type="range" id="cuota" min="4" max="64" step="1" value="16" aria-describedby="cuotaAyuda">
+          <p class="ayuda" id="cuotaAyuda">Alcanza para <b id="horasTxt">—</b> continuas. Al llenarse se borra el clip más antiguo que no esté protegido.</p>
+          <p class="ayuda" id="dispTxt"></p>
+        </div>
+        <div class="campo">
+          <span class="etiqueta" id="lRes">Resolución</span>
+          <div class="segmentos" role="radiogroup" aria-labelledby="lRes">
+            <label><input type="radio" name="resolucion" value="720p"><span>720p HD</span></label>
+            <label><input type="radio" name="resolucion" value="1080p"><span>1080p FHD</span></label>
+            <label><input type="radio" name="resolucion" value="4k"><span>4K UHD</span></label>
+          </div>
+        </div>
+        <div class="campo">
+          <span class="etiqueta" id="lDur">Duración de cada fragmento</span>
+          <div class="segmentos" role="radiogroup" aria-labelledby="lDur">
+            <label><input type="radio" name="minutos" value="1"><span>1 min</span></label>
+            <label><input type="radio" name="minutos" value="3"><span>3 min</span></label>
+            <label><input type="radio" name="minutos" value="5"><span>5 min</span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Sensor de impacto</legend>
+        <div class="campo">
+          <span class="etiqueta" id="lSens">Sensibilidad</span>
+          <div class="segmentos" role="radiogroup" aria-labelledby="lSens">
+            <label><input type="radio" name="sensibilidad" value="alta"><span>Alta · 1,8 G</span></label>
+            <label><input type="radio" name="sensibilidad" value="media"><span>Media · 2,5 G</span></label>
+            <label><input type="radio" name="sensibilidad" value="baja"><span>Baja · 3,5 G</span></label>
+          </div>
+          <p class="ayuda">Un golpe por encima del umbral pasa el clip actual y el anterior a la bóveda. En vías destapadas usa «Baja».</p>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Copiloto Pascal</legend>
+        <label class="interruptor"><input type="checkbox" id="vozOn"><span>Escuchar «Hola Pascal» / «Okay Pascal»</span></label>
+        <label class="interruptor"><input type="checkbox" id="ttsOn"><span>Confirmar con voz</span></label>
+        <details class="comandos">
+          <summary>Qué le puedes decir</summary>
+          <ul>
+            <li>«Hola Pascal, activa la grabación» · «detén la grabación»</li>
+            <li>«Okay Pascal, guarda este video» · «acaba de pasar un accidente»</li>
+            <li>«Hola Pascal, toma una foto»</li>
+            <li>«Okay Pascal, modo ahorro térmico» · «sal del ahorro»</li>
+            <li>«Hola Pascal, cuánto espacio queda»</li>
+          </ul>
+        </details>
+        <p class="ayuda" id="vozAyuda"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Video</legend>
+        <label class="interruptor"><input type="checkbox" id="audioOn"><span>Grabar audio de la cabina</span></label>
+        <p class="ayuda">Apagado por defecto. En algunos Android no puede usarse a la vez que el copiloto por voz.</p>
+        <div class="campo"><label for="placa">Placa del vehículo <small>(se ve en el video)</small></label><input id="placa" maxlength="10" autocomplete="off" autocapitalize="characters" placeholder="ABC123"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Privacidad</legend>
+        <p class="ayuda">Videos, fotos, ubicación y telemetría se guardan solo en el almacenamiento privado de esta app en tu teléfono. PV Car no los envía a ningún servidor, no usa analítica ni publicidad, y nunca lee tu galería. Solo salen del teléfono si tú los descargas o compartes.</p>
+        <p class="ayuda">Responsable: PascalIA · <a href="/politica-de-datos/">Política de datos</a> · <a href="/terminos/">Términos</a> · <a href="/eliminar-mis-datos/">Eliminar mis datos</a> · <a href="/aviso-legal/">Aviso legal</a></p>
+        <button type="button" class="boton peligro" id="borrarTodo">Borrar todos los clips del bucle</button>
+      </fieldset>
+
+      <div class="acciones"><button type="submit" class="boton">Listo</button></div>
+    </form>
+  </dialog>
+
+  <!-- Primer uso -->
+  <dialog class="hoja bienvenida" id="dlgBienvenida" aria-labelledby="tBienv">
+    <form method="dialog" id="formBienv">
+      <img src="icons/logo-pvcar.webp" alt="PV Car, by PascalIA" width="112" height="112" class="logo">
+      <h2 id="tBienv">Tu celular, cámara testigo</h2>
+      <p class="nota fuerte">Versión demo de PV Car. Funciona de verdad con la cámara y los sensores de tu teléfono; lo que grabes queda solo en este navegador y nadie más lo ve.</p>
+      <ol>
+        <li><b>Graba en bucle</b> dentro del espacio que elijas, sin tocar tus fotos ni tus archivos.</li>
+        <li><b>Protege la evidencia</b> con un golpe fuerte, con el botón o diciendo «Okay Pascal, guarda este video».</li>
+        <li><b>Saca un acta PDF</b> con la huella SHA-256 y tu firma.</li>
+      </ol>
+      <p class="nota">Pediremos cámara, ubicación y, si activas el copiloto, micrófono. Todo queda en el teléfono.</p>
+      <p class="nota fuerte">Instala el teléfono en un soporte fijo antes de arrancar y no lo manipules mientras conduces. Para usar las manos libres está «Hola Pascal».</p>
+      <p class="nota">Mantén la app abierta y la pantalla encendida: el navegador detiene la cámara si sales de la app o bloqueas el teléfono.</p>
+      <label class="casilla"><input type="checkbox" id="acepto" required><span>Leí la <a href="/politica-de-datos/">política de datos</a> y los <a href="/terminos/">términos</a>, y soy mayor de 18 años.</span></label>
+      <div class="acciones"><button type="submit" class="boton" id="btnEmpezar" disabled>Empezar</button></div>
+    </form>
+  </dialog>
+
+</body>
+</html>
