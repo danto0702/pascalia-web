@@ -92,37 +92,44 @@ export class Grabador extends EventTarget {
     const W = canvas.width, H = canvas.height;
     ctx.drawImage(video, 0, 0, W, H);
     const s = this.tel.estado;
-    const u = Math.max(14, Math.round(H / 34)); // tamaño de letra proporcional
-    const alto = Math.round(u * 2.9);
-    ctx.fillStyle = "rgba(15,15,15,0.62)";
-    ctx.fillRect(0, H - alto, W, alto);
-    ctx.fillStyle = "#FFC107";
-    ctx.fillRect(0, H - alto, Math.round(u * 0.3), alto);
-    ctx.textBaseline = "alphabetic";
-    const x = Math.round(u * 0.9);
-    const y1 = H - alto + Math.round(u * 1.25), y2 = H - Math.round(u * 0.55);
-    ctx.font = `700 ${u}px ui-monospace, Menlo, Consolas, monospace`;
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillText(fechaHora(), x, y1);
+    // La letra se calcula con el lado corto: en vertical el video es angosto.
+    const u = Math.max(14, Math.round(Math.min(W, H) / 28));
+    const mono = (peso, tam) => `${peso} ${tam}px ui-monospace, "Roboto Mono", Menlo, Consolas, monospace`;
+    const grande = mono(700, u), chica = mono(500, Math.round(u * 0.78));
+    const g = s.gPico || 0;
     const vel = s.velKmh === null ? "-- km/h" : `${Math.round(s.velKmh)} km/h`;
-    const g = `${(s.gPico || 0).toFixed(2)} G`;
-    ctx.textAlign = "right";
-    ctx.fillStyle = (s.gPico || 0) >= this.tel.umbral ? "#FF5252" : "#FFC107";
-    ctx.fillText(`${vel}   ${g}`, W - x, y1);
-    ctx.textAlign = "left";
-    ctx.font = `500 ${Math.round(u * 0.8)}px ui-monospace, Menlo, Consolas, monospace`;
-    ctx.fillStyle = "#F4F1EA";
-    const placa = this.ajustes.placa ? `  ·  ${this.ajustes.placa.toUpperCase()}` : "";
-    ctx.fillText(`${coordenadas(s.lat, s.lon)}${placa}`, x, y2);
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#C9C4BA";
-    ctx.fillText(this.grabando ? "● REC  PV Car" : "PV Car", W - x, y2);
-    ctx.textAlign = "left";
-    if (this.clipActual && this.clipActual.protegido) {
-      ctx.font = `700 ${Math.round(u * 0.8)}px system-ui, sans-serif`;
-      ctx.fillStyle = "#FFC107";
-      ctx.fillText("BÓVEDA · PROTEGIDO", x, Math.round(u * 1.4));
+    const placa = this.ajustes.placa ? `  ${this.ajustes.placa.toUpperCase()}` : "";
+    const prot = !!(this.clipActual && this.clipActual.protegido);
+    const estado = this.grabando ? (prot ? "● REC · BÓVEDA" : "● REC") : "PV Car";
+    const pares = [
+      [{ t: fechaHora(), f: grande, c: "#FFFFFF" }, { t: `${vel}  ${g.toFixed(2)} G`, f: grande, c: g >= this.tel.umbral ? "#FF5252" : "#FFC107" }],
+      [{ t: `${coordenadas(s.lat, s.lon)}${placa}`, f: chica, c: "#F4F1EA" }, { t: estado, f: chica, c: prot ? "#FFC107" : this.grabando ? "#FF6B6B" : "#C9C4BA" }],
+    ];
+    const x = Math.round(u * 0.9), hueco = u;
+    const ancho = (e) => { ctx.font = e.f; return ctx.measureText(e.t).width; };
+    const alto = (e) => parseInt(e.f.match(/ (\d+)px/)[1], 10);
+    // Si izquierda y derecha no caben en una fila, la derecha baja a su propia fila.
+    const filas = [];
+    for (const [izq, der] of pares) {
+      if (ancho(izq) + hueco + ancho(der) <= W - 2 * x) filas.push([izq, der]);
+      else { filas.push([izq, null]); filas.push([der, null]); }
     }
+    const interlinea = 1.3;
+    const altoFranja = Math.round(filas.reduce((a, [e]) => a + alto(e) * interlinea, 0) + u * 0.7);
+    ctx.fillStyle = "rgba(15,15,15,0.62)";
+    ctx.fillRect(0, H - altoFranja, W, altoFranja);
+    ctx.fillStyle = prot ? "#FFC107" : "#8C877E";
+    ctx.fillRect(0, H - altoFranja, Math.round(u * 0.3), altoFranja);
+    ctx.textBaseline = "alphabetic";
+    let y = H - altoFranja + Math.round(u * 0.35);
+    for (const [izq, der] of filas) {
+      y += alto(izq) * interlinea;
+      const base = y - alto(izq) * 0.28;
+      ctx.textAlign = "left"; ctx.font = izq.f; ctx.fillStyle = izq.c;
+      ctx.fillText(izq.t, x, base, W - 2 * x);
+      if (der) { ctx.textAlign = "right"; ctx.font = der.f; ctx.fillStyle = der.c; ctx.fillText(der.t, W - x, base); }
+    }
+    ctx.textAlign = "left";
   }
 
   async iniciar() {

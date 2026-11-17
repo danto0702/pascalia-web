@@ -196,8 +196,11 @@ function encenderVoz() {
   voz.iniciar();
 }
 voz.addEventListener("estado", (e) => {
-  const m = { escuchando: ["ok", "Hola Pascal"], apagado: ["apagado", "Voz apagada"], "sin permiso": ["mal", "Sin micrófono"], "sin conexión": ["alerta", "Voz sin red"] }[e.detail] || ["alerta", e.detail];
+  const m = { escuchando: ["ok", "Di «Hola Pascal»"], apagado: ["apagado", "Voz apagada"], "sin permiso": ["mal", "Sin permiso de micrófono"], "sin conexión": ["alerta", "Voz sin internet"], "micrófono ocupado": ["mal", "Micrófono ocupado"] }[e.detail] || ["mal", `Voz: ${e.detail}`];
   chip("chipVoz", m[0], `<svg aria-hidden="true"><use href="#i-mic"/></svg><b>${m[1]}</b>`);
+});
+voz.addEventListener("oido", (e) => {
+  $("vozOido").textContent = `Último texto oído (${voz.modo}): «${e.detail.trim()}»`;
 });
 voz.addEventListener("orden", async (e) => {
   const r = e.detail;
@@ -237,7 +240,9 @@ grab.addEventListener("error", (e) => {
 });
 
 document.addEventListener("visibilitychange", async () => {
-  if (document.visibilityState !== "visible" || !grab.grabando) return;
+  if (document.visibilityState !== "visible") return;
+  if (ajustes.voz && !voz.activa && ajustes.bienvenida) encenderVoz();
+  if (!grab.grabando) return;
   mantenerPantalla(true);
   const vivo = grab.stream?.getVideoTracks().some((t) => t.readyState === "live");
   if (!vivo) {
