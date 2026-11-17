@@ -62,13 +62,15 @@ async function mantenerPantalla(si) {
 }
 
 /* ---------- Estado en pantalla ---------- */
-function chip(id, tono, html) { const c = $(id); c.dataset.tono = tono; if (html !== undefined) c.innerHTML = html; }
+function chip(id, tono, html) {
+  const c = $(id); c.dataset.tono = tono;
+  if (html !== undefined) (c.querySelector(".valor") || c).innerHTML = html; // el ícono y la etiqueta oculta se conservan
+}
 
 function pintarRec() {
   const b = $("btnRec");
   b.setAttribute("aria-pressed", String(grab.grabando));
-  b.querySelector("use").setAttribute("href", grab.grabando ? "#i-stop" : "#i-rec");
-  b.querySelector("span").textContent = grab.grabando ? "Detener" : "Grabar";
+  b.querySelector("span:not(.rec-forma)").textContent = grab.grabando ? "Detener" : "Grabar";
   b.setAttribute("aria-label", grab.grabando ? "Detener la grabación" : "Iniciar la grabación");
   $("visorVacio").hidden = !!grab.stream;
   if (!grab.grabando) chip("chipRec", "apagado", '<span class="punto"></span><span>Detenido</span>');
@@ -83,14 +85,13 @@ setInterval(() => {
     chip("chipRec", prot ? "prot" : "rec", `<span class="punto"></span><span>${prot ? "Protegiendo" : "REC"} ${t}</span>`);
   }
   const s = tel.estado;
-  if (s.sensor === "activo") chip("chipG", s.gPico >= tel.umbral ? "mal" : "ok", `G <b>${s.gPico.toFixed(2)}</b>`);
+  if (s.sensor === "activo") chip("chipG", s.gPico >= tel.umbral ? "mal" : "ok", `${s.gPico.toFixed(2).replace(".", ",")} G`);
 }, 1000);
 
 tel.addEventListener("cambio", () => {
   const s = tel.estado;
-  const vel = s.velKmh === null ? "" : ` · ${Math.round(s.velKmh)} km/h`;
   const tono = { fijo: "ok", impreciso: "alerta", buscando: "alerta", "sin permiso": "mal", "sin señal": "mal" }[s.gps] || "apagado";
-  chip("chipGps", tono, `GPS <b>${s.gps === "fijo" || s.gps === "impreciso" ? "OK" + vel : s.gps}</b>`);
+  chip("chipGps", tono, s.gps === "fijo" || s.gps === "impreciso" ? (s.velKmh === null ? "OK" : `${Math.round(s.velKmh)} km/h`) : s.gps);
 });
 
 async function pintarEspacio() {
@@ -98,7 +99,8 @@ async function pintarEspacio() {
   const usados = clips.reduce((a, c) => a + (c.bytes || 0), 0);
   const cuota = ajustes.cuotaGB * GB;
   const pct = Math.min(100, Math.round((usados / cuota) * 100));
-  chip("chipEspacio", pct > 90 ? "alerta" : "ok", `Memoria <b>${formatoBytes(usados)} / ${ajustes.cuotaGB} GB</b>`);
+  chip("chipEspacio", pct > 90 ? "alerta" : "ok", formatoBytes(usados));
+  $("chipEspacio").title = `${formatoBytes(usados)} usados de ${ajustes.cuotaGB} GB (${pct} %)`;
   return { clips, usados, cuota };
 }
 
@@ -164,7 +166,7 @@ async function detenerGrabacion(origen = "manual") {
   vibrar([50, 60, 50]);
   iniciadaPorAuto = false;
   if (!ajustes.autoInicio) tel.detener(); // el inicio automático necesita el GPS encendido
-  if (!ajustes.autoInicio) { chip("chipGps", "apagado", "GPS <b>—</b>"); chip("chipG", "apagado", "G <b>—</b>"); }
+  if (!ajustes.autoInicio) { chip("chipGps", "apagado", "—"); chip("chipG", "apagado", "—"); }
   mantenerPantalla(!!ajustes.autoInicio); // con inicio automático la pantalla sigue encendida para el próximo arranque
   salirAhorro();
   pintarRec();
@@ -177,6 +179,15 @@ async function detenerGrabacion(origen = "manual") {
   } else avisar("Grabación detenida", { hablar: true });
 }
 
+/** Momento clave de la app: el visor se enmarca en amarillo y aparece el escudo. */
+function mostrarSello(texto) {
+  const sello = $("sello"), visor = document.querySelector(".visor");
+  $("selloMotivo").textContent = texto;
+  for (const el of [sello, visor]) { el.classList.remove("sellando"); void el.offsetWidth; el.classList.add("sellando"); }
+  clearTimeout(mostrarSello.t);
+  mostrarSello.t = setTimeout(() => { sello.classList.remove("sellando"); visor.classList.remove("sellando"); }, 2000);
+}
+
 async function proteger(motivo = "Protegido por el conductor", extra = {}, origen = "manual") {
   const ids = await grab.proteger(motivo, extra);
   if (!ids.length) {
@@ -186,6 +197,7 @@ async function proteger(motivo = "Protegido por el conductor", extra = {}, orige
   if (!ids.length) return avisar("No hay un clip para proteger todavía.", { hablar: true });
   vibrar([60, 40, 60]);
   anotar("proteccion", origen, motivo);
+  mostrarSello(extra.g ? `${motivo} · ${extra.g.toFixed(2).replace(".", ",")} G` : motivo);
   avisar(ids.length > 1 ? "Video protegido en la bóveda, con los segundos previos." : "Video protegido en la bóveda.", { hablar: true });
   pintarEspacio();
 }
@@ -215,12 +227,12 @@ function salirAhorro() {
 
 /* ---------- Copiloto ---------- */
 function encenderVoz() {
-  if (!vozDisponible()) { chip("chipVoz", "mal", '<svg aria-hidden="true"><use href="#i-mic"/></svg><b>Voz no disponible</b>'); return; }
+  if (!vozDisponible()) { chip("chipVoz", "mal", "Voz no disponible"); return; }
   voz.iniciar();
 }
 voz.addEventListener("estado", (e) => {
-  const m = { escuchando: ["ok", "Di «Hola Pascal»"], apagado: ["apagado", "Voz apagada"], "sin permiso": ["mal", "Sin permiso de micrófono"], "sin conexión": ["alerta", "Voz sin internet"], "micrófono ocupado": ["mal", "Micrófono ocupado"] }[e.detail] || ["mal", `Voz: ${e.detail}`];
-  chip("chipVoz", m[0], `<svg aria-hidden="true"><use href="#i-mic"/></svg><b>${m[1]}</b>`);
+  const m = { escuchando: ["ok", "«Hola Pascal»"], apagado: ["apagado", "Voz apagada"], "sin permiso": ["mal", "Sin permiso de micrófono"], "sin conexión": ["alerta", "Voz sin internet"], "micrófono ocupado": ["mal", "Micrófono ocupado"] }[e.detail] || ["mal", `Voz: ${e.detail}`];
+  chip("chipVoz", m[0], m[1]);
 });
 voz.addEventListener("oido", (e) => {
   $("vozOido").textContent = `Último texto oído (${voz.modo}): «${e.detail.trim()}»`;
@@ -318,6 +330,8 @@ async function compartirVarios(lista) {
   }
 }
 
+const ic = (n) => `<svg aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const mini = (src, dur) => `<figure class="mini">${src ? `<img src="${src}" alt="" width="240" height="135" loading="lazy" decoding="async">` : ic("video")}${dur ? `<span class="mini-dur">${dur}</span>` : ""}</figure>`;
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 function duracion(c) {
   if (c.tipo === "foto") return "Foto";
@@ -342,7 +356,7 @@ async function pintarLista() {
   const ul = $("lista");
   if (pestana === "grab") {
     $("notaLista").textContent = `Cada viaje, de Grabar a Detener, queda guardado como una grabación. Si la memoria llega a ${ajustes.cuotaGB} GB, el bucle borra primero las partes más antiguas que no estén protegidas (usados: ${formatoBytes(usados)}, ${Math.round((usados / cuota) * 100)} %).`;
-    if (!grupos.length) { ul.innerHTML = '<li class="vacio">Aún no hay grabaciones. Toca Grabar y, al terminar el viaje, Detener: la grabación completa aparece aquí.</li>'; return; }
+    if (!grupos.length) { ul.innerHTML = '<li class="vacio"><svg aria-hidden="true"><use href="#i-video"/></svg>Aún no hay grabaciones. Toca Grabar y, al terminar el viaje, Detener: la grabación completa aparece aquí.</li>'; return; }
     ul.innerHTML = grupos.map((g) => {
       const res = g.partes[0].resolucion;
       const ins = g.grabando ? '<span class="insignia rec">Grabando</span>'
@@ -351,34 +365,36 @@ async function pintarLista() {
       const partes = g.partes.length > 1 ? ` · ${g.partes.length} partes` : "";
       const rango = g.grabando ? `${hora(g.inicio)} – ahora` : `${hora(g.inicio)} – ${hora(g.fin)}`;
       return `<li class="clip${g.protegidas ? " prot" : ""}" data-sesion="${esc(g.id)}">
-        <h3>${esc(fechaHora(new Date(g.inicio)).slice(0, 10))} · ${rango}</h3>${ins}
-        <p class="meta">${duracionTexto(g.segundos)}${partes} · ${formatoBytes(g.bytes)} · ${esc(RESOLUCIONES[res]?.etiqueta || "")}${g.protegidas && g.protegidas < g.partes.length ? ` · ${g.protegidas} parte(s) en la bóveda` : ""}</p>
+        ${mini(g.partes.find((p) => p.miniatura)?.miniatura, esc(duracionTexto(g.segundos)))}<div class="clip-info">${ins}
+        <h3>${esc(fechaHora(new Date(g.inicio)).slice(0, 10))} · ${rango}</h3>
+        <p class="meta">${duracionTexto(g.segundos)}${partes} · ${formatoBytes(g.bytes)} · ${esc(RESOLUCIONES[res]?.etiqueta || "")}${g.protegidas && g.protegidas < g.partes.length ? ` · ${g.protegidas} parte(s) en la bóveda` : ""}</p></div>
         <div class="botones">${g.grabando ? "" : `
-          <button type="button" data-a="ver">Ver</button>
-          <button type="button" data-a="compartir">Guardar / compartir</button>
-          ${g.protegidas < g.partes.length ? '<button type="button" class="dest" data-a="proteger">Proteger completa</button>' : ""}
-          <button type="button" class="mal" data-a="borrar">Borrar</button>`}
+          <button type="button" class="prim" data-a="ver">${ic("play")}<span class="lbl">Ver</span></button>
+          <button type="button" data-a="compartir">${ic("compartir")}<span class="lbl">Guardar / compartir</span></button>
+          ${g.protegidas < g.partes.length ? `<button type="button" class="dest" data-a="proteger">${ic("escudo")}<span class="lbl">Proteger completa</span></button>` : ""}
+          <button type="button" class="mal" data-a="borrar" aria-label="Borrar grabación">${ic("papelera")}<span class="lbl">Borrar</span></button>`}
         </div></li>`;
     }).join("");
     return;
   }
   const bytesBov = bov.reduce((a, c) => a + c.bytes, 0);
   $("notaLista").textContent = `La bóveda nunca se recicla. Aquí están las partes protegidas por un golpe, el botón Proteger o la voz, y las fotos. Ocupa ${formatoBytes(bytesBov)} de los ${ajustes.cuotaGB} GB.`;
-  if (!bov.length) { ul.innerHTML = '<li class="vacio">Aún no hay evidencias. Un golpe fuerte, el botón Proteger o «Okay Pascal, guarda este video» las envían aquí.</li>'; return; }
+  if (!bov.length) { ul.innerHTML = '<li class="vacio"><svg aria-hidden="true"><use href="#i-escudo"/></svg>Aún no hay evidencias. Un golpe fuerte, el botón Proteger o «Okay Pascal, guarda este video» las envían aquí.</li>'; return; }
   ul.innerHTML = bov.map((c) => {
     const ins = c.estado === "grabando" ? '<span class="insignia rec">Grabando</span>' : '<span class="insignia prot">Protegido</span>';
     const evento = c.eventos?.length ? ` · ${esc(c.eventos.at(-1).motivo)}` : "";
     const hash = `<p class="hash">${c.hash ? "SHA-256 " + c.hash : c.estado === "grabando" ? "Se sellará al cerrar la parte" : "Calculando huella SHA-256…"}</p>`;
     const listo = c.estado !== "grabando";
     return `<li class="clip prot" data-id="${esc(c.id)}">
-      <h3>${esc(fechaHora(new Date(c.inicio)))}</h3>${ins}
-      <p class="meta">${duracion(c)} · ${formatoBytes(c.bytes)}${c.tipo === "video" ? " · " + esc(RESOLUCIONES[c.resolucion]?.etiqueta || `${c.ancho}×${c.alto}`) : ""}${evento}</p>${hash}
+      ${mini(c.miniatura, c.tipo === "foto" ? "" : esc(duracion(c)))}<div class="clip-info">${ins}
+      <h3>${esc(fechaHora(new Date(c.inicio)))}</h3>
+      <p class="meta">${duracion(c)} · ${formatoBytes(c.bytes)}${c.tipo === "video" ? " · " + esc(RESOLUCIONES[c.resolucion]?.etiqueta || `${c.ancho}×${c.alto}`) : ""}${evento}</p></div>${hash}
       <div class="botones">${listo ? `
-        <button type="button" data-a="ver">Ver</button>
-        <button type="button" data-a="compartir">Guardar / compartir</button>
-        <button type="button" class="dest" data-a="acta">Acta PDF</button>
-        <button type="button" data-a="desproteger">Quitar protección</button>
-        <button type="button" class="mal" data-a="borrar">Borrar</button>` : ""}
+        <button type="button" class="prim" data-a="ver">${ic("play")}<span class="lbl">Ver</span></button>
+        <button type="button" data-a="compartir">${ic("compartir")}<span class="lbl">Guardar / compartir</span></button>
+        <button type="button" class="dest" data-a="acta">${ic("doc")}<span class="lbl">Acta PDF</span></button>
+        <button type="button" data-a="desproteger"><span class="lbl">Quitar protección</span></button>
+        <button type="button" class="mal" data-a="borrar" aria-label="Borrar evidencia">${ic("papelera")}<span class="lbl">Borrar</span></button>` : ""}
       </div></li>`;
   }).join("");
 }
@@ -391,9 +407,9 @@ $("lista").addEventListener("click", async (e) => {
     const g = grupos.find((x) => x.id === fila.dataset.sesion); if (!g) return pintarLista();
     if (a === "ver") return verSesion(g);
     if (a === "compartir") {
-      b.disabled = true; b.textContent = "Preparando…";
+      b.disabled = true; b.querySelector(".lbl").textContent = "Preparando…";
       try { return await compartirVarios(await Promise.all(g.partes.map(async (p, i) => ({ blob: await db.archivoDe(p), nombre: nombreParte(g, p, i) })))); }
-      finally { b.disabled = false; b.textContent = "Guardar / compartir"; }
+      finally { b.disabled = false; b.querySelector(".lbl").textContent = "Guardar / compartir"; }
     }
     if (a === "proteger") {
       for (const p of g.partes) {
@@ -592,7 +608,9 @@ const pasosGuia = [...document.querySelectorAll(".guia-paso")];
 const puntosGuia = [...document.querySelectorAll(".guia-puntos button")];
 let pasoGuia = 0;
 function irPaso(n) {
-  pasoGuia = Math.max(0, Math.min(pasosGuia.length - 1, n));
+  const nuevo = Math.max(0, Math.min(pasosGuia.length - 1, n));
+  pasosGuia.at(nuevo).dataset.dir = nuevo >= pasoGuia ? "sig" : "ant";
+  pasoGuia = nuevo;
   pasosGuia.forEach((s, i) => { s.hidden = i !== pasoGuia; });
   puntosGuia.forEach((b, i) => b.setAttribute("aria-selected", String(i === pasoGuia)));
   const ultimo = pasoGuia === pasosGuia.length - 1, yaAcepto = aceptoTerminos();
@@ -671,7 +689,7 @@ async function revisarAuto() {
 function configurarAuto() {
   auto.configurar({ umbralKmh: ajustes.autoUmbral, minutosParada: ajustes.autoParada });
   if (ajustes.autoInicio && aceptoTerminos()) { tel.iniciar(); mantenerPantalla(true); }
-  else if (!grab.grabando) { tel.detener(); chip("chipGps", "apagado", "GPS <b>—</b>"); }
+  else if (!grab.grabando) { tel.detener(); chip("chipGps", "apagado", "—"); }
 }
 tel.addEventListener("cambio", revisarAuto);
 setInterval(revisarAuto, 15000); // el GPS deja de avisar cuando el carro está quieto

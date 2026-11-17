@@ -222,6 +222,7 @@ export class Grabador extends EventTarget {
     clearTimeout(frag.corte); clearInterval(frag.muestras);
     if (this._frag === frag) { this._frag = null; this.clipActual = null; }
     const { rec, clip } = frag;
+    const miniatura = this.miniatura(); // fotograma pequeño para las tarjetas de Videos
     if (rec.state !== "inactive") {
       await new Promise((ok) => { rec.addEventListener("stop", ok, { once: true }); rec.stop(); });
     }
@@ -233,6 +234,7 @@ export class Grabador extends EventTarget {
       c.protegido = c.protegido || clip.protegido;
       c.eventos = clip.eventos;
       c.telemetria = clip.telemetria;
+      if (miniatura) c.miniatura = miniatura;
     });
     if (final) this.dispatchEvent(new CustomEvent("cerrado", { detail: final }));
     return final;
@@ -283,11 +285,27 @@ export class Grabador extends EventTarget {
       id: `f${t}`, tipo: "foto", inicio: t, fin: t, bytes: blob.size, partes: 1, mime: "image/jpeg",
       ancho: this.canvas.width, alto: this.canvas.height, protegido: true, estado: "listo",
       eventos: [{ t, motivo: "Foto" }], telemetria: [this.tel.muestra()], placa: this.ajustes.placa || "", hash: null,
+      miniatura: this.miniatura(),
     };
     await db.guardarClip({ ...meta, bytes: 0, partes: 0 });
     await db.agregarParte(meta.id, 0, blob);
     this.dispatchEvent(new CustomEvent("cerrado", { detail: await db.obtenerClip(meta.id) }));
     return { meta, blob };
+  }
+
+  /** Miniatura 16:9 de 240 px en JPEG como data URL (≈ 8 kB), o null sin cámara. */
+  miniatura() {
+    try {
+      const f = this.fotograma(240);
+      if (!f) return null;
+      const c = document.createElement("canvas");
+      c.width = 240; c.height = 135;
+      const x = c.getContext("2d");
+      const esc = Math.max(240 / f.width, 135 / f.height); // recorte centrado, sin bandas negras
+      const w = f.width * esc, h = f.height * esc;
+      x.drawImage(f, (240 - w) / 2, (135 - h) / 2, w, h);
+      return c.toDataURL("image/jpeg", 0.62);
+    } catch { return null; }
   }
 
   /** Fotograma pequeño en JPEG para el acta (o null si no hay cámara). */

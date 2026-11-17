@@ -31,6 +31,13 @@
     <symbol id="i-boveda" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8.7v-1M12 16.3v-1M15.3 12h1M7.7 12h1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="i-ajustes" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-gps" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-g" viewBox="0 0 24 24"><path d="M3 12h4l2.5-6 5 12 2.5-6h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-memoria" viewBox="0 0 24 24"><path d="M8 3h8.5L19 5.5V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6l3-3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v4M12 3v4M15 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.8v12.4a.8.8 0 0 0 1.2.7l9.8-6.2a.8.8 0 0 0 0-1.4L9.2 5.1A.8.8 0 0 0 8 5.8Z" fill="currentColor"/></symbol>
+    <symbol id="i-compartir" viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5M5 13v6.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-papelera" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l.8 12.5a1.5 1.5 0 0 0 1.5 1.5h6.4a1.5 1.5 0 0 0 1.5-1.5L17.5 7M10 11v6M14 11v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H7a1.5 1.5 0 0 0-1.5 1.5v15A1.5 1.5 0 0 0 7 21h10a1.5 1.5 0 0 0 1.5-1.5V7.5L14 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v4.5h4.5M9 13h6M9 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="i-cerrar" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
   </svg>
 
@@ -45,23 +52,26 @@
       </div>
 
       <header class="barra">
-        <div class="marca"><img src="icons/icono-192.png" alt="" width="28" height="28"><span>PV&nbsp;Car</span><span class="demo">Demo</span></div>
+        <div class="barra-sup">
+          <div class="marca"><img src="icons/icono-192.png" alt="" width="28" height="28"><span>PV&nbsp;Car</span><span class="demo">Demo</span></div>
+          <p id="chipRec" class="chip rec-pill" data-tono="apagado"><span class="punto"></span><span>Detenido</span></p>
+        </div>
         <ul class="chips" aria-label="Estado de los sensores">
-          <li id="chipRec" class="chip" data-tono="apagado"><span class="punto"></span><span>Detenido</span></li>
-          <li id="chipGps" class="chip" data-tono="apagado">GPS <b>—</b></li>
-          <li id="chipG" class="chip" data-tono="apagado">G <b>—</b></li>
-          <li id="chipVoz" class="chip" data-tono="apagado"><svg aria-hidden="true"><use href="#i-mic"/></svg><b>Voz apagada</b></li>
-          <li id="chipEspacio" class="chip" data-tono="apagado">Memoria <b>—</b></li>
+          <li id="chipGps" class="chip" data-tono="apagado"><svg aria-hidden="true"><use href="#i-gps"/></svg><span class="sr">GPS:</span><b class="valor">—</b></li>
+          <li id="chipG" class="chip" data-tono="apagado"><svg aria-hidden="true"><use href="#i-g"/></svg><span class="sr">Fuerza G:</span><b class="valor">—</b></li>
+          <li id="chipVoz" class="chip" data-tono="apagado"><svg aria-hidden="true"><use href="#i-mic"/></svg><span class="sr">Copiloto:</span><b class="valor">Voz apagada</b></li>
+          <li id="chipEspacio" class="chip" data-tono="apagado"><svg aria-hidden="true"><use href="#i-memoria"/></svg><span class="sr">Memoria:</span><b class="valor">—</b></li>
         </ul>
       </header>
 
       <p class="aviso" id="aviso" role="status" aria-live="polite"></p>
+      <div class="sello" id="sello" aria-hidden="true"><span class="sello-escudo"><svg><use href="#i-escudo"/></svg></span><b>Evidencia protegida</b><small id="selloMotivo"></small></div>
     </section>
 
     <nav class="controles" id="controles" aria-label="Controles de grabación">
       <button type="button" class="ctl" id="btnBoveda"><svg aria-hidden="true"><use href="#i-video"/></svg><span>Videos</span></button>
       <button type="button" class="ctl" id="btnFoto"><svg aria-hidden="true"><use href="#i-foto"/></svg><span>Foto</span></button>
-      <button type="button" class="ctl rec" id="btnRec" aria-pressed="false"><svg aria-hidden="true"><use href="#i-rec"/></svg><span>Grabar</span></button>
+      <button type="button" class="ctl rec" id="btnRec" aria-pressed="false"><span class="rec-forma" aria-hidden="true"></span><span>Grabar</span></button>
       <button type="button" class="ctl proteger" id="btnProteger"><svg aria-hidden="true"><use href="#i-escudo"/></svg><span>Proteger</span></button>
       <button type="button" class="ctl" id="btnAhorro"><svg aria-hidden="true"><use href="#i-sol"/></svg><span>Ahorro</span></button>
       <button type="button" class="ctl" id="btnAjustes"><svg aria-hidden="true"><use href="#i-ajustes"/></svg><span>Ajustes</span></button>
