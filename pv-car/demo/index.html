@@ -27,6 +27,7 @@
     <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 2.8 4.5 5.6v5.6c0 4.7 3.2 8.6 7.5 10 4.3-1.4 7.5-5.3 7.5-10V5.6L12 2.8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.6 12 2.4 2.4 4.4-4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-foto" viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4V8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13.3" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="i-sol" viewBox="0 0 24 24"><path d="M14 14.8V4.5a2 2 0 1 0-4 0v10.3a4 4 0 1 0 4 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 10.5 5-3v9l-5-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
     <symbol id="i-boveda" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8.7v-1M12 16.3v-1M15.3 12h1M7.7 12h1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="i-ajustes" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
@@ -50,7 +51,7 @@
           <li id="chipGps" class="chip" data-tono="apagado">GPS <b>—</b></li>
           <li id="chipG" class="chip" data-tono="apagado">G <b>—</b></li>
           <li id="chipVoz" class="chip" data-tono="apagado"><svg aria-hidden="true"><use href="#i-mic"/></svg><b>Voz apagada</b></li>
-          <li id="chipEspacio" class="chip" data-tono="apagado">Bucle <b>—</b></li>
+          <li id="chipEspacio" class="chip" data-tono="apagado">Memoria <b>—</b></li>
         </ul>
       </header>
 
@@ -58,7 +59,7 @@
     </section>
 
     <nav class="controles" id="controles" aria-label="Controles de grabación">
-      <button type="button" class="ctl" id="btnBoveda"><svg aria-hidden="true"><use href="#i-boveda"/></svg><span>Bóveda</span></button>
+      <button type="button" class="ctl" id="btnBoveda"><svg aria-hidden="true"><use href="#i-video"/></svg><span>Videos</span></button>
       <button type="button" class="ctl" id="btnFoto"><svg aria-hidden="true"><use href="#i-foto"/></svg><span>Foto</span></button>
       <button type="button" class="ctl rec" id="btnRec" aria-pressed="false"><svg aria-hidden="true"><use href="#i-rec"/></svg><span>Grabar</span></button>
       <button type="button" class="ctl proteger" id="btnProteger"><svg aria-hidden="true"><use href="#i-escudo"/></svg><span>Proteger</span></button>
@@ -79,15 +80,15 @@
   <!-- Bóveda y bucle -->
   <dialog class="hoja" id="dlgBoveda" aria-labelledby="tBoveda">
     <div class="hoja-cab">
-      <h2 id="tBoveda">Bóveda y bucle</h2>
+      <h2 id="tBoveda">Videos</h2>
       <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
     </div>
     <div class="pestanas" role="tablist" aria-label="Tipo de archivo">
-      <button type="button" role="tab" id="tabProt" aria-selected="true" aria-controls="lista">Protegidos <span id="nProt">0</span></button>
-      <button type="button" role="tab" id="tabBucle" aria-selected="false" aria-controls="lista">Bucle <span id="nBucle">0</span></button>
+      <button type="button" role="tab" id="tabGrab" aria-selected="true" aria-controls="lista">Grabaciones <span id="nGrab">0</span></button>
+      <button type="button" role="tab" id="tabBov" aria-selected="false" aria-controls="lista">Bóveda <span id="nBov">0</span></button>
     </div>
     <p class="nota" id="notaLista"></p>
-    <ul class="lista" id="lista" role="tabpanel" aria-labelledby="tabProt"></ul>
+    <ul class="lista" id="lista" role="tabpanel" aria-labelledby="tabGrab"></ul>
   </dialog>
 
   <!-- Reproductor -->
@@ -97,6 +98,7 @@
       <button type="button" class="cerrar" data-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
     </div>
     <div id="verMedio" class="ver-medio"></div>
+    <p class="nota" id="verParte" aria-live="polite"></p>
     <dl class="datos" id="verDatos"></dl>
   </dialog>
 

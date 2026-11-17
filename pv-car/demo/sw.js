@@ -1,10 +1,10 @@
 // Service worker: la app abre y graba sin conexión (Offline-First).
 // Sube VERSION en cada publicación para renovar la caché.
-const VERSION = "pvcar-demo-v3";
+const VERSION = "pvcar-demo-v4";
 const ARCHIVOS = [
   "./", "index.html", "/legal.js", "app.css", "manifest.webmanifest",
   "js/app.js", "js/db.js", "js/fifo.js", "js/grabador.js", "js/telemetria.js", "js/voz.js",
-  "js/comandos.js", "js/sha256.js", "js/hash-worker.js", "js/pdf.js", "js/acta.js",
+  "js/comandos.js", "js/sesiones.js", "js/sha256.js", "js/hash-worker.js", "js/pdf.js", "js/acta.js",
   "icons/icono-48.png", "icons/logo-pvcar.webp", "icons/icono-180.png", "icons/icono-192.png", "icons/icono-512.png", "icons/icono-512-maskable.png",
 ];
 

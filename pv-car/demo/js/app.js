@@ -6,6 +6,7 @@ import { Voz, vozDisponible } from "./voz.js";
 import { ACCIONES } from "./comandos.js";
 import { horasDeGrabacion, formatoHoras, formatoBytes, GB, RESOLUCIONES } from "./fifo.js";
 import { generarActa, fotogramaDeArchivo, nombreArchivo } from "./acta.js";
+import { agruparSesiones, duracionTexto } from "./sesiones.js";
 
 const $ = (id) => document.getElementById(id);
 const CLAVE = "pvcar_ajustes";
@@ -88,7 +89,7 @@ async function pintarEspacio() {
   const usados = clips.reduce((a, c) => a + (c.bytes || 0), 0);
   const cuota = ajustes.cuotaGB * GB;
   const pct = Math.min(100, Math.round((usados / cuota) * 100));
-  chip("chipEspacio", pct > 90 ? "alerta" : "ok", `Bucle <b>${formatoBytes(usados)} / ${ajustes.cuotaGB} GB</b>`);
+  chip("chipEspacio", pct > 90 ? "alerta" : "ok", `Memoria <b>${formatoBytes(usados)} / ${ajustes.cuotaGB} GB</b>`);
   return { clips, usados, cuota };
 }
 
@@ -152,8 +153,13 @@ async function detenerGrabacion() {
   mantenerPantalla(false);
   salirAhorro();
   pintarRec();
-  pintarEspacio();
-  avisar("Grabación detenida", { hablar: true });
+  const { clips } = await pintarEspacio();
+  const g = agruparSesiones(clips).find((x) => x.id === grab.sesion);
+  if (g) {
+    pestana = "grab";
+    avisar(`Grabación guardada: ${duracionTexto(g.segundos)}${g.partes.length > 1 ? ` en ${g.partes.length} partes` : ""}. Está en Videos.`, { hablar: false });
+    if (ajustes.tts) voz.decir("Grabación detenida y guardada");
+  } else avisar("Grabación detenida", { hablar: true });
 }
 
 async function proteger(motivo = "Protegido por el conductor", extra = {}) {
@@ -264,10 +270,12 @@ $("btnBoveda").addEventListener("click", () => { pintarLista(); $("dlgBoveda").s
 $("btnAjustes").addEventListener("click", () => { pintarAjustes(); $("dlgAjustes").showModal(); });
 document.querySelectorAll("[data-cerrar]").forEach((b) => b.addEventListener("click", () => b.closest("dialog").close()));
 
-/* ---------- Bóveda ---------- */
-let pestana = "prot";
-$("tabProt").addEventListener("click", () => { pestana = "prot"; pintarLista(); });
-$("tabBucle").addEventListener("click", () => { pestana = "bucle"; pintarLista(); });
+/* ---------- Grabaciones y bóveda ---------- */
+// «Grabaciones»: cada viaje (de Grabar a Detener) unido en una sola grabación.
+// «Bóveda»: las partes protegidas por un evento y las fotos, con su acta.
+let pestana = "grab";
+$("tabGrab").addEventListener("click", () => { pestana = "grab"; pintarLista(); });
+$("tabBov").addEventListener("click", () => { pestana = "bov"; pintarLista(); });
 
 function descargar(blob, nombre) {
   const url = URL.createObjectURL(blob);
@@ -276,50 +284,80 @@ function descargar(blob, nombre) {
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
-async function compartir(blob, nombre) {
-  const f = new File([blob], nombre, { type: blob.type });
-  if (navigator.canShare?.({ files: [f] })) {
-    try { await navigator.share({ files: [f], title: nombre }); return; } catch (e) { if (e.name === "AbortError") return; }
+async function compartir(blob, nombre) { return compartirVarios([{ blob, nombre }]); }
+/** Comparte uno o varios archivos juntos; si el teléfono no puede, los descarga. */
+async function compartirVarios(lista) {
+  const files = lista.map(({ blob, nombre }) => new File([blob], nombre, { type: blob.type }));
+  if (navigator.canShare?.({ files })) {
+    try { await navigator.share({ files, title: lista.length > 1 ? `Grabación PV Car (${lista.length} partes)` : lista[0].nombre }); return; }
+    catch (e) { if (e.name === "AbortError") return; }
   }
-  descargar(blob, nombre);
+  for (const [i, { blob, nombre }] of lista.entries()) {
+    descargar(blob, nombre);
+    if (i < lista.length - 1) await new Promise((ok) => setTimeout(ok, 700));
+  }
 }
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 function duracion(c) {
   if (c.tipo === "foto") return "Foto";
-  const s = Math.round(((c.fin || Date.now()) - c.inicio) / 1000);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")} min`;
+  return duracionTexto(((c.fin || Date.now()) - c.inicio) / 1000);
 }
+const hora = (t) => fechaHora(new Date(t)).slice(11, 16);
+function nombreParte(g, p, i) {
+  const base = nombreArchivo({ ...p, inicio: g.inicio }).replace(/\.(\w+)$/, "");
+  const ext = nombreArchivo(p).split(".").pop();
+  return g.partes.length > 1 ? `${base}_parte${i + 1}de${g.partes.length}.${ext}` : `${base}.${ext}`;
+}
+let grupos = [];
 
 async function pintarLista() {
   const { clips, usados, cuota } = await pintarEspacio();
-  const prot = clips.filter((c) => c.protegido), bucle = clips.filter((c) => !c.protegido);
-  $("nProt").textContent = prot.length; $("nBucle").textContent = bucle.length;
-  $("tabProt").setAttribute("aria-selected", String(pestana === "prot"));
-  $("tabBucle").setAttribute("aria-selected", String(pestana === "bucle"));
-  $("lista").setAttribute("aria-labelledby", pestana === "prot" ? "tabProt" : "tabBucle");
-  const bytesProt = prot.reduce((a, c) => a + c.bytes, 0);
-  $("notaLista").textContent = pestana === "prot"
-    ? `La bóveda nunca se recicla. Ocupa ${formatoBytes(bytesProt)} de la cuota de ${ajustes.cuotaGB} GB.`
-    : `Estos clips se borran solos, del más antiguo al más reciente, cuando el bucle llega a ${ajustes.cuotaGB} GB (usados: ${formatoBytes(usados)}, ${Math.round((usados / cuota) * 100)} %).`;
-  const items = pestana === "prot" ? prot : bucle;
+  grupos = agruparSesiones(clips);
+  const bov = clips.filter((c) => c.protegido);
+  $("nGrab").textContent = grupos.length; $("nBov").textContent = bov.length;
+  $("tabGrab").setAttribute("aria-selected", String(pestana === "grab"));
+  $("tabBov").setAttribute("aria-selected", String(pestana === "bov"));
+  $("lista").setAttribute("aria-labelledby", pestana === "grab" ? "tabGrab" : "tabBov");
   const ul = $("lista");
-  if (!items.length) {
-    ul.innerHTML = `<li class="vacio">${pestana === "prot" ? "Aún no hay evidencias protegidas. Un golpe fuerte, el botón Proteger o «Okay Pascal, guarda este video» las envían aquí." : "El bucle está vacío. Toca Grabar para empezar."}</li>`;
+  if (pestana === "grab") {
+    $("notaLista").textContent = `Cada viaje, de Grabar a Detener, queda guardado como una grabación. Si la memoria llega a ${ajustes.cuotaGB} GB, el bucle borra primero las partes más antiguas que no estén protegidas (usados: ${formatoBytes(usados)}, ${Math.round((usados / cuota) * 100)} %).`;
+    if (!grupos.length) { ul.innerHTML = '<li class="vacio">Aún no hay grabaciones. Toca Grabar y, al terminar el viaje, Detener: la grabación completa aparece aquí.</li>'; return; }
+    ul.innerHTML = grupos.map((g) => {
+      const res = g.partes[0].resolucion;
+      const ins = g.grabando ? '<span class="insignia rec">Grabando</span>'
+        : g.protegidas === g.partes.length ? '<span class="insignia prot">Protegida</span>'
+        : g.protegidas ? '<span class="insignia prot">Con evidencia</span>' : g.recuperada ? '<span class="insignia">Recuperada</span>' : "";
+      const partes = g.partes.length > 1 ? ` · ${g.partes.length} partes` : "";
+      const rango = g.grabando ? `${hora(g.inicio)} – ahora` : `${hora(g.inicio)} – ${hora(g.fin)}`;
+      return `<li class="clip${g.protegidas ? " prot" : ""}" data-sesion="${esc(g.id)}">
+        <h3>${esc(fechaHora(new Date(g.inicio)).slice(0, 10))} · ${rango}</h3>${ins}
+        <p class="meta">${duracionTexto(g.segundos)}${partes} · ${formatoBytes(g.bytes)} · ${esc(RESOLUCIONES[res]?.etiqueta || "")}${g.protegidas && g.protegidas < g.partes.length ? ` · ${g.protegidas} parte(s) en la bóveda` : ""}</p>
+        <div class="botones">${g.grabando ? "" : `
+          <button type="button" data-a="ver">Ver</button>
+          <button type="button" data-a="compartir">Guardar / compartir</button>
+          ${g.protegidas < g.partes.length ? '<button type="button" class="dest" data-a="proteger">Proteger completa</button>' : ""}
+          <button type="button" class="mal" data-a="borrar">Borrar</button>`}
+        </div></li>`;
+    }).join("");
     return;
   }
-  ul.innerHTML = items.map((c) => {
-    const ins = c.estado === "grabando" ? '<span class="insignia rec">Grabando</span>' : c.protegido ? '<span class="insignia prot">Protegido</span>' : c.estado === "recuperado" ? '<span class="insignia">Recuperado</span>' : "";
+  const bytesBov = bov.reduce((a, c) => a + c.bytes, 0);
+  $("notaLista").textContent = `La bóveda nunca se recicla. Aquí están las partes protegidas por un golpe, el botón Proteger o la voz, y las fotos. Ocupa ${formatoBytes(bytesBov)} de los ${ajustes.cuotaGB} GB.`;
+  if (!bov.length) { ul.innerHTML = '<li class="vacio">Aún no hay evidencias. Un golpe fuerte, el botón Proteger o «Okay Pascal, guarda este video» las envían aquí.</li>'; return; }
+  ul.innerHTML = bov.map((c) => {
+    const ins = c.estado === "grabando" ? '<span class="insignia rec">Grabando</span>' : '<span class="insignia prot">Protegido</span>';
     const evento = c.eventos?.length ? ` · ${esc(c.eventos.at(-1).motivo)}` : "";
-    const hash = c.protegido ? `<p class="hash">${c.hash ? "SHA-256 " + c.hash : c.estado === "grabando" ? "Se sellará al cerrar el fragmento" : "Calculando huella SHA-256…"}</p>` : "";
+    const hash = `<p class="hash">${c.hash ? "SHA-256 " + c.hash : c.estado === "grabando" ? "Se sellará al cerrar la parte" : "Calculando huella SHA-256…"}</p>`;
     const listo = c.estado !== "grabando";
-    return `<li class="clip${c.protegido ? " prot" : ""}" data-id="${esc(c.id)}">
+    return `<li class="clip prot" data-id="${esc(c.id)}">
       <h3>${esc(fechaHora(new Date(c.inicio)))}</h3>${ins}
-      <p class="meta">${duracion(c)} · ${formatoBytes(c.bytes)} · ${esc(RESOLUCIONES[c.resolucion]?.etiqueta || `${c.ancho}×${c.alto}`)}${evento}</p>${hash}
+      <p class="meta">${duracion(c)} · ${formatoBytes(c.bytes)}${c.tipo === "video" ? " · " + esc(RESOLUCIONES[c.resolucion]?.etiqueta || `${c.ancho}×${c.alto}`) : ""}${evento}</p>${hash}
       <div class="botones">${listo ? `
         <button type="button" data-a="ver">Ver</button>
         <button type="button" data-a="compartir">Guardar / compartir</button>
-        ${c.protegido ? '<button type="button" class="dest" data-a="acta">Acta PDF</button><button type="button" data-a="desproteger">Quitar protección</button>' : '<button type="button" class="dest" data-a="proteger">Proteger</button>'}
+        <button type="button" class="dest" data-a="acta">Acta PDF</button>
+        <button type="button" data-a="desproteger">Quitar protección</button>
         <button type="button" class="mal" data-a="borrar">Borrar</button>` : ""}
       </div></li>`;
   }).join("");
@@ -327,45 +365,99 @@ async function pintarLista() {
 
 $("lista").addEventListener("click", async (e) => {
   const b = e.target.closest("button[data-a]"); if (!b) return;
-  const id = b.closest("[data-id]").dataset.id;
-  const clip = await db.obtenerClip(id); if (!clip) return pintarLista();
   const a = b.dataset.a;
+  const fila = b.closest("[data-sesion], [data-id]");
+  if (fila.dataset.sesion) {
+    const g = grupos.find((x) => x.id === fila.dataset.sesion); if (!g) return pintarLista();
+    if (a === "ver") return verSesion(g);
+    if (a === "compartir") {
+      b.disabled = true; b.textContent = "Preparando…";
+      try { return await compartirVarios(await Promise.all(g.partes.map(async (p, i) => ({ blob: await db.archivoDe(p), nombre: nombreParte(g, p, i) })))); }
+      finally { b.disabled = false; b.textContent = "Guardar / compartir"; }
+    }
+    if (a === "proteger") {
+      for (const p of g.partes) {
+        if (p.protegido) continue;
+        await db.actualizarClip(p.id, (c) => { c.protegido = true; c.eventos = [...(c.eventos || []), { t: Date.now(), motivo: "Grabación protegida completa" }]; });
+        sellarSiCorresponde(await db.obtenerClip(p.id));
+      }
+      avisar("Grabación protegida: ya no se borra con el bucle.");
+    }
+    if (a === "borrar") {
+      const libres = g.partes.filter((p) => !p.protegido);
+      const msg = g.protegidas ? `Se borrarán ${libres.length} parte(s). Las ${g.protegidas} protegidas se conservan en la bóveda. ¿Continuar?` : "¿Borrar esta grabación completa?";
+      if (libres.length && confirm(msg)) for (const p of libres) await db.borrarClip(p.id);
+      else if (!libres.length) avisar("Todas las partes están protegidas: bórralas desde la Bóveda.");
+    }
+    return pintarLista();
+  }
+  const id = fila.dataset.id;
+  const clip = await db.obtenerClip(id); if (!clip) return pintarLista();
   if (a === "ver") return ver(clip);
   if (a === "compartir") return compartir(await db.archivoDe(clip), nombreArchivo(clip));
   if (a === "acta") return abrirActa(clip);
-  if (a === "proteger") {
-    await db.actualizarClip(id, (c) => { c.protegido = true; c.eventos = [...(c.eventos || []), { t: Date.now(), motivo: "Protegido desde la lista" }]; });
-    sellarSiCorresponde(await db.obtenerClip(id));
-  }
-  if (a === "desproteger" && confirm("Este clip volverá al bucle y podrá borrarse cuando se llene la memoria. ¿Continuar?")) {
+  if (a === "desproteger" && confirm("Esta parte volverá a la grabación normal y podrá borrarse cuando se llene la memoria. ¿Continuar?")) {
     await db.actualizarClip(id, (c) => { c.protegido = false; });
   }
-  if (a === "borrar" && confirm(clip.protegido ? "Es una evidencia protegida. ¿Borrarla para siempre?" : "¿Borrar este clip?")) {
-    await db.borrarClip(id);
-  }
+  if (a === "borrar" && confirm("Es una evidencia protegida. ¿Borrarla para siempre?")) await db.borrarClip(id);
   pintarLista();
 });
 
-let urlVer = null;
+/* ---------- Reproductor ---------- */
+let urlsVer = [];
+function limpiarVer() { urlsVer.forEach((u) => URL.revokeObjectURL(u)); urlsVer = []; $("verMedio").innerHTML = ""; $("verParte").textContent = ""; }
+function resumen(partes) {
+  const t = partes.flatMap((p) => p.telemetria || []);
+  const conPos = t.filter((m) => m.lat !== null && m.lat !== undefined);
+  return { desde: conPos[0], hasta: conPos.at(-1), vmax: Math.max(0, ...t.map((m) => m.vel || 0)), gmax: Math.max(0, ...t.map((m) => m.g || 0)) };
+}
+function pintarDatos(filas) { $("verDatos").innerHTML = filas.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join(""); }
+
 async function ver(clip) {
-  if (urlVer) URL.revokeObjectURL(urlVer);
-  urlVer = URL.createObjectURL(await db.archivoDe(clip));
+  limpiarVer();
+  const url = URL.createObjectURL(await db.archivoDe(clip)); urlsVer.push(url);
   $("tVer").textContent = fechaHora(new Date(clip.inicio));
-  $("verMedio").innerHTML = clip.tipo === "foto" ? `<img src="${urlVer}" alt="Foto tomada el ${esc(fechaHora(new Date(clip.inicio)))}">` : `<video src="${urlVer}" controls playsinline></video>`;
-  const t = clip.telemetria || [];
-  const conPos = t.find((m) => m.lat !== null);
-  const vmax = Math.max(0, ...t.map((m) => m.vel || 0));
-  const gmax = Math.max(0, ...t.map((m) => m.g || 0));
-  const filas = [
+  $("verMedio").innerHTML = clip.tipo === "foto" ? `<img src="${url}" alt="Foto tomada el ${esc(fechaHora(new Date(clip.inicio)))}">` : `<video src="${url}" controls playsinline></video>`;
+  const r = resumen([clip]);
+  pintarDatos([
     ["Archivo", nombreArchivo(clip)], ["Tamaño", formatoBytes(clip.bytes)], ["Duración", duracion(clip)],
-    ["Posición", conPos ? coordenadas(conPos.lat, conPos.lon) : "Sin GPS"], ["Vel. máx.", `${vmax} km/h`], ["G máx.", `${gmax.toFixed(2)} G`],
+    ["Posición", r.desde ? coordenadas(r.desde.lat, r.desde.lon) : "Sin GPS"], ["Vel. máx.", `${r.vmax} km/h`], ["G máx.", `${r.gmax.toFixed(2)} G`],
     ...(clip.eventos || []).map((e) => [fechaHora(new Date(e.t)).slice(11), e.motivo]),
     ...(clip.hash ? [["SHA-256", clip.hash]] : []),
-  ];
-  $("verDatos").innerHTML = filas.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("");
+  ]);
   $("dlgVer").showModal();
 }
-$("dlgVer").addEventListener("close", () => { $("verMedio").innerHTML = ""; if (urlVer) URL.revokeObjectURL(urlVer); urlVer = null; });
+
+/** Reproduce las partes del viaje una tras otra, como un solo video. */
+async function verSesion(g) {
+  limpiarVer();
+  $("tVer").textContent = `Grabación · ${fechaHora(new Date(g.inicio)).slice(0, 10)} ${hora(g.inicio)} – ${hora(g.fin)}`;
+  const video = document.createElement("video");
+  video.controls = true; video.playsInline = true; video.preload = "auto";
+  $("verMedio").append(video);
+  const urls = [];
+  const url = async (i) => { if (!urls[i]) { urls[i] = URL.createObjectURL(await db.archivoDe(g.partes[i])); urlsVer.push(urls[i]); } return urls[i]; };
+  let actual = 0;
+  const cargar = async (i, reproducir) => {
+    actual = i;
+    video.src = await url(i);
+    $("verParte").textContent = g.partes.length < 2 ? "" : i + 1 < g.partes.length ? `Parte ${i + 1} de ${g.partes.length} · al terminar sigue sola la siguiente` : `Parte ${i + 1} de ${g.partes.length} (última)`;
+    if (reproducir) video.play().catch(() => {});
+    if (i + 1 < g.partes.length) url(i + 1); // deja lista la siguiente
+  };
+  video.addEventListener("ended", () => { if (actual + 1 < g.partes.length) cargar(actual + 1, true); });
+  await cargar(0, false);
+  const r = resumen(g.partes);
+  pintarDatos([
+    ["Inicio", fechaHora(new Date(g.inicio))], ["Fin", fechaHora(new Date(g.fin))], ["Duración", duracionTexto(g.segundos)],
+    ["Partes", String(g.partes.length)], ["Tamaño", formatoBytes(g.bytes)],
+    ["Desde", r.desde ? coordenadas(r.desde.lat, r.desde.lon) : "Sin GPS"], ["Hasta", r.hasta ? coordenadas(r.hasta.lat, r.hasta.lon) : "Sin GPS"],
+    ["Vel. máx.", `${r.vmax} km/h`], ["G máx.", `${r.gmax.toFixed(2)} G`],
+    ...g.partes.flatMap((p) => (p.eventos || []).filter((e) => !/Continuación/.test(e.motivo)).map((e) => [fechaHora(new Date(e.t)).slice(11), e.motivo])),
+  ]);
+  $("dlgVer").showModal();
+}
+$("dlgVer").addEventListener("close", limpiarVer);
 
 /* ---------- Acta con firma (Pascal Sign) ---------- */
 const firma = $("firma");

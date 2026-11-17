@@ -136,6 +136,8 @@ export class Grabador extends EventTarget {
     if (this.grabando) return;
     await this.encenderCamara();
     this.grabando = true;
+    // Todas las partes de este viaje (de Grabar a Detener) comparten la sesión.
+    this.sesion = `s${Date.now()}`;
     await this._abrirFragmento();
     this.dispatchEvent(new Event("estado"));
   }
@@ -189,7 +191,7 @@ export class Grabador extends EventTarget {
       resolucion: this.ajustes.resolucion, ancho: this.canvas.width, alto: this.canvas.height,
       protegido: protegerDesdeInicio, estado: "grabando",
       eventos: protegerDesdeInicio ? [{ t: inicio, motivo: "Continuación de un evento en curso" }] : [], telemetria: [this.tel.muestra()],
-      placa: this.ajustes.placa || "", hash: null,
+      placa: this.ajustes.placa || "", hash: null, sesion: this.sesion,
     };
     await db.guardarClip(clip);
     const frag = { rec, clip, seq: 0, cola: Promise.resolve(), corte: null, muestras: null };
