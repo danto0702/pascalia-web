@@ -5,6 +5,8 @@
     'use strict';
     if (typeof pdfPages === 'undefined') return;
     const TIPOS = ['text', 'stamp', 'sticky', 'markup'];
+    const ORDEN_AL = ['left', 'center', 'right', 'justify'];
+    const NOMBRE_AL = { left: 'izquierda', center: 'centrado', right: 'derecha', justify: 'justificado' };
     let portapapeles = null;
 
     const css = `
@@ -100,6 +102,7 @@
             ${obj.type === 'markup' ? '' : `<span class="cx-sep"></span>
             <button data-a="menos" title="Letra más pequeña" aria-label="Letra más pequeña">A−</button>
             <button data-a="mas" title="Letra más grande" aria-label="Letra más grande">A+</button>
+            ${obj.type === 'text' ? `<button data-a="alinear" title="Alineación: ${NOMBRE_AL[obj.align || 'left']} (toca para cambiar)" aria-label="Alineación: ${NOMBRE_AL[obj.align || 'left']}. Toca para cambiar"><i class="fa-solid fa-align-${obj.align || 'left'}"></i></button>` : ''}
             <span class="cx-sep"></span>
             <button data-a="editar" title="Editar el texto" aria-label="Editar el texto"><i class="fa-solid fa-pen"></i></button>`}
             <button data-a="borrar" title="Eliminar" aria-label="Eliminar"><i class="fa-solid fa-trash-can" style="color:#fda4af"></i></button>`;
@@ -110,7 +113,7 @@
             const b = e.target.closest('button');
             if (!b) return;
             e.stopPropagation();
-            ({ copiar: () => { copiar(); renderCurrentPage(); }, pegar, duplicar, menos: () => letra(-1), mas: () => letra(1),
+            ({ copiar: () => { copiar(); renderCurrentPage(); }, pegar, duplicar, menos: () => letra(-1), mas: () => letra(1), alinear: () => { const sig = ORDEN_AL[(ORDEN_AL.indexOf(obj.align || 'left') + 1) % ORDEN_AL.length]; window.setSelectedAlign && setSelectedAlign(sig); if (window.showToast) showToast('Alineación: ' + NOMBRE_AL[sig], 'indigo'); },
                editar: () => window.startInlineEdit && startInlineEdit(obj.id), borrar: () => window.deleteSelectedObject && deleteSelectedObject() })[b.dataset.a]();
         });
         el.appendChild(barra);
