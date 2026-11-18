@@ -622,6 +622,11 @@ function irPaso(n) {
   document.querySelector(".guia-acepto").hidden = yaAcepto;
   $("guiaSaltar").hidden = ultimo;
   pasosGuia.at(pasoGuia).querySelector("h2").focus?.();
+  // En pantallas bajas la casilla de aceptación queda abajo: se muestra sola
+  if (ultimo && !yaAcepto) setTimeout(() => {
+    const suave = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.querySelector(".guia-acepto").scrollIntoView({ block: "nearest", behavior: suave ? "smooth" : "auto" });
+  }, 700);
 }
 function abrirGuia(desde = 0) { if (!$("dlgBienvenida").open) $("dlgBienvenida").showModal(); irPaso(desde); }
 pasosGuia.forEach((s) => s.querySelector("h2").setAttribute("tabindex", "-1"));

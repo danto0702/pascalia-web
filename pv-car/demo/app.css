@@ -329,3 +329,80 @@ select { width: 100%; min-height: 46px; padding: 10px 12px; border-radius: 10px;
 @keyframes paso-ant { from { opacity: 0; transform: translateX(-22px); } }
 .guia-puntos button::before { transition: width 240ms cubic-bezier(.16,1,.3,1), background-color 240ms; }
 @media (prefers-reduced-motion: reduce) { .guia-paso[data-dir]:not([hidden]) { animation: velo 200ms ease-out; } }
+
+/* ==== Guía de bienvenida a pantalla completa ====
+   La imagen va de borde a borde y se funde con el fondo; el encabezado y la barra
+   de botones son translúcidos para que el contenido se lea encima de la foto. */
+dialog.guia {
+  width: 100%; max-width: 100%; height: 100vh; height: 100dvh; max-height: 100dvh;
+  margin: 0; padding: 0; border: 0; border-radius: 0; overflow: hidden; background: var(--grafito);
+}
+dialog.guia[open] { animation: velo 320ms ease-out; }
+dialog.guia::backdrop { background: #000; }
+dialog.guia form { position: relative; display: flex; flex-direction: column; height: 100%; }
+dialog.guia .hoja-cab {
+  position: absolute; inset: 0 0 auto 0; z-index: 3;
+  padding: calc(env(safe-area-inset-top) + 14px) 16px 36px;
+  background: linear-gradient(rgba(0,0,0,.62), rgba(0,0,0,.24) 60%, transparent);
+}
+dialog.guia .guia-marca { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.55); }
+#guiaSaltar {
+  min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.2);
+  background: rgba(20,20,19,.42); color: #fff; font-weight: 600; text-decoration: none;
+  -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2);
+  transition: background-color 150ms;
+}
+@media (hover: hover) { #guiaSaltar:hover { background: rgba(20,20,19,.62); } }
+dialog.guia .guia-paso { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-bottom: 12px; scrollbar-width: none; }
+dialog.guia .guia-paso::-webkit-scrollbar { display: none; }
+dialog.guia .guia-img {
+  position: relative; margin: 0 0 2px; width: 100%; aspect-ratio: 4 / 3; max-height: 58dvh;
+  border-radius: 0; background: #000; overflow: hidden;
+}
+dialog.guia .guia-img img { width: 100%; height: 100%; object-fit: cover; display: block; transform-origin: 50% 60%; }
+dialog.guia .guia-img::after {
+  content: ""; position: absolute; inset: auto 0 0 0; height: 46%; pointer-events: none;
+  background: linear-gradient(rgba(20,20,19,0), rgba(20,20,19,.72) 62%, var(--grafito));
+}
+dialog.guia .guia-paso > :not(figure) { margin-left: 22px; margin-right: 22px; }
+dialog.guia .guia-paso h2 { position: relative; z-index: 1; margin-top: -30px; margin-bottom: 10px; font-size: 27px; line-height: 1.12; letter-spacing: -.02em; text-wrap: balance; }
+dialog.guia .guia-paso p { font-size: 16.5px; line-height: 1.55; }
+dialog.guia .guia-pie {
+  position: relative; z-index: 2; margin: 0; gap: 14px;
+  padding: 12px 22px calc(env(safe-area-inset-bottom) + 14px);
+  background: rgba(20,20,19,.76); border-top: 1px solid rgba(255,255,255,.07);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15); backdrop-filter: blur(16px) saturate(1.15);
+}
+dialog.guia .guia-pie .boton { min-height: 52px; padding: 0 24px; border-radius: 14px; }
+dialog.guia .guia-pie .acciones { flex: 1; justify-content: flex-end; }
+dialog.guia .guia-acepto .casilla { padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid var(--linea); }
+
+/* Cada pantalla: la foto entra enfocándose y el texto llega detrás */
+dialog.guia .guia-paso:not([hidden]) .guia-img img { animation: guia-imagen 900ms cubic-bezier(.16,1,.3,1) both; }
+dialog.guia .guia-paso:not([hidden]) h2 { animation: guia-texto 460ms cubic-bezier(.16,1,.3,1) 90ms both; }
+dialog.guia .guia-paso:not([hidden]) h2 ~ * { animation: guia-texto 460ms cubic-bezier(.16,1,.3,1) 170ms both; }
+dialog.guia .guia-paso[data-dir]:not([hidden]) { animation: none; } /* el movimiento lo llevan la foto y el texto */
+@keyframes guia-imagen { from { opacity: .35; transform: scale(1.09); filter: blur(10px) brightness(.7); } }
+@keyframes guia-texto { from { opacity: 0; transform: translateY(14px); } }
+#btnEmpezar:not([disabled]):not([hidden]) { animation: guia-listo 360ms cubic-bezier(.16,1,.3,1); }
+@keyframes guia-listo { from { transform: scale(.94); } }
+
+/* En pantallas grandes, tarjeta centrada con la misma composición */
+@media (min-width: 700px) {
+  dialog.guia { width: min(520px, 100%); height: min(900px, 94dvh); max-height: 94dvh; margin: auto; border-radius: 24px; border: 1px solid var(--linea); box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+  dialog.guia::backdrop { background: rgba(0,0,0,.72); }
+  dialog.guia .guia-img { max-height: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.guia .guia-paso:not([hidden]) .guia-img img,
+  dialog.guia .guia-paso:not([hidden]) h2,
+  dialog.guia .guia-paso:not([hidden]) h2 ~ *,
+  #btnEmpezar:not([disabled]):not([hidden]) { animation: velo 220ms ease-out both; }
+}
+/* Barra inferior: puntos centrados arriba y botones en una sola fila */
+dialog.guia .guia-pie { flex-direction: column; align-items: stretch; gap: 12px; }
+dialog.guia .guia-puntos { justify-content: center; }
+dialog.guia .guia-pie .acciones { flex-wrap: nowrap; justify-content: stretch; gap: 10px; }
+dialog.guia .guia-pie .acciones .boton:not(.sec) { flex: 1; }
+/* En celulares altos la imagen crece (cuadrada) y llena mejor la pantalla */
+@media (max-width: 699px) and (min-height: 760px) { dialog.guia .guia-img { aspect-ratio: 1 / 1; } }
