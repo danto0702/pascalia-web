@@ -580,7 +580,8 @@
                             <div class="flex bg-zinc-900 rounded-lg p-0.5 border border-zinc-800">
                                 <button onclick="setSelectedAlign('left')" class="flex-1 py-1 text-xs hover:bg-zinc-800 rounded"><i class="fa-solid fa-align-left"></i></button>
                                 <button onclick="setSelectedAlign('center')" class="flex-1 py-1 text-xs hover:bg-zinc-800 rounded"><i class="fa-solid fa-align-center"></i></button>
-                                <button onclick="setSelectedAlign('right')" class="flex-1 py-1 text-xs hover:bg-zinc-800 rounded"><i class="fa-solid fa-align-right"></i></button>
+                                <button onclick="setSelectedAlign('right')" class="flex-1 py-1 text-xs hover:bg-zinc-800 rounded" title="Derecha"><i class="fa-solid fa-align-right"></i></button>
+                                <button onclick="setSelectedAlign('justify')" class="flex-1 py-1 text-xs hover:bg-zinc-800 rounded" title="Justificado"><i class="fa-solid fa-align-justify"></i></button>
                             </div>
                         </div>
                     </div>
@@ -920,6 +921,7 @@
         let pdfSources = [];  // PDFs reales cargados: [{ id, name, bytes }]
         let lastDrawnPageId = null;
         let textEditMode = false;
+        let textEditPorParrafo = true; // editar el texto del PDF por párrafos (o por líneas)
         const seenObjIds = new Set();   // para animar solo los objetos recién añadidos
         let lastPageAnimId = null;
 
@@ -1349,7 +1351,22 @@
             });
 
             // Zonas de texto original del PDF (modo Editar texto)
-            if (textEditMode && page.textItems) {
+            if (textEditMode && page.textItems && textEditPorParrafo) {
+                paragraphsOf(page).forEach((grupo) => {
+                    const libres = grupo.filter(i => !page.textItems[i].used);
+                    if (!libres.length) return;
+                    const r = unionRect(libres.map(i => page.textItems[i]));
+                    const hit = document.createElement('div');
+                    hit.className = 'pdf-text-hit';
+                    hit.title = libres.length > 1 ? 'Toca para editar este párrafo' : 'Toca para editar este texto';
+                    Object.assign(hit.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px', height: r.h + 'px' });
+                    const ir = (e) => { e.stopPropagation(); e.preventDefault(); convertParagraph(libres); };
+                    hit.addEventListener('mousedown', ir);
+                    hit.addEventListener('touchstart', ir, { passive: false });
+                    layer.appendChild(hit);
+                });
+            }
+            if (textEditMode && page.textItems && !textEditPorParrafo) {
                 page.textItems.forEach((ti, tIdx) => {
                     if (ti.used) return;
                     const hit = document.createElement('div');
@@ -1383,6 +1400,7 @@
                 // Tipos de objetos
                 if (obj.type === 'text') {
                     el.style.whiteSpace = 'pre-wrap';
+                    if (obj.para) { el.style.padding = '0'; el.style.lineHeight = String(obj.lh || 1.2); el.style.overflowWrap = 'break-word'; }
                     if (obj.bold) el.style.fontWeight = '700';
                     if (obj.highlight) el.style.backgroundColor = 'rgba(250, 204, 21, 0.45)';
                     if (obj.strike) el.style.textDecoration = 'line-through';
@@ -1564,6 +1582,7 @@
             btn.classList.toggle('bg-amber-500/20', textEditMode);
             btn.classList.toggle('border-amber-400', textEditMode);
             renderCurrentPage();
+            pintarSelectorParrafo();
             if (!textEditMode) return showToast("Modo Editar texto desactivado.", "indigo");
             const page = pdfPages[currentPageIndex];
             if (page.textItems && page.textItems.some(t => !t.used)) {
@@ -1573,6 +1592,116 @@
             } else {
                 showToast("Doble clic sobre cualquier texto de la página para editarlo.", "amber");
             }
+        }
+
+        // ---------- Párrafos del texto original ----------
+        // Une líneas consecutivas del mismo tamaño y letra, con interlineado parejo y que se solapan en horizontal
+        function paragraphsOf(page) {
+            if (page.paragraphs && page.paragraphs.n === page.textItems.length) return page.paragraphs.g;
+            const items = page.textItems;
+            const orden = items.map((t, i) => i).sort((a, b) => items[a].y - items[b].y || items[a].x - items[b].x);
+            const grupos = [];
+            orden.forEach(i => {
+                const t = items[i];
+                let destino = null;
+                for (const g of grupos) {
+                    const u = items[g[g.length - 1]];
+                    const primero = items[g[0]];
+                    const salto = t.y - u.y; // distancia entre líneas (de arriba a arriba)
+                    const mismoTam = Math.abs(t.size - u.size) <= Math.max(0.6, u.size * 0.12);
+                    const solapa = Math.min(t.x + t.w, u.x + u.w) - Math.max(t.x, u.x);
+                    const pasoPrevio = g.length > 1 ? items[g[1]].y - primero.y : null;
+                    const interlineado = salto > u.size * 0.6 && salto < u.size * 1.9 && (!pasoPrevio || Math.abs(salto - pasoPrevio) < u.size * 0.35);
+                    if (mismoTam && interlineado && solapa > Math.min(t.w, u.w) * 0.3 && t.bold === u.bold && t.family === u.family) { destino = g; break; }
+                }
+                if (destino) destino.push(i); else grupos.push([i]);
+            });
+            page.paragraphs = { n: items.length, g: grupos };
+            return grupos;
+        }
+
+        function unionRect(list) {
+            const x0 = Math.min(...list.map(t => t.x)), y0 = Math.min(...list.map(t => t.y));
+            const x1 = Math.max(...list.map(t => t.x + t.w)), y1 = Math.max(...list.map(t => t.y + t.h));
+            return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+        }
+
+        // Convierte un párrafo (varias líneas) en un solo cuadro editable que se reacomoda al escribir
+        function convertParagraph(indices) {
+            const page = pdfPages[currentPageIndex];
+            const lineas = indices.map(i => page.textItems[i]).sort((a, b) => a.y - b.y);
+            if (lineas.length === 1) return convertTextItem(indices[0]);
+            const r = unionRect(lineas);
+            let size = lineas.map(l => l.size).sort((a, b) => a - b)[Math.floor(lineas.length / 2)];
+            const pasos = lineas.slice(1).map((l, k) => l.y - lineas[k].y).sort((a, b) => a - b);
+            const lh = Math.min(2.5, Math.max(1, pasos[Math.floor(pasos.length / 2)] / size));
+            // Alineación del original
+            const tol = size * 0.6, der = r.x + r.w;
+            const llenas = lineas.slice(0, -1);
+            let align = 'left';
+            const izqIgual = lineas.every(l => Math.abs(l.x - r.x) < tol);
+            const derIgual = llenas.every(l => Math.abs(l.x + l.w - der) < tol);
+            const centros = lineas.every(l => Math.abs(l.x + l.w / 2 - (r.x + r.w / 2)) < tol);
+            const angosto = r.w < size * 16; // celdas de tabla, firmas, direcciones: se conservan los renglones
+            if (izqIgual && derIgual && llenas.length >= 2 && !angosto) align = 'justify';
+            else if (!izqIgual && centros) align = 'center';
+            else if (!izqIgual && lineas.every(l => Math.abs(l.x + l.w - der) < tol)) align = 'right';
+            // Texto corrido: se unen las líneas (las palabras cortadas con guion se juntan)
+            let texto = '';
+            lineas.forEach(l => {
+                const t = l.text.trim();
+                if (!texto) texto = t;
+                else if (angosto) texto += '\n' + t;
+                else if (/[A-Za-zÁÉÍÓÚáéíóúÑñ]-$/.test(texto)) texto = texto.slice(0, -1) + t;
+                else texto += ' ' + t;
+            });
+            // Si la letra de reemplazo es más ancha que la original, se reduce un poco para conservar los renglones
+            const fam = lineas[0].family, negrita = lineas[0].bold;
+            try {
+                const cx = (convertParagraph.cv || (convertParagraph.cv = document.createElement('canvas'))).getContext('2d');
+                cx.font = `${negrita ? 700 : 400} ${size}px ${fam}`;
+                const exceso = Math.max(...lineas.map(l => cx.measureText(l.text.trim()).width / Math.max(1, l.w)));
+                if (exceso > 1.005) size = size / Math.min(exceso * 1.01, 1 / 0.82);
+            } catch (e) { /* sin medición */ }
+            const s0 = lineas[0].size;
+            lineas.forEach(l => { l.used = true; });
+            const obj = {
+                id: 'ptx-' + Date.now(),
+                type: 'text', para: true, lh: Math.round(lh * s0 / size * 1000) / 1000,
+                x: r.x, y: lineas[0].y + 0.97 * s0 - (lh * s0 + size) / 2,
+                width: Math.ceil(r.w + 1),
+                text: texto, align,
+                fontSize: Math.round(size * 10) / 10,
+                fontFamily: fam, bold: negrita, color: '#000000',
+                cover: { x: r.x - 1, y: r.y - 1, w: r.w + 2, h: r.h + 2 }
+            };
+            page.objects.push(obj);
+            selectObject(obj.id);
+            startInlineEdit(obj.id);
+        }
+
+        // Selector flotante «Párrafo | Línea» mientras está activo Editar texto
+        function pintarSelectorParrafo() {
+            let sel = document.getElementById('selector-parrafo');
+            if (!textEditMode) { if (sel) sel.remove(); return; }
+            if (!sel) {
+                sel = document.createElement('div');
+                sel.id = 'selector-parrafo';
+                sel.setAttribute('role', 'radiogroup');
+                sel.setAttribute('aria-label', 'Editar el texto por');
+                sel.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:calc(112px + env(safe-area-inset-top,0px));z-index:45;display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(24,24,27,.94);box-shadow:0 10px 24px -12px rgba(0,0,0,.6);font:600 13px Inter,sans-serif';
+                document.body.appendChild(sel);
+            }
+            const b = (v, t) => `<button role="radio" aria-checked="${textEditPorParrafo === v}" data-v="${v}" style="border:0;border-radius:999px;padding:8px 14px;min-height:36px;cursor:pointer;${textEditPorParrafo === v ? 'background:#FFC107;color:#1F1F1F' : 'background:transparent;color:#e4e4e7'}">${t}</button>`;
+            sel.innerHTML = b(true, 'Párrafo') + b(false, 'Línea');
+            sel.querySelectorAll('button').forEach(x => x.onclick = () => setTextEditGranularity(x.dataset.v === 'true'));
+        }
+
+        function setTextEditGranularity(porParrafo) {
+            textEditPorParrafo = porParrafo;
+            pintarSelectorParrafo();
+            renderCurrentPage();
+            showToast(porParrafo ? 'Editar por párrafos: toca un párrafo para editarlo completo.' : 'Editar por líneas: toca una línea para editar solo esa.', 'amber');
         }
 
         // Reemplaza una línea de texto original del PDF por un bloque editable (tapando el original)
@@ -1685,6 +1814,12 @@
             const obj = page.objects.find(o => o.id === selectedObjectId);
             if (obj) {
                 obj.align = align;
+                // Centrar, alinear a la derecha o justificar necesita un ancho de caja fijo
+                if (align !== 'left' && !obj.width) {
+                    const el = document.querySelector(`#page-interactive-layer [data-id="${obj.id}"]`);
+                    obj.width = Math.round(el ? el.offsetWidth : 300);
+                    if (obj.tight) { obj.tight = false; obj.para = true; obj.lh = obj.lh || 1.15; }
+                }
                 renderCurrentPage();
             }
         }
@@ -2821,8 +2956,9 @@
             });
         }
 
-        function wrapText(text, font, size, maxWidth) {
+        function wrapText(text, font, size, maxWidth, finales) {
             const lines = [];
+            const marcar = () => { if (finales) finales[lines.length - 1] = true; };
             toWinAnsi(text).split('\n').forEach(par => {
                 const words = par.split(' ');
                 let line = '';
@@ -2836,6 +2972,7 @@
                     }
                 });
                 lines.push(line);
+                marcar();
             });
             return lines;
         }
@@ -2975,7 +3112,7 @@
                     if (opts.skip && opts.skip(obj)) continue;
                     if (obj.type === 'sig-request') continue; // casilla para firmante externo: no se imprime
                     // Los objetos en pantalla tienen padding de 8 px (clase p-2), salvo el texto original editado
-                    const pad = obj.tight ? 0 : 8;
+                    const pad = obj.tight || obj.para ? 0 : 8;
                     const x = obj.x + pad, y = obj.y + pad;
                     const fontFor = (o) => {
                         const fam = (o.fontFamily || '').toLowerCase();
@@ -2990,15 +3127,30 @@
                     } else if (obj.type === 'text') {
                         const size = obj.fontSize || 14;
                         const font = fontFor(obj);
-                        const maxW = obj.tight ? 100000 : (obj.width ? obj.width - 16 : (PAGE_W - x - 20));
-                        const lines = wrapText(obj.text, font, size, maxW);
-                        const lh = size * (obj.tight ? 1.15 : 1.35);
+                        const pad = obj.para ? 0 : 16;
+                        const maxW = obj.tight ? 100000 : (obj.width ? obj.width - pad : (PAGE_W - x - 20));
+                        const finales = [];
+                        const lines = wrapText(obj.text, font, size, maxW, finales);
+                        const lh = size * (obj.para ? (obj.lh || 1.2) : (obj.tight ? 1.15 : 1.35));
                         lines.forEach((ln, li) => {
                             const lw = font.widthOfTextAtSize(ln, size);
-                            const blockW = obj.width ? obj.width - 16 : lw;
+                            const blockW = obj.width ? obj.width - pad : lw;
                             let lx = x;
                             if (obj.align === 'center') lx = x + (blockW - lw) / 2;
                             if (obj.align === 'right') lx = x + blockW - lw;
+                            // Justificado: se reparte el espacio entre palabras, salvo en la última línea de cada párrafo
+                            if (obj.align === 'justify' && obj.width && !finales[li] && ln.includes(' ')) {
+                                const palabras = ln.split(' ').filter(Boolean);
+                                const anchoPal = palabras.reduce((a, w) => a + font.widthOfTextAtSize(w, size), 0);
+                                const hueco = (blockW - anchoPal) / (palabras.length - 1);
+                                if (hueco > 0 && hueco < size * 3) {
+                                    let px = x;
+                                    palabras.forEach(w => { text(w, px, y + li * lh + (lh - size) / 2 - size * 0.05, size, font, hexToRgb(obj.color)); px += font.widthOfTextAtSize(w, size) + hueco; });
+                                    if (obj.highlight) rect(x - 2, y + li * lh - 2, blockW + 4, lh, { color: rgb(0.98, 0.8, 0.08), opacity: 0.45 });
+                                    if (obj.strike) rect(x, y + li * lh + lh / 2, blockW, 1, { color: hexToRgb(obj.color) });
+                                    return;
+                                }
+                            }
                             if (obj.highlight) rect(lx - 2, y + li * lh - 2, lw + 4, lh, { color: rgb(0.98, 0.8, 0.08), opacity: 0.45 });
                             // la línea base queda aprox. a 0.8 del tamaño desde el borde superior de la caja de línea
                             text(ln, lx, y + li * lh + (lh - size) / 2 - size * 0.05, size, font, hexToRgb(obj.color));
