@@ -9,7 +9,7 @@
         'Firmar (dibujo, texto o imagen)', 'Pedir firma a otra persona', 'Casilla de firma para otra persona',
         'Firmar desde el celular (Pascal Sign)', 'Agregar texto', 'Fecha y hora', 'Mis firmas y evidencia',
         'Rellenar el formulario del PDF', 'Campo de texto', 'Casilla de verificación', 'Opción única', 'Lista desplegable',
-        'Exportar respuestas (CSV)', 'Guardar PDF', 'Verificar un documento firmado', 'Delegar mi firma', 'Firmas que me delegaron'
+        'Exportar respuestas (CSV)', 'Word a PDF en lote', 'Guardar PDF', 'Verificar un documento firmado', 'Delegar mi firma', 'Firmas que me delegaron'
     ]);
     const GRATIS = new Set(['Firmar desde el celular (Pascal Sign)']);
 
