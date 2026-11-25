@@ -4,13 +4,31 @@
     'use strict';
     if (!window.PascalCuenta || !window.PascalWord) return;
     const { hoja, aviso, esc } = PascalCuenta.ui;
-    const MAX_ARCHIVOS = 100, MAX_MB = 20;
+    const MAX_ARCHIVOS = 300, MAX_MB = 20;
     const JSZIP = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
     const cargarZip = () => window.JSZip ? Promise.resolve() : new Promise((ok, mal) => {
         const s = document.createElement('script'); s.src = JSZIP; s.onload = ok; s.onerror = () => mal(new Error('No se pudo cargar el compresor. Revisa tu conexión.')); document.head.appendChild(s);
     });
     const hayServidor = () => !!(window.PASCAL_CONVERTIDOR && PascalCuenta.token && PascalCuenta.token());
     const base = (n) => n.replace(/\.docx?$/i, '').replace(/[\\/:*?"<>|]+/g, '_').trim() || 'Documento';
+    // Ruta de salida: se conserva la carpeta dentro del ZIP y se cambia la extensión a .pdf
+    const rutaPdf = (ruta) => ruta.split('/').map((p, i, a) => i === a.length - 1 ? base(p) + '.pdf' : p.replace(/[\\:*?"<>|]+/g, '_')).join('/');
+    const esZip = (f) => /\.zip$/i.test(f.name) || /zip/.test(f.type || '');
+    // Saca los Word de un ZIP (con sus carpetas). Se ignoran temporales de Office (~$) y carpetas de macOS.
+    async function deZip(f) {
+        await cargarZip();
+        const zip = await JSZip.loadAsync(f);
+        const salida = [];
+        for (const e of Object.values(zip.files)) {
+            if (e.dir || !/\.docx?$/i.test(e.name) || /(^|\/)(__MACOSX\/|\._|~\$)/.test(e.name)) continue;
+            const blob = await e.async('blob');
+            const nombre = e.name.split('/').pop();
+            const doc = new File([blob], nombre, { type: /\.doc$/i.test(nombre) ? 'application/msword' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+            doc.ruta = e.name;
+            salida.push(doc);
+        }
+        return salida;
+    }
 
     // El plan (Suite) lo exige acceso.js al tocar la herramienta
     async function abrir() {
@@ -18,8 +36,8 @@
         let modoGuardado = null; try { modoGuardado = localStorage.getItem('pascal-word-modo'); } catch (e) { /* nada */ }
         const exacta = hayServidor();
         const h = hoja(`<h2 class="pc-h" style="margin:0 0 4px">Convertir Word a PDF en lote</h2>
-            <p class="pc-muted">Elige varios documentos de Word y los pasamos a PDF de una vez.</p>
-            <label class="pc-btn pc-sec" style="width:100%;box-sizing:border-box;margin:6px 0">Elegir documentos de Word<input type="file" data-archivos multiple accept=".docx,.doc,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden></label>
+            <p class="pc-muted">Elige varios documentos de Word, o un ZIP con documentos de Word, y los pasamos a PDF de una vez. Si subes un ZIP, recibes un ZIP con la misma organización de carpetas.</p>
+            <label class="pc-btn pc-sec" style="width:100%;box-sizing:border-box;margin:6px 0">Elegir documentos de Word o un ZIP<input type="file" data-archivos multiple accept=".docx,.doc,.zip,application/zip,application/x-zip-compressed,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden></label>
             <p class="pc-muted" data-cuantos style="margin:2px 0 10px">Ningún documento elegido.</p>
             <fieldset style="border:0;padding:0;margin:0 0 10px"><legend style="font-weight:700;font-size:14px;margin-bottom:6px">Cómo convertir</legend>
               <label style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:14px${exacta ? '' : ';opacity:.5'}"><input type="radio" name="wl-modo" value="servidor" ${exacta && modoGuardado !== 'local' ? 'checked' : ''} ${exacta ? '' : 'disabled'}><span><b>Conversión exacta</b><br><span class="pc-muted" style="font-size:12px">Respeta tablas, márgenes y letras; el texto queda seleccionable. Cada archivo se envía cifrado al convertidor y se borra apenas se convierte.</span></span></label>
@@ -33,15 +51,29 @@
         const fila = (i, estado, nota) => {
             const li = q(`[data-i="${i}"]`); if (!li) return;
             const ic = { espera: '<span style="color:#a1a1aa">•</span>', trabajando: '<span style="color:#d97706">⟳</span>', ok: '<span style="color:#16a34a">✓</span>', error: '<span style="color:#dc2626">✗</span>' }[estado];
-            li.innerHTML = `${ic} <b style="font-weight:600">${esc(archivos[i].name)}</b>${nota ? ` <span class="pc-muted">· ${esc(nota)}</span>` : ''}`;
+            li.innerHTML = `${ic} <b style="font-weight:600">${esc(archivos[i].ruta || archivos[i].name)}</b>${nota ? ` <span class="pc-muted">· ${esc(nota)}</span>` : ''}`;
         };
-        q('[data-archivos]').onchange = (e) => {
-            archivos = [...e.target.files].filter(f => /\.docx?$/i.test(f.name) || PascalWord.esWord(f));
+        let desdeZip = false;
+        q('[data-archivos]').onchange = async (e) => {
+            const elegidos = [...e.target.files];
+            archivos = elegidos.filter(f => !esZip(f) && (/\.docx?$/i.test(f.name) || PascalWord.esWord(f)));
+            const zips = elegidos.filter(esZip);
+            desdeZip = zips.length > 0;
+            if (zips.length) {
+                q('[data-cuantos]').textContent = 'Abriendo el ZIP…';
+                try { for (const z of zips) archivos.push(...(await deZip(z))); }
+                catch (err) { aviso(msg, 'No se pudo abrir el ZIP. Verifica que no esté dañado ni protegido con contraseña.'); }
+                if (!archivos.length) aviso(msg, 'El ZIP no tiene documentos de Word (.docx o .doc).');
+                // Para conservar el formato, con ZIP se usa la conversión exacta
+                const ex = h.querySelector('input[name="wl-modo"][value="servidor"]');
+                if (ex && !ex.disabled) ex.checked = true;
+            }
             const grandes = archivos.filter(f => f.size > MAX_MB * 1048576);
             if (archivos.length > MAX_ARCHIVOS) { aviso(msg, `Máximo ${MAX_ARCHIVOS} documentos por lote.`); archivos = archivos.slice(0, MAX_ARCHIVOS); }
             else if (grandes.length) { aviso(msg, `${grandes.length} documento(s) pasan de ${MAX_MB} MB y no se incluirán.`); archivos = archivos.filter(f => f.size <= MAX_MB * 1048576); }
             else aviso(msg, '');
             q('[data-cuantos]').textContent = archivos.length ? `${archivos.length} documento(s) de Word.` : 'Ningún documento elegido.';
+            if (desdeZip && !hayServidor()) aviso(msg, 'El convertidor exacto no está disponible en este momento: la conversión en el dispositivo puede cambiar el formato. Te recomendamos intentarlo más tarde.');
             q('[data-lista]').innerHTML = archivos.map((f, i) => `<li data-i="${i}" style="padding:6px 0;border-bottom:1px solid #f1f1f1"></li>`).join('');
             archivos.forEach((f, i) => fila(i, 'espera'));
             q('[data-convertir]').disabled = !archivos.length;
@@ -64,7 +96,7 @@
                     try {
                         const r = await PascalWord.convertir(archivos[i], { modo });
                         const doc = await PDFLib.PDFDocument.load(r.bytes, { ignoreEncryption: true });
-                        res[i] = { bytes: r.bytes, nombre: base(archivos[i].name) + '.pdf', paginas: doc.getPageCount() };
+                        res[i] = { bytes: r.bytes, nombre: archivos[i].ruta ? rutaPdf(archivos[i].ruta) : base(archivos[i].name) + '.pdf', paginas: doc.getPageCount() };
                         if (r.aviso) respaldo++;
                         const notas = [`${res[i].paginas} pág.`];
                         if (r.metodo === 'local' && modo === 'servidor') notas.push('convertido en el dispositivo');
@@ -90,7 +122,7 @@
                         (await todo.copyPages(d, d.getPageIndices())).forEach(p => todo.addPage(p));
                     }
                     downloadBlob(new Blob([await todo.save()], { type: 'application/pdf' }), `Word_unidos_${fecha}.pdf`);
-                } else if (listos.length === 1) {
+                } else if (listos.length === 1 && !desdeZip) {
                     downloadBlob(new Blob([listos[0].bytes], { type: 'application/pdf' }), listos[0].nombre);
                 } else {
                     await cargarZip();
@@ -100,7 +132,8 @@
                         if (usados[n]) n = n.replace(/\.pdf$/, ` (${++usados[n]}).pdf`); else usados[n] = 1;
                         zip.file(n, r.bytes);
                     });
-                    downloadBlob(await zip.generateAsync({ type: 'blob' }), `Word_a_PDF_${fecha}.zip`);
+                    const nombreZip = desdeZip ? (([...q('[data-archivos]').files].find(esZip) || {}).name || 'Documentos.zip').replace(/\.zip$/i, '') + '_PDF.zip' : `Word_a_PDF_${fecha}.zip`;
+                    downloadBlob(await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }), nombreZip);
                 }
                 aviso(msg, `Listo: ${listos.length} convertido(s)${fallos ? `, ${fallos} con error` : ''}${respaldo ? `. ${respaldo} se convirtieron en el dispositivo porque el convertidor exacto no respondió` : ''}. Revisa los PDF antes de firmarlos o enviarlos.`, !fallos);
             } catch (e) {
