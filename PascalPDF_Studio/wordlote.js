@@ -30,7 +30,7 @@
         return salida;
     }
 
-    // El plan (Suite) lo exige acceso.js al tocar la herramienta
+    // El plan (Pro o Suite) lo exige acceso.js al tocar la herramienta
     async function abrir() {
         let archivos = [], trabajando = false;
         let modoGuardado = null; try { modoGuardado = localStorage.getItem('pascal-word-modo'); } catch (e) { /* nada */ }
