@@ -4,7 +4,7 @@
     'use strict';
     if (!window.PascalCuenta || !window.PascalWord) return;
     const { hoja, aviso, esc } = PascalCuenta.ui;
-    const MAX_ARCHIVOS = 300, MAX_MB = 20;
+    const MAX_ARCHIVOS = 300, MAX_MB = 100;
     const JSZIP = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
     const cargarZip = () => window.JSZip ? Promise.resolve() : new Promise((ok, mal) => {
         const s = document.createElement('script'); s.src = JSZIP; s.onload = ok; s.onerror = () => mal(new Error('No se pudo cargar el compresor. Revisa tu conexión.')); document.head.appendChild(s);
