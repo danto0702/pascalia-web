@@ -7,7 +7,7 @@ errores = []
 for p in OBLIG:
     if not (raiz / p / "index.html").exists(): errores.append(f"falta la página /{p}/")
 for f in sorted(raiz.rglob("*.html")):
-    if any(x.startswith(".") for x in f.relative_to(raiz).parts) or "docs" in f.parts: continue
+    if any(x.startswith(".") for x in f.relative_to(raiz).parts) or "docs" in f.parts or "supabase" in f.parts: continue
     t = f.read_text(encoding="utf-8", errors="ignore"); r = f.relative_to(raiz)
     if 'src="/legal.js"' not in t: errores.append(f"{r}: no carga /legal.js (banner de cookies + franja legal)")
     if not re.search(r'<html[^>]*\blang="', t): errores.append(f"{r}: <html> sin lang")

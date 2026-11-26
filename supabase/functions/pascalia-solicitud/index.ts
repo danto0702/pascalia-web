@@ -1,6 +1,7 @@
 // Recibe las solicitudes del formulario de pascalia.lat: valida, frena spam,
 // guarda en pascalia_solicitudes y envía el aviso y la respuesta automática (Resend).
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { cabeceraBaja, plantillaCorreo } from "./correo.ts";
 
 const ORIGENES = new Set([
   "https://pascalia.lat",
@@ -148,13 +149,22 @@ Deno.serve(async (req) => {
     const okAviso = await enviarCorreo(key, {
       from: desde, to: [aviso], reply_to: s.correo,
       subject: `Nueva solicitud ${fila.radicado} · ${solucion} · ${s.nombre}`,
-      html: `<div style="font-family:Arial,sans-serif;color:#1F1F1F"><h2 style="margin:0 0 12px">Nueva solicitud desde pascalia.lat</h2><table>${filas}</table><p style="margin:16px 0 6px;color:#5A5754">Mensaje</p><p style="white-space:pre-wrap;margin:0">${esc(s.mensaje)}</p><p style="margin-top:20px"><a href="https://pascalia.lat/panel/">Abrir el tablero de solicitudes</a></p></div>`,
+      html: plantillaCorreo({
+        interno: true, titulo: "Nueva solicitud desde pascalia.lat",
+        cuerpo: `<table>${filas}</table><p style="margin:16px 0 6px;color:#5C5C5C">Mensaje</p><p style="white-space:pre-wrap;margin:0">${esc(s.mensaje)}</p><p style="margin-top:20px"><a href="https://pascalia.lat/panel/">Abrir el tablero de solicitudes</a></p>`,
+      }),
     });
     const okRespuesta = await enviarCorreo(key, {
       from: desde, to: [s.correo], reply_to: aviso,
       subject: `Recibimos tu solicitud ${fila.radicado} · PascalIA`,
-      html: `<div style="font-family:Arial,sans-serif;color:#1F1F1F;max-width:560px"><p>Hola, ${esc(s.nombre.split(" ")[0])}:</p><p>Gracias por escribirnos. Recibimos tu solicitud sobre <b>${esc(solucion)}</b> con el radicado <b>${esc(fila.radicado)}</b>. Te responderemos pronto, normalmente en el siguiente día hábil.</p><p>Si quieres agregar algo, responde a este correo.</p><p style="margin-top:24px">— Equipo PascalIA<br><span style="color:#5A5754">Ideas que hacen florecer tu organización · <a href="https://pascalia.lat">pascalia.lat</a></span></p><p style="margin-top:24px;font-size:12px;color:#5A5754">Te escribimos porque enviaste una solicitud en pascalia.lat; no te inscribimos en listas de correo. Responsable: Danilo Orlando Torrado Blanco (PascalIA), Calle 11 # 13-55, Ábrego, Norte de Santander. <a href="mailto:contacto@pascalia.lat?subject=Baja%20${encodeURIComponent(fila.radicado)}">Darme de baja</a> · <a href="https://pascalia.lat/eliminar-mis-datos/">Eliminar mis datos</a> · <a href="https://pascalia.lat/politica-de-datos/">Política de datos</a></p></div>`,
-      headers: { "List-Unsubscribe": `<mailto:contacto@pascalia.lat?subject=Baja%20${encodeURIComponent(fila.radicado)}>` },
+      html: plantillaCorreo({
+        producto: solucion, referencia: fila.radicado,
+        previa: `Radicado ${fila.radicado}. Te responderemos pronto.`,
+        titulo: `Hola, ${esc(s.nombre.split(" ")[0])}`,
+        cuerpo: `<p>Gracias por escribirnos. Recibimos tu solicitud sobre <b>${esc(solucion)}</b> con el radicado <b>${esc(fila.radicado)}</b>. Te responderemos pronto, normalmente en el siguiente día hábil.</p><p>Si quieres agregar algo, responde a este correo.</p>`,
+        motivo: "Te escribimos porque enviaste una solicitud en pascalia.lat; no te inscribimos en listas de correo.",
+      }),
+      headers: cabeceraBaja(fila.radicado),
     });
     confirmacion = okRespuesta;
     await db.from("pascalia_solicitudes")

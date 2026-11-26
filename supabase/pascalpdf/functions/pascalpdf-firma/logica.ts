@@ -2,6 +2,8 @@
 // El documento llega y sale cifrado desde el navegador (la clave nunca llega aquí):
 // esta función solo guarda metadatos, verifica correos con código y entrega URLs firmadas de Storage.
 
+import { plantillaCorreo } from "./correo.ts";
+
 export type Solicitud = {
   id: string;
   creada_en: string;
@@ -109,11 +111,8 @@ function enmascarar(correo: string) {
   return (u.length <= 2 ? u[0] + "*" : u.slice(0, 2) + "*".repeat(Math.min(6, u.length - 2))) + "@" + d;
 }
 
-function plantilla(titulo: string, cuerpo: string) {
-  return `<div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:auto;color:#1F1F1F">
-  <div style="height:4px;background:#FFC107;border-radius:4px"></div>
-  <h2 style="font-size:18px;margin:20px 0 8px">${titulo}</h2>${cuerpo}
-  <p style="color:#5C5C5C;font-size:12px;margin-top:28px">PascalPDF de PascalIA · pascalia.lat<br>Si no esperabas este correo, ignóralo.</p></div>`;
+export function plantilla(titulo: string, cuerpo: string) {
+  return plantillaCorreo({ producto: "PascalPDF", titulo, cuerpo, motivo: "Recibes este correo porque se usó tu dirección en PascalPDF o Pascal Sign. Si no esperabas este correo, ignóralo." });
 }
 
 const fueraDeVigencia = (s: Solicitud, ahora: Date) => s.estado === "pendiente" && new Date(s.vence_en) < ahora;

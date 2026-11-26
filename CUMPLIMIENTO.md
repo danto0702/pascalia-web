@@ -12,7 +12,7 @@ El paso «Verificar cumplimiento» de `.github/workflows/pages.yml` (`.github/sc
 ## Manual (revisar en cada cambio)
 - **Formularios:** casilla de autorización sin marcar, enlace a la política, «soy mayor de 18 años»; pedir solo los datos necesarios para el fin.
 - **Menores:** servicios para mayores de 18. Si un producto involucra niños, el adulto responsable autoriza (consentimiento parental).
-- **Correos:** pie con responsable, enlace de baja, cabecera `List-Unsubscribe` y enlace a `/eliminar-mis-datos/`.
+- **Correos:** todo correo automático se arma con `plantillaCorreo` de `supabase/shared/correo.ts` (marca, firma «Equipo PascalIA», pie con responsable, baja y `/eliminar-mis-datos/`) y los que envían a clientes agregan `cabeceraBaja()`. Nunca HTML suelto. Los que escribes a mano usan `supabase/shared/firma-gmail.html`. Al crear una función nueva que envíe correo, copia `correo.ts` junto a ella al desplegar.
 - **Precios:** valor total en COP antes de cobrar; nada de cargos ocultos, renovaciones automáticas no avisadas ni casillas premarcadas.
 - **Patrones oscuros:** nada de urgencia falsa, contadores inventados, «confirmshaming», cancelación más difícil que la compra.
 - **Afirmaciones:** sin reseñas ni testimonios inventados; cifras y promesas solo con respaldo; demos marcadas como ficticias.

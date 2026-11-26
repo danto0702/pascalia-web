@@ -1,7 +1,8 @@
 // Cuentas de PascalPDF y Pascal Sign: entrada con código al correo, planes, prueba de 7 días,
 // historial de firmas, cupo de solicitudes de firma y pagos con Wompi (con códigos promocionales).
 // Independiente del entorno: index.ts conecta Postgres/Wompi/Resend; las pruebas usan Postgres local.
-import { ErrorCliente } from "./logica.ts";
+import { ErrorCliente, plantilla } from "./logica.ts";
+import { estiloCodigo } from "./correo.ts";
 
 export type Usuario = {
   id: string; correo: string; nombre: string | null; creado_en: string;
@@ -278,7 +279,7 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
         vence_en: new Date(ahora.getTime() + MINUTOS_CODIGO * 60_000).toISOString(), intentos: 0, creado_en: ahora.toISOString(),
       });
       const ok = await deps.correo(correo, `${codigo} es tu código para entrar a PascalPDF`,
-        `<div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:auto;color:#1F1F1F"><div style="height:4px;background:#FFC107;border-radius:4px"></div><h2 style="font-size:18px;margin:20px 0 8px">Tu código para entrar</h2><p>Escribe este código en PascalPDF o Pascal Sign:</p><p style="font-size:28px;font-weight:800;letter-spacing:6px">${codigo}</p><p>Vence en ${MINUTOS_CODIGO} minutos.</p><p style="color:#5C5C5C;font-size:12px;margin-top:28px">PascalIA · pascalia.lat<br>Si no pediste este código, ignora este correo.</p></div>`);
+        plantilla("Tu código para entrar", `<p>Escribe este código en PascalPDF o Pascal Sign:</p><p style="${estiloCodigo}">${codigo}</p><p>Vence en ${MINUTOS_CODIGO} minutos.</p><p style="color:#5C5C5C;font-size:14px">Si no pediste este código, ignora este correo.</p>`));
       if (!ok) throw new ErrorCliente("No pudimos enviar el correo. Intenta de nuevo.", 502);
       return { ok: true };
     }
@@ -463,7 +464,7 @@ export async function manejarCuenta(d: Record<string, unknown>, deps: DepsCuenta
       });
       const fmt = (x: Date) => x.toLocaleString("es-CO", { dateStyle: "long", timeStyle: "short", timeZone: "America/Bogota" });
       await deps.correo(delegado_correo, `${u.nombre || u.correo} te delegó su firma en PascalPDF`,
-        `<div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:auto;color:#1F1F1F"><div style="height:4px;background:#FFC107;border-radius:4px"></div><h2 style="font-size:18px;margin:20px 0 8px">Te delegaron una firma</h2><p><b>${escHtml(u.nombre || u.correo)}</b> te autorizó a usar la firma de <b>${escHtml(firma_nombre)}</b> en PascalPDF del ${fmt(desde)} al ${fmt(hasta)}.</p><p>${objetos.length ? "Solo para: " + objetos.map(escHtml).join(", ") + "." : "Para cualquier documento."}</p><p>Entra a PascalPDF con este correo (${escHtml(delegado_correo)}) y la verás en «Firmar» → «Firmas que te delegaron». Cada uso queda registrado en el historial del titular.</p><p style="color:#5C5C5C;font-size:12px;margin-top:28px">PascalIA · pascalia.lat<br>Si no esperabas este correo, ignóralo.</p></div>`);
+        plantilla("Te delegaron una firma", `<p><b>${escHtml(u.nombre || u.correo)}</b> te autorizó a usar la firma de <b>${escHtml(firma_nombre)}</b> en PascalPDF del ${fmt(desde)} al ${fmt(hasta)}.</p><p>${objetos.length ? "Solo para: " + objetos.map(escHtml).join(", ") + "." : "Para cualquier documento."}</p><p>Entra a PascalPDF con este correo (${escHtml(delegado_correo)}) y la verás en «Firmar» → «Firmas que te delegaron». Cada uso queda registrado en el historial del titular.</p>`));
       return { ok: true, delegacion: publicaDelegacion(del, ahora) };
     }
 
