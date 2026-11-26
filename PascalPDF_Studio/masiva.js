@@ -30,7 +30,7 @@
     async function wordAPdf(file) {
         let modo = null; try { modo = localStorage.getItem('pascal-word-modo'); } catch (e) { /* nada */ }
         if (!modo) modo = window.PASCAL_CONVERTIDOR ? 'servidor' : 'local';
-        return (await PascalWord.convertir(file, { modo })).bytes;
+        return (await PascalWord.convertir(file, { modo, sinRespaldo: modo === 'servidor' })).bytes;
     }
 
     // ------------------------------------------------------------------ estampar firma + datos en un PDF

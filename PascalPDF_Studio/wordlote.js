@@ -94,7 +94,7 @@
                     const i = cola.shift();
                     fila(i, 'trabajando', 'convirtiendo…');
                     try {
-                        const r = await PascalWord.convertir(archivos[i], { modo });
+                        const r = await PascalWord.convertir(archivos[i], { modo, sinRespaldo: modo === 'servidor' });
                         const doc = await PDFLib.PDFDocument.load(r.bytes, { ignoreEncryption: true });
                         res[i] = { bytes: r.bytes, nombre: archivos[i].ruta ? rutaPdf(archivos[i].ruta) : base(archivos[i].name) + '.pdf', paginas: doc.getPageCount() };
                         if (r.aviso) respaldo++;
