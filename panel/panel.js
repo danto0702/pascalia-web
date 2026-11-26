@@ -37,6 +37,8 @@
   var mapa = function (l) { var m = {}; l.forEach(function (x) { m[x[0]] = x[1]; }); return m; };
   var L = { etapa: mapa(ETAPAS), solucion: mapa(SOLUCIONES), fuente: mapa(FUENTES), prioridad: mapa(PRIORIDADES), motivo: mapa(MOTIVOS), tipo: mapa(TIPOS_TODOS) };
 
+  // Si llegas desde el correo de recuperación, primero se pide la nueva contraseña (no se entra al tablero)
+  var recuperando = /(^|[#&])type=recovery(&|$)/.test(location.hash);
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   var $ = function (s) { return document.querySelector(s); };
   var todas = [], filtradas = [], actual = null;
@@ -80,7 +82,12 @@
   }
 
   // ---------- sesión ----------
+  function mostrarNuevaClave() {
+    vista("#v-login"); $("#f-login").hidden = true; $("#f-nueva-clave").hidden = false;
+    var c = $("#n-clave"); if (c) c.focus();
+  }
   async function arrancar(session) {
+    if (recuperando) { mostrarNuevaClave(); return; }
     if (!session) { vista("#v-login"); return; }
     var r = await sb.rpc("pascalia_es_admin");
     if (r.error || r.data !== true) {
@@ -112,14 +119,16 @@
     if (clave.length < 10) { msg.textContent = "Usa al menos 10 caracteres."; msg.className = "msg error"; return; }
     var r = await sb.auth.updateUser({ password: clave });
     if (r.error) { msg.textContent = "No se pudo guardar: " + r.error.message; msg.className = "msg error"; return; }
+    recuperando = false;
     $("#f-nueva-clave").hidden = true; $("#f-login").hidden = false;
+    if (history.replaceState) history.replaceState(null, "", location.pathname);
     var s = await sb.auth.getSession(); arrancar(s.data.session);
   });
   document.querySelectorAll("[data-salir]").forEach(function (b) {
     b.addEventListener("click", async function () { await sb.auth.signOut(); location.reload(); });
   });
   sb.auth.onAuthStateChange(function (ev) {
-    if (ev === "PASSWORD_RECOVERY") { vista("#v-login"); $("#f-login").hidden = true; $("#f-nueva-clave").hidden = false; }
+    if (ev === "PASSWORD_RECOVERY") { recuperando = true; mostrarNuevaClave(); }
   });
 
   // ---------- datos ----------
