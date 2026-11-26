@@ -125,7 +125,12 @@
         if (modo === 'servidor' && servidorListo()) {
             try { return { bytes: await enServidor(file), metodo: 'servidor', fuentes: raras, nombre }; }
             catch (e) {
-                if (e.status === 413 || e.status === 415) throw e;
+                if (e.status === 413 || e.status === 415 || e.status === 401) throw e;
+                // Un reintento antes de rendirse (el convertidor pudo estar ocupado o reiniciándose)
+                await new Promise(r => setTimeout(r, 2500));
+                try { return { bytes: await enServidor(file), metodo: 'servidor', fuentes: raras, nombre }; } catch (e2) { e = e2; }
+                // En lotes no se cambia a la conversión del navegador: desconfigura tablas y márgenes
+                if (opciones.sinRespaldo) { const err = new Error('La conversión exacta falló. Intenta de nuevo con este documento.'); err.status = e.status; throw err; }
                 // Sin conexión con el convertidor: se usa el del navegador y se avisa
                 return { bytes: await enNavegador(file), metodo: 'local', fuentes: raras, nombre, aviso: 'El convertidor exacto no respondió; se usó la conversión del celular.' };
             }

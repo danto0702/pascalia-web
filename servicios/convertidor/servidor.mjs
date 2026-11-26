@@ -10,7 +10,16 @@ const PUERTO = process.env.PORT || 8080;
 const API = process.env.CUENTAS_API || 'https://dfzoqenxvpqkzkuakmli.supabase.co/functions/v1/pascalpdf-firma';
 const ORIGENES = (process.env.ORIGENES || 'https://pascalia.lat,https://www.pascalia.lat').split(',');
 const MAX = 20 * 1024 * 1024;
+const MAX_SIMULT = Number(process.env.SIMULTANEAS || 1); // LibreOffice usa mucha memoria: de a uno por defecto
+const MAX_COLA = 40;
 let enCurso = 0;
+const cola = [];
+// Turno para convertir: cada turno usa su propio perfil de LibreOffice, que se reutiliza (arranca más rápido y gasta menos)
+const libres = Array.from({ length: MAX_SIMULT }, (_, i) => i);
+function turno() {
+    return new Promise((ok) => { if (libres.length) ok(libres.shift()); else cola.push(ok); });
+}
+function soltar(n) { const sig = cola.shift(); if (sig) sig(n); else libres.push(n); }
 
 const cabeceras = (origen) => ({
     'Access-Control-Allow-Origin': ORIGENES.includes(origen) ? origen : ORIGENES[0],
@@ -27,12 +36,15 @@ async function sesionValida(token) {
     } catch { return false; }
 }
 
-function convertir(dir, archivo) {
+function convertir(dir, archivo, perfil) {
     return new Promise((ok, mal) => {
-        const p = spawn('soffice', ['--headless', '--norestore', '--nolockcheck', `-env:UserInstallation=file://${dir}/perfil`,
-            '--convert-to', 'pdf:writer_pdf_Export', '--outdir', dir, archivo], { stdio: 'ignore' });
-        const t = setTimeout(() => { p.kill('SIGKILL'); mal(new Error('tiempo')); }, 90000);
-        p.on('exit', (c) => { clearTimeout(t); c === 0 ? ok() : mal(new Error('soffice ' + c)); });
+        const p = spawn('soffice', ['--headless', '--norestore', '--nolockcheck', '--nodefault', '--nofirststartwizard',
+            `-env:UserInstallation=file://${tmpdir()}/perfil-${perfil}`,
+            '--convert-to', 'pdf:writer_pdf_Export', '--outdir', dir, archivo], { stdio: ['ignore', 'ignore', 'pipe'], env: { ...process.env, HOME: tmpdir() } });
+        let err = '';
+        p.stderr.on('data', (d) => { err = (err + d).slice(-300); });
+        const t = setTimeout(() => { p.kill('SIGKILL'); mal(new Error('tiempo')); }, 120000);
+        p.on('exit', (c) => { clearTimeout(t); c === 0 ? ok() : mal(new Error('soffice ' + c + ' ' + err.replace(/\s+/g, ' ').trim())); });
         p.on('error', (e) => { clearTimeout(t); mal(e); });
     });
 }
@@ -44,7 +56,7 @@ createServer(async (req, res) => {
     if (req.method !== 'POST' || req.url !== '/convertir') return json(res, c, 404, { error: 'No existe' });
     const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
     if (!(await sesionValida(token))) return json(res, c, 401, { error: 'Inicia sesión para convertir documentos.' });
-    if (enCurso >= 3) return json(res, c, 503, { error: 'El convertidor está ocupado. Intenta de nuevo en un momento.' });
+    if (cola.length >= MAX_COLA) return json(res, c, 503, { error: 'El convertidor está ocupado. Intenta de nuevo en un momento.' });
     const partes = []; let tam = 0, pasado = false;
     req.on('data', (d) => { tam += d.length; if (tam > MAX) pasado = true; else partes.push(d); });
     req.on('end', async () => {
@@ -55,17 +67,28 @@ createServer(async (req, res) => {
         if (!ext) return json(res, c, 415, { error: 'El archivo no es un documento de Word.' });
         enCurso++;
         const dir = await mkdtemp(join(tmpdir(), 'conv-'));
+        const n = await turno();
         try {
             await writeFile(join(dir, 'documento.' + ext), buf);
-            await convertir(dir, join(dir, 'documento.' + ext));
-            const pdf = await readFile(join(dir, 'documento.pdf'));
+            let pdf = null;
+            // Un reintento: si LibreOffice se cae, se borra su perfil y se intenta otra vez
+            for (let intento = 1; intento <= 2 && !pdf; intento++) {
+                try {
+                    await convertir(dir, join(dir, 'documento.' + ext), n);
+                    pdf = await readFile(join(dir, 'documento.pdf'));
+                } catch (e) {
+                    console.error(`fallo de conversión (intento ${intento})`, e.message);
+                    if (intento === 2) throw e;
+                    await rm(join(tmpdir(), 'perfil-' + n), { recursive: true, force: true }).catch(() => {});
+                }
+            }
             res.writeHead(200, { ...c, 'Content-Type': 'application/pdf', 'Cache-Control': 'no-store' });
             res.end(pdf);
         } catch (e) {
-            console.error('fallo de conversión', e.message); // sin datos del documento
             json(res, c, 422, { error: 'No se pudo convertir este documento.' });
         } finally {
             enCurso--;
+            soltar(n);
             rm(dir, { recursive: true, force: true }).catch(() => {});
         }
     });
