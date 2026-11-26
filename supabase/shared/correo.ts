@@ -7,7 +7,7 @@
 // `titulo` y `cuerpo` son HTML de confianza: quien llama debe escapar lo que venga de usuarios.
 
 const SITIO = "https://pascalia.lat";
-const LOGO = `${SITIO}/correo/flor-96.png`; // se muestra a 48 px para pantallas de alta densidad
+const LOGO = `${SITIO}/correo/logo-vertical.png`; // flor con la palabra debajo; PNG de 440 px que se muestra a 88 px
 const AMARILLO = "#FFC107";
 const GRAFITO = "#1F1F1F";
 const GRIS = "#5C5C5C";
@@ -48,13 +48,12 @@ export function plantillaCorreo(o: OpcionesCorreo): string {
   const baja = `mailto:contacto@pascalia.lat?subject=${encodeURIComponent(o.referencia ? `Baja ${o.referencia}` : "Baja")}`;
 
   const firma = o.interno ? "" : `
-    <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:28px;border-top:1px solid #E9E9E9;padding-top:18px;width:100%"><tr>
-      <td width="44" valign="top" style="padding:18px 12px 0 0"><img src="${LOGO}" width="32" height="32" alt="" style="display:block;border:0"></td>
-      <td valign="top" style="padding-top:18px;font:14px/1.5 ${fuente};color:${GRAFITO}">
+    <div style="margin-top:28px;border-top:1px solid #E9E9E9;padding-top:18px"><table role="presentation" cellpadding="0" cellspacing="0"><tr>
+      <td valign="top" style="padding:0 0 0 12px;border-left:3px solid ${AMARILLO};font:14px/1.5 ${fuente};color:${GRAFITO}">
         <b>Equipo Pascal<span style="color:#8A6100">IA</span></b><br>
         <span style="color:${GRIS}">Ideas que hacen florecer tu organización</span><br>
         <a href="${SITIO}" style="color:${GRAFITO}">pascalia.lat</a> · <a href="mailto:contacto@pascalia.lat" style="color:${GRAFITO}">contacto@pascalia.lat</a> · <a href="https://wa.me/573123885012" style="color:${GRAFITO}">WhatsApp +57 312 388 5012</a>
-      </td></tr></table>`;
+      </td></tr></table></div>`;
 
   const pie = o.interno ? "" : `
     <p style="margin:22px 0 0;font:12px/1.6 ${fuente};color:${GRIS}">
@@ -71,8 +70,7 @@ export function plantillaCorreo(o: OpcionesCorreo): string {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">
     <tr><td style="height:4px;background:${AMARILLO};border-radius:0 0 4px 4px;font-size:0;line-height:0">&nbsp;</td></tr>
     <tr><td style="padding:22px 0 6px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td width="52"><img src="${LOGO}" width="40" height="40" alt="PascalIA" style="display:block;border:0"></td>
-      <td style="font:800 20px ${fuente};color:${GRAFITO}">Pascal<span style="color:#8A6100">IA</span></td>${producto}
+      <td><img src="${LOGO}" width="88" height="74" alt="PascalIA" style="display:block;border:0"></td>${producto}
     </tr></table></td></tr>
     <tr><td style="font:16px/1.6 ${fuente};color:${GRAFITO}">
       <h1 style="font:700 20px/1.3 ${fuente};margin:18px 0 10px;color:${GRAFITO}">${o.titulo}</h1>
