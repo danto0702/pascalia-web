@@ -156,3 +156,6 @@
   .pb-panel { width: 100%; height: 100%; border-radius: 0; }
   .pb-tag { display: none; }
 }
+
+/* Páginas con botón "volver arriba" en la misma esquina: se sube para no quedar debajo del chat. */
+body:has(.pb) .to-top { bottom: 92px; }
