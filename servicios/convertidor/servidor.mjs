@@ -2,7 +2,7 @@
 // Solo atiende a usuarios con sesión de PascalPDF (se verifica el token con la función de cuentas).
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
-import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, readFile, rm, readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -34,6 +34,34 @@ async function sesionValida(token) {
         const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion: 'cuenta', token }) });
         return r.ok;
     } catch { return false; }
+}
+
+function correr(cmd, args, cwd) {
+    return new Promise((ok, mal) => {
+        const p = spawn(cmd, args, { cwd, stdio: 'ignore' });
+        p.on('exit', (c) => c === 0 ? ok() : mal(new Error(cmd + ' ' + c)));
+        p.on('error', mal);
+    });
+}
+
+// Ajustes para que LibreOffice respete el diseño de Word:
+// la «cuadrícula del documento» (w:docGrid) hace que LibreOffice agrande el interlineado y la altura de las
+// filas, y achique la letra si la cuadrícula es de caracteres; Word en la práctica no la aplica al texto latino.
+async function prepararDocx(dir, archivo) {
+    const x = join(dir, 'x');
+    await correr('unzip', ['-q', '-o', archivo, '-d', x]);
+    const partes = (await readdir(join(x, 'word'))).filter(n => /^(document|header\d*|footer\d*|styles|settings)\.xml$/.test(n));
+    let cambio = false;
+    for (const n of partes) {
+        const ruta = join(x, 'word', n);
+        const xml = await readFile(ruta, 'utf8');
+        const nuevo = xml.replace(/<w:docGrid\b[^>]*\/>/g, '').replace(/<w:docGrid\b[^>]*>\s*<\/w:docGrid>/g, '');
+        if (nuevo !== xml) { await writeFile(ruta, nuevo); cambio = true; }
+    }
+    if (!cambio) return archivo;
+    const salida = join(dir, 'ajustado.docx');
+    await correr('zip', ['-q', '-r', '-X', salida, '.'], x);
+    return salida;
 }
 
 function convertir(dir, archivo, perfil) {
@@ -70,6 +98,13 @@ createServer(async (req, res) => {
         const n = await turno();
         try {
             await writeFile(join(dir, 'documento.' + ext), buf);
+            let origen = join(dir, 'documento.' + ext);
+            if (ext === 'docx') {
+                try {
+                    const aj = await prepararDocx(dir, origen);
+                    if (aj !== origen) { await rm(origen); await correr('mv', [aj, origen]); }
+                } catch (e) { console.error('no se pudo ajustar el docx', e.message); }
+            }
             let pdf = null;
             // Un reintento: si LibreOffice se cae, se borra su perfil y se intenta otra vez
             for (let intento = 1; intento <= 2 && !pdf; intento++) {

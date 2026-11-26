@@ -1,9 +1,17 @@
 # Convertidor Word → PDF de PascalPDF y Pascal Sign (LibreOffice sin interfaz)
 FROM node:22-bookworm-slim
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      libreoffice-writer-nogui fonts-crosextra-carlito fonts-crosextra-caladea \
-      fonts-liberation2 fonts-dejavu-core fonts-noto-core fontconfig \
-    && rm -rf /var/lib/apt/lists/* && fc-cache -f
+# Letras: las de Microsoft (Arial, Times, Verdana, Georgia, Trebuchet...) y equivalentes con la misma medida
+# (Carlito = Calibri, Caladea = Cambria, Liberation Sans Narrow = Arial Narrow, URW = Century Gothic/Bookman...)
+RUN sed -i 's/Components: main/Components: main contrib/' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
+    && echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections \
+    && apt-get install -y --no-install-recommends \
+      libreoffice-writer-nogui fonts-crosextra-carlito fonts-crosextra-caladea fonts-liberation fonts-liberation2 \
+      fonts-dejavu-core fonts-noto-core fonts-urw-base35 fontconfig zip unzip \
+    && (apt-get install -y --no-install-recommends ttf-mscorefonts-installer || echo "sin fuentes de Microsoft") \
+    && rm -rf /var/lib/apt/lists/*
+COPY fuentes.conf /etc/fonts/local.conf
+RUN fc-cache -f
 WORKDIR /app
 COPY servidor.mjs ./
 ENV NODE_ENV=production
