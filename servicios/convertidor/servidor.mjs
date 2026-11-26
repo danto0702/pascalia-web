@@ -9,7 +9,7 @@ import { join } from 'node:path';
 const PUERTO = process.env.PORT || 8080;
 const API = process.env.CUENTAS_API || 'https://dfzoqenxvpqkzkuakmli.supabase.co/functions/v1/pascalpdf-firma';
 const ORIGENES = (process.env.ORIGENES || 'https://pascalia.lat,https://www.pascalia.lat').split(',');
-const MAX = 20 * 1024 * 1024;
+const MAX = 100 * 1024 * 1024;
 const MAX_SIMULT = Number(process.env.SIMULTANEAS || 1); // LibreOffice usa mucha memoria: de a uno por defecto
 const MAX_COLA = 40;
 let enCurso = 0;
@@ -43,7 +43,7 @@ function convertir(dir, archivo, perfil) {
             '--convert-to', 'pdf:writer_pdf_Export', '--outdir', dir, archivo], { stdio: ['ignore', 'ignore', 'pipe'], env: { ...process.env, HOME: tmpdir() } });
         let err = '';
         p.stderr.on('data', (d) => { err = (err + d).slice(-300); });
-        const t = setTimeout(() => { p.kill('SIGKILL'); mal(new Error('tiempo')); }, 120000);
+        const t = setTimeout(() => { p.kill('SIGKILL'); mal(new Error('tiempo')); }, 300000);
         p.on('exit', (c) => { clearTimeout(t); c === 0 ? ok() : mal(new Error('soffice ' + c + ' ' + err.replace(/\s+/g, ' ').trim())); });
         p.on('error', (e) => { clearTimeout(t); mal(e); });
     });
@@ -60,7 +60,7 @@ createServer(async (req, res) => {
     const partes = []; let tam = 0, pasado = false;
     req.on('data', (d) => { tam += d.length; if (tam > MAX) pasado = true; else partes.push(d); });
     req.on('end', async () => {
-        if (pasado) return json(res, c, 413, { error: 'El archivo supera 20 MB.' });
+        if (pasado) return json(res, c, 413, { error: 'El archivo supera 100 MB.' });
         const buf = Buffer.concat(partes);
         // .docx es un ZIP (PK); .doc es OLE (D0 CF 11 E0)
         const ext = buf[0] === 0x50 && buf[1] === 0x4b ? 'docx' : buf[0] === 0xd0 && buf[1] === 0xcf ? 'doc' : null;

@@ -6,7 +6,7 @@
     if (!window.PascalCuenta || !window.PascalSello) return;
     const { api } = PascalCuenta;
     const { hoja, aviso, esc, toast, conBoton } = PascalCuenta.ui;
-    const MAX_ARCHIVOS = 200, MAX_MB = 30;
+    const MAX_ARCHIVOS = 200, MAX_MB = 100;
     const LIBS = {
         jszip: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
         docx: 'https://cdn.jsdelivr.net/npm/docx-preview@0.3.7/dist/docx-preview.min.js',
